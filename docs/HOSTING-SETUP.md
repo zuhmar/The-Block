@@ -14,7 +14,7 @@ The browser never connects directly to PostgreSQL. Do not add `DATABASE_URL` to 
 ## Provision after connecting the accounts
 
 1. Create/import a Vercel project from `zuhmar/The-Block`, branch `main`, repository root. Use `vercel.json`'s existing build/output settings. Record the assigned production frontend origin; do not assume a particular `vercel.app` hostname is available.
-2. Create a Railway project with a PostgreSQL service and a Docker service sourced from the same GitHub repository. Keep its source root at the repository root so `railway.json` and `Dockerfile` are used.
+2. Create a Railway project with a PostgreSQL service and a Docker service sourced from the same GitHub repository. Keep its source root at the repository root so `Dockerfile` is used.
 3. Set the server's variables below. Reference the PostgreSQL service's **direct** `DATABASE_URL` through Railway's variable-reference UI. Do not copy that value into this file or GitHub.
 4. Expose a Railway HTTPS domain for the server and deploy. Verify `/health` returns `ok: true` and `/world` returns a nonempty `roomId`. Startup applies the idempotent SQL migration and seeds an empty city without overwriting existing records.
 5. Set the frontend's `VITE_SERVER_URL` to that HTTPS server origin, then deploy/redeploy Vercel. Set `CLIENT_ORIGIN` on the server to the actual frontend production origin if it differs from the originally recorded value.

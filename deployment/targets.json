@@ -1,0 +1,17 @@
+{
+  "repository": "zuhmar/The-Block",
+  "branch": "main",
+  "vercel": {
+    "projectId": "prj_yYdrtXC73hHPp5rNgqVlh9SJupTU",
+    "teamId": "team_r4e9d4NIOCkF3kV0y7JZsDB0",
+    "origin": "https://the-block-tau-eight.vercel.app"
+  },
+  "railway": {
+    "projectId": "d6c8f776-3f6b-4e6b-9f46-9d4b4d5596f7",
+    "environmentId": "cc28c432-4276-4eec-8297-c82425eae4a4",
+    "serverServiceId": "57149cb1-305d-408b-b6df-46af4536f552",
+    "postgresServiceId": "4b2a32b0-25eb-413a-9fbb-2321c11ed123",
+    "origin": "https://street-survival-server-production.up.railway.app",
+    "region": "iad"
+  }
+}
