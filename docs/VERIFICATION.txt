@@ -1,0 +1,72 @@
+Full verification before final art-only refinement:
+
+$ pnpm lint && pnpm test && pnpm build
+$ eslint .
+$ tsx --test tests/*.test.ts
+✔ contracts reject untrusted state and invalid movement (2.322504ms)
+✔ placement masks, ownership, costs and foundation immunity (1.959606ms)
+✔ shelter edge prevents attacks from either side (0.200042ms)
+✔ death drops all inventory, equipment, cash once; preserves progression and assets (0.827098ms)
+✔ offline-owner raid: access blocked until breach; loot is public and single-claim (0.795901ms)
+✔ server movement limits speed and dead characters cannot walk (0.240723ms)
+✔ survival ticks, shelter recovery and interest privacy (0.388206ms)
+✔ firearm reload, range and ammunition are server validated (0.320453ms)
+✔ construction never obstructs street; base access requires its west entrance (0.411941ms)
+✔ durable request ledger makes retries idempotent and rejects stale requests (0.459754ms)
+Load smoke: {"testedAt":"2026-11-15T20:49:21.238Z","clients":20,"durationMs":5025,"snapshots":1234,"p95SnapshotGapMs":103,"maxSnapshotGapMs":111,"scope":"5-second local network smoke test; no browser rendering or sustained production capacity claim"}
+✔ 20 real network clients share a single city with bounded snapshot gaps (6100.896382ms)
+✔ real WebSocket clients: authentication, movement, replay, chat, reconnect and process restart (7112.221715ms)
+✔ PostgreSQL concurrent claims serialize, failed actions roll back, raiding survives fresh connection (110.779562ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14348.507095
+$ pnpm typecheck && pnpm assets:validate && pnpm --filter @street/client build
+$ tsc --noEmit
+$ tsx packages/art-tools/validate.ts
+Validated 283 images, dimensions, alpha, cells, animations and required keys.
+$ vite build
+vite v6.4.6 building for production...
+transforming...
+✓ 69 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                      0.62 kB │ gzip:   0.35 kB
+dist/assets/index-Bp2HArJ5.css       9.08 kB │ gzip:   2.83 kB
+dist/assets/index-CZJ3zvkG.js       79.02 kB │ gzip:  22.47 kB
+dist/assets/network-CEOLgJtR.js    129.05 kB │ gzip:  41.20 kB
+dist/assets/phaser-BMeCXOGt.js   1,482.30 kB │ gzip: 339.99 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.63s
+
+Final regenerated-art build:
+
+$ pnpm typecheck && pnpm assets:validate && pnpm --filter @street/client build
+$ tsc --noEmit
+$ tsx packages/art-tools/validate.ts
+Validated 283 images, dimensions, alpha, cells, animations and required keys.
+$ vite build
+vite v6.4.6 building for production...
+transforming...
+✓ 69 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                      0.62 kB │ gzip:   0.35 kB
+dist/assets/index-Bp2HArJ5.css       9.08 kB │ gzip:   2.83 kB
+dist/assets/index-CZJ3zvkG.js       79.02 kB │ gzip:  22.47 kB
+dist/assets/network-CEOLgJtR.js    129.05 kB │ gzip:  41.20 kB
+dist/assets/phaser-BMeCXOGt.js   1,482.30 kB │ gzip: 339.99 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.72s

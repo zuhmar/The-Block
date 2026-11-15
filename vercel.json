@@ -1,0 +1,6 @@
+{
+  "buildCommand": "pnpm assets:generate && pnpm --filter @street/client build",
+  "outputDirectory": "apps/client/dist",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": null
+}

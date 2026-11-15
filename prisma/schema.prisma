@@ -1,0 +1,22 @@
+// pg executes the authoritative SQL migration; Prisma documents the data model.
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+model Account {
+ id String @id
+ name String @unique
+ password String
+ @@map("accounts")
+}
+model Session {
+ token String @id
+ account String @unique
+ expires BigInt
+ @@map("sessions")
+}
+model World {
+ id Int @id
+ data Json
+ @@map("worlds")
+}

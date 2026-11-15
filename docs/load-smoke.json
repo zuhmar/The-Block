@@ -1,0 +1,9 @@
+{
+  "testedAt": "2026-11-15T20:49:21.238Z",
+  "clients": 20,
+  "durationMs": 5025,
+  "snapshots": 1234,
+  "p95SnapshotGapMs": 103,
+  "maxSnapshotGapMs": 111,
+  "scope": "5-second local network smoke test; no browser rendering or sustained production capacity claim"
+}
