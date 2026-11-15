@@ -13,23 +13,22 @@ import {
 import { z } from "zod";
 import { pool, migrate, transaction, load } from "./db.js";
 import { readServerConfig } from "./config.js";
+import { acquireAuthority } from "./authority.js";
 import { commitAction, createPlayer, move, tick, visible } from "./engine.js";
 import {
   appearanceSchema,
   envelopeSchema,
+  VERSION,
   type WorldState,
 } from "../../../packages/shared/src/index.js";
 const config = readServerConfig();
-await migrate();
 // A dedicated PostgreSQL advisory lock forbids a second authority for this city.
 const authority = await pool.connect();
-if (
-  !(await authority.query("SELECT pg_try_advisory_lock(739481) AS locked"))
-    .rows[0].locked
-)
-  throw Error(
-    "Another Street Survival authority is already running for this database",
-  );
+await acquireAuthority(
+  authority,
+  process.env.RAILWAY_DEPLOYMENT_ID ? 90000 : 0,
+);
+await migrate();
 const bootstrap = randomUUID();
 let roomId = "";
 const app = express();
@@ -124,7 +123,7 @@ app.get("/world", (_req, res) => {
     res.status(503).json({ error: "City starting" });
     return;
   }
-  res.json({ roomId });
+  res.json({ roomId, version: VERSION, layout: "top-down" });
 });
 app.get("/health", async (_req, res) => {
   if (!roomId) {
@@ -133,7 +132,7 @@ app.get("/health", async (_req, res) => {
   }
   try {
     await pool.query("SELECT 1");
-    res.json({ ok: true, district: "The Block" });
+    res.json({ ok: true, district: "The Block", protocol: VERSION });
   } catch {
     res.status(503).json({ ok: false });
   }
@@ -144,7 +143,13 @@ export class Block extends Room {
   online = new Map<string, string>();
   inputs = new Map<
     string,
-    { dir: number; sprint: boolean; crouch: boolean; time: number }
+    {
+      dir: number;
+      dirY: number;
+      sprint: boolean;
+      crouch: boolean;
+      time: number;
+    }
   >();
   seq = new Map<string, number>();
   rates = new Map<string, { n: number; time: number }>();
@@ -167,6 +172,10 @@ export class Block extends Room {
       this.rates.set(client.sessionId, rate);
       if (++rate.n > 45) {
         client.send("notice", "Too many actions");
+        return;
+      }
+      if (raw?.v !== VERSION) {
+        client.send("notice", "The city has been updated. Refresh this page.");
         return;
       }
       const parsed = envelopeSchema.safeParse(raw);
@@ -242,7 +251,11 @@ export class Block extends Room {
       throw Error("Account already connected");
     this.online.set(client.sessionId, auth);
     this.seq.set(client.sessionId, 0);
-    client.send("welcome", { id: auth, serverTime: Date.now() });
+    client.send("welcome", {
+      id: auth,
+      serverTime: Date.now(),
+      version: VERSION,
+    });
     this.stateCache = await load();
     this.sync();
   }
@@ -266,7 +279,7 @@ export class Block extends Room {
       for (const [id, input] of this.inputs) {
         const p = w.players[id];
         if (p && now - input.time < 400)
-          move(w, p, input.dir, input.sprint, input.crouch, dt);
+          move(w, p, input.dir, input.sprint, input.crouch, dt, input.dirY);
       }
       tick(w, dt, new Set(this.online.values()), now);
     });

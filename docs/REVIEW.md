@@ -1,40 +1,35 @@
-# Review of the supplied master prompt
+# Implementation review
 
-The document is a technically detailed product specification, not merely an art prompt. The main engineering risks are transactional item ownership, offline world mutation, obstruction in a side-scrolling construction system, real browser verification and sustained multiplayer capacity. A single authoritative city and one district are appropriate constraints for a first build.
+The original master prompt describes a complete multiplayer urban survival game. The user subsequently approved a top-down world and CryoFall-inspired HUD; `DESIGN.md` records that direction. Street Survival keeps its own original art and urban setting.
 
-The implementation uses the specified stack, original deterministic procedural artwork and real PostgreSQL/WebSocket infrastructure. It does not substitute fake players or an in-browser multiplayer simulation. A PostgreSQL advisory lock prevents multiple authorities, and the server refuses creation of extra rooms. The browser receives the existing city ID and joins it directly.
+## Implemented and checked
 
-## Acceptance status
+- Real Phaser/Vite client, Colyseus authority and PostgreSQL persistence; no fake multiplayer.
+- One authoritative city, guarded by a PostgreSQL session lock acquired before world migration.
+- Protocol v2 with authoritative X/Y movement, normalized diagonals, substep collision, wall sliding, safe-zone rectangles, Euclidean interaction/interest ranges and 2D line of sight.
+- Secure accounts, expiring hashed sessions, message validation/rate limits, replay rejection and durable successful-action IDs.
+- Survival, scavenging, item/weight limits, merchants, bat crafting, firearm ammo/reload and skills that persist through death.
+- Two-dimensional foundation/wall/door/roof/storage construction, owner permissions, physical access, repair, controlled dismantling, offline raiding and public death loot.
+- Full-screen world, navigation rail, minimap, hotbar, survival meters and inventory/equipment, crafting, skills, journal, merchant, building, chat and map panels.
+- 526 manifest-backed original procedural SVG/PNG assets. Character art has 108 appearance combinations, four directions and eight states. Required keys, dimensions, alpha, cells and nonempty frames validate.
+- 19 tests, lint, typecheck and production build pass, including two-axis real-WebSocket movement/reconnect/restart, concurrent claims, offline raids, stored damage/theft, 2D range/collision and legacy layout preservation.
 
-| Requirement                                            | Evidence / status                                                                                                                                                                                       |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Two browser sessions see movement                      | Two real WebSocket clients pass. Browser rendering is **unverified** because browser tools are unavailable.                                                                                             |
-| Persistent character, inventory, skills                | PostgreSQL snapshots; reconnect and real process-restart tests pass.                                                                                                                                    |
-| No double loot claims                                  | Concurrent transactions serialize under row lock; exactly one claimant succeeds.                                                                                                                        |
-| Build, store, offline-owner breach and theft           | Building/storage unit tests and real-WebSocket offline raid pass.                                                                                                                                       |
-| Foundation immune; breach/theft persist                | Unit and database tests plus real server process restart after a raid pass.                                                                                                                             |
-| Shelter safety and open-street PvP                     | Both attack endpoints and construction masks checked on server; tests pass.                                                                                                                             |
-| Death drops carried assets; preserves permanent state  | Tested for inventory, equipment, cash, bank and skills; buildings remain in the world. Loaded ammo also drops.                                                                                          |
-| Generated sprites without uploads                      | 283 manifest-backed SVG/PNG assets, including 108 appearance combinations in both directions. All generated/validated.                                                                                  |
-| Reproducible startup                                   | Locked pnpm workspace, Compose database, idempotent migration, setup/dev scripts. Full install, migration, tests and frontend build exercised. Interactive `pnpm dev` browser launch awaits browser QA. |
-| Validation, transfers, death, raids, persistence tests | 15 passing tests; see milestone report.                                                                                                                                                                 |
+The database migration keeps a one-time pre-layout world backup. IDs, inventory, cash, bank, skills, property, storage and damage remain. Legacy bases receive y=1344; a player inside a new solid footprint moves to nearby free ground. No foundations are silently deleted.
 
-## Deliberate implementation choices
+## Verification limits and remaining product work
 
-- **Separate base lane:** construction cannot seal the public horizontal street. Bases are entered from their west edge; walls/doors block that lane. Storage requires physical entry into the associated base and clear access. This is a compact 1D construction model, not fully enclosed 2D rooms.
-- **PostgreSQL JSONB world row:** one `FOR UPDATE` transaction owns each mutation and all item transfers. Accounts and hashed sessions have separate tables. Normalize entities if profiling shows the world row becoming a bottleneck. Prisma's model is supplied as documentation; `pg` runs the SQL migration.
-- **Durable action IDs:** requests carry protocol version, monotonically increasing per-connection sequence, unique ID and timestamp. Successful persistent actions and results commit with the world. Same-ID retries return the stored result; old messages are rejected. Ledger retention exceeds the accepted timestamp window.
-- **Offline combat:** disconnected combatants remain targetable for their remaining combat timer. Their position and belongings persist; there is no disconnect escape to safety.
-- **20 clients:** a local five-second network smoke test passes. This cannot establish sustained hosting capacity or mobile rendering performance.
+1. Browser rendering, two-window manual gameplay and mobile-device QA remain unverified because managed browser tooling was unavailable. Asset contact sheets were inspected; this is not a substitute for browser screenshots.
+2. Full modular equipment visuals, selectable bottoms/shoes, durability and distinct equipment-slot transfers remain. Current appearance selection and weapon/backpack gameplay work.
+3. Hostile NPC AI is not implemented. Merchant interactions and the shelter's recovery area work; the caretaker links to the survival guide.
+4. Temperature exposure effects, combat blocking, recoil and richer aim/accuracy mechanics remain. Current attacks validate distance, facing, LOS, cooldown, stamina, ammo and reload on the server.
+5. Rotatable wall modules, collaborator permission editing, bounded crate capacity and more advanced building interiors remain. Current 2D barriers can physically enclose storage and be breached.
+6. Banking services, deeper account progression, agriculture/industry and a full research tree remain. The crafting and skill windows show only implemented recipes and actual experience, not simulated research progress.
+7. Sustained capacity/soak testing, monitoring and database restore rehearsals remain. The 20-client local check is a five-second network smoke test.
 
-## Remaining gaps before calling the entire master prompt complete
+Vercel serves the frontend and Railway runs the server and persistent PostgreSQL. `deployment/verification.json` records the latest completed hosted checks; its version/commit must be considered when checking a subsequent redesign deployment.
 
-1. Browser visual/gameplay QA, two-window manual acceptance and mobile device testing. Managed browser tooling was absent, so these checks could not be executed here.
-2. Full modular equipment visuals, selectable bottom/shoe garments, item durability/condition and moving equipment between distinct equipped slots. Current appearance selections persist and generate correctly; weapons and backpack are functional, with weapon selection in inventory.
-3. Hostile NPC AI and interactions with the shelter caretaker. NPC artwork exists; merchants are functional interaction points.
-4. Temperature exposure consequences, gameplay blocking/aim accuracy/recoil, and richer hit-reaction animations. Current combat uses authoritative direct range/line-of-sight hits, cooldowns, stamina, ammo and reload timing. Right-click currently shows an aiming pose; it does not implement a blocking mechanic.
-5. Full enclosure/floor/interior building semantics, collaborator permission editing, and bounded crate capacity. Current owner-only access/build/repair/dismantle is enforced server-side; raiders may loot reachable storage.
-6. Banking interface, explicit account progression beyond persistent learned skills, a dedicated hotbar and optional onboarding task tracking.
-7. Sustained load/soak testing, production HTTPS/WebSocket hosting, monitoring and database recovery rehearsals. Vercel and Railway deployment is now live, with two-client hosted WebSocket and inventory-persistence smoke checks.
+## Technical tradeoffs
 
-These are concrete remaining product tasks, not hidden behind completed milestone claims. No extra districts, paid services, fake multiplayer or external sprite packs were added.
+All city mutations are serialized in a single PostgreSQL JSONB row. This keeps transfers, death and raiding atomic but needs profiling and normalization for larger cities. Static map masks reserve public routes while buildable regions contain player structures. Old artificial base lanes are retired; access now depends on normal movement and barriers.
+
+The city requires a single writer. A replacement may wait for its predecessor to release the lock, but cannot migrate or simulate while that lock is held. Operations must coordinate the game-server handover; the database does not need a restart.

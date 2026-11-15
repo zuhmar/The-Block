@@ -1,6 +1,7 @@
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { pool, migrate, transaction, load } from "../apps/server/src/db.js";
+import { acquireAuthority } from "../apps/server/src/authority.js";
 import { createPlayer, act, emptyWorld } from "../apps/server/src/engine.js";
 const look = {
   skin: "#c98c62",
@@ -33,8 +34,15 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
       const a = createPlayer("a", "A", look),
         b = createPlayer("b", "B", look);
       a.x = b.x = 3000;
+      a.y = b.y = 1344;
       w.players = { a, b };
-      w.bags.bag = { id: "bag", x: 3000, cash: 0, inventory: { scrap: 1 } };
+      w.bags.bag = {
+        id: "bag",
+        x: 3000,
+        y: 1344,
+        cash: 0,
+        inventory: { scrap: 1 },
+      };
     });
     const results = await Promise.allSettled(
       ["a", "b"].map((id) =>
@@ -63,12 +71,14 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
     await transaction((w) => {
       w.players.a.inventory = { wood: 50 };
       w.players.a.x = 3000;
+      w.players.a.y = 1344;
       act(w, "a", { type: "build", kind: "foundation", x: 3008 });
       const f = Object.values(w.structures)[0];
       act(w, "a", { type: "build", kind: "door", x: 3072, foundation: f.id });
       const d = Object.values(w.structures).find((s) => s.kind === "door")!;
       const b = w.players.b;
-      b.x = 3040;
+      b.x = 3030;
+      b.y = 1344;
       b.protected = false;
       b.inventory.bat = 1;
       b.weapon = "bat";
@@ -94,6 +104,51 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
       0,
     );
     await fresh.end();
+    const legacy = JSON.parse(JSON.stringify(await load()));
+    delete legacy.layoutVersion;
+    for (const p of Object.values(legacy.players) as any[]) delete p.y;
+    for (const s of Object.values(legacy.structures) as any[]) delete s.y;
+    await pool.query("UPDATE worlds SET data=$1 WHERE id=1", [
+      JSON.stringify(legacy),
+    ]);
+    await migrate();
+    await migrate();
+    const backup = (
+      await pool.query("SELECT data FROM world_layout_backups WHERE layout=1")
+    ).rows;
+    assert.equal(backup.length, 1);
+    assert.deepEqual(backup[0].data, legacy);
+    const migrated = await load();
+    assert.equal(migrated.layoutVersion, 2);
+    assert.deepEqual(migrated.players.a.inventory, legacy.players.a.inventory);
+    assert.equal(
+      Object.values(migrated.structures).find((s) => s.kind === "door")!.hp,
+      0,
+    );
+
+    const predecessor = await pool.connect(),
+      successor = await pool.connect(),
+      observer = await pool.connect();
+    try {
+      await acquireAuthority(predecessor);
+      const transition = acquireAuthority(successor, 3000);
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      assert(
+        !(await observer.query("SELECT pg_try_advisory_lock(739481) AS locked"))
+          .rows[0].locked,
+      );
+      await predecessor.query("SELECT pg_advisory_unlock(739481)");
+      await transition;
+      assert(
+        !(await observer.query("SELECT pg_try_advisory_lock(739481) AS locked"))
+          .rows[0].locked,
+      );
+      await successor.query("SELECT pg_advisory_unlock(739481)");
+    } finally {
+      predecessor.release();
+      successor.release();
+      observer.release();
+    }
     assert.deepEqual(Object.keys(emptyWorld().players), []);
   } finally {
     pool.connect = originalConnect;

@@ -5,6 +5,11 @@ import {
   PIECES,
   safe,
   canCarry,
+  distance,
+  inRect,
+  segmentRect,
+  placementReason,
+  type Point,
   type Player,
   type WorldState,
   type Action,
@@ -22,6 +27,7 @@ export const emptyWorld = (): WorldState => ({
   bags: {},
   clock: 0,
   actions: {},
+  layoutVersion: 2,
 });
 export function createPlayer(
   id: string,
@@ -31,10 +37,12 @@ export function createPlayer(
   return {
     id,
     name,
-    x: 400,
+    x: WORLD.spawn.x,
+    y: WORLD.spawn.y,
     lane: "street",
     parcel: "",
     facing: 1,
+    facingY: 0,
     health: 100,
     hunger: 100,
     thirst: 100,
@@ -65,23 +73,86 @@ function give(p: Player, item: Item, n = 1) {
   if (!canCarry(p.inventory, item, n)) fail("Backpack full or too heavy");
   p.inventory[item] = (p.inventory[item] || 0) + n;
 }
-function near(p: Player, x: number, range = 150) {
-  if (Math.abs(p.x - x) > range) fail("Move closer");
+function near(p: Point, target: Point, range = 150) {
+  if (distance(p, target) > range) fail("Move closer");
 }
-export function obstruction(w: WorldState, a: number, b: number) {
-  return Object.values(w.structures).some(
-    (s) =>
-      s.hp > 0 &&
-      (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
-      s.x > Math.min(a, b) &&
-      s.x < Math.max(a, b),
+export function obstruction(
+  w: WorldState,
+  a: Point,
+  b: Point,
+  ignoreId?: string,
+) {
+  return (
+    WORLD.obstacles.some((r) => segmentRect(a, b, r)) ||
+    Object.values(w.structures).some(
+      (s) =>
+        s.id !== ignoreId &&
+        s.hp > 0 &&
+        (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
+        segmentRect(a, b, { x: s.x - 24, y: s.y - 24, width: 48, height: 48 }),
+    )
   );
 }
 function access(w: WorldState, p: Player, s: Structure) {
-  if (p.lane !== "parcel" || p.parcel !== s.foundation)
-    fail("Enter this base from its west edge first");
-  near(p, s.x);
-  if (obstruction(w, p.x, s.x)) fail("Access blocked by a wall or closed door");
+  near(p, s);
+  if (obstruction(w, p, s, s.id))
+    fail("Access blocked by a wall or closed door");
+}
+export function blocked(w: WorldState, p: Point) {
+  return (
+    WORLD.obstacles.some((r) => inRect(p, r, 12)) ||
+    Object.values(w.structures).some(
+      (s) =>
+        s.hp > 0 &&
+        (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
+        inRect(p, { x: s.x - 24, y: s.y - 24, width: 48, height: 48 }, 12),
+    )
+  );
+}
+export function upgradeWorld(w: WorldState) {
+  w.layoutVersion = 2;
+  w.actions ||= {};
+  for (const p of Object.values(w.players)) {
+    p.y ??= p.lane === "parcel" ? 1344 : WORLD.spawn.y;
+    p.facingY ??= 0;
+  }
+  for (const s of Object.values(w.structures)) s.y ??= 1344;
+  for (const b of Object.values(w.bags)) b.y ??= WORLD.spawn.y;
+  for (const p of Object.values(w.players)) {
+    if (blocked(w, p)) {
+      const original = { x: p.x, y: p.y };
+      let found = false;
+      for (let radius = 16; radius <= 192 && !found; radius += 16)
+        for (const [dx, dy] of [
+          [0, 1],
+          [1, 0],
+          [0, -1],
+          [-1, 0],
+          [1, 1],
+          [-1, 1],
+          [1, -1],
+          [-1, -1],
+        ]) {
+          const point = {
+            x: Math.max(
+              24,
+              Math.min(WORLD.width - 24, original.x + dx * radius),
+            ),
+            y: Math.max(
+              24,
+              Math.min(WORLD.height - 24, original.y + dy * radius),
+            ),
+          };
+          if (!blocked(w, point)) {
+            p.x = point.x;
+            p.y = point.y;
+            found = true;
+            break;
+          }
+        }
+    }
+  }
+  return w;
 }
 export function kill(w: WorldState, p: Player) {
   if (p.dead) return;
@@ -92,7 +163,7 @@ export function kill(w: WorldState, p: Player) {
   for (const [k, v] of Object.entries(p.equipped))
     inventory[k as Item] = (inventory[k as Item] || 0) + v;
   const id = randomUUID();
-  w.bags[id] = { id, x: p.x, inventory, cash: p.cash };
+  w.bags[id] = { id, x: p.x, y: p.y, inventory, cash: p.cash };
   p.inventory = {};
   p.equipped = {};
   p.cash = 0;
@@ -106,39 +177,32 @@ export function move(
   sprint: boolean,
   crouch: boolean,
   dt: number,
+  dirY = 0,
 ) {
   if (p.dead) return;
-  const speed = crouch ? 60 : sprint && p.energy > 8 ? 235 : 145;
-  let next = Math.max(
-    24,
-    Math.min(
-      WORLD.width - 24,
-      p.x + dir * speed * (p.hunger < 15 || p.thirst < 15 ? 0.7 : 1) * dt,
-    ),
-  );
-  if (p.lane === "parcel") {
-    const f = w.structures[p.parcel];
-    if (f) next = Math.max(f.x - 160, Math.min(f.x + 160, next));
-    else p.lane = "street";
+  const magnitude = Math.hypot(dir, dirY);
+  if (!magnitude) return;
+  const speed =
+      (crouch ? 60 : sprint && p.energy > 8 ? 235 : 145) *
+      (p.hunger < 15 || p.thirst < 15 ? 0.7 : 1),
+    step = speed * Math.min(0.25, Math.max(0, dt));
+  const dx = (dir / magnitude) * step,
+    dy = (dirY / magnitude) * step;
+  // Substeps prevent tunnelling through corners at sprint speed; separate axes allow wall sliding.
+  const count = Math.max(1, Math.ceil(step / 8));
+  for (let i = 0; i < count; i++) {
+    const x = Math.max(24, Math.min(WORLD.width - 24, p.x + dx / count));
+    if (!blocked(w, { x, y: p.y })) p.x = x;
+    const y = Math.max(24, Math.min(WORLD.height - 24, p.y + dy / count));
+    if (!blocked(w, { x: p.x, y })) p.y = y;
   }
-  if (
-    p.lane === "street" ||
-    !Object.values(w.structures).some(
-      (s) =>
-        s.hp > 0 &&
-        (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
-        Math.abs(next - s.x) < 18,
-    )
-  )
-    p.x = next;
-  if (dir) {
-    p.facing = dir;
-    if (sprint) {
-      p.energy = Math.max(0, p.energy - 4 * dt);
-      p.skills.athletics += dt * 0.01;
-    }
-    if (!safe(p.x)) p.protected = false;
+  p.facing = dir;
+  p.facingY = dirY;
+  if (sprint && p.energy > 8) {
+    p.energy = Math.max(0, p.energy - 4 * dt);
+    p.skills.athletics += dt * 0.01;
   }
+  if (!safe(p.x, p.y)) p.protected = false;
 }
 export function tick(
   w: WorldState,
@@ -154,10 +218,10 @@ export function tick(
     if ((!active.has(p.id) && p.combatUntil < now) || p.dead) continue;
     p.hunger = Math.max(0, p.hunger - dt * 0.015);
     p.thirst = Math.max(0, p.thirst - dt * 0.022);
-    p.energy = Math.min(100, p.energy + dt * (safe(p.x) ? 3 : 1));
+    p.energy = Math.min(100, p.energy + dt * (safe(p.x, p.y) ? 3 : 1));
     p.temperature = 20 + Math.sin((w.clock / 3600) * Math.PI * 2) * 8;
     p.skills.survival += dt * 0.001;
-    if (safe(p.x)) p.health = Math.min(100, p.health + dt);
+    if (safe(p.x, p.y)) p.health = Math.min(100, p.health + dt);
     if (p.hunger === 0 || p.thirst === 0) {
       p.health -= dt * 0.4;
       if (p.health <= 0) kill(w, p);
@@ -182,7 +246,8 @@ export function act(
   if (a.type === "respawn") {
     if (!p.dead) fail("You are alive");
     p.dead = false;
-    p.x = 400;
+    p.x = WORLD.spawn.x;
+    p.y = WORLD.spawn.y;
     p.lane = "street";
     p.parcel = "";
     p.health = 100;
@@ -194,22 +259,27 @@ export function act(
   }
   if (p.dead) fail("Respawn first");
   switch (a.type) {
+    case "aim": {
+      const length = distance(p, a);
+      if (length > 0) {
+        p.facing = (a.x - p.x) / length;
+        p.facingY = (a.y - p.y) / length;
+      }
+      return "";
+    }
     case "enter": {
       const f = w.structures[a.foundation];
       if (!f || f.kind !== "foundation") fail("Foundation missing");
-      near(p, f.x - 160, 100);
-      p.lane = "parcel";
-      p.parcel = f.id;
-      p.x = f.x - 160;
-      return "Entered base lane · main street remains open";
+      near(p, f, 210);
+      return "Walk through an open door to enter the base";
     }
     case "exit": {
       p.lane = "street";
       p.parcel = "";
-      return "Back on the main street";
+      return "Base access uses normal WASD movement";
     }
     case "scavenge": {
-      near(p, WORLD.scavenge[a.index]);
+      near(p, WORLD.scavengePoints[a.index]);
       if ((p.cooldowns[a.index] || 0) > now)
         fail("Container depleted · return in a minute");
       const item = loot[Math.floor(Math.random() * loot.length)];
@@ -249,7 +319,7 @@ export function act(
       return "Crafted bat";
     }
     case "trade": {
-      near(p, a.sell ? WORLD.trader : WORLD.store);
+      near(p, a.sell ? WORLD.traderPoint : WORLD.storePoint);
       if (a.sell) {
         take(p, a.item);
         p.cash += ITEMS[a.item].price;
@@ -263,49 +333,25 @@ export function act(
       return a.sell ? "Item sold" : "Purchased " + a.item;
     }
     case "build": {
-      const x = Math.round(a.x / 64) * 64;
-      near(p, x, 210);
-      if (
-        safe(x) ||
-        !WORLD.parcels.some(([l, r]) => x >= l + 32 && x <= r - 32)
-      )
-        fail("Protected road, public area or parcel edge");
-      if (
-        Object.values(w.structures).filter((s) => s.owner === id).length >= 40
-      )
-        fail("Build budget reached");
-      if (
-        Object.values(w.structures).some(
-          (s) =>
-            s.x === x &&
-            (s.kind === a.kind ||
-              (["wall", "door", "storage"].includes(s.kind) &&
-                ["wall", "door", "storage"].includes(a.kind))),
-        )
-      )
-        fail("Space occupied");
-      let foundation: Structure | undefined;
-      if (a.kind !== "foundation") {
-        foundation = w.structures[a.foundation || ""];
-        if (
-          !foundation ||
-          foundation.kind !== "foundation" ||
-          foundation.owner !== id ||
-          Math.abs(foundation.x - x) > 128
-        )
-          fail("Select an owned foundation within 128px");
-      } else if (
-        Object.values(w.structures).some(
-          (s) => s.kind === "foundation" && Math.abs(s.x - x) < 192,
-        )
-      )
-        fail("Foundation too close");
+      const x = Math.round(a.x / 64) * 64,
+        y = Math.round((a.y ?? p.y) / 64) * 64;
+      const reason = placementReason(
+        p,
+        a.kind,
+        { x, y },
+        Object.values(w.structures),
+        a.foundation,
+      );
+      if (reason) fail(reason);
+      const foundation =
+        a.kind === "foundation" ? undefined : w.structures[a.foundation || ""];
       take(p, "wood", PIECES[a.kind].wood);
       const sid = randomUUID();
       w.structures[sid] = {
         id: sid,
         kind: a.kind,
         x,
+        y,
         owner: id,
         foundation: foundation?.id || sid,
         hp: PIECES[a.kind].hp,
@@ -319,7 +365,7 @@ export function act(
     case "door": {
       const s = w.structures[a.id];
       if (!s || s.kind !== "door" || s.hp <= 0) fail("Door missing");
-      near(p, s.x);
+      near(p, s);
       if (s.owner !== id) fail("Owner access only");
       s.open = !s.open;
       return s.open ? "Door open" : "Door closed";
@@ -327,7 +373,7 @@ export function act(
     case "repair": {
       const s = w.structures[a.id];
       if (!s || s.owner !== id) fail("Owner access only");
-      near(p, s.x);
+      near(p, s);
       take(p, "wood", 2);
       s.hp = PIECES[s.kind].hp;
       return "Repaired";
@@ -335,7 +381,7 @@ export function act(
     case "dismantle": {
       const s = w.structures[a.id];
       if (!s || s.owner !== id) fail("Owner access only");
-      near(p, s.x);
+      near(p, s);
       if (p.combatUntil > now) fail("Cannot dismantle during combat");
       if (
         s.kind === "foundation" &&
@@ -350,10 +396,16 @@ export function act(
       return "Dismantled";
     }
     case "drop": {
-      if (safe(p.x)) fail("Drop items outside the shelter");
+      if (safe(p.x, p.y)) fail("Drop items outside the shelter");
       take(p, a.item);
       const bid = randomUUID();
-      w.bags[bid] = { id: bid, x: p.x, inventory: { [a.item]: 1 }, cash: 0 };
+      w.bags[bid] = {
+        id: bid,
+        x: p.x,
+        y: p.y,
+        inventory: { [a.item]: 1 },
+        cash: 0,
+      };
       return "Dropped " + a.item;
     }
     case "store":
@@ -363,9 +415,9 @@ export function act(
       if (s && s.kind !== "storage") fail("Not a storage crate");
       if (!s && !bag) fail("Container empty");
       if (s) access(w, p, s);
-      else near(p, bag.x);
+      else near(p, bag);
       const c = s || bag;
-      if (safe(c.x)) fail("No theft or item transfer in shelter");
+      if (safe(c.x, c.y)) fail("No theft or item transfer in shelter");
       if (a.type === "store") {
         if (!s || s.owner !== id) fail("Owner storage only");
         take(p, a.item);
@@ -386,7 +438,7 @@ export function act(
       return a.type === "store" ? "Stored" : "Loot claimed";
     }
     case "attack": {
-      if (p.protected || safe(p.x)) fail("Shelter protects both sides");
+      if (p.protected || safe(p.x, p.y)) fail("Shelter protects both sides");
       if (p.weapon !== a.weapon) fail("Equip that weapon first");
       if (
         a.weapon !== "fists" &&
@@ -401,11 +453,12 @@ export function act(
       if (!t && !s) fail("Target missing");
       const target = t || s;
       const range = a.weapon === "pistol" ? 560 : 90;
-      near(p, target.x, range);
-      if ((target.x - p.x) * p.facing < 0) fail("Face your target");
-      if (safe(target.x) || (t && (t.protected || t.dead)))
+      near(p, target, range);
+      if ((target.x - p.x) * p.facing + (target.y - p.y) * p.facingY < -1)
+        fail("Face your target");
+      if (safe(target.x, target.y) || (t && (t.protected || t.dead)))
         fail("Target protected");
-      if (obstruction(w, p.x, target.x)) fail("Line of sight blocked");
+      if (obstruction(w, p, target, target.id)) fail("Line of sight blocked");
       if (s?.kind === "foundation") fail("Foundations cannot be raided");
       if (s && s.hp <= 0) fail("Already breached");
       if (a.weapon === "pistol") {
@@ -448,9 +501,11 @@ export function publicPlayer(p: Player) {
     id: p.id,
     name: p.name,
     x: p.x,
+    y: p.y,
     lane: p.lane,
     parcel: p.parcel,
     facing: p.facing,
+    facingY: p.facingY,
     health: p.health,
     dead: p.dead,
     appearance: p.appearance,
@@ -465,19 +520,19 @@ export function visible(w: WorldState, id: string, online: Set<string>) {
     clock: w.clock,
     self: p,
     players: Object.values(w.players)
-      .filter((t) => online.has(t.id) && Math.abs(t.x - p.x) < 1400)
+      .filter((t) => online.has(t.id) && distance(t, p) < 1400)
       .map(publicPlayer),
     structures: Object.values(w.structures)
-      .filter((s) => Math.abs(s.x - p.x) < 1400)
+      .filter((s) => distance(s, p) < 1400)
       .map((s) => ({
         ...s,
         inventory:
           s.kind === "storage" &&
-          Math.abs(s.x - p.x) < 150 &&
-          !obstruction(w, p.x, s.x)
+          distance(s, p) < 150 &&
+          !obstruction(w, p, s, s.id)
             ? s.inventory
             : {},
       })),
-    bags: Object.values(w.bags).filter((b) => Math.abs(b.x - p.x) < 1400),
+    bags: Object.values(w.bags).filter((b) => distance(b, p) < 1400),
   };
 }

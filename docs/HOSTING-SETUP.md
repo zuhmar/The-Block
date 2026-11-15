@@ -39,7 +39,7 @@ The browser never connects directly to PostgreSQL. Do not add `DATABASE_URL` to 
 ## Operational constraints
 
 - Deploy exactly one game-server replica. The session advisory lock rejects another authority using the same database. Disable sleeping/serverless execution for the game service.
-- For later server upgrades, stop the existing authority before starting its replacement. A rolling deploy can fail readiness while the old authority retains the lock. The current release does not provide zero-downtime handover.
+- For server upgrades, wait until the successor logs that it is waiting for the previous authority, then restart the previous game-server deployment by its deployment ID. The successor polls the lock before migrating and simulating; the database stays running. Expect a brief reconnect window and verify the new deployment becomes healthy.
 - Do not use a transaction-mode database pooler: the advisory lock requires a stable PostgreSQL session.
 - Keep provider TLS options on the connection URL; do not disable certificate verification to make a connection work.
 - Select provider plans deliberately. Infrastructure uses the account’s existing provider plan and default resource allocation; no plan upgrade was selected. Check Railway usage in the project dashboard.

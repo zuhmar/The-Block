@@ -1,58 +1,58 @@
 # Street Survival
 
-A real local multiplayer vertical slice of **The Block**, built with Phaser 3, Vite, TypeScript, Colyseus and PostgreSQL. Includes generated SVG/PNG art, account authentication, server movement, survival, scavenging, merchants, construction, combat, public death loot, persistent offline raids and automated tests. It is an initial implementation, not a claim that every master-prompt detail has passed browser acceptance.
+A browser-based **top-down urban survival sandbox** inspired by CryoFall's world composition and HUD organization, with original flat cartoon artwork. Built with Phaser 3, Vite, TypeScript, Colyseus and PostgreSQL.
 
-Live frontend: **https://the-block-tau-eight.vercel.app**. The authoritative server and PostgreSQL run on Railway. Live HTTP, two-client WebSocket movement and inventory persistence checks pass; visual browser/mobile QA remains pending.
+Live frontend: **https://the-block-tau-eight.vercel.app**. The authoritative server and PostgreSQL run on Railway. See `deployment/verification.json` for the last hosted verification and `docs/DESIGN.md` for the approved redesign.
 
 ## Start locally
 
-Install Node.js 24+, pnpm 11 and Docker with Compose. From this repository:
+Install Node.js 24+, pnpm 11 and Docker with Compose, then run:
 
 ```sh
 pnpm setup && pnpm dev
 ```
 
-Open **http://localhost:5173** in two browser profiles/private windows. Create **different accounts** (unique names, passwords of at least 10 characters). Both connect to the same city on port 2567. No API keys, paid services or uploaded sprites are needed. Local PostgreSQL credentials in Compose are development defaults.
+Open **http://localhost:5173** in two browser profiles and create different accounts. Names must be unique and passwords at least 10 characters. No API keys, paid services or manual sprite uploads are needed locally.
 
-`pnpm setup` installs the locked dependencies, starts and waits for PostgreSQL, applies the idempotent SQL migration and generates artwork. The map, NPCs and loot tables are deterministic content in `packages/game-data` and `packages/shared`; accounts are created at sign-up. No shared demo credentials are seeded.
+Setup installs locked dependencies, waits for PostgreSQL, applies the idempotent SQL migration and generates art. The initial city is seeded without shared demo credentials. Copy `.env.example` to `.env` at the repository root to customize `DATABASE_URL`, `PORT`, `CLIENT_ORIGIN` and `VITE_SERVER_URL`. The server and Vite both read the root configuration; only `VITE_` variables are public.
 
-To customize configuration, copy `.env.example` to `.env` in the repository root. The server loads that file; Vite reads frontend `VITE_` variables from the same root. Shell environment variables override file defaults. `DATABASE_URL`, `PORT`, `CLIENT_ORIGIN` and `VITE_SERVER_URL` are configurable. Never expose database credentials as `VITE_` values.
-
-Stop development with Ctrl+C. PostgreSQL data survives `docker compose down`; do not use `down -v` if you want to keep the city. Run only one authority per database; an advisory lock enforces this.
+PostgreSQL data survives `docker compose down`. Do not use `down -v` if you want to keep the city. Only one server authority may run per database.
 
 ## Play
 
-- **A/D** walk, **Shift** run, **Ctrl** crouch. No jumping.
-- **E** interacts with the closest merchant, scavenging container, structure or bag.
-- **Tab** backpack and skills; **B** construction; **M** district map; **Enter** chat. The footer provides clickable alternatives.
-- **Left click** attacks the nearest target in front of you. Equip a bat or pistol in the backpack. **R** reloads the pistol; **right click** shows the firearm aiming pose.
-- On mobile, use the movement, run, crouch, hit and reload buttons and footer panels. Desktop is the primary target; touch rendering awaits device QA.
+- **WASD / arrow keys** move freely on both axes. **Shift** sprints, **Ctrl** crouches. Diagonal movement has the same speed as straight movement; there is no jumping.
+- **E** interacts with the nearest merchant, container, base piece or bag.
+- **Tab** backpack; **C** crafting; **K** character and skills; **B** building; **J** journal; **M** district map; **Enter** chat; **Escape** closes a panel.
+- **1–0** activate the ten hotbar actions. **R** reloads. **Right click** aims; **left click** attacks a nearby target at the cursor. Wheel zooms.
+- Mobile has a D-pad, run/crouch buttons, interaction and attack controls. Desktop is the primary target; visual mobile QA remains pending.
 
-You begin in the protected shelter with a worn backpack (eight inventory slots), water, a snack and $10. Walk east to the store at 1090, scrap buyer at 1510 and scavenging containers at 1850 and beyond. Containers have a per-character 60-second cooldown. Sell resources for cash or buy wood and supplies. Consume food/water through the backpack. Craft a bat for three wood. Pistols and ammo are available at the store; reload before firing.
+Start in **The Haven**, a walkable protected shelter. Its southern doorway leads toward the main street. Visit Mara at (1090, 650) for supplies and Otis at (1510, 650) to sell recyclables. Scavenging containers appear on the map and have per-character 60-second cooldowns. Craft a bat for three wood; buy a pistol and ammunition at the store and reload before firing.
 
-The day lasts 60 real minutes. Hunger and thirst drain gradually; low values slow movement, empty values damage health. Running and attacks consume energy. The shelter restores health and energy. Temperature follows the day cycle and is displayed; exposure damage is not implemented yet.
+The full in-game day lasts 60 real minutes. Hunger and thirst drain gradually, low values slow movement, and empty values cause health loss. Running and attacks use energy. The shelter restores health and energy. Temperature is displayed but exposure consequences are still pending.
+
+The HUD puts navigation across the top, a minimap at upper right, health/energy at lower left, food/water at lower right, and ten quick actions below the world. All displayed survivor counts, inventory and status values come from the shared server.
 
 ### Build and raid
 
-Vacant parcels are marked east of x=2900. Stand within 210px, press B, select a foundation, then click valid ground. Modules require selecting an owned foundation within 128px. Costs are in the palette. Foundations cost eight wood; walls five; doors four; roofs four; crates five. Maximum: 40 pieces per owner. The server checks the build mask, grid, spacing, ownership and materials.
+Vacant grounds lie east of the main north/south crossing and below the east/west road. Follow the minimap. Stand within 210px, press B, choose a foundation, and click valid ground. Modules must be within 128px of a selected owned foundation. Costs: foundation eight wood, wall five, door four, roof four, crate five. Maximum 40 pieces per owner.
 
-The main street is a permanent traversal lane. Base modules occupy a separate side-view lane above it, preventing buildings from trapping the whole district. To access storage, interact with the foundation **within 100px of its west entrance (foundation x − 160)** and select **Enter base**. Walk right through that lane. Closed doors and walls block movement and storage access. Owners can open their doors. Use **Exit to street** in the backpack or structure panel to leave. This is a compact one-dimensional base model, not a full room/interior construction system.
+The preview checks roads, shelter, static footprints, reach, materials, collision, ownership and footprint bounds. The server validates placement again. Roads and public buildings cannot be claimed. Foundations are raid immune. Existing legacy structures are retained during the world migration.
 
-Store items through your crate panel. Other players can enter from the same west edge, attack walls/doors, breach them and take reachable contents while you are offline. Foundations ignore raid attacks. Repair costs two wood. Dismantling requires ownership, no active combat, an empty container, and removal of dependent modules before its foundation. There is no automatic foundation reclamation.
+Walk normally into your base through an open door. Closed walls and doors block movement and storage access in both dimensions. Owners can open doors, repair for two wood, and dismantle empty modules outside combat. Remove attached modules before their foundation. There is no automatic foundation deletion.
 
-All carried items, equipped backpack, loaded ammunition and carried cash drop publicly on death, once. Anyone can claim them immediately on the open street. Skills, bank balance, property and stored items remain. Respawn gives no free replacement gear or supplies. Spawn protection expires on leaving the shelter. Bank balance persists but there is no banking service UI yet.
+Other players can breach barriers and take physically accessible storage while you are offline. Death produces one public bag with all carried items, equipped gear, loaded ammo and carried cash. Learned skills, bank balance, owned structures and stored contents remain. Respawn gives no free replacement inventory; spawn protection expires on leaving the shelter. The bank balance persists, but banking services are not yet exposed in the UI.
 
 ## Verify
 
-Start PostgreSQL, then run:
+With local PostgreSQL running:
 
 ```sh
 pnpm verify
 ```
 
-This runs lint, 15 tests, TypeScript checks, asset validation and the Vite production build. Tests create and drop uniquely named databases, so the configured database user needs `CREATEDB`. The Compose user has this permission. Tests do not reset your city. Ports 2568/2569 must be free for isolated server subprocesses.
+Verification runs lint, 19 tests, TypeScript checks, asset validation and a Vite production build. Tests create uniquely named temporary databases, so the database user needs `CREATEDB`; the Compose user has this permission. Tests never reset the developer's shared city. Ports 2568 and 2569 must be free.
 
-Tests include two real WebSocket clients, server-controlled movement, shared chat, stale sequence rejection, reconnect, actual process restart, offline-owner door breach/storage theft and persistence after another restart. Unit/integration checks cover public death loot, foundation immunity, placement, authorization, concurrent database claims, rollback and durable request deduplication. A separate 20-client, five-second network smoke test records measured snapshot gaps in `docs/load-smoke.json`. It is not a sustained capacity or browser rendering benchmark.
+The suite checks two-axis multiplayer movement, reconnect and real server restart, normalized diagonals, 2D safe zones and interaction ranges, placement/collision, public death loot, atomic concurrent claims, durable request IDs, offline-owner raids, foundation immunity, persisted breach/theft, and legacy world backup/migration. A five-second 20-client network smoke test records snapshot gaps in `docs/load-smoke.json`; it is not a sustained capacity benchmark.
 
 ```sh
 pnpm assets:generate
@@ -63,21 +63,24 @@ pnpm test
 pnpm build
 ```
 
-Browser QA was unavailable in the build environment: no managed `cua_repl.js`/browser-control tool was exposed. No claim of two _browser_ sessions or completed visual/mobile acceptance is made. Follow `docs/BROWSER-QA.md` locally.
+The deterministic pipeline generates **526 original SVG/PNG assets**, including 108 appearance combinations in four directions with eight animation states, roofs, overhead terrain, construction, props, NPCs, items, effects and UI icons. It checks required keys, dimensions, real alpha, frame consistency and nonempty character cells. Only nearby character appearances are loaded into the GPU.
 
-## Repository
+Browser automation was unavailable in the build environment. Asset sheets were inspected and network/rules checks run, but visual browser/mobile acceptance is not claimed. Follow `docs/BROWSER-QA.md` locally.
 
-| Path                 | Purpose                                                             |
-| -------------------- | ------------------------------------------------------------------- |
-| `apps/client`        | Phaser scene, interpolation, responsive HTML UI, intent client      |
-| `apps/server`        | Colyseus room, validated game rules, HTTP auth, SQL repository      |
-| `packages/shared`    | Versioned Zod contracts, inventory/balance/world definitions        |
-| `packages/game-data` | District, NPC and scavenging content                                |
-| `packages/art-tools` | Deterministic SVG generation, Sharp rasterization, atlas validation |
-| `prisma`             | PostgreSQL model reference and executable SQL migration             |
-| `tests`              | Unit, PostgreSQL, real-WebSocket and load-smoke tests               |
-| `docs`               | Review, milestones, verification limits and deployment              |
+## Repository and persistence
 
-The SQL migration and `pg` repository are authoritative; Prisma documents the three tables and is not the runtime ORM. World entities are currently persisted together in one JSONB row locked transactionally. This deliberate first-district implementation makes transfers and world changes atomic but needs profiling and normalization before a larger deployment.
+| Path                 | Purpose                                                                     |
+| -------------------- | --------------------------------------------------------------------------- |
+| `apps/client`        | Phaser top-down world, interpolation, responsive game HUD and intent client |
+| `apps/server`        | Colyseus authority, HTTP auth, rules, migrations and SQL repository         |
+| `packages/shared`    | Protocol v2, geometry, items, balance, map and placement checks             |
+| `packages/game-data` | District, NPC and loot definitions                                          |
+| `packages/art-tools` | Original SVG generation, Sharp rasterization and atlas validation           |
+| `prisma`             | PostgreSQL model reference and executable SQL migration                     |
+| `tests`              | Rules, PostgreSQL, real-WebSocket and load-smoke checks                     |
+| `deployment`         | Non-secret hosting targets and live verification reports                    |
+| `docs`               | Design, review, QA, milestones and deployment guidance                      |
 
-See `docs/REVIEW.md` for remaining master-prompt gaps, `docs/DEPLOYMENT.md` for hosting, and `docs/MILESTONES.md` for completion evidence.
+The `pg` repository and SQL migration are authoritative; Prisma is a model reference rather than the runtime ORM. A transactionally locked JSONB row holds the city. Accounts and hashed sessions are separate tables. `world_layout_backups` retains the pre-top-down world before its first upgrade; progress, inventory, ownership, storage and damage are preserved. This serialized first-district design needs profiling and normalization before larger scale.
+
+See `docs/REVIEW.md` for remaining product gaps and `docs/DEPLOYMENT.md` for operations.

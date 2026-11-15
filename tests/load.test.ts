@@ -105,7 +105,7 @@ test("20 real network clients share a single city with bounded snapshot gaps", a
     for (let step = 0; step < 25; step++) {
       for (const r of rooms)
         r.send("intent", {
-          v: 1,
+          v: 2,
           requestId: crypto.randomUUID(),
           at: Date.now(),
           seq: step + 1,

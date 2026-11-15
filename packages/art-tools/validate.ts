@@ -3,11 +3,50 @@ import sharp from "sharp";
 import assert from "node:assert/strict";
 import { ITEMS, PIECES } from "../shared/src/index.js";
 const root = new URL("../../apps/client/public/assets/", import.meta.url);
-const { assets } = JSON.parse(
+const { assets, version, view } = JSON.parse(
   await readFile(new URL("manifest.json", root), "utf8"),
 );
+assert.equal(version, 2);
+assert.equal(view, "top-down");
+for (let skin = 0; skin < 3; skin++)
+  for (let hair = 0; hair < 3; hair++)
+    for (let top = 0; top < 3; top++)
+      for (const body of ["standard", "broad"])
+        for (const style of ["short", "long"])
+          for (const direction of ["south", "north", "east", "west"])
+            assert(
+              assets[
+                `player-${skin}-${hair}-${top}-${body}-${style}-${direction}`
+              ],
+              "Every appearance needs four directions",
+            );
 for (const key of [
   ...Object.keys(ITEMS),
+  "td-grass",
+  "td-dirt",
+  "td-concrete",
+  "td-asphalt",
+  "td-floor",
+  "td-building-0",
+  "td-building-1",
+  "td-building-2",
+  "td-building-3",
+  "td-tree-0",
+  "td-rubble",
+  "td-bush",
+  "td-bed",
+  "td-pallet",
+  "td-bench",
+  "td-streetlamp",
+  "ui-craft",
+  "ui-inventory",
+  "ui-build",
+  "ui-skills",
+  "ui-journal",
+  "ui-map",
+  "ui-chat",
+  "ui-fists",
+
   ...Object.keys(PIECES).flatMap((k) =>
     ["intact", "damaged", "breached"].map((s) => k + "-" + s),
   ),

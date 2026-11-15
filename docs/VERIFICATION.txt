@@ -54,3 +54,60 @@ Live provisioning: pending Vercel and Railway account connections.
 Docker build: blocked at pnpm bootstrap by container network ECONNREFUSED to npm registry. Workspace npm lookup confirmed the pinned version exists. No insecure TLS or network bypass was applied.
 
 Hosted follow-up: Vercel frontend READY; Railway Docker server build and deployment SUCCESS; PostgreSQL SUCCESS with persistent volume. Frontend HTTP 200 and bundle server URL checked. Live CORS, signup/login, two real WebSocket clients, shared movement and persistent inventory after login all passed. Browser visual QA was not performed. See deployment/verification.json.
+
+
+TOP-DOWN REDESIGN VERIFICATION
+
+$ pnpm lint && pnpm test && pnpm build
+$ eslint .
+$ tsx --test tests/*.test.ts
+✔ production configuration rejects missing credentials and insecure or malformed origins (1.228684ms)
+✔ local development retains working defaults without cloud credentials (0.183026ms)
+✔ contracts reject untrusted state and invalid movement (3.286278ms)
+✔ placement masks, ownership, costs and foundation immunity (1.573134ms)
+✔ shelter edge prevents attacks from either side (0.189947ms)
+✔ death drops all inventory, equipment, cash once; preserves progression and assets (0.691002ms)
+✔ offline-owner raid: access blocked until breach; loot is public and single-claim (1.891263ms)
+✔ server movement limits speed and dead characters cannot walk (0.471341ms)
+✔ survival ticks, shelter recovery and interest privacy (0.488107ms)
+✔ firearm reload, range and ammunition are server validated (0.375257ms)
+✔ top-down walls block movement while protected roads remain open (0.792305ms)
+✔ diagonal speed is normalized and vertical range cannot be spoofed (0.506063ms)
+✔ safe zones use both coordinates and spawn protection expires through the exit (0.176166ms)
+✔ legacy layout migration retains progress, inventory, cash and owned structures (0.615749ms)
+✔ durable request ledger makes retries idempotent and rejects stale requests (0.328166ms)
+✔ interaction and interest ranges include vertical distance (0.211749ms)
+Load smoke: {"testedAt":"2026-11-15T21:42:33.062Z","clients":20,"durationMs":5037,"snapshots":1224,"p95SnapshotGapMs":102,"maxSnapshotGapMs":106,"scope":"5-second local network smoke test; no browser rendering or sustained production capacity claim"}
+✔ 20 real network clients share a single city with bounded snapshot gaps (6139.359925ms)
+✔ real WebSocket clients: authentication, movement, replay, chat, reconnect and process restart (7569.136027ms)
+Waiting for the previous city authority to stop before migration.
+✔ PostgreSQL concurrent claims serialize, failed actions roll back, raiding survives fresh connection (336.392876ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14980.402721
+$ pnpm typecheck && pnpm assets:validate && pnpm --filter @street/client build
+$ tsc --noEmit
+$ tsx packages/art-tools/validate.ts
+Validated 526 images, dimensions, alpha, cells, animations and required keys.
+$ vite build
+vite v6.4.6 building for production...
+transforming...
+✓ 69 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                      0.62 kB │ gzip:   0.34 kB
+dist/assets/index-CnHjfs0W.css      31.56 kB │ gzip:   7.66 kB
+dist/assets/index-DIuGIpmd.js       94.10 kB │ gzip:  27.71 kB
+dist/assets/network-CEOLgJtR.js    129.05 kB │ gzip:  41.20 kB
+dist/assets/phaser-BMeCXOGt.js   1,482.30 kB │ gzip: 339.99 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.38s

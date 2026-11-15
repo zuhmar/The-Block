@@ -17,3 +17,7 @@ Exact latest load observations are in `load-smoke.json`. Read `REVIEW.md` before
 ## Hosted deployment follow-up
 
 Vercel production deployment and Railway PostgreSQL/server deployment succeeded. Real hosted signup/login, CORS, two-client WebSocket movement and inventory persistence across login were verified. Runtime container build succeeded on Railway. See `deployment/verification.json`. Browser/mobile visual QA and sustained load testing remain open.
+
+## Approved top-down redesign
+
+The user replaced the original side-view direction with a top-down world and CryoFall-inspired HUD. Added protocol v2, persistent Y positions, normalized WASD movement, 2D collision/range/safe zones, physical base access, four-direction characters, overhead city art, minimap, hotbar and game panels. Legacy worlds are backed up and migrated without resetting progress or ownership. The updated suite has 19 passing tests. Read DESIGN.md and REVIEW.md for the current scope.

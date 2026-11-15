@@ -97,7 +97,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
     let seq = 1;
     for (let i = 0; i < 5; i++) {
       a.send("intent", {
-        v: 1,
+        v: 2,
         requestId: crypto.randomUUID(),
         at: Date.now(),
         seq: seq++,
@@ -106,7 +106,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       await wait(100);
     }
     a.send("intent", {
-      v: 1,
+      v: 2,
       requestId: crypto.randomUUID(),
       at: Date.now(),
       seq: seq++,
@@ -118,7 +118,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
     const moved = snapshots.get(a).self.x;
     assert(moved < x + 130, "Server constrains movement");
     a.send("intent", {
-      v: 1,
+      v: 2,
       requestId: crypto.randomUUID(),
       at: Date.now(),
       seq: 1,
@@ -129,10 +129,34 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       Math.abs(snapshots.get(a).self.x - moved) < 20,
       "Replayed sequence rejected",
     );
+    const beforeY = snapshots.get(a).self.y;
+    for (let i = 0; i < 4; i++) {
+      a.send("intent", {
+        v: 2,
+        requestId: crypto.randomUUID(),
+        at: Date.now(),
+        seq: seq++,
+        action: { type: "move", dir: 0, dirY: 1, sprint: false, crouch: false },
+      });
+      await wait(100);
+    }
+    a.send("intent", {
+      v: 2,
+      requestId: crypto.randomUUID(),
+      at: Date.now(),
+      seq: seq++,
+      action: { type: "move", dir: 0, dirY: 0, sprint: false, crouch: false },
+    });
+    await until(
+      () =>
+        snapshots.get(b).players.find((p: any) => p.id === aid).y >
+        beforeY + 25,
+    );
+    const movedY = snapshots.get(a).self.y;
     let said = "";
     b.onMessage("chat", (c) => (said = c.text));
     a.send("intent", {
-      v: 1,
+      v: 2,
       requestId: crypto.randomUUID(),
       at: Date.now(),
       seq: seq++,
@@ -143,12 +167,14 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
     await wait(150);
     const rejoined = await connect(t1);
     assert.equal(snapshots.get(rejoined).self.id, aid);
+    assert(Math.abs(snapshots.get(rejoined).self.y - movedY) < 20);
     assert(Math.abs(snapshots.get(rejoined).self.x - moved) < 20);
     for (const r of rooms) if (r.connection.isOpen) await r.leave();
     await stop();
     await start();
     const again = await connect(await token("walkerone", false));
     assert.equal(snapshots.get(again).self.id, aid);
+    assert(Math.abs(snapshots.get(again).self.y - movedY) < 20);
     assert(Math.abs(snapshots.get(again).self.x - moved) < 20);
     const stored = (await db.query("SELECT password FROM accounts LIMIT 1"))
       .rows[0].password;
@@ -165,7 +191,8 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
         (p: any) => p.id !== aid,
       ) as any;
     owner.inventory = { wood: 20 };
-    raider.x = 3050;
+    raider.x = 3030;
+    raider.y = 1344;
     raider.lane = "parcel";
     raider.parcel = "offline-foundation";
     raider.protected = false;
@@ -179,6 +206,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
         id: "offline-foundation",
         kind: "foundation",
         x: 3008,
+        y: 1344,
         owner: aid,
         foundation: "offline-foundation",
         hp: 9999,
@@ -190,6 +218,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
         id: "offline-door",
         kind: "door",
         x: 3072,
+        y: 1344,
         owner: aid,
         foundation: "offline-foundation",
         hp: 80,
@@ -201,6 +230,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
         id: "offline-crate",
         kind: "storage",
         x: 3136,
+        y: 1344,
         owner: aid,
         foundation: "offline-foundation",
         hp: 60,
@@ -217,7 +247,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
     let raidSeq = 1;
     for (let i = 0; i < 5; i++) {
       attacker.send("intent", {
-        v: 1,
+        v: 2,
         requestId: crypto.randomUUID(),
         at: Date.now(),
         seq: raidSeq++,
@@ -236,7 +266,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       "Owner remains offline",
     );
     attacker.send("intent", {
-      v: 1,
+      v: 2,
       requestId: crypto.randomUUID(),
       at: Date.now(),
       seq: raidSeq++,

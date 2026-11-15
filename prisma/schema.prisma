@@ -20,3 +20,10 @@ model World {
  data Json
  @@map("worlds")
 }
+
+model WorldLayoutBackup {
+ layout Int @id
+ data Json
+ created_at DateTime @default(now())
+ @@map("world_layout_backups")
+}

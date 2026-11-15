@@ -29,7 +29,7 @@ export const loot = [
   "bandage",
 ] as const;
 export const npcs = [
-  { key: "caretaker", name: "June · Shelter", x: 440 },
-  { key: "shopkeeper", name: "Mara · Store", x: 1090 },
-  { key: "trader", name: "Otis · Scrap", x: 1510 },
+  { key: "caretaker", name: "June · Shelter", x: 550, y: 510 },
+  { key: "shopkeeper", name: "Mara · Store", x: 1090, y: 650 },
+  { key: "trader", name: "Otis · Scrap", x: 1510, y: 650 },
 ];
