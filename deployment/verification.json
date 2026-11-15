@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-11-15T21:05:23.242Z",
+  "backend": "https://street-survival-server-production.up.railway.app",
+  "frontendOrigin": "https://the-block-tau-eight.vercel.app",
+  "health": true,
+  "cors": true,
+  "signupLogin": true,
+  "realWebSocketClients": 2,
+  "sharedMovement": true,
+  "persistentInventoryOnLogin": true,
+  "browserRenderingVerified": false,
+  "frontendHttpStatus": 200,
+  "frontendBundlePointsToBackend": true,
+  "railwayContainerBuild": "SUCCESS",
+  "databaseDeployment": "SUCCESS",
+  "vercelDeploymentId": "dpl_GDB1jMhTjPox45hDhmrP7kJ2SCnt",
+  "railwayServerDeploymentId": "ee5a8f46-1ba1-4087-b0b5-01efa6494687"
+}

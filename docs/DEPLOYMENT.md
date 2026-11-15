@@ -1,6 +1,6 @@
 # Deployment
 
-Deployment configuration is prepared for Vercel plus Railway PostgreSQL and the persistent Node server. Neither hosting account has been connected in this session, and no live service or database has been provisioned. See `HOSTING-SETUP.md` for the handoff.
+The frontend is deployed on Vercel, with the persistent Node server and PostgreSQL deployed on Railway. See `HOSTING-SETUP.md` for the live URLs and `deployment/verification.json` for live checks.
 
 ## Persistent server
 
@@ -8,7 +8,7 @@ Use an always-on Node.js 24 host supporting WebSockets and a PostgreSQL database
 
 Set `NODE_ENV=production`, `DATABASE_URL`, `PORT` and `CLIENT_ORIGIN` (the exact HTTPS frontend origin). Configure HTTPS/WSS termination, proxy WebSocket upgrades and expose `/health` for readiness. The server applies the idempotent SQL migration at startup, then opens the singleton city. `/world` returns its current room ID; the client fetches it afresh after a restart.
 
-`pnpm --filter @street/server start` runs the TypeScript authority with tsx. The provided container installs the locked development tools as well as production dependencies so tsx is available. Improve the runtime image/build compilation before a larger deployment if necessary. A Docker image build was attempted here, but the build container could not reach the npm registry (`ECONNREFUSED` while bootstrapping pnpm). The pinned pnpm version was confirmed to exist from the workspace. The full image build remains unverified until it runs on the hosting provider.
+`pnpm --filter @street/server start` runs the TypeScript authority with tsx. The provided container installs the locked development tools as well as production dependencies so tsx is available. Improve the runtime image/build compilation before a larger deployment if necessary. The local container initially could not reach the npm registry. Railway subsequently built and ran the complete Docker image successfully; its health check and live two-client WebSocket test passed.
 
 Use a non-default database password, private database networking and secret environment variables. Do not ship `.env`. Configure the reverse proxy's client IP handling deliberately before adjusting Express trust-proxy or relying on per-IP limits behind a proxy. The current HTTP auth limiter allows 60 requests per minute per observed IP; game intents allow 45 per second per connection. Passwords use scrypt with per-account random salts; bearer tokens are 32 random bytes, stored hashed, and expire after seven days. There is no account recovery or email verification.
 

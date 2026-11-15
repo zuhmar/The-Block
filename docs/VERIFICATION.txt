@@ -52,3 +52,5 @@ Missing URL: rejected. HTTP localhost URL: rejected. HTTPS origin: production cl
 
 Live provisioning: pending Vercel and Railway account connections.
 Docker build: blocked at pnpm bootstrap by container network ECONNREFUSED to npm registry. Workspace npm lookup confirmed the pinned version exists. No insecure TLS or network bypass was applied.
+
+Hosted follow-up: Vercel frontend READY; Railway Docker server build and deployment SUCCESS; PostgreSQL SUCCESS with persistent volume. Frontend HTTP 200 and bundle server URL checked. Live CORS, signup/login, two real WebSocket clients, shared movement and persistent inventory after login all passed. Browser visual QA was not performed. See deployment/verification.json.

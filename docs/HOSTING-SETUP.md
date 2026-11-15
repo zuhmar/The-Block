@@ -1,6 +1,12 @@
 # Hosting handoff: Vercel + Railway
 
-Status: configuration committed; account connections and live provisioning are pending. No credentials or paid infrastructure were created in this session.
+Status: live on Vercel and Railway. The PostgreSQL service has a persistent 500MB volume in `iad`. The server uses a private database-variable reference; no database credentials are stored in GitHub.
+
+- Frontend: https://the-block-tau-eight.vercel.app
+- Game server: https://street-survival-server-production.up.railway.app
+- Railway project: https://railway.com/project/d6c8f776-3f6b-4e6b-9f46-9d4b4d5596f7
+
+`deployment/targets.json` records non-secret resource identifiers. `deployment/verification.json` records the successful live HTTP, CORS, signup/login, two-client WebSocket movement and persistent-inventory checks. Browser rendering and mobile QA remain unverified.
 
 ## Architecture
 
@@ -11,7 +17,7 @@ Browser → Vercel static frontend
 
 The browser never connects directly to PostgreSQL. Do not add `DATABASE_URL` to Vercel or prefix secrets with `VITE_`.
 
-## Provision after connecting the accounts
+## Reproduce the setup
 
 1. Create/import a Vercel project from `zuhmar/The-Block`, branch `main`, repository root. Use `vercel.json`'s existing build/output settings. Record the assigned production frontend origin; do not assume a particular `vercel.app` hostname is available.
 2. Create a Railway project with a PostgreSQL service and a Docker service sourced from the same GitHub repository. Keep its source root at the repository root so `Dockerfile` is used.
@@ -36,5 +42,5 @@ The browser never connects directly to PostgreSQL. Do not add `DATABASE_URL` to 
 - For later server upgrades, stop the existing authority before starting its replacement. A rolling deploy can fail readiness while the old authority retains the lock. The current release does not provide zero-downtime handover.
 - Do not use a transaction-mode database pooler: the advisory lock requires a stable PostgreSQL session.
 - Keep provider TLS options on the connection URL; do not disable certificate verification to make a connection work.
-- Select provider plans deliberately. Infrastructure provisioning may require billing; no plan has been selected or charged by this setup work.
-- GitHub is already linked and the deployment files can be pushed independently of provider authorization. Live provisioning still needs the Vercel and Railway account connections.
+- Select provider plans deliberately. Infrastructure uses the account’s existing provider plan and default resource allocation; no plan upgrade was selected. Check Railway usage in the project dashboard.
+- GitHub `main` is linked to both hosts. Server watch patterns cover runtime/dependency changes and exclude documentation-only updates. Railway service settings are configured through its API: Dockerfile, `/health`, one replica in `iad`, sleeping disabled, zero overlap and five-second draining. The deprecated `railway.json` was removed; new Railway services no longer accept it.

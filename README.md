@@ -2,6 +2,8 @@
 
 A real local multiplayer vertical slice of **The Block**, built with Phaser 3, Vite, TypeScript, Colyseus and PostgreSQL. Includes generated SVG/PNG art, account authentication, server movement, survival, scavenging, merchants, construction, combat, public death loot, persistent offline raids and automated tests. It is an initial implementation, not a claim that every master-prompt detail has passed browser acceptance.
 
+Live frontend: **https://the-block-tau-eight.vercel.app**. The authoritative server and PostgreSQL run on Railway. Live HTTP, two-client WebSocket movement and inventory persistence checks pass; visual browser/mobile QA remains pending.
+
 ## Start locally
 
 Install Node.js 24+, pnpm 11 and Docker with Compose. From this repository:

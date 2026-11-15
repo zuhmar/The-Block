@@ -35,6 +35,6 @@ The implementation uses the specified stack, original deterministic procedural a
 4. Temperature exposure consequences, gameplay blocking/aim accuracy/recoil, and richer hit-reaction animations. Current combat uses authoritative direct range/line-of-sight hits, cooldowns, stamina, ammo and reload timing. Right-click currently shows an aiming pose; it does not implement a blocking mechanic.
 5. Full enclosure/floor/interior building semantics, collaborator permission editing, and bounded crate capacity. Current owner-only access/build/repair/dismantle is enforced server-side; raiders may loot reachable storage.
 6. Banking interface, explicit account progression beyond persistent learned skills, a dedicated hotbar and optional onboarding task tracking.
-7. Sustained load/soak testing, production HTTPS/WebSocket hosting, monitoring and database recovery rehearsals. No external deployment was performed.
+7. Sustained load/soak testing, production HTTPS/WebSocket hosting, monitoring and database recovery rehearsals. Vercel and Railway deployment is now live, with two-client hosted WebSocket and inventory-persistence smoke checks.
 
 These are concrete remaining product tasks, not hidden behind completed milestone claims. No extra districts, paid services, fake multiplayer or external sprite packs were added.

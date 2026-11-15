@@ -13,3 +13,7 @@ The first bootstrap, rules, art and client were integrated before the first full
 | 7. Hardening             | Zod messages, per-client rate limits, timestamp/sequence replay rejection, durable successful-action IDs, transactional rollback, concurrent claim tests, load smoke, deployment docs | 15 tests, lint, typecheck, asset validation and build pass. Five-second/20-client local smoke only; no production soak/browser verification.         |
 
 Exact latest load observations are in `load-smoke.json`. Read `REVIEW.md` before describing this as the full completed MVP.
+
+## Hosted deployment follow-up
+
+Vercel production deployment and Railway PostgreSQL/server deployment succeeded. Real hosted signup/login, CORS, two-client WebSocket movement and inventory persistence across login were verified. Runtime container build succeeded on Railway. See `deployment/verification.json`. Browser/mobile visual QA and sustained load testing remain open.
