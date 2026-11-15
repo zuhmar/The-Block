@@ -48,7 +48,7 @@ Start PostgreSQL, then run:
 pnpm verify
 ```
 
-This runs lint, 13 tests, TypeScript checks, asset validation and the Vite production build. Tests create and drop uniquely named databases, so the configured database user needs `CREATEDB`. The Compose user has this permission. Tests do not reset your city. Ports 2568/2569 must be free for isolated server subprocesses.
+This runs lint, 15 tests, TypeScript checks, asset validation and the Vite production build. Tests create and drop uniquely named databases, so the configured database user needs `CREATEDB`. The Compose user has this permission. Tests do not reset your city. Ports 2568/2569 must be free for isolated server subprocesses.
 
 Tests include two real WebSocket clients, server-controlled movement, shared chat, stale sequence rejection, reconnect, actual process restart, offline-owner door breach/storage theft and persistence after another restart. Unit/integration checks cover public death loot, foundation immunity, placement, authorization, concurrent database claims, rollback and durable request deduplication. A separate 20-client, five-second network smoke test records measured snapshot gaps in `docs/load-smoke.json`. It is not a sustained capacity or browser rendering benchmark.
 

@@ -17,7 +17,7 @@ The implementation uses the specified stack, original deterministic procedural a
 | Death drops carried assets; preserves permanent state  | Tested for inventory, equipment, cash, bank and skills; buildings remain in the world. Loaded ammo also drops.                                                                                          |
 | Generated sprites without uploads                      | 283 manifest-backed SVG/PNG assets, including 108 appearance combinations in both directions. All generated/validated.                                                                                  |
 | Reproducible startup                                   | Locked pnpm workspace, Compose database, idempotent migration, setup/dev scripts. Full install, migration, tests and frontend build exercised. Interactive `pnpm dev` browser launch awaits browser QA. |
-| Validation, transfers, death, raids, persistence tests | 13 passing tests; see milestone report.                                                                                                                                                                 |
+| Validation, transfers, death, raids, persistence tests | 15 passing tests; see milestone report.                                                                                                                                                                 |
 
 ## Deliberate implementation choices
 

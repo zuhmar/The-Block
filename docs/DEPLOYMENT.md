@@ -1,14 +1,14 @@
 # Deployment
 
-This project is configured for local play and has not been deployed externally.
+Deployment configuration is prepared for Vercel plus Railway PostgreSQL and the persistent Node server. Neither hosting account has been connected in this session, and no live service or database has been provisioned. See `HOSTING-SETUP.md` for the handoff.
 
 ## Persistent server
 
-Use an always-on Node.js 24 host supporting WebSockets and a PostgreSQL database. A Dockerfile is included. Run exactly one replica for a database; PostgreSQL advisory locking rejects a second authority. No process-local database substitutes are used.
+Use an always-on Node.js 24 host supporting WebSockets and a PostgreSQL database. A Dockerfile and `railway.json` are included. Railway builds from the repository root with Docker and probes `/health`; readiness requires both the database and the city room. Use a direct PostgreSQL connection or session-mode pooler, never a transaction-mode pooler: the authority holds a session advisory lock. Run exactly one replica for a database; PostgreSQL advisory locking rejects a second authority. No process-local database substitutes are used. Stop the old authority before replacing it: a rolling deployment with both processes alive can block the new process on the singleton lock. Plan a brief maintenance window for replacement until a coordinated handover is implemented.
 
-Set `DATABASE_URL`, `PORT` and `CLIENT_ORIGIN` (the exact HTTPS frontend origin). Configure HTTPS/WSS termination, proxy WebSocket upgrades and expose `/health` for readiness. The server applies the idempotent SQL migration at startup, then opens the singleton city. `/world` returns its current room ID; the client fetches it afresh after a restart.
+Set `NODE_ENV=production`, `DATABASE_URL`, `PORT` and `CLIENT_ORIGIN` (the exact HTTPS frontend origin). Configure HTTPS/WSS termination, proxy WebSocket upgrades and expose `/health` for readiness. The server applies the idempotent SQL migration at startup, then opens the singleton city. `/world` returns its current room ID; the client fetches it afresh after a restart.
 
-`pnpm --filter @street/server start` runs the TypeScript authority with tsx. The provided container installs the locked development tools as well as production dependencies so tsx is available. Improve the runtime image/build compilation before a larger deployment if necessary. The Dockerfile has not been separately image-built in this environment.
+`pnpm --filter @street/server start` runs the TypeScript authority with tsx. The provided container installs the locked development tools as well as production dependencies so tsx is available. Improve the runtime image/build compilation before a larger deployment if necessary. A Docker image build was attempted here, but the build container could not reach the npm registry (`ECONNREFUSED` while bootstrapping pnpm). The pinned pnpm version was confirmed to exist from the workspace. The full image build remains unverified until it runs on the hosting provider.
 
 Use a non-default database password, private database networking and secret environment variables. Do not ship `.env`. Configure the reverse proxy's client IP handling deliberately before adjusting Express trust-proxy or relying on per-IP limits behind a proxy. The current HTTP auth limiter allows 60 requests per minute per observed IP; game intents allow 45 per second per connection. Passwords use scrypt with per-account random salts; bearer tokens are 32 random bytes, stored hashed, and expire after seven days. There is no account recovery or email verification.
 
@@ -16,7 +16,7 @@ The current room sends proximity-filtered state at 10Hz and commits its world in
 
 ## Vercel static frontend
 
-The root `vercel.json` sets install/build/output paths. Set `VITE_SERVER_URL=https://your-persistent-server.example` at build time. Deploy only the Vite output under `apps/client/dist`. Vercel does not host the persistent Colyseus process. Configure the authority's `CLIENT_ORIGIN` to the deployed frontend origin and use HTTPS/WSS for both endpoints.
+The root `vercel.json` sets install/build/output paths. Set `VITE_SERVER_URL=https://your-persistent-server.example` at build time. Vercel builds reject a missing, localhost or non-HTTPS server origin rather than deploying a client pointed at the visitor’s localhost. Keep the Vercel Root Directory at the repository root. Deploy only the Vite output under `apps/client/dist`. Vercel does not host the persistent Colyseus process. Configure the authority's `CLIENT_ORIGIN` to the deployed frontend origin and use HTTPS/WSS for both endpoints.
 
 ## Backups and operations
 

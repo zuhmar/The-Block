@@ -1,12 +1,13 @@
-import "dotenv/config";
+import { readServerConfig } from "./config.js";
 import pg from "pg";
 import { readFile } from "node:fs/promises";
 import { emptyWorld } from "./engine.js";
 import type { WorldState } from "../../../packages/shared/src/index.js";
 export const pool = new pg.Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgresql://street:local-development-only@127.0.0.1:5432/street",
+  connectionString: readServerConfig().databaseUrl,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  max: 10,
 });
 export async function migrate() {
   await pool.query(

@@ -12,12 +12,14 @@ import {
 } from "node:crypto";
 import { z } from "zod";
 import { pool, migrate, transaction, load } from "./db.js";
+import { readServerConfig } from "./config.js";
 import { commitAction, createPlayer, move, tick, visible } from "./engine.js";
 import {
   appearanceSchema,
   envelopeSchema,
   type WorldState,
 } from "../../../packages/shared/src/index.js";
+const config = readServerConfig();
 await migrate();
 // A dedicated PostgreSQL advisory lock forbids a second authority for this city.
 const authority = await pool.connect();
@@ -32,7 +34,7 @@ const bootstrap = randomUUID();
 let roomId = "";
 const app = express();
 app.disable("x-powered-by");
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" }));
+app.use(cors({ origin: config.clientOrigin }));
 app.use(express.json({ limit: "8kb" }));
 const attempts = new Map<string, { n: number; until: number }>();
 const authSchema = z.object({
@@ -125,6 +127,10 @@ app.get("/world", (_req, res) => {
   res.json({ roomId });
 });
 app.get("/health", async (_req, res) => {
+  if (!roomId) {
+    res.status(503).json({ ok: false, error: "City starting" });
+    return;
+  }
   try {
     await pool.query("SELECT 1");
     res.json({ ok: true, district: "The Block" });
@@ -286,6 +292,6 @@ const game = new Server({
   transport: new WebSocketTransport({ server: http }),
 });
 game.define("block", Block).filterBy([]);
-await game.listen(Number(process.env.PORT || 2567));
+await game.listen(config.port);
 roomId = (await matchMaker.createRoom("block", { bootstrap })).roomId;
-console.log("Street Survival authority · http://localhost:2567");
+console.log(`Street Survival authority · listening on port ${config.port}`);

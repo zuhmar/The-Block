@@ -433,8 +433,9 @@ new Phaser.Game({
   scene: City,
   render: { antialias: true },
 });
-const serverUrl =
-  (import.meta as any).env.VITE_SERVER_URL || "http://localhost:2567";
+const serverUrl = String(
+  (import.meta as any).env.VITE_SERVER_URL || "http://localhost:2567",
+).replace(/\/+$/, "");
 $("#login").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.target as HTMLFormElement);
