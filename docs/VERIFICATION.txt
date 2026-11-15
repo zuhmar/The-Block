@@ -111,3 +111,5 @@ dist/assets/phaser-BMeCXOGt.js   1,482.30 kB │ gzip: 339.99 kB
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 ✓ built in 6.38s
+
+HOSTED TOP-DOWN CHECK: Vercel READY and Railway SUCCESS for source 45e4da0. Protocol v2, top-down manifest, all four character directions, 526 assets, correct hosted backend URL, signup/login, two real WebSocket clients, movement on both axes, persistent Y and inventory after login all passed. Database deployment was unchanged and remained running. Visual browser/mobile QA was not performed. See deployment/verification.json.

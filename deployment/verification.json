@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-15T21:05:23.242Z",
+  "checkedAt": "2026-11-15T21:48:11.429Z",
   "backend": "https://street-survival-server-production.up.railway.app",
   "frontendOrigin": "https://the-block-tau-eight.vercel.app",
   "health": true,
@@ -7,12 +7,21 @@
   "signupLogin": true,
   "realWebSocketClients": 2,
   "sharedMovement": true,
+  "sharedVerticalMovement": true,
+  "persistentYOnLogin": true,
+  "protocol": 2,
+  "layout": "top-down",
   "persistentInventoryOnLogin": true,
   "browserRenderingVerified": false,
+  "sourceCommit": "45e4da0ab339218f4679652cd14a98b3972e67f1",
   "frontendHttpStatus": 200,
   "frontendBundlePointsToBackend": true,
+  "generatedAssets": 526,
+  "fourDirectionalCharacters": true,
+  "localTests": 19,
   "railwayContainerBuild": "SUCCESS",
   "databaseDeployment": "SUCCESS",
-  "vercelDeploymentId": "dpl_GDB1jMhTjPox45hDhmrP7kJ2SCnt",
-  "railwayServerDeploymentId": "ee5a8f46-1ba1-4087-b0b5-01efa6494687"
+  "vercelDeploymentId": "dpl_FGaeR9jDWM8jVnwFBjFFgcxjiJXb",
+  "railwayServerDeploymentId": "ac2765ea-af99-4274-9f78-4a3207ee4958",
+  "handover": "Previous game-server process restarted; PostgreSQL was not restarted"
 }
