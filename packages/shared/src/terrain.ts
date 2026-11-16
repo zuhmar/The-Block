@@ -1,3 +1,9 @@
+import {
+  fitDetailProps,
+  gridEnvelope,
+  routeFootprints,
+  type PlacementReport,
+} from "./map-placement.js";
 import { MARKET_QUARTER, inMarketQuarter } from "./market-quarter.js";
 import {
   MAP_SIZE,
@@ -830,6 +836,78 @@ export const PLAZA_GARDENS: TerrainRect[] = [
   ),
 ];
 
+let connections:
+  | { building: MapObject; points: TerrainPoint[]; width: number }[]
+  | undefined;
+export function buildingWalkways() {
+  if (connections) return connections;
+  connections = [];
+  for (const b of BUILDINGS) {
+    const start = { x: b.x, y: b.y + b.height / 2 + 3 },
+      road = nearestRoadPoint(start);
+    if (road.distance > 740 || road.distance < road.width / 2) continue;
+    const length = road.distance,
+      end = {
+        x: road.x - ((road.x - start.x) / length) * (road.width / 2 + 7),
+        y: road.y - ((road.y - start.y) / length) * (road.width / 2 + 7),
+      };
+    const side = b.x + b.width / 2 + 40;
+    const points =
+      end.y < b.y + b.height / 2
+        ? [
+            start,
+            { x: start.x, y: start.y + 26 },
+            { x: side, y: start.y + 26 },
+            { x: side, y: end.y },
+            end,
+          ]
+        : [
+            start,
+            { x: start.x, y: start.y + 26 },
+            { x: end.x, y: start.y + 26 },
+            end,
+          ];
+    if (
+      BUILDINGS.some(
+        (o) =>
+          o.id !== b.id &&
+          points.slice(1).some((p, i) =>
+            segmentBox(points[i], p, {
+              x: o.x - o.width / 2 - 8,
+              y: o.y - o.height / 2 - 8,
+              width: o.width + 16,
+              height: o.height + 16,
+            }),
+          ),
+      )
+    )
+      continue;
+    connections.push({
+      building: b,
+      points,
+      width:
+        DISTRICTS.find(
+          (d) =>
+            b.x >= d.x &&
+            b.x < d.x + d.width &&
+            b.y >= d.y &&
+            b.y < d.y + d.height,
+        )?.id === "downtown"
+          ? 72
+          : DISTRICTS.find(
+                (d) =>
+                  b.x >= d.x &&
+                  b.x < d.x + d.width &&
+                  b.y >= d.y &&
+                  b.y < d.y + d.height,
+              )?.id === "uptown"
+            ? 44
+            : 52,
+    });
+  }
+  return connections;
+}
+export let sceneryPlacementReport: PlacementReport = { moved: [], omitted: [] };
 export function nearestRoadPoint(p: TerrainPoint) {
   let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
   for (const road of ROADS) {
@@ -1583,12 +1661,15 @@ export function mapObjects(): MapObject[] {
   }
   for (const road of ROADS)
     for (let i = 8; i < road.points.length; i += 18) {
-      const p = road.points[i];
+      const p = road.points[i],
+        a = road.points[i - 1],
+        length = Math.hypot(p.x - a.x, p.y - a.y),
+        offset = road.width / 2 + 48;
       if (!insideCity(p) || naturalBlocked(p)) continue;
       out.push({
         id: "lamp-" + road.name + i,
-        x: p.x + road.width / 2 + 40,
-        y: p.y + road.width / 2 + 40,
+        x: p.x - ((p.y - a.y) / length) * offset,
+        y: p.y + ((p.x - a.x) / length) * offset - 42,
         width: 40,
         height: 100,
         asset: "map-prop-4",
@@ -1727,6 +1808,46 @@ export function mapObjects(): MapObject[] {
     if (o.solid && onRoad(o, Math.hypot(o.width, o.height) / 2 + 32))
       out.splice(i, 1);
   }
+  const reserved = [
+    ...BUILDINGS.map((b) =>
+      gridEnvelope(
+        {
+          x: b.x - b.width / 2,
+          y: b.y - b.height / 2,
+          width: b.width,
+          height: b.height,
+        },
+        64,
+      ),
+    ),
+    ...LEGACY_BUILDINGS.slice(0, 5).map((r) => gridEnvelope(r, 64)),
+    ...BUILDINGS.map((b) =>
+      gridEnvelope({
+        x: b.x - 32,
+        y: b.y + b.height / 2,
+        width: 64,
+        height: 80,
+      }),
+    ),
+    ...SERVICE_POINTS.map((p) =>
+      gridEnvelope({ x: p.x - 64, y: p.y - 64, width: 128, height: 128 }),
+    ),
+    ...buildingWalkways().flatMap((r) => routeFootprints(r.points, r.width)),
+    ...MARKET_QUARTER.paths.flatMap((r) => routeFootprints(r.points, r.width)),
+  ];
+  const fitted = fitDetailProps(
+    out,
+    reserved,
+    (r) =>
+      r.x < 0 ||
+      r.y < 0 ||
+      r.x + r.width > MAP_SIZE ||
+      r.y + r.height > MAP_SIZE ||
+      roadOverlapsRect(r, 28) ||
+      corners(r).some((p) => naturalBlocked(p, 0)),
+  );
+  out.splice(0, out.length, ...fitted.objects);
+  sceneryPlacementReport = fitted.report;
   objectsCache = out;
   for (const o of out)
     if (o.solid) {

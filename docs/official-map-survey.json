@@ -12,7 +12,7 @@
     "Uptown"
   ],
   "buildings": 177,
-  "staticObjects": 2007,
+  "staticObjects": 1866,
   "roads": 13,
   "percentages": {
     "water": 7.55,
@@ -22,7 +22,7 @@
     "city": 34.69
   },
   "streetConnections": 166,
-  "sceneryRevision": 6,
+  "sceneryRevision": 7,
   "pavedForecourts": 61,
   "serviceAlleys": 22,
   "aiMapAssets": 90,
@@ -32,13 +32,13 @@
     "width": 960,
     "height": 768
   },
-  "streetProps": 149,
+  "streetProps": 140,
   "sharedCourtyards": 12,
   "serviceYards": 15,
   "composedShops": 20,
   "plazaGardens": 2,
   "pavementMaterials": ["slab concrete", "plaza pavers", "worn service paving"],
-  "natureDetails": 300,
+  "natureDetails": 299,
   "solidNatureDetails": 12,
   "treeVariants": 4,
   "renderQuality": {
@@ -48,5 +48,11 @@
     "pavementTexturePixels": 256,
     "pavementRepeatWorldPixels": 128
   },
-  "authoredMarketBuildings": 6
+  "authoredMarketBuildings": 6,
+  "placement": {
+    "structureGrid": 64,
+    "detailGrid": 16,
+    "moved": 1101,
+    "omitted": 141
+  }
 }

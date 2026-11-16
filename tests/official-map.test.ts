@@ -325,7 +325,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  w.sceneryVersion = 5;
+  w.sceneryVersion = 6;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -342,7 +342,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 6);
+  assert.equal(w.sceneryVersion, 7);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));

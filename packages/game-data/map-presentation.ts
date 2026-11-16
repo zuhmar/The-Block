@@ -11,11 +11,11 @@ import {
 } from "../shared/src/official-map.js";
 import {
   nearestRoadPoint,
+  buildingWalkways,
   mapObjectEnabled,
   mapObjects,
   blockSpaces,
 } from "../shared/src/terrain.js";
-import { segmentRect } from "../shared/src/index.js";
 export const districtFor = (p: { x: number; y: number }) =>
   DISTRICTS.find(
     (d) =>
@@ -30,60 +30,7 @@ export const frontageStyle = (b: MapObject) => {
     apron: district === "industrial" ? 52 : district === "downtown" ? 36 : 20,
   };
 };
-let connections:
-  | { building: MapObject; points: { x: number; y: number }[]; width: number }[]
-  | undefined;
-export function streetConnections() {
-  if (connections) return connections;
-  connections = [];
-  for (const b of BUILDINGS) {
-    const start = { x: b.x, y: b.y + b.height / 2 + 3 },
-      road = nearestRoadPoint(start);
-    if (road.distance > 740 || road.distance < road.width / 2) continue;
-    const length = road.distance,
-      end = {
-        x: road.x - ((road.x - start.x) / length) * (road.width / 2 + 7),
-        y: road.y - ((road.y - start.y) / length) * (road.width / 2 + 7),
-      };
-    const side = b.x + b.width / 2 + 40;
-    const points =
-      end.y < b.y + b.height / 2
-        ? [
-            start,
-            { x: start.x, y: start.y + 26 },
-            { x: side, y: start.y + 26 },
-            { x: side, y: end.y },
-            end,
-          ]
-        : [
-            start,
-            { x: start.x, y: start.y + 26 },
-            { x: end.x, y: start.y + 26 },
-            end,
-          ];
-    if (
-      BUILDINGS.some(
-        (o) =>
-          o.id !== b.id &&
-          points.slice(1).some((p, i) =>
-            segmentRect(points[i], p, {
-              x: o.x - o.width / 2 - 8,
-              y: o.y - o.height / 2 - 8,
-              width: o.width + 16,
-              height: o.height + 16,
-            }),
-          ),
-      )
-    )
-      continue;
-    connections.push({
-      building: b,
-      points,
-      width: frontageStyle(b).walkWidth,
-    });
-  }
-  return connections;
-}
+export const streetConnections = buildingWalkways;
 export interface CitySurface {
   id: string;
   buildings: MapObject[];

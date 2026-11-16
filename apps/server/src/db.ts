@@ -31,11 +31,11 @@ export async function migrate() {
       "Saved original world as layout backup 3 before official-map migration.",
     );
   const sceneryBackup = await pool.query(
-    "INSERT INTO world_layout_backups(layout,data) SELECT 9,data FROM worlds WHERE id=1 AND COALESCE((data->>'sceneryVersion')::integer,0)<6 ON CONFLICT(layout) DO NOTHING RETURNING layout",
+    "INSERT INTO world_layout_backups(layout,data) SELECT 10,data FROM worlds WHERE id=1 AND COALESCE((data->>'sceneryVersion')::integer,0)<7 ON CONFLICT(layout) DO NOTHING RETURNING layout",
   );
   if (sceneryBackup.rowCount)
     console.log(
-      "Saved world backup 9 before authored market quarter revision.",
+      "Saved world backup 10 before grid scenery placement revision.",
     );
   await transaction((w) => upgradeWorld(w));
 }
