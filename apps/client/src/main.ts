@@ -1,3 +1,4 @@
+import { cartographySVG } from "../../../packages/game-data/cartography";
 import {
   COAST,
   RIVER,
@@ -327,7 +328,25 @@ class City extends Phaser.Scene {
     const landMask = this.make.graphics({ x: 0, y: 0 }, false);
     landMask.fillStyle(0xffffff).fillPoints(COAST, true);
     grass.setMask(landMask.createGeometryMask());
+    const groundDetail = this.add.graphics().setDepth(-9900);
+    groundDetail.setMask(landMask.createGeometryMask());
+    // Soft terrain variation breaks up the repeating grass without marking house plots.
+    for (let i = 0; i < 750; i++) {
+      const x = random.integerInRange(80, WORLD.width - 80),
+        y = random.integerInRange(80, WORLD.height - 80);
+      groundDetail
+        .fillStyle(i % 3 === 0 ? 0xb0a576 : 0x536e49, 0.045)
+        .fillEllipse(
+          x,
+          y,
+          random.integerInRange(90, 420),
+          random.integerInRange(60, 220),
+        );
+    }
     const shores = this.add.graphics().setDepth(-9800);
+    shores.lineStyle(148, 0x659b9c, 0.18).strokePoints(COAST, true);
+    shores.lineStyle(92, 0x88b4ac, 0.24).strokePoints(COAST, true);
+    shores.lineStyle(54, 0xacc4ad, 0.3).strokePoints(COAST, true);
     shores.lineStyle(36, 0xc1b48a, 1).strokePoints(COAST, true);
     shores.lineStyle(8, 0x7ba8a8, 0.8).strokePoints(COAST, true);
     for (const lake of LAKES) {
@@ -1073,78 +1092,35 @@ function attack(point?: Point) {
   send({ type: "aim", x: target.x, y: target.y });
   send({ type: "attack", target: target.id, weapon: self.weapon });
 }
+const mapBases = new Map<string, HTMLImageElement>();
+function mapBase(width: number, height: number) {
+  const key = width + "x" + height;
+  let img = mapBases.get(key);
+  if (!img) {
+    img = new Image();
+    img.src =
+      "data:image/svg+xml;charset=utf-8," +
+      encodeURIComponent(cartographySVG(width, height));
+    img.onload = () => {
+      if (snapshot) {
+        drawMap($("#minimap") as HTMLCanvasElement);
+        const large =
+          document.querySelector<HTMLCanvasElement>("#district-map");
+        if (large) drawMap(large);
+      }
+    };
+    mapBases.set(key, img);
+  }
+  return img;
+}
 function drawMap(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d")!;
   const sx = canvas.width / WORLD.width,
     sy = canvas.height / WORLD.height;
-  ctx.fillStyle = "#284f64";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const polygon = (
-    points: readonly { x: number; y: number }[],
-    fill: string,
-    stroke?: string,
-  ) => {
-    ctx.beginPath();
-    points.forEach((p, i) =>
-      i ? ctx.lineTo(p.x * sx, p.y * sy) : ctx.moveTo(p.x * sx, p.y * sy),
-    );
-    ctx.closePath();
-    ctx.fillStyle = fill;
-    ctx.fill();
-    if (stroke) {
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-  };
-  polygon(COAST, "#758567", "#c2ba91");
-  ctx.fillStyle = "#405f43";
-  for (const tree of woodlandTrees) {
-    ctx.beginPath();
-    ctx.arc(
-      tree.x * sx,
-      tree.y * sy,
-      canvas.width > 300 ? 2 : 1,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-  }
-  for (const lake of LAKES) polygon(lake, "#427c8b", "#afbc9f");
-  const path = (
-    points: readonly { x: number; y: number }[],
-    color: string,
-    width: number,
-  ) => {
-    ctx.beginPath();
-    points.forEach((p, i) =>
-      i ? ctx.lineTo(p.x * sx, p.y * sy) : ctx.moveTo(p.x * sx, p.y * sy),
-    );
-    ctx.strokeStyle = color;
-    ctx.lineWidth = Math.max(1, width * sx);
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.stroke();
-  };
-  path(RIVER, "#aab699", 176);
-  path(RIVER, "#427c8b", 148);
-  for (const road of ROADS) {
-    path(road.points, "#d5c9a2", road.width + 35);
-    path(road.points, "#747369", road.width);
-  }
-  for (const r of CLIFFS) {
-    ctx.fillStyle = "#4b5551";
-    ctx.fillRect(r.x * sx, r.y * sy, r.width * sx, r.height * sy);
-  }
-  for (const r of WORLD.obstacles) {
-    ctx.fillStyle = "#424f47";
-    ctx.fillRect(
-      r.x * sx,
-      r.y * sy,
-      Math.max(1, r.width * sx),
-      Math.max(1, r.height * sy),
-    );
-  }
+  const base = mapBase(canvas.width, canvas.height);
+  if (!base.complete || !base.naturalWidth) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#90bc88";
   const s = WORLD.safeRect;
   ctx.fillRect(s.x * sx, s.y * sy, s.width * sx, s.height * sy);
