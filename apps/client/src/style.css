@@ -2468,3 +2468,7 @@ canvas {
   top: 0;
   z-index: 2;
 }
+
+.map-legend i.loot {
+  background: #e4c875;
+}

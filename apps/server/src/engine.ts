@@ -19,7 +19,11 @@ import {
   type Appearance,
   type Structure,
 } from "../../../packages/shared/src/index.js";
-import { skills, loot } from "../../../packages/game-data/content.js";
+import { skills } from "../../../packages/game-data/content.js";
+import {
+  lootCrateAt,
+  rollCrateLoot,
+} from "../../../packages/game-data/loot-crates.js";
 const fail = (message: string): never => {
   throw new Error(message);
 };
@@ -289,11 +293,20 @@ export function act(
       near(p, WORLD.scavengePoints[a.index]);
       if ((p.cooldowns[a.index] || 0) > now)
         fail("Container depleted · return in a minute");
-      const item = loot[Math.floor(Math.random() * loot.length)];
-      give(p, item, item === "wood" ? 6 : 1);
+      const crate = lootCrateAt(a.index),
+        reward = rollCrateLoot(crate.tier - 1, p.inventory);
+      if (!Object.keys(reward.items).length)
+        fail("Backpack full · make room before searching");
+      p.inventory = reward.inventory;
       p.cooldowns[a.index] = now + 60000;
       p.skills.scavenging += 1;
-      return "Found " + item;
+      return (
+        crate.name +
+        " · " +
+        Object.entries(reward.items)
+          .map(([item, n]) => `${n} ${item}`)
+          .join(", ")
+      );
     }
     case "consume": {
       take(p, a.item);

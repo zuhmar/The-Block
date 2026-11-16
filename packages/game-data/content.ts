@@ -13,21 +13,6 @@ export const skills = [
   "trading",
   "survival",
 ];
-export const loot = [
-  "wood",
-  "wood",
-  "wood",
-  "scrap",
-  "water",
-  "snack",
-  "stone",
-  "brick",
-  "concrete",
-  "steel",
-  "glass",
-  "electronics",
-  "bandage",
-] as const;
 export const npcs = [
   { key: "caretaker", name: "June · Shelter", x: 550, y: 510 },
   { key: "shopkeeper", name: "Mara · Store", x: 1090, y: 650 },

@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { importLootCrates } from "./import-loot-crates.js";
 import { importConstruction } from "./import-construction.js";
 import { importWorld } from "./import-world.js";
 import { importCharacters } from "./import-characters.js";
@@ -406,6 +407,7 @@ for (const [key, body] of Object.entries({
   await asset(key, body);
 await importWorld(root, manifest);
 await importConstruction(root, manifest);
+await importLootCrates(root, manifest);
 await writeFile(
   new URL("manifest.json", root),
   JSON.stringify(

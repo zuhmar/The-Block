@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import assert from "node:assert/strict";
 import { ITEMS, PIECES, BUILD_KINDS } from "../shared/src/index.js";
+import { LOOT_CRATES } from "../game-data/loot-crates.js";
 const root = new URL("../../apps/client/public/assets/", import.meta.url);
 const { assets, version, view } = JSON.parse(
   await readFile(new URL("manifest.json", root), "utf8"),
@@ -101,6 +102,26 @@ for (const kind of BUILD_KINDS)
   }
 for (const item of Object.keys(ITEMS))
   assert.equal(assets[item].source, "ai-generated", item);
+for (const crate of LOOT_CRATES) {
+  const key = `loot-crate-${crate.id}`;
+  assert.equal(assets[key]?.sourceGroup, "loot-crates", key);
+  if (crate.id === "military")
+    assert(
+      assets[key].width / assets[key].height >= 3,
+      "Military cache must be long and skinny",
+    );
+  if (crate.id === "advanced")
+    assert(
+      assets[key].width / assets[key].height >= 1.7 &&
+        assets[key].width / assets[key].height < 3,
+      "Advanced cache must be long and thick",
+    );
+  const stats = await sharp(new URL(assets[key].file, root).pathname).stats();
+  assert(
+    stats.channels[3].min === 0 && stats.channels[3].max > 180,
+    `${key} needs real transparent padding and visible artwork`,
+  );
+}
 for (const [key, a] of Object.entries(assets) as [string, any][]) {
   const image = sharp(new URL(a.file, root).pathname);
   const m = await image.metadata();

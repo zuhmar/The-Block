@@ -1896,6 +1896,111 @@
       },
       "source": "ai-generated",
       "sourceAsset": "street-props-campfire"
+    },
+    "loot-crate-small": {
+      "file": "loot-crate-small.png",
+      "width": 127,
+      "height": 128,
+      "frameWidth": 127,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "loot-crates",
+      "artSource": "art/ai/loot-crates/sources/small.png",
+      "sourceCrop": {
+        "left": 332,
+        "top": 330,
+        "width": 590,
+        "height": 594
+      }
+    },
+    "loot-crate-supply": {
+      "file": "loot-crate-supply.png",
+      "width": 128,
+      "height": 114,
+      "frameWidth": 128,
+      "frameHeight": 114,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "loot-crates",
+      "artSource": "art/ai/loot-crates/sources/supply.png",
+      "sourceCrop": {
+        "left": 172,
+        "top": 219,
+        "width": 911,
+        "height": 804
+      }
+    },
+    "loot-crate-reinforced": {
+      "file": "loot-crate-reinforced.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "loot-crates",
+      "artSource": "art/ai/loot-crates/sources/reinforced.png",
+      "sourceCrop": {
+        "left": 235,
+        "top": 237,
+        "width": 784,
+        "height": 784
+      }
+    },
+    "loot-crate-military": {
+      "file": "loot-crate-military.png",
+      "width": 128,
+      "height": 37,
+      "frameWidth": 128,
+      "frameHeight": 37,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "loot-crates",
+      "artSource": "art/ai/loot-crates/sources/military.png",
+      "sourceCrop": {
+        "left": 152,
+        "top": 154,
+        "width": 1869,
+        "height": 454
+      }
+    },
+    "loot-crate-advanced": {
+      "file": "loot-crate-advanced.png",
+      "width": 128,
+      "height": 58,
+      "frameWidth": 128,
+      "frameHeight": 58,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "loot-crates",
+      "artSource": "art/ai/loot-crates/sources/advanced.png",
+      "sourceCrop": {
+        "left": 162,
+        "top": 145,
+        "width": 1451,
+        "height": 599
+      }
     }
   }
 }

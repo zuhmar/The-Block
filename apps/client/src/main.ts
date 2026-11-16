@@ -20,6 +20,7 @@ import {
   type Item,
   type Point,
 } from "../../../packages/shared/src/index";
+import { lootCrateAt } from "../../../packages/game-data/loot-crates";
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
 import { constructionVisual } from "./construction-visuals";
@@ -145,13 +146,13 @@ function nearest() {
     },
     ...WORLD.scavengePoints.map((p, index) => ({
       ...p,
-      title: "Abandoned container",
+      title: `T${lootCrateAt(index).tier} · ${lootCrateAt(index).name}`,
       type: "scavenge",
       index,
       hint:
-        (self!.cooldowns[index] || 0) > Date.now()
+        (self!.cooldowns[index] || 0) > Date.now() + serverOffset
           ? "Depleted · return later"
-          : "Search for resources",
+          : `Up to ${lootCrateAt(index).rolls} loot rolls · Press E to search`,
     })),
     ...snapshot.bags.map((b) => ({
       ...b,
@@ -178,6 +179,15 @@ function nearest() {
     .sort((a, b) => distance(a, self!) - distance(b, self!))[0];
 }
 
+function lootVisualSize(index: number) {
+  const crate = lootCrateAt(index),
+    asset = manifest[crate.key];
+  return {
+    width: crate.size,
+    height: (crate.size * asset.height) / asset.width,
+  };
+}
+
 class City extends Phaser.Scene {
   keys!: Record<string, Phaser.Input.Keyboard.Key>;
   sprites = new Map<string, Phaser.GameObjects.Sprite>();
@@ -191,6 +201,9 @@ class City extends Phaser.Scene {
   preview!: Phaser.GameObjects.Image;
   previewText!: Phaser.GameObjects.Text;
   buildGuides!: Phaser.GameObjects.Graphics;
+  lootGuides!: Phaser.GameObjects.Graphics;
+  lootProps = new Map<number, Phaser.GameObjects.Image>();
+  lootLabels = new Map<number, Phaser.GameObjects.Text>();
   lastY = new Map<string, number>();
   constructor() {
     super("city");
@@ -269,6 +282,7 @@ class City extends Phaser.Scene {
   }
   drawWorld() {
     this.staticBuilt = true;
+    this.lootGuides = this.add.graphics().setDepth(8500);
     const random = new Phaser.Math.RandomDataGenerator([
       "street-survival-the-block-v2",
     ]);
@@ -427,13 +441,24 @@ class City extends Phaser.Scene {
         .setScale(0.75)
         .setDepth(830);
     for (const [i, p] of WORLD.scavengePoints.entries()) {
+      const crate = lootCrateAt(i),
+        visual = lootVisualSize(i);
+      this.lootProps.set(
+        i,
+        this.add
+          .image(p.x, p.y, crate.key)
+          .setOrigin(0.5, 0.5)
+          .setDisplaySize(visual.width, visual.height)
+          .setDepth(p.y),
+      );
+      this.lootLabels.set(
+        i,
+        this.text(p.x, p.y - visual.height / 2 - 12, "", 10, crate.color)
+          .setPadding(5, 3)
+          .setDepth(8501),
+      );
       this.add
-        .image(p.x, p.y, i % 2 ? "trash" : "dumpster")
-        .setOrigin(0.5, 0.8)
-        .setScale(0.65)
-        .setDepth(p.y);
-      this.add
-        .image(p.x + 58, p.y - 10, "td-pallet")
+        .image(p.x + 62, p.y - 10, "td-pallet")
         .setOrigin(0.5, 0.8)
         .setScale(0.55)
         .setDepth(p.y - 10);
@@ -513,6 +538,50 @@ class City extends Phaser.Scene {
       this.makeAnimations(key),
     );
     if (!this.load.isLoading()) this.load.start();
+  }
+  drawLootHints() {
+    const graphics = this.lootGuides.clear(),
+      now = Date.now() + serverOffset;
+    for (const [index, p] of WORLD.scavengePoints.entries()) {
+      const crate = lootCrateAt(index),
+        remaining = Math.max(0, (self?.cooldowns[index] || 0) - now);
+      const depleted = remaining > 0,
+        nearby = !!self && distance(self, p) < 650,
+        close = !!self && distance(self, p) < 150;
+      const visual = lootVisualSize(index);
+      const color = depleted ? 0x90958a : parseInt(crate.color.slice(1), 16);
+      this.lootProps.get(index)?.setAlpha(depleted ? 0.42 : 1);
+      this.lootLabels
+        .get(index)
+        ?.setVisible(nearby)
+        .setColor(depleted ? "#b5b8ac" : crate.color)
+        .setText(
+          `T${crate.tier} · ${depleted ? "EMPTY " + Math.ceil(remaining / 1000) + "s" : close ? "E SEARCH" : "LOOT"}`,
+        );
+      graphics
+        .lineStyle(2, color, depleted ? 0.35 : 0.9)
+        .strokeRoundedRect(
+          p.x - visual.width / 2 - 5,
+          p.y - visual.height / 2 - 5,
+          visual.width + 10,
+          visual.height + 10,
+          8,
+        );
+      if (!depleted)
+        graphics
+          .fillStyle(color, 1)
+          .fillTriangle(
+            p.x,
+            p.y - visual.height / 2 - 4,
+            p.x - 4,
+            p.y - visual.height / 2 - 10,
+            p.x + 4,
+            p.y - visual.height / 2 - 10,
+          );
+    }
+    for (const bag of snapshot.bags) {
+      graphics.lineStyle(2, 0xf1d68c, 0.9).strokeCircle(bag.x, bag.y, 27);
+    }
   }
   update(time: number, delta: number) {
     if (!this.staticBuilt) return;
@@ -687,20 +756,27 @@ class City extends Phaser.Scene {
       );
       const label = this.labels.get(e.id)!;
       label
-        .setPosition(s.x, s.y - (e.entity === "player" ? 74 : 65))
+        .setPosition(
+          s.x,
+          s.y - (e.entity === "player" ? 74 : e.entity === "bag" ? 36 : 65),
+        )
         .setDepth(s.depth + 1)
         .setText(
           e.entity === "player"
             ? e.name + (e.id === self?.id ? " · YOU" : "")
-            : e.id === near?.id
-              ? e.entity === "bag"
-                ? "PUBLIC LOOT"
-                : nice(e.kind) +
+            : e.entity === "bag"
+              ? "LOOT BAG"
+              : e.id === near?.id
+                ? nice(e.kind) +
                   " · " +
                   (e.kind === "foundation" ? "RAID PROOF" : e.hp + " HP")
-              : "",
+                : "",
         )
-        .setVisible(e.entity === "player" || e.id === near?.id);
+        .setVisible(
+          e.entity === "player" ||
+            e.id === near?.id ||
+            (e.entity === "bag" && !!self && distance(self, e) < 650),
+        );
       if (
         e.entity === "player" &&
         e.attackAt > (this.attackSeen.get(e.id) || 0) &&
@@ -724,6 +800,7 @@ class City extends Phaser.Scene {
         });
       }
     }
+    this.drawLootHints();
     const building = panel === "build" && !!self;
     this.buildGuides.clear();
     this.preview.setVisible(building);
@@ -878,6 +955,18 @@ function drawMap(canvas: HTMLCanvasElement) {
   ctx.fillStyle = "#90bc88";
   const s = WORLD.safeRect;
   ctx.fillRect(s.x * sx, s.y * sy, s.width * sx, s.height * sy);
+  for (const [index, p] of WORLD.scavengePoints.entries()) {
+    const crate = lootCrateAt(index),
+      size = canvas.width > 300 ? 6 : 3;
+    ctx.fillStyle =
+      (self?.cooldowns[index] || 0) > Date.now() + serverOffset
+        ? "#8b9083"
+        : crate.color;
+    ctx.strokeStyle = "#24352a";
+    ctx.lineWidth = 1;
+    ctx.fillRect(p.x * sx - size / 2, p.y * sy - size / 2, size, size);
+    ctx.strokeRect(p.x * sx - size / 2, p.y * sy - size / 2, size, size);
+  }
   for (const p of snapshot.players) {
     ctx.fillStyle = p.id === self?.id ? "#f1dfaa" : "#90cbd2";
     ctx.beginPath();
@@ -1051,7 +1140,7 @@ function renderPanel() {
   } else if (panel === "map") {
     title = "The Block";
     subtitle = "DISTRICT 01 / SHARED CITY";
-    html = `<canvas id="district-map" width="760" height="380"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Buildable ground</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Vacant ground lies east of the north/south crossing. Roads and public buildings cannot be claimed.</p>`;
+    html = `<canvas id="district-map" width="760" height="380"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Buildable ground</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Vacant ground lies east of the north/south crossing. Roads and public buildings cannot be claimed.</p>`;
   } else if (panel === "chat") {
     title = "Neighborhood chat";
     subtitle = "THE BLOCK / LIVE";

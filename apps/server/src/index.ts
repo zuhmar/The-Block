@@ -22,6 +22,7 @@ import {
   BUILD_BUDGET,
   type WorldState,
 } from "../../../packages/shared/src/index.js";
+import { LOOT_CRATES } from "../../../packages/game-data/loot-crates.js";
 const config = readServerConfig();
 // A dedicated PostgreSQL advisory lock forbids a second authority for this city.
 const authority = await pool.connect();
@@ -132,6 +133,7 @@ app.get("/world", (_req, res) => {
     roofs: false,
     practiceWoodGrant: 1,
     buildBudget: BUILD_BUDGET,
+    lootCrateTiers: LOOT_CRATES.length,
   });
 });
 app.get("/health", async (_req, res) => {
