@@ -2,7 +2,7 @@ import {
   MARKET_QUARTER,
   inMarketQuarter,
 } from "../shared/src/market-quarter.js";
-import { buildingVisual } from "../game-data/map-visuals.js";
+import { buildingVisual, propVisual } from "../game-data/map-visuals.js";
 import {
   frontageStyle,
   citySurfaces,
@@ -20,7 +20,6 @@ import {
   mapObjects,
   groundKind,
   mountainBlend,
-  PLAZA_GARDENS,
 } from "../shared/src/terrain.js";
 import {
   BUILDINGS,
@@ -37,9 +36,10 @@ const path = (ps: readonly { x: number; y: number }[]) =>
   ps
     .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
     .join(" ");
-const objects = [...BUILDINGS, ...mapObjects()].sort(
-  (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
-);
+const objects = [...BUILDINGS, ...mapObjects()]
+  .map(propVisual)
+  .filter((o) => o !== null)
+  .sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2));
 const keys = new Set([
   ...objects.map((o) => o.asset),
   "map-tile-grass",
@@ -84,14 +84,12 @@ for (const l of LAKES)
 for (const r of cityPaving())
   body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-paving-slab)"/>`;
 body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-paving-pavers)"/>`;
-for (const r of PLAZA_GARDENS)
-  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="14" fill="url(#pattern-map-tile-grass)" stroke="#92967b" stroke-width="6"/>`;
 for (const surface of citySurfaces()) {
   body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-${surface.service ? "map-paving-service" : surface.court ? "map-paving-pavers" : surface.material === "concrete" ? "map-paving-slab" : "map-tile-gravel"})" stroke="#b9b9a3" stroke-width="5"/>`;
   if (surface.court) {
     const a = surface.points[0],
       b = surface.points[2];
-    body += `<rect x="${a.x + 8}" y="${a.y + 8}" width="${b.x - a.x - 16}" height="${b.y - a.y - 16}" fill="url(#pattern-map-paving-pavers)"/><rect x="${(a.x + b.x) / 2 - 36}" y="${(a.y + b.y) / 2 - 26}" width="72" height="52" rx="12" fill="url(#pattern-map-tile-grass)"/>`;
+    body += `<rect x="${a.x + 8}" y="${a.y + 8}" width="${b.x - a.x - 16}" height="${b.y - a.y - 16}" fill="url(#pattern-map-paving-pavers)"/>`;
   }
   if (surface.service) {
     const a = surface.points[0],

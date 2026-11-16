@@ -14,7 +14,6 @@ import {
   mapObjectEnabled,
   mapObjects,
   blockSpaces,
-  PLAZA_GARDENS,
 } from "../shared/src/terrain.js";
 import { segmentRect } from "../shared/src/index.js";
 export const districtFor = (p: { x: number; y: number }) =>
@@ -241,23 +240,6 @@ export function paintCityFrontage(
     ctx.strokeStyle = "#727d7d";
     ctx.lineWidth = 7;
     ctx.stroke();
-    for (const x of [plaza.x + 44, plaza.x + plaza.width - 172]) {
-      ctx.fillStyle = "#868e74";
-      ctx.fillRect(x - 5, plaza.y + 86, 138, 74);
-      ctx.fillStyle = materials.grass;
-      ctx.fillRect(x, plaza.y + 91, 128, 64);
-    }
-  }
-  for (const r of PLAZA_GARDENS) {
-    if (!near(r)) continue;
-    ctx.fillStyle = "#92967b";
-    ctx.beginPath();
-    ctx.roundRect(r.x - 6, r.y - 6, r.width + 12, r.height + 12, 18);
-    ctx.fill();
-    ctx.fillStyle = materials.grass;
-    ctx.beginPath();
-    ctx.roundRect(r.x, r.y, r.width, r.height, 14);
-    ctx.fill();
   }
   for (const surface of citySurfaces()) {
     if (
@@ -284,11 +266,6 @@ export function paintCityFrontage(
         b = surface.points[2];
       ctx.fillStyle = materials.pavers;
       ctx.fillRect(a.x + 8, a.y + 8, b.x - a.x - 16, b.y - a.y - 16);
-      // Planted center keeps a generous route down both sides of the shared court.
-      ctx.fillStyle = materials.grass;
-      ctx.beginPath();
-      ctx.roundRect((a.x + b.x) / 2 - 36, (a.y + b.y) / 2 - 26, 72, 52, 12);
-      ctx.fill();
     }
     if (surface.service) {
       const a = surface.points[0],

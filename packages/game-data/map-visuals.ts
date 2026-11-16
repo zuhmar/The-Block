@@ -25,3 +25,16 @@ export function buildingVisual(object: MapObject, frame: SpriteFrame) {
     originY: (b.y + b.height) / frame.height,
   };
 }
+
+// Paved public spaces use contained planters, not painted grass backings.
+export function propVisual(object: MapObject): MapObject | null {
+  if (object.id.startsWith("market-flowers-")) return null;
+  if (
+    /^plaza-garden-\d+$/.test(object.id) ||
+    object.id.startsWith("court-planter-") ||
+    object.id.startsWith("plaza-plant-")
+  ) {
+    return { ...object, asset: "map-street-planter", width: 64, height: 32 };
+  }
+  return object;
+}

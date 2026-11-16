@@ -1,5 +1,8 @@
 import { inMarketQuarter } from "../../../packages/shared/src/market-quarter";
-import { buildingVisual } from "../../../packages/game-data/map-visuals";
+import {
+  buildingVisual,
+  propVisual,
+} from "../../../packages/game-data/map-visuals";
 import { paintCityFrontage } from "../../../packages/game-data/map-presentation";
 import Phaser from "phaser";
 import { WORLD } from "../../../packages/shared/src/index";
@@ -118,8 +121,9 @@ export class MapWorld {
         .setDisplaySize(CHUNK_SIZE + 2, CHUNK_SIZE + 2)
         .setDepth(-10000),
     ];
-    for (const o of terrainChunkObjects(key)) {
-      if (!mapObjectEnabled(o)) continue;
+    for (const raw of terrainChunkObjects(key)) {
+      const o = propVisual(raw);
+      if (!o || !mapObjectEnabled(raw)) continue;
       if (
         o.kind === "building" &&
         inMarketQuarter(o) &&
