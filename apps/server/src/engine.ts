@@ -51,6 +51,7 @@ export function createPlayer(
     energy: 100,
     temperature: 20,
     inventory: { water: 1, snack: 1, wood: 10000 },
+    practiceWoodGranted: true,
     equipped: { backpack: 1 },
     cash: 10,
     bank: 0,
@@ -117,6 +118,10 @@ export function upgradeWorld(w: WorldState) {
   for (const p of Object.values(w.players)) {
     p.y ??= p.lane === "parcel" ? 1344 : WORLD.spawn.y;
     p.facingY ??= 0;
+    if (!p.practiceWoodGranted) {
+      p.inventory.wood = Math.max(p.inventory.wood || 0, 10000);
+      p.practiceWoodGranted = true;
+    }
   }
   for (const s of Object.values(w.structures)) s.y ??= 1344;
   for (const b of Object.values(w.bags)) b.y ??= WORLD.spawn.y;

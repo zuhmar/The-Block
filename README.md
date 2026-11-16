@@ -85,4 +85,4 @@ The `pg` repository and SQL migration are authoritative; Prisma is a model refer
 
 See `docs/REVIEW.md` for remaining product gaps and `docs/DEPLOYMENT.md` for operations.
 
-New characters start with 10,000 wood for building practice, alongside water, a snack and $10. Wood stacks to 10,000 in one slot and uses no carry weight, so other supplies remain usable. Existing saved inventories are unchanged.
+New characters start with 10,000 wood for building practice, alongside water, a snack and $10. Wood stacks to 10,000 and uses no carry weight or carrying slot. Existing characters receive a one-time top-up to at least 10,000 wood; their other items are preserved. A persisted grant flag prevents repeat grants after spending, reconnecting or restarting.

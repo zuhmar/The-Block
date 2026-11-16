@@ -5,9 +5,11 @@ import {
   createPlayer,
   emptyWorld,
   obstruction,
+  upgradeWorld,
 } from "../apps/server/src/engine.js";
 import {
   BUILD_KINDS,
+  canCarry,
   floorSupportsPiece,
   snapBuildPoint,
   placementReason,
@@ -215,4 +217,45 @@ test("new characters can build immediately using their 10000 starter wood", () =
   assert.equal(player.inventory.wood, 9987);
   assert.equal(player.inventory.water, 1);
   assert.equal(player.inventory.snack, 1);
+});
+
+test("existing characters receive wood once without losing items or refilling after restart", () => {
+  const world = emptyWorld(),
+    player = createPlayer("existing", "Existing", look);
+  delete player.practiceWoodGranted;
+  player.inventory = { wood: 7, water: 2, snack: 1, scrap: 3 };
+  world.players[player.id] = player;
+  const upgraded = upgradeWorld(world);
+  assert.deepEqual(upgraded.players.existing.inventory, {
+    wood: 10000,
+    water: 2,
+    snack: 1,
+    scrap: 3,
+  });
+  assert.equal(player.practiceWoodGranted, true);
+  player.inventory.wood = 9992;
+  assert.equal(
+    upgradeWorld(JSON.parse(JSON.stringify(upgraded))).players.existing
+      .inventory.wood,
+    9992,
+  );
+  const fresh = createPlayer("fresh", "Fresh", look);
+  fresh.inventory.wood = 9987;
+  upgraded.players.fresh = fresh;
+  assert.equal(upgradeWorld(upgraded).players.fresh.inventory.wood, 9987);
+});
+
+test("practice wood does not consume any of the eight normal carrying slots", () => {
+  const inventory = {
+    wood: 10000,
+    water: 1,
+    snack: 1,
+    bandage: 1,
+    scrap: 1,
+    stone: 1,
+    brick: 1,
+    glass: 1,
+  };
+  assert(canCarry(inventory, "electronics"));
+  assert(!canCarry({ ...inventory, electronics: 1 }, "steel"));
 });

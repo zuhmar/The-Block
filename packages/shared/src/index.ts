@@ -312,6 +312,7 @@ export interface Player {
   energy: number;
   temperature: number;
   inventory: Inventory;
+  practiceWoodGranted?: boolean;
   equipped: Inventory;
   cash: number;
   bank: number;
@@ -357,7 +358,8 @@ export interface WorldState {
 export function canCarry(inv: Inventory, item: Item, n = 1) {
   const next = { ...inv, [item]: (inv[item] || 0) + n };
   return (
-    Object.keys(next).filter((k) => next[k as Item]! > 0).length <= 8 &&
+    Object.keys(next).filter((k) => k !== "wood" && next[k as Item]! > 0)
+      .length <= 8 &&
     Object.entries(next).every(([k, v]) => v <= ITEMS[k as Item].stack) &&
     Object.entries(next).reduce(
       (s, [k, v]) => s + ITEMS[k as Item].weight * v,

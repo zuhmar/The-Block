@@ -129,6 +129,7 @@ app.get("/world", (_req, res) => {
     layout: "top-down",
     construction: "floor-edges-v1",
     roofs: false,
+    practiceWoodGrant: 1,
   });
 });
 app.get("/health", async (_req, res) => {
