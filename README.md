@@ -34,7 +34,7 @@ The HUD puts navigation across the top, a minimap at upper right, health/energy 
 
 ### Build and raid
 
-Vacant grounds lie east of the main north/south crossing and below the east/west road. Follow the minimap. Stand within 210px, press B, choose a foundation, and click valid ground. Modules must be within 128px of a selected owned foundation. Costs: foundation eight wood, wall five, door four, roof four, crate five. Maximum 40 pieces per owner.
+Vacant grounds lie east of the main north/south crossing and below the east/west road. Follow the minimap. Stand within 210px, press B and place floors, then hover an owned floor to snap walls/doors along its outer or interior grid lines, or storage inside. Costs: floor eight wood, wall five, door four, crate five. Maximum **100 pieces per player**; dismantling frees slots. Roofs are not required.
 
 The preview checks roads, shelter, static footprints, reach, materials, collision, ownership and footprint bounds. The server validates placement again. Roads and public buildings cannot be claimed. Foundations are raid immune. Existing legacy structures are retained during the world migration.
 

@@ -136,6 +136,7 @@ export const PIECES = {
   roof: { wood: 4, hp: 70 },
   storage: { wood: 5, hp: 60 },
 } as const;
+export const BUILD_BUDGET = 100;
 export const BUILD_KINDS = ["foundation", "wall", "door", "storage"] as const;
 export const BUILDING = {
   floorSize: 128,
@@ -437,7 +438,7 @@ export function placementReason(
     return "Protected road, public area or parcel edge";
   if (
     structures.filter((s) => s.owner === player.id && s.kind !== "roof")
-      .length >= 40
+      .length >= BUILD_BUDGET
   )
     return "Build budget reached";
   if (kind !== "foundation") {

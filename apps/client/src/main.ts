@@ -3,6 +3,7 @@ import { Client, type Room } from "colyseus.js";
 import {
   WORLD,
   BUILD_KINDS,
+  BUILD_BUDGET,
   BUILDING,
   structureFootprint,
   VERSION,
@@ -1006,7 +1007,7 @@ function renderPanel() {
       )
       .join(
         "",
-      )}</select></label><p class="warning-note">Roads, public buildings and the shelter stay protected. Bases can be raided while you are offline.</p>`;
+      )}</select></label><p class="warning-note">Roads, public buildings and the shelter stay protected. Bases can be raided while you are offline. Build budget: ${BUILD_BUDGET} pieces per player.</p>`;
   } else if (panel === "skills") {
     title = "Character & skills";
     subtitle = "LEARN BY DOING";

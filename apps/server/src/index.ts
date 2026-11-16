@@ -19,6 +19,7 @@ import {
   appearanceSchema,
   envelopeSchema,
   VERSION,
+  BUILD_BUDGET,
   type WorldState,
 } from "../../../packages/shared/src/index.js";
 const config = readServerConfig();
@@ -130,6 +131,7 @@ app.get("/world", (_req, res) => {
     construction: "floor-grid-v2",
     roofs: false,
     practiceWoodGrant: 1,
+    buildBudget: BUILD_BUDGET,
   });
 });
 app.get("/health", async (_req, res) => {

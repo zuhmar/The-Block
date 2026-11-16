@@ -365,3 +365,32 @@ test("walls on a floor at the parcel boundary are allowed without extending the 
     foundation: floor.id,
   });
 });
+
+test("a player can place their 100th piece but not their 101st", () => {
+  const { world, player, floor } = setup();
+  for (let i = 0; i < 98; i++) {
+    const id = `existing-${i}`;
+    world.structures[id] = { ...floor, id, kind: "storage", x: 6000, y: 2800 };
+  }
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    x: floor.x + 32,
+    y: floor.y - 64,
+    foundation: floor.id,
+  });
+  assert.equal(Object.values(world.structures).length, 100);
+  const wood = player.inventory.wood;
+  assert.throws(
+    () =>
+      act(world, player.id, {
+        type: "build",
+        kind: "wall",
+        x: floor.x - 32,
+        y: floor.y - 64,
+        foundation: floor.id,
+      }),
+    /Build budget reached/,
+  );
+  assert.equal(player.inventory.wood, wood);
+});
