@@ -160,20 +160,20 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
     }
 
     const unpolished = structuredClone(newMap);
-    unpolished.sceneryVersion = 4;
-    await pool.query("DELETE FROM world_layout_backups WHERE layout=8");
+    unpolished.sceneryVersion = 5;
+    await pool.query("DELETE FROM world_layout_backups WHERE layout=9");
     await pool.query("UPDATE worlds SET data=$1 WHERE id=1", [
       JSON.stringify(unpolished),
     ]);
     await migrate();
     await migrate();
     const sceneryBackup = (
-      await pool.query("SELECT data FROM world_layout_backups WHERE layout=8")
+      await pool.query("SELECT data FROM world_layout_backups WHERE layout=9")
     ).rows;
     assert.equal(sceneryBackup.length, 1);
     assert.deepEqual(sceneryBackup[0].data, unpolished);
     const polished = await load();
-    assert.equal(polished.sceneryVersion, 5);
+    assert.equal(polished.sceneryVersion, 6);
     assert.deepEqual(polished.players, unpolished.players);
     assert.deepEqual(polished.structures, unpolished.structures);
 

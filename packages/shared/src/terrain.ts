@@ -1,3 +1,4 @@
+import { MARKET_QUARTER, inMarketQuarter } from "./market-quarter.js";
 import {
   MAP_SIZE,
   CITY,
@@ -698,6 +699,33 @@ for (const b of BUILDINGS) {
     if (moved) break;
   }
 }
+export const authoredMarketBuildings: string[] = [];
+for (const plan of MARKET_QUARTER.buildings) {
+  const b = BUILDINGS.find((b) => b.id === plan.id)!;
+  const rect = {
+    x: plan.x - plan.width / 2,
+    y: plan.y - plan.height / 2,
+    width: plan.width,
+    height: plan.height,
+  };
+  // Authored positions must pass the same circulation constraints as generated architecture.
+  if (roadOverlapsRect(rect, 32))
+    throw Error("Market building overlaps road: " + b.id);
+  Object.assign(b, plan);
+  authoredMarketBuildings.push(b.id);
+}
+for (const id of authoredMarketBuildings) {
+  const b = BUILDINGS.find((o) => o.id === id)!;
+  if (
+    BUILDINGS.some(
+      (o) =>
+        o !== b &&
+        Math.abs(o.x - b.x) < (o.width + b.width) / 2 + 32 &&
+        Math.abs(o.y - b.y) < (o.height + b.height) / 2 + 32,
+    )
+  )
+    throw Error("Market building crowds its neighbor: " + id);
+}
 export interface BlockSpace extends TerrainRect {
   id: string;
   buildings: MapObject[];
@@ -774,7 +802,7 @@ export function blockSpaces(): BlockSpace[] {
   }
   return spaces;
 }
-export const PLAZA_GARDENS: TerrainRect[] = [
+const automaticPlazaGardens: TerrainRect[] = [
   { x: CIVIC_PLAZA.x + 184, y: CIVIC_PLAZA.y + 184, width: 160, height: 72 },
   { x: CIVIC_PLAZA.x + 568, y: CIVIC_PLAZA.y + 184, width: 160, height: 72 },
   { x: CIVIC_PLAZA.x + 184, y: CIVIC_PLAZA.y + 440, width: 160, height: 72 },
@@ -795,6 +823,13 @@ export const PLAZA_GARDENS: TerrainRect[] = [
         p.y < r.y + r.height + 112,
     ),
 );
+export const PLAZA_GARDENS: TerrainRect[] = [
+  ...MARKET_QUARTER.gardens,
+  ...automaticPlazaGardens.filter(
+    (r) => !inMarketQuarter({ x: r.x + r.width / 2, y: r.y + r.height / 2 }),
+  ),
+];
+
 export function nearestRoadPoint(p: TerrainPoint) {
   let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
   for (const road of ROADS) {
@@ -1457,7 +1492,12 @@ export function mapObjects(): MapObject[] {
     out.push({
       id: "plaza-garden-seat-" + i,
       x: r.x + r.width / 2,
-      y: r.y + r.height + 28,
+      y:
+        r.y +
+        r.height +
+        (inMarketQuarter({ x: r.x + r.width / 2, y: r.y + r.height / 2 })
+          ? 20
+          : 28),
       width: 64,
       height: 32,
       asset: "map-street-bench",
@@ -1555,6 +1595,36 @@ export function mapObjects(): MapObject[] {
         kind: "decoration",
       });
     }
+  // Authored market furniture replaces arbitrary scatter within this reference block.
+  for (let i = out.length - 1; i >= 0; i--) {
+    const o = out[i];
+    if (
+      inMarketQuarter(o) &&
+      [
+        "street-detail-",
+        "streetscape-",
+        "shop-detail-",
+        "plaza-seat-",
+        "plaza-plant-",
+      ].some((prefix) => o.id.startsWith(prefix))
+    )
+      out.splice(i, 1);
+  }
+  for (const p of MARKET_QUARTER.props) {
+    if (
+      roadOverlapsRect(
+        {
+          x: p.x - p.width / 2,
+          y: p.y - p.height / 2,
+          width: p.width,
+          height: p.height,
+        },
+        16,
+      )
+    )
+      throw Error("Market prop overlaps road: " + p.id);
+    out.push({ ...p, kind: "decoration" });
+  }
   // Independent hash placement keeps the existing woodland seed and tree positions stable.
   const woodland = out.filter((o) => o.kind === "tree");
   for (let y = 224; y < MAP_SIZE - 224; y += 320)

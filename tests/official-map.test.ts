@@ -1,3 +1,5 @@
+import { MARKET_QUARTER } from "../packages/shared/src/market-quarter.js";
+import { buildingVisual } from "../packages/game-data/map-visuals.js";
 import {
   citySurfaces,
   streetConnections,
@@ -323,7 +325,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  w.sceneryVersion = 4;
+  w.sceneryVersion = 5;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -340,7 +342,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 5);
+  assert.equal(w.sceneryVersion, 6);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
@@ -476,4 +478,59 @@ test("nature details stay sparse, dry and clear of road corridors with solid log
     solid.length > 0 && solid.length < 40,
     "solid scenery leaves open building country",
   );
+});
+
+test("authored market keeps frontages aligned, furniture off entrances and artwork undistorted", async () => {
+  const { assets } = JSON.parse(
+    await readFile("apps/client/public/assets/manifest.json", "utf8"),
+  );
+  const frontage = MARKET_QUARTER.buildings.slice(0, 5);
+  assert(frontage.every((b) => b.y + b.height / 2 === 5424));
+  const world = emptyWorld();
+  for (const plan of MARKET_QUARTER.buildings) {
+    const b = BUILDINGS.find((b) => b.id === plan.id)!;
+    const v = buildingVisual(b, assets[b.asset]),
+      bounds = assets[b.asset].contentBounds;
+    assert(bounds && bounds.width > 0 && bounds.height > 0);
+    assert(
+      Math.abs(
+        v.width / assets[b.asset].width - v.height / assets[b.asset].height,
+      ) < 1e-9,
+      "uniform artwork scale",
+    );
+    assert((bounds.width * v.width) / assets[b.asset].width <= b.width + 1e-6);
+    assert.equal(
+      v.y,
+      b.y + b.height / 2,
+      "visible front rests on footprint edge",
+    );
+    assert(
+      !blocked(world, { x: b.x, y: b.y + b.height / 2 + 24 }),
+      b.id + " entrance",
+    );
+  }
+  for (const route of MARKET_QUARTER.paths)
+    for (let i = 1; i < route.points.length; i++) {
+      const a = route.points[i - 1],
+        b = route.points[i],
+        steps = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 16);
+      for (let j = 0; j <= steps; j++)
+        assert(
+          !blocked(world, {
+            x: a.x + ((b.x - a.x) * j) / steps,
+            y: a.y + ((b.y - a.y) * j) / steps,
+          }),
+          "market promenade remains traversable",
+        );
+    }
+  for (const p of MARKET_QUARTER.props) {
+    assert(
+      !BUILDINGS.some(
+        (b) =>
+          Math.abs(b.x - p.x) < (b.width + p.width) / 2 &&
+          Math.abs(b.y - p.y) < (b.height + p.height) / 2,
+      ),
+      p.id + " clear of buildings",
+    );
+  }
 });

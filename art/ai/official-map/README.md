@@ -19,3 +19,5 @@ World and city previews render actual authored map coordinates with these sprite
 
 - `nature-props.png`: twelve original AI shrub, berry bush, wildflower, grass, fern, stump, mossy log, branches, reeds, cattails, pebbles and mossy boulder cutouts. A targeted AI edit removed the initial pale matte and all cast-shadow/ground effects. Plant leaves, attached moss and tree roots remain part of their object silhouettes.
 - `trees.png`: four original AI oak, pine, birch and dead-tree cutouts without terrain bases or cast shadows. New nature sprites receive four transparent pixels of framing; the runtime swaps matching older grass-backed nature props for the clean art while retaining their positions and footprints.
+
+Building entries also retain measured visible `contentBounds` from their alpha channel. The authored market quarter uses these bounds to preserve the illustrations' aspect ratios and align façades with footprint fronts, without repainting or stretching the artwork. These metadata additions do not change the source images.

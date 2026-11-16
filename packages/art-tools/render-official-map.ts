@@ -1,4 +1,9 @@
 import {
+  MARKET_QUARTER,
+  inMarketQuarter,
+} from "../shared/src/market-quarter.js";
+import { buildingVisual } from "../game-data/map-visuals.js";
+import {
   frontageStyle,
   citySurfaces,
   cityPaving,
@@ -101,6 +106,8 @@ for (const surface of citySurfaces()) {
 }
 for (const p of PARKS)
   body += `<ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2}" ry="${p.height / 2}" fill="url(#pattern-map-tile-grass)"/>`;
+for (const route of MARKET_QUARTER.paths)
+  body += `<polyline points="${route.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="none" stroke="url(#pattern-map-paving-slab)" stroke-width="${route.width}" stroke-linejoin="round"/>`;
 for (const c of streetConnections()) {
   const points = c.points.map((p) => `${p.x},${p.y}`).join(" ");
   body += `<polyline points="${points}" fill="none" stroke="url(#pattern-map-paving-slab)" stroke-width="${c.width + 10}" stroke-linejoin="round"/>`;
@@ -125,6 +132,17 @@ for (const road of ROADS)
 for (const road of ROADS.filter((r) => r.width >= 100))
   body += `<path d="${path(road.points)}" fill="none" stroke="#e1d6a4" stroke-width="3" stroke-dasharray="32 96"/>`;
 for (const o of objects) {
+  if (
+    o.kind === "building" &&
+    inMarketQuarter(o) &&
+    !o.id.startsWith("legacy")
+  ) {
+    const a = assets[o.asset],
+      v = buildingVisual(o, a);
+    body += `<use href="#${o.asset}" transform="translate(${v.x} ${v.y}) scale(${v.width / a.width} ${v.height / a.height}) translate(${-a.width * v.originX} ${-a.height * v.originY})"/>`;
+    continue;
+  }
+
   const tree = o.kind === "tree",
     mountain = o.kind === "mountain",
     w = tree ? 128 : o.width,

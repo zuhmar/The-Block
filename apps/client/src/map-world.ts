@@ -1,3 +1,5 @@
+import { inMarketQuarter } from "../../../packages/shared/src/market-quarter";
+import { buildingVisual } from "../../../packages/game-data/map-visuals";
 import { paintCityFrontage } from "../../../packages/game-data/map-presentation";
 import Phaser from "phaser";
 import { WORLD } from "../../../packages/shared/src/index";
@@ -118,6 +120,22 @@ export class MapWorld {
     ];
     for (const o of terrainChunkObjects(key)) {
       if (!mapObjectEnabled(o)) continue;
+      if (
+        o.kind === "building" &&
+        inMarketQuarter(o) &&
+        !o.id.startsWith("legacy")
+      ) {
+        const frame = scene.cache.json.get("manifest").assets[o.asset],
+          v = buildingVisual(o, frame);
+        objects.push(
+          scene.add
+            .image(v.x, v.y, o.asset)
+            .setOrigin(v.originX, v.originY)
+            .setDisplaySize(v.width, v.height)
+            .setDepth(o.y + o.height / 2),
+        );
+        continue;
+      }
       const tree = o.kind === "tree",
         mountain = o.kind === "mountain",
         w = tree ? 128 : o.width,

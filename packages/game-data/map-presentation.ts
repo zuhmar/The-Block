@@ -1,4 +1,8 @@
 import {
+  MARKET_QUARTER,
+  inMarketQuarter,
+} from "../shared/src/market-quarter.js";
+import {
   BUILDINGS,
   DISTRICTS,
   type MapObject,
@@ -274,7 +278,7 @@ export function paintCityFrontage(
     ctx.fill();
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#718082";
-    ctx.stroke();
+    if (!surface.buildings.every(inMarketQuarter)) ctx.stroke();
     if (surface.court) {
       const a = surface.points[0],
         b = surface.points[2];
@@ -340,6 +344,16 @@ export function paintCityFrontage(
     ctx.ellipse(p.x, p.y, p.width / 2, p.height / 2, 0, 0, Math.PI * 2);
     ctx.fill();
   }
+  for (const route of MARKET_QUARTER.paths) {
+    if (!route.points.some(near)) continue;
+    ctx.beginPath();
+    route.points.forEach((p, i) =>
+      i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
+    );
+    ctx.strokeStyle = materials.concrete;
+    ctx.lineWidth = route.width;
+    ctx.stroke();
+  }
   for (const c of streetConnections()) {
     if (!near(c.building) || !mapObjectEnabled(c.building)) continue;
     ctx.beginPath();
@@ -392,7 +406,7 @@ export function paintCityFrontage(
       ctx.setLineDash([18, 14]);
       ctx.strokeRect(x + 12, b.y + b.height / 2 + 12, w - 24, 32);
       ctx.setLineDash([]);
-    } else {
+    } else if (!inMarketQuarter(b)) {
       ctx.strokeStyle = s.district === "uptown" ? "#788c60" : "#718082";
       ctx.lineWidth = 3;
       ctx.beginPath();

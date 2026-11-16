@@ -250,7 +250,13 @@ export async function importOfficialMap(
           }
           sizes.push(tail);
         }
-        const minimum = Math.max(12, Math.max(...sizes) * 0.002);
+        const minimum = Math.max(
+          12,
+          Math.max(...sizes) *
+            (["buildings", "storefronts", "city-buildings"].includes(group.name)
+              ? 0.015
+              : 0.002),
+        );
         for (let n = 0; n < labels.length; n++)
           if (labels[n] && sizes[labels[n]] < minimum) clean[n * 4 + 3] = 0;
         crop = await sharp(clean, {
@@ -329,6 +335,33 @@ export async function importOfficialMap(
           })
           .png()
           .toFile(new URL(file, root).pathname);
+      let contentBounds:
+        | { x: number; y: number; width: number; height: number }
+        | undefined;
+      if (key.startsWith("map-building-")) {
+        const { data, info } = await sharp(new URL(file, root).pathname)
+          .ensureAlpha()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        let left = info.width,
+          top = info.height,
+          right = 0,
+          bottom = 0;
+        for (let y = 0; y < info.height; y++)
+          for (let x = 0; x < info.width; x++)
+            if (data[(y * info.width + x) * 4 + 3] > 32) {
+              left = Math.min(left, x);
+              right = Math.max(right, x);
+              top = Math.min(top, y);
+              bottom = Math.max(bottom, y);
+            }
+        contentBounds = {
+          x: left,
+          y: top,
+          width: right - left + 1,
+          height: bottom - top + 1,
+        };
+      }
       manifest[key] = {
         file,
         width: group.width,
@@ -340,6 +373,7 @@ export async function importOfficialMap(
         source: "ai-generated",
         sourceGroup: "official-map",
         sourceAsset: group.name + ".png",
+        ...(contentBounds ? { contentBounds } : {}),
       };
     }
   }
