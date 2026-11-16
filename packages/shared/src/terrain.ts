@@ -623,6 +623,178 @@ for (const [i, b] of BUILDINGS.entries()) {
   b.width = Math.min(b.width, width);
   b.height = Math.min(b.height, height);
 }
+// Group small shops beside larger neighbors, sharing a clear south frontage.
+export const composedShopRows: string[] = [];
+for (const b of BUILDINGS) {
+  if (b.width > 128 || b.id.startsWith("legacy")) continue;
+  const district = DISTRICTS.find(
+    (d) =>
+      b.x >= d.x && b.x < d.x + d.width && b.y >= d.y && b.y < d.y + d.height,
+  );
+  if (!district || district.id === "uptown") continue;
+  const anchors = BUILDINGS.filter(
+    (o) =>
+      o !== b &&
+      o.width >= 176 &&
+      !o.id.startsWith("legacy") &&
+      o.x >= district.x &&
+      o.x < district.x + district.width &&
+      o.y >= district.y &&
+      o.y < district.y + district.height &&
+      Math.hypot(o.x - b.x, o.y - b.y) < 650,
+  ).sort(
+    (a, z) =>
+      Math.hypot(a.x - b.x, a.y - b.y) - Math.hypot(z.x - b.x, z.y - b.y),
+  );
+  let moved = false;
+  for (const anchor of anchors) {
+    for (const side of [-1, 1]) {
+      const p = {
+        x: anchor.x + side * (anchor.width / 2 + b.width / 2 + 72),
+        y: anchor.y + anchor.height / 2 - b.height / 2,
+      };
+      if (
+        Math.hypot(p.x - b.x, p.y - b.y) > 300 ||
+        p.x - b.width / 2 < district.x ||
+        p.x + b.width / 2 > district.x + district.width ||
+        p.y - b.height / 2 < district.y ||
+        p.y + b.height / 2 > district.y + district.height
+      )
+        continue;
+      const r = {
+        x: p.x - b.width / 2,
+        y: p.y - b.height / 2,
+        width: b.width,
+        height: b.height,
+      };
+      if (
+        roadOverlapsRect(r, 40) ||
+        SERVICE_POINTS.some(
+          (o) =>
+            Math.abs(o.x - p.x) < b.width / 2 + 140 &&
+            Math.abs(o.y - p.y) < b.height / 2 + 140,
+        )
+      )
+        continue;
+      if (
+        [
+          ...BUILDINGS.filter((o) => o !== b),
+          ...PARKS,
+          ...PARKING_LOTS,
+          ...INDUSTRIAL_YARDS,
+        ].some(
+          (o) =>
+            Math.abs(o.x - p.x) < (o.width + b.width) / 2 + 48 &&
+            Math.abs(o.y - p.y) < (o.height + b.height) / 2 + 48,
+        )
+      )
+        continue;
+      b.x = p.x;
+      b.y = p.y;
+      composedShopRows.push(b.id);
+      moved = true;
+      break;
+    }
+    if (moved) break;
+  }
+}
+export interface BlockSpace extends TerrainRect {
+  id: string;
+  buildings: MapObject[];
+  kind: "courtyard" | "alley" | "service";
+}
+let spaces: BlockSpace[] | undefined;
+export function blockSpaces(): BlockSpace[] {
+  if (spaces) return spaces;
+  spaces = [];
+  for (const a of BUILDINGS) {
+    const district = DISTRICTS.find(
+      (d) =>
+        a.x >= d.x && a.x < d.x + d.width && a.y >= d.y && a.y < d.y + d.height,
+    );
+    if (!district || district.id === "uptown" || a.id.startsWith("legacy"))
+      continue;
+    for (const b of BUILDINGS) {
+      if (
+        b.x <= a.x ||
+        b.id.startsWith("legacy") ||
+        b.x >= district.x + district.width ||
+        b.x < district.x ||
+        b.y < district.y ||
+        b.y >= district.y + district.height
+      )
+        continue;
+      const gap = b.x - b.width / 2 - (a.x + a.width / 2);
+      if (
+        Math.abs(a.y + a.height / 2 - (b.y + b.height / 2)) > 80 ||
+        gap < 64 ||
+        gap > 320
+      )
+        continue;
+      const r = {
+        x: a.x + a.width / 2,
+        y: Math.max(a.y - a.height / 2, b.y - b.height / 2),
+        width: gap,
+        height:
+          Math.min(a.y + a.height / 2, b.y + b.height / 2) -
+          Math.max(a.y - a.height / 2, b.y - b.height / 2),
+      };
+      if (
+        r.height < 128 ||
+        roadOverlapsRect(r, 24) ||
+        PARKS.some(
+          (p) =>
+            Math.abs(p.x - r.x - r.width / 2) < (p.width + r.width) / 2 &&
+            Math.abs(p.y - r.y - r.height / 2) < (p.height + r.height) / 2,
+        )
+      )
+        continue;
+      if (
+        BUILDINGS.some(
+          (o) =>
+            o !== a &&
+            o !== b &&
+            Math.abs(o.x - r.x - r.width / 2) < (o.width + r.width) / 2 + 8 &&
+            Math.abs(o.y - r.y - r.height / 2) < (o.height + r.height) / 2 + 8,
+        )
+      )
+        continue;
+      spaces.push({
+        id: "block-space-" + a.id + "-" + b.id,
+        ...r,
+        buildings: [a, b],
+        kind:
+          district.id === "industrial"
+            ? "service"
+            : gap >= 176
+              ? "courtyard"
+              : "alley",
+      });
+    }
+  }
+  return spaces;
+}
+export const PLAZA_GARDENS: TerrainRect[] = [
+  { x: CIVIC_PLAZA.x + 184, y: CIVIC_PLAZA.y + 184, width: 160, height: 72 },
+  { x: CIVIC_PLAZA.x + 568, y: CIVIC_PLAZA.y + 184, width: 160, height: 72 },
+  { x: CIVIC_PLAZA.x + 184, y: CIVIC_PLAZA.y + 440, width: 160, height: 72 },
+  { x: CIVIC_PLAZA.x + 568, y: CIVIC_PLAZA.y + 440, width: 160, height: 72 },
+].filter(
+  (r) =>
+    !roadOverlapsRect(r, 56) &&
+    !BUILDINGS.some(
+      (b) =>
+        Math.abs(b.x - r.x - r.width / 2) < (b.width + r.width) / 2 + 56 &&
+        Math.abs(b.y - r.y - r.height / 2) < (b.height + r.height) / 2 + 56,
+    ) &&
+    !SERVICE_POINTS.some(
+      (p) =>
+        p.x > r.x - 112 &&
+        p.x < r.x + r.width + 112 &&
+        p.y > r.y - 112 &&
+        p.y < r.y + r.height + 112,
+    ),
+);
 export function nearestRoadPoint(p: TerrainPoint) {
   let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
   for (const road of ROADS) {
@@ -1271,6 +1443,50 @@ export function mapObjects(): MapObject[] {
         continue;
       out.push({ id: "shop-detail-" + i + "-" + j, ...p, kind: "decoration" });
     }
+  }
+  for (const [i, r] of PLAZA_GARDENS.entries()) {
+    out.push({
+      id: "plaza-garden-" + i,
+      x: r.x + r.width / 2,
+      y: r.y + r.height / 2,
+      width: 104,
+      height: 48,
+      asset: "map-nature-3",
+      kind: "decoration",
+    });
+    out.push({
+      id: "plaza-garden-seat-" + i,
+      x: r.x + r.width / 2,
+      y: r.y + r.height + 28,
+      width: 64,
+      height: 32,
+      asset: "map-street-bench",
+      kind: "decoration",
+    });
+  }
+  for (const space of blockSpaces()) {
+    if (space.kind !== "courtyard") continue;
+    const x = space.x + space.width / 2,
+      y = space.y + space.height / 2;
+    out.push({
+      id: "court-planter-" + space.id,
+      x,
+      y,
+      width: 64,
+      height: 32,
+      asset: "map-street-planter",
+      kind: "decoration",
+    });
+    if (space.height >= 176)
+      out.push({
+        id: "court-seat-" + space.id,
+        x,
+        y: y - 54,
+        width: 64,
+        height: 32,
+        asset: "map-street-bench",
+        kind: "decoration",
+      });
   }
   const streetDetails: [string, number, number][] = [
     ["dumpster", 48, 42],

@@ -9,6 +9,8 @@ import {
   nearestRoadPoint,
   mapObjectEnabled,
   mapObjects,
+  blockSpaces,
+  PLAZA_GARDENS,
 } from "../shared/src/terrain.js";
 import { segmentRect } from "../shared/src/index.js";
 export const districtFor = (p: { x: number; y: number }) =>
@@ -85,6 +87,8 @@ export interface CitySurface {
   points: { x: number; y: number }[];
   material: "concrete" | "gravel";
   alley?: boolean;
+  court?: boolean;
+  service?: boolean;
 }
 let surfaces: CitySurface[] | undefined;
 // Ground geometry is shared by the playable renderer and map preview exporter.
@@ -109,38 +113,22 @@ export function citySurfaces(): CitySurface[] {
         points: [left, right, { x: z.x, y: z.y }, { x: a.x, y: a.y }],
       });
     }
-    for (const other of BUILDINGS) {
-      if (other.x <= b.x || districtFor(other)?.id !== district.id) continue;
-      const gap = other.x - other.width / 2 - (b.x + b.width / 2);
-      if (Math.abs(other.y - b.y) > 64 || gap < 32 || gap > 320) continue;
-      const top = Math.min(b.y - b.height / 2, other.y - other.height / 2) - 42;
-      const bottom =
-        Math.max(b.y + b.height / 2, other.y + other.height / 2) + 36;
-      const x = b.x + b.width / 2 - 12,
-        end = other.x - other.width / 2 + 12;
-      if (
-        PARKS.some(
-          (p) =>
-            x < p.x + p.width / 2 &&
-            end > p.x - p.width / 2 &&
-            top < p.y + p.height / 2 &&
-            bottom > p.y - p.height / 2,
-        )
-      )
-        continue;
-      surfaces.push({
-        id: "alley-" + b.id + "-" + other.id,
-        buildings: [b, other],
-        material: district.id === "industrial" ? "gravel" : "concrete",
-        alley: true,
-        points: [
-          { x, y: top },
-          { x: end, y: top },
-          { x: end, y: bottom },
-          { x, y: bottom },
-        ],
-      });
-    }
+  }
+  for (const space of blockSpaces()) {
+    surfaces.push({
+      id: space.id,
+      buildings: space.buildings,
+      material: space.kind === "service" ? "gravel" : "concrete",
+      alley: space.kind === "alley",
+      court: space.kind === "courtyard",
+      service: space.kind === "service",
+      points: [
+        { x: space.x, y: space.y },
+        { x: space.x + space.width, y: space.y },
+        { x: space.x + space.width, y: space.y + space.height },
+        { x: space.x, y: space.y + space.height },
+      ],
+    });
   }
   return surfaces;
 }
@@ -160,8 +148,8 @@ export function cityPaving() {
         BUILDINGS.some(
           (b) =>
             districtFor(b)?.id === "downtown" &&
-            Math.abs(b.x - p.x) < b.width / 2 + 144 &&
-            Math.abs(b.y - p.y) < b.height / 2 + 144,
+            Math.abs(b.x - p.x) < b.width / 2 + 96 &&
+            Math.abs(b.y - p.y) < b.height / 2 + 80,
         ) &&
         !PARKS.some(
           (r) =>
@@ -263,6 +251,17 @@ export function paintCityFrontage(
       ctx.fillRect(x, plaza.y + 91, 128, 64);
     }
   }
+  for (const r of PLAZA_GARDENS) {
+    if (!near(r)) continue;
+    ctx.fillStyle = "#92967b";
+    ctx.beginPath();
+    ctx.roundRect(r.x - 6, r.y - 6, r.width + 12, r.height + 12, 18);
+    ctx.fill();
+    ctx.fillStyle = materials.grass;
+    ctx.beginPath();
+    ctx.roundRect(r.x, r.y, r.width, r.height, 14);
+    ctx.fill();
+  }
   for (const surface of citySurfaces()) {
     if (
       !surface.buildings.some(near) ||
@@ -279,6 +278,34 @@ export function paintCityFrontage(
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#b9b9a3";
     ctx.stroke();
+    if (surface.court) {
+      const a = surface.points[0],
+        b = surface.points[2];
+      ctx.fillStyle = "#b9ae94";
+      ctx.fillRect(a.x + 8, a.y + 8, b.x - a.x - 16, b.y - a.y - 16);
+      ctx.strokeStyle = "#cfc7b0";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let y = a.y + 32; y < b.y - 8; y += 48) {
+        ctx.moveTo(a.x + 8, y);
+        ctx.lineTo(b.x - 8, y);
+      }
+      ctx.stroke();
+      // Planted center keeps a generous route down both sides of the shared court.
+      ctx.fillStyle = materials.grass;
+      ctx.beginPath();
+      ctx.roundRect((a.x + b.x) / 2 - 36, (a.y + b.y) / 2 - 26, 72, 52, 12);
+      ctx.fill();
+    }
+    if (surface.service) {
+      const a = surface.points[0],
+        b = surface.points[2];
+      ctx.strokeStyle = "#c6ac68";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([12, 10]);
+      ctx.strokeRect(a.x + 16, a.y + 16, b.x - a.x - 32, b.y - a.y - 32);
+      ctx.setLineDash([]);
+    }
     if (surface.alley) {
       // Narrow service lanes and drain seams read as alleys, not lawns.
       const a = surface.points[0],

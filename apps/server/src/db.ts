@@ -31,10 +31,10 @@ export async function migrate() {
       "Saved original world as layout backup 3 before official-map migration.",
     );
   const sceneryBackup = await pool.query(
-    "INSERT INTO world_layout_backups(layout,data) SELECT 6,data FROM worlds WHERE id=1 AND COALESCE((data->>'sceneryVersion')::integer,0)<3 ON CONFLICT(layout) DO NOTHING RETURNING layout",
+    "INSERT INTO world_layout_backups(layout,data) SELECT 7,data FROM worlds WHERE id=1 AND COALESCE((data->>'sceneryVersion')::integer,0)<4 ON CONFLICT(layout) DO NOTHING RETURNING layout",
   );
   if (sceneryBackup.rowCount)
-    console.log("Saved world backup 6 before city variety revision.");
+    console.log("Saved world backup 7 before city composition revision.");
   await transaction((w) => upgradeWorld(w));
 }
 export async function transaction<T>(fn: (world: WorldState) => T): Promise<T> {

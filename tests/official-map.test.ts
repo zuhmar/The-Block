@@ -20,6 +20,9 @@ import {
 } from "../packages/shared/src/index.js";
 import {
   groundKind,
+  blockSpaces,
+  composedShopRows,
+  roadOverlapsRect,
   mapChunk,
   mapObjects,
   ROADS,
@@ -306,7 +309,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  w.sceneryVersion = 2;
+  w.sceneryVersion = 3;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -323,7 +326,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 3);
+  assert.equal(w.sceneryVersion, 4);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
@@ -364,7 +367,9 @@ test("commercial infill preserves road shoulders and civic landmarks stay unique
       1,
       role,
     );
-  assert(citySurfaces().filter((s) => s.alley).length >= 30);
+  assert(
+    citySurfaces().filter((s) => s.alley || s.court || s.service).length >= 20,
+  );
   assert(
     citySurfaces().every(
       (s) => s.buildings.length > 0 && s.points.length === 4,
@@ -400,4 +405,22 @@ test("city variety uses all new artwork at varied sizes without blocking entranc
       !blocked(emptyWorld(), { x: b.x, y: b.y + b.height / 2 + 24 }),
       b.id + " doorway",
     );
+});
+
+test("composed shop rows and shared courts leave road corridors and pedestrian space open", () => {
+  assert(composedShopRows.length >= 12);
+  const spaces = blockSpaces();
+  for (const kind of ["courtyard", "service", "alley"])
+    assert(
+      spaces.some((s) => s.kind === kind),
+      kind,
+    );
+  for (const s of spaces) {
+    assert(!roadOverlapsRect(s, 24), s.id);
+    if (s.kind === "courtyard")
+      assert(
+        s.width >= 176 && (s.width - 72) / 2 >= 52,
+        s.id + " walking clearance",
+      );
+  }
 });

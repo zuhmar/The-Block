@@ -15,6 +15,7 @@ import {
   mapObjects,
   groundKind,
   mountainBlend,
+  PLAZA_GARDENS,
 } from "../shared/src/terrain.js";
 import {
   BUILDINGS,
@@ -70,8 +71,20 @@ for (const l of LAKES)
 for (const r of cityPaving())
   body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-tile-concrete)"/>`;
 body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-tile-concrete)"/>`;
+for (const r of PLAZA_GARDENS)
+  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="14" fill="url(#pattern-map-tile-grass)" stroke="#92967b" stroke-width="6"/>`;
 for (const surface of citySurfaces()) {
   body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-map-tile-${surface.material})" stroke="#b9b9a3" stroke-width="5"/>`;
+  if (surface.court) {
+    const a = surface.points[0],
+      b = surface.points[2];
+    body += `<rect x="${a.x + 8}" y="${a.y + 8}" width="${b.x - a.x - 16}" height="${b.y - a.y - 16}" fill="#b9ae94"/><rect x="${(a.x + b.x) / 2 - 36}" y="${(a.y + b.y) / 2 - 26}" width="72" height="52" rx="12" fill="url(#pattern-map-tile-grass)"/>`;
+  }
+  if (surface.service) {
+    const a = surface.points[0],
+      b = surface.points[2];
+    body += `<rect x="${a.x + 16}" y="${a.y + 16}" width="${b.x - a.x - 32}" height="${b.y - a.y - 32}" fill="none" stroke="#c6ac68" stroke-width="3" stroke-dasharray="12 10"/>`;
+  }
   if (surface.alley) {
     const a = surface.points[0],
       b = surface.points[2];
