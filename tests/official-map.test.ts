@@ -534,3 +534,29 @@ test("authored market keeps frontages aligned, furniture off entrances and artwo
     );
   }
 });
+
+test("all building illustrations fit their reserved ground footprints with uniform scale", async () => {
+  const { assets } = JSON.parse(
+    await readFile("apps/client/public/assets/manifest.json", "utf8"),
+  );
+  for (const b of BUILDINGS) {
+    const frame = assets[b.asset],
+      bounds = frame.contentBounds,
+      v = buildingVisual(b, frame);
+    assert.equal(frame.perspective, "overhead", b.asset);
+    const scale = v.width / frame.width;
+    assert.ok(Math.abs(scale - v.height / frame.height) < 1e-9, b.id);
+    const left = v.x - v.originX * v.width + bounds.x * scale;
+    const top = v.y - v.originY * v.height + bounds.y * scale;
+    assert.ok(
+      left >= b.x - b.width / 2 - 1e-6 &&
+        left + bounds.width * scale <= b.x + b.width / 2 + 1e-6,
+      b.id + " horizontal footprint",
+    );
+    assert.ok(
+      top >= b.y - b.height / 2 - 1e-6 &&
+        top + bounds.height * scale <= b.y + b.height / 2 + 1e-6,
+      b.id + " vertical footprint",
+    );
+  }
+});

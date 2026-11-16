@@ -1,4 +1,3 @@
-import { inMarketQuarter } from "../../../packages/shared/src/market-quarter";
 import {
   buildingVisual,
   propVisual,
@@ -38,7 +37,7 @@ export class MapWorld {
   private reservationKey = "";
   private pixelRatio: number;
   private gravelBrush?: HTMLCanvasElement;
-  private slabSurface?: HTMLCanvasElement;
+  private tonedSurfaces = new Map<string, HTMLCanvasElement>();
   constructor(
     private scene: Phaser.Scene,
     ratio = 1,
@@ -125,11 +124,7 @@ export class MapWorld {
     for (const raw of terrainChunkObjects(key)) {
       const o = propVisual(raw);
       if (!o || !mapObjectEnabled(raw)) continue;
-      if (
-        o.kind === "building" &&
-        inMarketQuarter(o) &&
-        !o.id.startsWith("legacy")
-      ) {
+      if (o.kind === "building") {
         const frame = scene.cache.json.get("manifest").assets[o.asset],
           v = buildingVisual(o, frame);
         objects.push(
@@ -144,12 +139,8 @@ export class MapWorld {
       const tree = o.kind === "tree",
         mountain = o.kind === "mountain",
         w = tree ? 128 : o.width,
-        h = tree
-          ? 158
-          : mountain
-            ? o.height + 100
-            : o.height + (o.kind === "building" ? 60 : 0),
-        oy = tree ? -60 : mountain ? -50 : o.kind === "building" ? -30 : 0;
+        h = tree ? 158 : mountain ? o.height + 100 : o.height,
+        oy = tree ? -60 : mountain ? -50 : 0;
       objects.push(
         scene.add
           .image(o.x, o.y + oy, o.asset)
@@ -184,19 +175,24 @@ export class MapWorld {
       const source = this.scene.textures
         .get(name)
         .getSourceImage() as HTMLImageElement;
-      if (name === "map-paving-slab" && !this.slabSurface) {
+      const wash =
+        name === "map-paving-slab"
+          ? "rgba(181,183,176,0.22)"
+          : name === "map-tile-grass"
+            ? "rgba(113,128,76,0.24)"
+            : undefined;
+      if (wash && !this.tonedSurfaces.has(name)) {
         const surface = document.createElement("canvas");
         surface.width = source.width;
         surface.height = source.height;
         const painter = surface.getContext("2d")!;
         painter.drawImage(source, 0, 0);
-        // Keep the AI slab detail, with less contrast against the surrounding landscape.
-        painter.fillStyle = "rgba(181,183,176,0.22)";
+        painter.fillStyle = wash;
         painter.fillRect(0, 0, surface.width, surface.height);
-        this.slabSurface = surface;
+        this.tonedSurfaces.set(name, surface);
       }
       const fill = ctx.createPattern(
-        name === "map-paving-slab" ? this.slabSurface! : source,
+        this.tonedSurfaces.get(name) || source,
         "repeat",
       )!;
       if (name.startsWith("map-paving-"))

@@ -13,10 +13,7 @@ export function buildingVisual(object: MapObject, frame: SpriteFrame) {
     width: frame.width,
     height: frame.height,
   };
-  const scale = Math.min(
-    object.width / b.width,
-    (object.height + 60) / b.height,
-  );
+  const scale = Math.min(object.width / b.width, object.height / b.height);
   return {
     x: object.x,
     y: object.y + object.height / 2,

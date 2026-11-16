@@ -46,7 +46,10 @@
     "targetBackingPixels": 6000000,
     "hiDpiChunkPixels": 2052,
     "pavementTexturePixels": 256,
-    "pavementRepeatWorldPixels": 128
+    "pavementRepeatWorldPixels": 128,
+    "buildingPerspective": "roof-dominant overhead",
+    "buildingDesigns": 28,
+    "consistentBuildingFit": 177
   },
   "authoredMarketBuildings": 6,
   "placement": {

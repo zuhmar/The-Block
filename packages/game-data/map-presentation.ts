@@ -32,7 +32,7 @@ export const frontageStyle = (b: MapObject) => {
     district,
     material: district === "industrial" ? "gravel" : "concrete",
     walkWidth: district === "downtown" ? 72 : district === "uptown" ? 44 : 52,
-    apron: district === "industrial" ? 52 : district === "downtown" ? 36 : 20,
+    apron: district === "industrial" ? 36 : district === "downtown" ? 16 : 12,
   };
 };
 export const streetConnections = buildingWalkways;
@@ -381,9 +381,9 @@ export function paintCityFrontage(
     const s = frontageStyle(b),
       pad = s.apron,
       x = b.x - b.width / 2 - pad,
-      y = b.y - b.height / 2 - 12,
+      y = b.y - b.height / 2 - 8,
       w = b.width + pad * 2,
-      h = b.height + pad + 32;
+      h = b.height + pad + 20;
     ctx.fillStyle =
       s.material === "gravel" ? materials.service : materials.concrete;
     ctx.beginPath();

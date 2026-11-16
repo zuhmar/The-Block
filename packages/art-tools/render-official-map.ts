@@ -1,7 +1,4 @@
-import {
-  MARKET_QUARTER,
-  inMarketQuarter,
-} from "../shared/src/market-quarter.js";
+import { MARKET_QUARTER } from "../shared/src/market-quarter.js";
 import { buildingVisual, propVisual } from "../game-data/map-visuals.js";
 import {
   frontageStyle,
@@ -59,7 +56,7 @@ for (const key of keys) {
     b64 = (await readFile(root + a.file)).toString("base64");
   defs += `<image id="${key}" width="${a.width}" height="${a.height}" href="data:image/png;base64,${b64}"/>`;
   if (key.startsWith("map-tile") || key.startsWith("map-paving-"))
-    defs += `<pattern id="pattern-${key}" width="${key.startsWith("map-paving-") ? 128 : a.width}" height="${key.startsWith("map-paving-") ? 128 : a.height}" patternUnits="userSpaceOnUse"><use href="#${key}" transform="scale(${key.startsWith("map-paving-") ? 128 / a.width : 1})"/>${key === "map-paving-slab" ? '<rect width="128" height="128" fill="#b5b7b0" opacity=".22"/>' : ""}</pattern>`;
+    defs += `<pattern id="pattern-${key}" width="${key.startsWith("map-paving-") ? 128 : a.width}" height="${key.startsWith("map-paving-") ? 128 : a.height}" patternUnits="userSpaceOnUse"><use href="#${key}" transform="scale(${key.startsWith("map-paving-") ? 128 / a.width : 1})"/>${key === "map-paving-slab" ? '<rect width="128" height="128" fill="#b5b7b0" opacity=".22"/>' : key === "map-tile-grass" ? '<rect width="64" height="64" fill="#71804c" opacity=".24"/>' : ""}</pattern>`;
 }
 const start = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 ${MAP_SIZE} ${MAP_SIZE}"><defs>${defs}<clipPath id="land"><path d="${path(COAST)}Z"/></clipPath></defs>`;
 let body = `<rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-water)"/><g clip-path="url(#land)"><rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-grass)"/>`;
@@ -138,11 +135,7 @@ for (const road of ROADS)
 for (const road of ROADS.filter((r) => r.width >= 100))
   body += `<path d="${path(road.points)}" fill="none" stroke="#e1d6a4" stroke-width="3" stroke-dasharray="32 96"/>`;
 for (const o of objects) {
-  if (
-    o.kind === "building" &&
-    inMarketQuarter(o) &&
-    !o.id.startsWith("legacy")
-  ) {
+  if (o.kind === "building") {
     const a = assets[o.asset],
       v = buildingVisual(o, a);
     body += `<use href="#${o.asset}" transform="translate(${v.x} ${v.y}) scale(${v.width / a.width} ${v.height / a.height}) translate(${-a.width * v.originX} ${-a.height * v.originY})"/>`;
@@ -152,12 +145,8 @@ for (const o of objects) {
   const tree = o.kind === "tree",
     mountain = o.kind === "mountain",
     w = tree ? 128 : o.width,
-    h = tree
-      ? 158
-      : mountain
-        ? o.height + 100
-        : o.height + (o.kind === "building" ? 60 : 0),
-    oy = tree ? -60 : mountain ? -50 : o.kind === "building" ? -30 : 0,
+    h = tree ? 158 : mountain ? o.height + 100 : o.height,
+    oy = tree ? -60 : mountain ? -50 : 0,
     a = assets[o.asset];
   body += `<use href="#${o.asset}" transform="translate(${o.x} ${o.y + oy}) rotate(${o.rotation || 0}) scale(${(o.rotation ? h : w) / a.width} ${(o.rotation ? w : h) / a.height}) translate(${-a.width / 2} ${-a.height / 2})"/>`;
 }

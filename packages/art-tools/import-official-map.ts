@@ -190,7 +190,9 @@ export async function importOfficialMap(
           for (let x = 0; x < rw; x++) {
             const i = (y * rw + x) * 4;
             if (
-              group.name !== "buildings" ||
+              !["buildings", "storefronts", "city-buildings"].includes(
+                group.name,
+              ) ||
               raw.data[i] < 210 ||
               raw.data[i + 1] > 110 ||
               raw.data[i + 2] > 110
@@ -373,7 +375,7 @@ export async function importOfficialMap(
         source: "ai-generated",
         sourceGroup: "official-map",
         sourceAsset: group.name + ".png",
-        ...(contentBounds ? { contentBounds } : {}),
+        ...(contentBounds ? { contentBounds, perspective: "overhead" } : {}),
       };
     }
   }

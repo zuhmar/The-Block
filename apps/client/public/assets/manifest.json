@@ -3177,11 +3177,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 8,
+        "x": 14,
         "y": 1,
-        "width": 368,
+        "width": 357,
         "height": 383
-      }
+      },
+      "perspective": "overhead"
     },
     "map-building-store": {
       "file": "map-building-store.png",
@@ -3199,10 +3200,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 0,
-        "y": 8,
+        "y": 2,
         "width": 384,
-        "height": 368
-      }
+        "height": 380
+      },
+      "perspective": "overhead"
     },
     "map-building-bank": {
       "file": "map-building-bank.png",
@@ -3219,11 +3221,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 1,
-        "y": 0,
-        "width": 381,
-        "height": 384
-      }
+        "x": 0,
+        "y": 2,
+        "width": 384,
+        "height": 379
+      },
+      "perspective": "overhead"
     },
     "map-building-hospital": {
       "file": "map-building-hospital.png",
@@ -3240,11 +3243,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 0,
-        "y": 11,
-        "width": 384,
-        "height": 362
-      }
+        "x": 2,
+        "y": 1,
+        "width": 382,
+        "height": 382
+      },
+      "perspective": "overhead"
     },
     "map-building-police": {
       "file": "map-building-police.png",
@@ -3262,10 +3266,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 1,
-        "y": 0,
-        "width": 380,
-        "height": 384
-      }
+        "y": 15,
+        "width": 383,
+        "height": 355
+      },
+      "perspective": "overhead"
     },
     "map-building-restaurant": {
       "file": "map-building-restaurant.png",
@@ -3282,11 +3287,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 2,
-        "y": 0,
-        "width": 379,
-        "height": 384
-      }
+        "x": 4,
+        "y": 1,
+        "width": 375,
+        "height": 383
+      },
+      "perspective": "overhead"
     },
     "map-building-office": {
       "file": "map-building-office.png",
@@ -3303,11 +3309,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 1,
-        "y": 1,
-        "width": 382,
-        "height": 381
-      }
+        "x": 16,
+        "y": 46,
+        "width": 352,
+        "height": 338
+      },
+      "perspective": "overhead"
     },
     "map-building-premium": {
       "file": "map-building-premium.png",
@@ -3325,10 +3332,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 1,
-        "y": 13,
+        "y": 6,
         "width": 383,
-        "height": 357
-      }
+        "height": 372
+      },
+      "perspective": "overhead"
     },
     "map-building-warehouse": {
       "file": "map-building-warehouse.png",
@@ -3345,11 +3353,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 1,
-        "y": 15,
-        "width": 383,
-        "height": 353
-      }
+        "x": 0,
+        "y": 18,
+        "width": 384,
+        "height": 348
+      },
+      "perspective": "overhead"
     },
     "map-building-factory": {
       "file": "map-building-factory.png",
@@ -3366,11 +3375,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 5,
-        "y": 1,
-        "width": 373,
-        "height": 383
-      }
+        "x": 2,
+        "y": 21,
+        "width": 382,
+        "height": 343
+      },
+      "perspective": "overhead"
     },
     "map-building-abandoned": {
       "file": "map-building-abandoned.png",
@@ -3388,10 +3398,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 0,
-        "y": 15,
-        "width": 384,
-        "height": 353
-      }
+        "y": 19,
+        "width": 383,
+        "height": 347
+      },
+      "perspective": "overhead"
     },
     "map-building-apartments": {
       "file": "map-building-apartments.png",
@@ -3408,11 +3419,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 0,
-        "y": 37,
-        "width": 384,
-        "height": 310
-      }
+        "x": 1,
+        "y": 19,
+        "width": 383,
+        "height": 346
+      },
+      "perspective": "overhead"
     },
     "map-building-luxury": {
       "file": "map-building-luxury.png",
@@ -3429,11 +3441,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png",
       "contentBounds": {
-        "x": 2,
-        "y": 18,
-        "width": 382,
-        "height": 347
-      }
+        "x": 1,
+        "y": 19,
+        "width": 383,
+        "height": 345
+      },
+      "perspective": "overhead"
     },
     "map-building-house": {
       "file": "map-building-house.png",
@@ -3451,10 +3464,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 1,
-        "y": 31,
+        "y": 14,
         "width": 383,
-        "height": 320
-      }
+        "height": 356
+      },
+      "perspective": "overhead"
     },
     "map-building-shop": {
       "file": "map-building-shop.png",
@@ -3472,10 +3486,11 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 1,
-        "y": 20,
-        "width": 382,
-        "height": 343
-      }
+        "y": 12,
+        "width": 383,
+        "height": 360
+      },
+      "perspective": "overhead"
     },
     "map-building-workshop": {
       "file": "map-building-workshop.png",
@@ -3493,55 +3508,14 @@
       "sourceAsset": "buildings.png",
       "contentBounds": {
         "x": 0,
-        "y": 20,
+        "y": 22,
         "width": 384,
-        "height": 344
-      }
+        "height": 340
+      },
+      "perspective": "overhead"
     },
     "map-building-cafe": {
       "file": "map-building-cafe.png",
-      "width": 384,
-      "height": 384,
-      "frameWidth": 384,
-      "frameHeight": 384,
-      "frames": 1,
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "source": "ai-generated",
-      "sourceGroup": "official-map",
-      "sourceAsset": "storefronts.png",
-      "contentBounds": {
-        "x": 11,
-        "y": 0,
-        "width": 295,
-        "height": 384
-      }
-    },
-    "map-building-laundry": {
-      "file": "map-building-laundry.png",
-      "width": 384,
-      "height": 384,
-      "frameWidth": 384,
-      "frameHeight": 384,
-      "frames": 1,
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "source": "ai-generated",
-      "sourceGroup": "official-map",
-      "sourceAsset": "storefronts.png",
-      "contentBounds": {
-        "x": 0,
-        "y": 11,
-        "width": 384,
-        "height": 362
-      }
-    },
-    "map-building-grocery": {
-      "file": "map-building-grocery.png",
       "width": 384,
       "height": 384,
       "frameWidth": 384,
@@ -3559,7 +3533,52 @@
         "y": 1,
         "width": 384,
         "height": 381
-      }
+      },
+      "perspective": "overhead"
+    },
+    "map-building-laundry": {
+      "file": "map-building-laundry.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 1,
+        "width": 384,
+        "height": 381
+      },
+      "perspective": "overhead"
+    },
+    "map-building-grocery": {
+      "file": "map-building-grocery.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 2,
+        "width": 384,
+        "height": 379
+      },
+      "perspective": "overhead"
     },
     "map-building-books": {
       "file": "map-building-books.png",
@@ -3577,10 +3596,11 @@
       "sourceAsset": "storefronts.png",
       "contentBounds": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "width": 384,
-        "height": 383
-      }
+        "height": 379
+      },
+      "perspective": "overhead"
     },
     "map-building-kiosk": {
       "file": "map-building-kiosk.png",
@@ -3597,11 +3617,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 50,
-        "y": 6,
-        "width": 285,
-        "height": 374
-      }
+        "x": 25,
+        "y": 5,
+        "width": 335,
+        "height": 375
+      },
+      "perspective": "overhead"
     },
     "map-building-bakery": {
       "file": "map-building-bakery.png",
@@ -3618,11 +3639,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 78,
+        "x": 12,
         "y": 5,
-        "width": 229,
+        "width": 359,
         "height": 375
-      }
+      },
+      "perspective": "overhead"
     },
     "map-building-garage": {
       "file": "map-building-garage.png",
@@ -3640,10 +3662,11 @@
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
         "x": 4,
-        "y": 43,
+        "y": 30,
         "width": 376,
-        "height": 297
-      }
+        "height": 323
+      },
+      "perspective": "overhead"
     },
     "map-building-diner": {
       "file": "map-building-diner.png",
@@ -3661,10 +3684,11 @@
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
         "x": 4,
-        "y": 42,
+        "y": 29,
         "width": 376,
-        "height": 300
-      }
+        "height": 325
+      },
+      "perspective": "overhead"
     },
     "map-building-apartment-slab": {
       "file": "map-building-apartment-slab.png",
@@ -3681,11 +3705,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 4,
-        "y": 22,
-        "width": 375,
-        "height": 341
-      }
+        "x": 11,
+        "y": 4,
+        "width": 362,
+        "height": 376
+      },
+      "perspective": "overhead"
     },
     "map-building-brick-warehouse": {
       "file": "map-building-brick-warehouse.png",
@@ -3702,11 +3727,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 4,
-        "y": 34,
-        "width": 375,
-        "height": 316
-      }
+        "x": 5,
+        "y": 30,
+        "width": 374,
+        "height": 323
+      },
+      "perspective": "overhead"
     },
     "map-building-corner-office": {
       "file": "map-building-corner-office.png",
@@ -3723,11 +3749,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 4,
+        "x": 6,
         "y": 4,
-        "width": 376,
+        "width": 371,
         "height": 376
-      }
+      },
+      "perspective": "overhead"
     },
     "map-building-duplex": {
       "file": "map-building-duplex.png",
@@ -3744,11 +3771,12 @@
       "sourceGroup": "official-map",
       "sourceAsset": "city-buildings.png",
       "contentBounds": {
-        "x": 8,
-        "y": 5,
-        "width": 368,
-        "height": 375
-      }
+        "x": 4,
+        "y": 6,
+        "width": 376,
+        "height": 371
+      },
+      "perspective": "overhead"
     },
     "map-street-dumpster": {
       "file": "map-street-dumpster.png",
