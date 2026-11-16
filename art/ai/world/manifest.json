@@ -1,0 +1,703 @@
+{
+  "version": 1,
+  "runtimeIntegrated": false,
+  "assets": {
+    "street-props-dumpster": {
+      "file": "sprites/street-props-dumpster.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 81,
+        "top": 20,
+        "width": 243,
+        "height": 232
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-trash-can": {
+      "file": "sprites/street-props-trash-can.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 493,
+        "top": 30,
+        "width": 167,
+        "height": 215
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-bench": {
+      "file": "sprites/street-props-bench.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 812,
+        "top": 27,
+        "width": 284,
+        "height": 229
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-pallet": {
+      "file": "sprites/street-props-pallet.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1202,
+        "top": 34,
+        "width": 275,
+        "height": 210
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-streetlamp": {
+      "file": "sprites/street-props-streetlamp.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 140,
+        "top": 262,
+        "width": 134,
+        "height": 248
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-abandoned-car": {
+      "file": "sprites/street-props-abandoned-car.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 431,
+        "top": 285,
+        "width": 293,
+        "height": 224
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-cardboard-boxes": {
+      "file": "sprites/street-props-cardboard-boxes.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 840,
+        "top": 285,
+        "width": 233,
+        "height": 221
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-road-barricade": {
+      "file": "sprites/street-props-road-barricade.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1219,
+        "top": 281,
+        "width": 244,
+        "height": 229
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-tree": {
+      "file": "sprites/street-props-tree.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 66,
+        "top": 515,
+        "width": 259,
+        "height": 249
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-bush": {
+      "file": "sprites/street-props-bush.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 456,
+        "top": 571,
+        "width": 237,
+        "height": 162
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-rubble": {
+      "file": "sprites/street-props-rubble.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 805,
+        "top": 546,
+        "width": 291,
+        "height": 197
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-tires": {
+      "file": "sprites/street-props-tires.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1209,
+        "top": 554,
+        "width": 257,
+        "height": 183
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-shopping-cart": {
+      "file": "sprites/street-props-shopping-cart.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 83,
+        "top": 777,
+        "width": 243,
+        "height": 238
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-water-barrel": {
+      "file": "sprites/street-props-water-barrel.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 500,
+        "top": 783,
+        "width": 147,
+        "height": 230
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-chainlink-fence": {
+      "file": "sprites/street-props-chainlink-fence.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 813,
+        "top": 786,
+        "width": 293,
+        "height": 223
+      },
+      "origin": "ai-generated"
+    },
+    "street-props-campfire": {
+      "file": "sprites/street-props-campfire.png",
+      "width": 256,
+      "height": 256,
+      "source": "sources/street-props.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1227,
+        "top": 789,
+        "width": 229,
+        "height": 215
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-water": {
+      "file": "sprites/inventory-items-water.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 98,
+        "top": 35,
+        "width": 142,
+        "height": 268
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-snack": {
+      "file": "sprites/inventory-items-snack.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 339,
+        "top": 59,
+        "width": 272,
+        "height": 228
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-bandage": {
+      "file": "sprites/inventory-items-bandage.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 660,
+        "top": 77,
+        "width": 236,
+        "height": 213
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-wood": {
+      "file": "sprites/inventory-items-wood.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 953,
+        "top": 57,
+        "width": 270,
+        "height": 228
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-scrap": {
+      "file": "sprites/inventory-items-scrap.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 31,
+        "top": 365,
+        "width": 261,
+        "height": 228
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-stone": {
+      "file": "sprites/inventory-items-stone.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 344,
+        "top": 379,
+        "width": 247,
+        "height": 207
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-brick": {
+      "file": "sprites/inventory-items-brick.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 647,
+        "top": 368,
+        "width": 261,
+        "height": 225
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-concrete": {
+      "file": "sprites/inventory-items-concrete.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 961,
+        "top": 342,
+        "width": 251,
+        "height": 257
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-steel": {
+      "file": "sprites/inventory-items-steel.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 31,
+        "top": 664,
+        "width": 259,
+        "height": 247
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-glass": {
+      "file": "sprites/inventory-items-glass.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 342,
+        "top": 668,
+        "width": 257,
+        "height": 237
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-electronics": {
+      "file": "sprites/inventory-items-electronics.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 642,
+        "top": 673,
+        "width": 273,
+        "height": 238
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-backpack": {
+      "file": "sprites/inventory-items-backpack.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 950,
+        "top": 642,
+        "width": 272,
+        "height": 278
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-cash": {
+      "file": "sprites/inventory-items-cash.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 29,
+        "top": 996,
+        "width": 268,
+        "height": 217
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-bat": {
+      "file": "sprites/inventory-items-bat.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 348,
+        "top": 963,
+        "width": 248,
+        "height": 269
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-pistol": {
+      "file": "sprites/inventory-items-pistol.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 647,
+        "top": 1001,
+        "width": 259,
+        "height": 204
+      },
+      "origin": "ai-generated"
+    },
+    "inventory-items-ammo": {
+      "file": "sprites/inventory-items-ammo.png",
+      "width": 128,
+      "height": 128,
+      "source": "sources/inventory-items.png",
+      "sourceCell": {
+        "row": 3,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 991,
+        "top": 997,
+        "width": 206,
+        "height": 201
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-shelter": {
+      "file": "sprites/buildings-shelter.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 37,
+        "top": 60,
+        "width": 345,
+        "height": 344
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-convenience-store": {
+      "file": "sprites/buildings-convenience-store.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 460,
+        "top": 84,
+        "width": 334,
+        "height": 316
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-workshop": {
+      "file": "sprites/buildings-workshop.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 0,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 863,
+        "top": 50,
+        "width": 366,
+        "height": 349
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-foundation": {
+      "file": "sprites/buildings-foundation.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 47,
+        "top": 495,
+        "width": 325,
+        "height": 296
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-wall": {
+      "file": "sprites/buildings-wall.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 478,
+        "top": 506,
+        "width": 297,
+        "height": 259
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-door": {
+      "file": "sprites/buildings-door.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 1,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 926,
+        "top": 499,
+        "width": 236,
+        "height": 272
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-roof": {
+      "file": "sprites/buildings-roof.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 26,
+        "top": 901,
+        "width": 368,
+        "height": 311
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-storage-chest": {
+      "file": "sprites/buildings-storage-chest.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 473,
+        "top": 938,
+        "width": 307,
+        "height": 233
+      },
+      "origin": "ai-generated"
+    },
+    "buildings-ruined-building": {
+      "file": "sprites/buildings-ruined-building.png",
+      "width": 512,
+      "height": 512,
+      "source": "sources/buildings.png",
+      "sourceCell": {
+        "row": 2,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 858,
+        "top": 888,
+        "width": 375,
+        "height": 321
+      },
+      "origin": "ai-generated"
+    }
+  }
+}
