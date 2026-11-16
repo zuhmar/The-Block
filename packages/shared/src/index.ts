@@ -112,7 +112,7 @@ export const ITEMS = {
   water: { weight: 1, stack: 8, price: 3 },
   snack: { weight: 0.2, stack: 8, price: 3 },
   bandage: { weight: 0.1, stack: 8, price: 5 },
-  // Building practice: starter wood occupies one slot without carry weight.
+  // Building practice: starter wood uses no normal carrying slot or carry weight.
   wood: { weight: 0, stack: 10000, price: 1 },
   scrap: { weight: 1, stack: 50, price: 2 },
   stone: { weight: 2, stack: 50, price: 1 },
@@ -153,22 +153,35 @@ export function snapBuildPoint(
     cy = floor?.y || 0;
   const snap = (value: number, center: number) =>
     Math.round((value - center - cell / 2) / cell) * cell + center + cell / 2;
+  const edgeSlot = (value: number, center: number) =>
+    Math.max(
+      center - half + cell / 2,
+      Math.min(center + half - cell / 2, snap(value, center)),
+    );
   if (
     (kind === "wall" || kind === "door") &&
     floor &&
     Math.max(Math.abs(point.x - cx), Math.abs(point.y - cy)) <= half + cell / 2
   ) {
-    if (Math.abs(point.x - cx) > Math.abs(point.y - cy))
-      return {
-        x: cx + (point.x < cx ? -half : half),
-        y: snap(point.y, cy),
-        rotation: 90,
-      };
-    return {
-      x: snap(point.x, cx),
-      y: cy + (point.y < cy ? -half : half),
-      rotation: 0,
+    const gridLine = (value: number, center: number) =>
+      center +
+      Math.max(
+        -half,
+        Math.min(half, Math.round((value - center) / cell) * cell),
+      );
+    const vertical = {
+      x: gridLine(point.x, cx),
+      y: edgeSlot(point.y, cy),
+      rotation: 90 as const,
     };
+    const horizontal = {
+      x: edgeSlot(point.x, cx),
+      y: gridLine(point.y, cy),
+      rotation: 0 as const,
+    };
+    return Math.abs(point.x - vertical.x) < Math.abs(point.y - horizontal.y)
+      ? vertical
+      : horizontal;
   }
   if (kind === "foundation")
     return {
@@ -176,6 +189,31 @@ export function snapBuildPoint(
       y: Math.round(point.y / cell) * cell,
     };
   return { x: snap(point.x, cx), y: snap(point.y, cy), rotation: 0 };
+}
+export function resolveBuildFloor(
+  owner: string,
+  point: Point,
+  structures: Structure[],
+  selectedId?: string,
+) {
+  const floors = structures.filter(
+    (s) => s.kind === "foundation" && s.owner === owner,
+  );
+  for (const radius of [
+    BUILDING.floorSize / 2,
+    BUILDING.floorSize / 2 + BUILDING.cellSize / 2,
+  ]) {
+    const candidates = floors.filter(
+      (f) =>
+        Math.abs(f.x - point.x) <= radius && Math.abs(f.y - point.y) <= radius,
+    );
+    if (candidates.length)
+      return (
+        candidates.find((f) => f.id === selectedId) ||
+        candidates.sort((a, b) => distance(a, point) - distance(b, point))[0]
+      );
+  }
+  return floors.find((f) => f.id === selectedId);
 }
 export function floorContainsCell(floor: Point, point: Point) {
   const inset = (BUILDING.floorSize - BUILDING.cellSize) / 2;
@@ -189,8 +227,8 @@ export function floorSupportsPiece(floor: Point, point: Point, kind: Kind) {
     dy = Math.abs(floor.y - point.y),
     half = BUILDING.floorSize / 2;
   return (
-    (dx === half && dy <= half - BUILDING.cellSize / 2) ||
-    (dy === half && dx <= half - BUILDING.cellSize / 2)
+    ((dx === half || dx === 0) && dy <= half - BUILDING.cellSize / 2) ||
+    ((dy === half || dy === 0) && dx <= half - BUILDING.cellSize / 2)
   );
 }
 export function structureFootprint(
@@ -378,7 +416,11 @@ export function placementReason(
   if (kind === "roof") return "Roofs are not needed";
   if (distance(player, point) > 210) return "Move closer";
   const margin =
-    kind === "foundation" ? BUILDING.floorSize / 2 : BUILDING.cellSize / 2;
+    kind === "foundation"
+      ? BUILDING.floorSize / 2
+      : kind === "storage"
+        ? 20
+        : 0;
   if (
     safe(point.x, point.y) ||
     !WORLD.parcelRects.some((r) =>
@@ -448,7 +490,7 @@ export function placementReason(
       f.owner !== player.id ||
       !floorSupportsPiece(f, point, kind)
     )
-      return "Place walls and doors on a selected floor edge; storage goes inside";
+      return "Place this piece on a floor you own";
   }
   if (kind === "wall" || kind === "door" || kind === "storage") {
     const candidate = structureFootprint({

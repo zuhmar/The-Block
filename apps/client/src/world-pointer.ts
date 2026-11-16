@@ -1,5 +1,7 @@
 import {
   snapBuildPoint,
+  resolveBuildFloor,
+  type Structure,
   type Kind,
   type Point,
 } from "../../../packages/shared/src/index";
@@ -23,4 +25,20 @@ export function constructionTarget(
   floor?: Point,
 ) {
   return snapBuildPoint(kind, pointerToWorld(pointer, camera), floor);
+}
+
+export function constructionPlan(
+  pointer: Point,
+  camera: WorldCamera,
+  kind: Kind,
+  owner: string,
+  structures: Structure[],
+  selectedFloor?: string,
+) {
+  const world = pointerToWorld(pointer, camera);
+  const floor =
+    kind === "foundation"
+      ? undefined
+      : resolveBuildFloor(owner, world, structures, selectedFloor);
+  return { point: snapBuildPoint(kind, world, floor), foundation: floor?.id };
 }

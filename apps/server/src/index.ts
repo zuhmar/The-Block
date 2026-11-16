@@ -127,7 +127,7 @@ app.get("/world", (_req, res) => {
     roomId,
     version: VERSION,
     layout: "top-down",
-    construction: "floor-edges-v1",
+    construction: "floor-grid-v2",
     roofs: false,
     practiceWoodGrant: 1,
   });

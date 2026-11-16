@@ -10,6 +10,7 @@ import {
 import {
   BUILD_KINDS,
   canCarry,
+  resolveBuildFloor,
   floorSupportsPiece,
   snapBuildPoint,
   placementReason,
@@ -40,7 +41,7 @@ function setup() {
 }
 test("walls snap to a floor edge and the authoritative placement matches the preview", () => {
   const { world, player, floor } = setup();
-  const requested = { x: 3034, y: 1307 },
+  const requested = { x: 3034, y: 1279 },
     point = snapBuildPoint("wall", requested, floor);
   assert(floorSupportsPiece(floor, point, "wall"));
   assert.equal(
@@ -95,16 +96,16 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
         type: "build",
         kind: "wall",
         x: 3168,
-        y: 1312,
+        y: 1280,
         foundation: floor.id,
       }),
-    /selected floor/,
+    /floor you own/,
   );
   act(world, player.id, {
     type: "build",
     kind: "door",
     x: 3040,
-    y: 1312,
+    y: 1280,
     foundation: floor.id,
   });
   assert.throws(
@@ -113,7 +114,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
         type: "build",
         kind: "wall",
         x: 3040,
-        y: 1312,
+        y: 1280,
         foundation: floor.id,
       }),
     /occupied/,
@@ -149,7 +150,7 @@ test("a green preview requires sufficient wood and a floor owned by the builder"
       Object.values(world.structures),
       floor.id,
     ),
-    /selected floor/,
+    /floor you own/,
   );
 });
 
@@ -258,4 +259,109 @@ test("practice wood does not consume any of the eight normal carrying slots", ()
   };
   assert(canCarry(inventory, "electronics"));
   assert(!canCarry({ ...inventory, electronics: 1 }, "steel"));
+});
+
+test("wall snapping stays on the floor at every corner and supports interior partitions", () => {
+  const { world, player, floor } = setup();
+  for (const dx of [-64, 64])
+    for (const dy of [-64, 64]) {
+      const point = snapBuildPoint(
+        "wall",
+        { x: floor.x + dx, y: floor.y + dy },
+        floor,
+      );
+      assert(floorSupportsPiece(floor, point, "wall"));
+      assert.deepEqual(snapBuildPoint("wall", point, floor), point);
+    }
+  player.y = 1440;
+  const requested = { x: floor.x + 25, y: floor.y + 5 };
+  const partition = snapBuildPoint("wall", requested, floor);
+  assert.equal(partition.y, floor.y);
+  assert.equal(
+    placementReason(player, "wall", partition, [floor], floor.id),
+    "",
+  );
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    ...requested,
+    foundation: floor.id,
+  });
+  assert(
+    Object.values(world.structures).some(
+      (s) => s.kind === "wall" && s.y === floor.y,
+    ),
+  );
+});
+
+test("hovering a different owned floor selects it despite a stale preferred floor", () => {
+  const { world, player, floor } = setup();
+  act(world, player.id, {
+    type: "build",
+    kind: "foundation",
+    x: floor.x + 128,
+    y: floor.y,
+  });
+  const structures = Object.values(world.structures),
+    next = structures.find((s) => s.id !== floor.id)!;
+  const requested = { x: next.x + 40, y: next.y - 60 };
+  const resolved = resolveBuildFloor(
+    player.id,
+    requested,
+    structures,
+    floor.id,
+  )!;
+  assert.equal(resolved.id, next.id);
+  const point = snapBuildPoint("wall", requested, resolved);
+  assert.equal(
+    placementReason(player, "wall", point, structures, resolved.id),
+    "",
+  );
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    ...point,
+    foundation: resolved.id,
+  });
+  assert(
+    Object.values(world.structures).some(
+      (s) => s.kind === "wall" && s.foundation === next.id,
+    ),
+  );
+  next.owner = "other";
+  assert.notEqual(
+    resolveBuildFloor(player.id, requested, structures, next.id)?.id,
+    next.id,
+  );
+});
+
+test("walls on a floor at the parcel boundary are allowed without extending the floor outside the parcel", () => {
+  const { world, player } = setup();
+  player.x = 2950;
+  player.y = 1260;
+  act(world, player.id, {
+    type: "build",
+    kind: "foundation",
+    x: 2944,
+    y: 1216,
+  });
+  const floor = Object.values(world.structures).find((s) => s.x === 2944)!;
+  const point = snapBuildPoint("wall", { x: 2880, y: floor.y - 32 }, floor);
+  assert.equal(point.x, 2880);
+  assert.equal(
+    placementReason(
+      player,
+      "wall",
+      point,
+      Object.values(world.structures),
+      floor.id,
+    ),
+    "",
+  );
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    ...point,
+    foundation: floor.id,
+  });
 });

@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import type Phaser from "phaser";
 import {
   constructionTarget,
+  constructionPlan,
   pointerToWorld,
 } from "../apps/client/src/world-pointer.js";
 import { act, createPlayer, emptyWorld } from "../apps/server/src/engine.js";
@@ -133,4 +134,47 @@ test("preview, clicked build target and authoritative structure agree at every s
       preview,
     );
   }
+});
+
+test("clicked placement uses the hovered floor rather than the earlier dropdown selection", () => {
+  const look = {
+    skin: "#c98c62",
+    hair: "#252939",
+    top: "#ec8753",
+    body: "standard",
+    style: "short",
+  } as const;
+  const camera = new CameraFixture();
+  camera.zoom = 0.84;
+  camera.preRender();
+  const world = emptyWorld(),
+    player = createPlayer("builder", "Builder", look);
+  player.x = 3000;
+  player.y = 1344;
+  world.players[player.id] = player;
+  for (const x of [3008, 3136])
+    act(world, player.id, { type: "build", kind: "foundation", x, y: 1344 });
+  const floors = Object.values(world.structures);
+  const pointer = camera.screenPoint({ x: 3165, y: 1281 });
+  const plan = constructionPlan(
+    pointer,
+    camera,
+    "wall",
+    player.id,
+    floors,
+    floors[0].id,
+  );
+  assert.equal(plan.foundation, floors[1].id);
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    ...plan.point,
+    foundation: plan.foundation,
+  });
+  const wall = Object.values(world.structures).find((s) => s.kind === "wall")!;
+  assert.equal(wall.foundation, floors[1].id);
+  assert.deepEqual(
+    { x: wall.x, y: wall.y, rotation: wall.rotation },
+    plan.point,
+  );
 });

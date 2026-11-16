@@ -13,7 +13,7 @@ The world uses a slightly elevated overhead view, four-direction characters, wal
 1. Start in The Haven, with equal stats and a basic backpack, water, snack and cash.
 2. Explore with WASD, search alley containers, and manage hunger, thirst, health and energy.
 3. Trade recyclables, buy supplies, craft a bat and equip weapons.
-4. Claim valid open ground with a foundation. Join 128px floor tiles edge to edge, then place 64px wall/door segments along floor edges and storage inside. Wall segments are 16px thick and automatically rotate for vertical edges. Roofs are not required or buildable.
+4. Claim valid open ground with a foundation. Join 128px floor tiles edge to edge, then place 64px wall/door segments along outer or interior floor grid lines and storage inside. Wall segments are 16px thick and automatically rotate for vertical edges. Roofs are not required or buildable.
 5. Defend or breach bases. Walls block movement and line of sight in two dimensions; accessible storage is lootable even when the owner is offline.
 6. Improve persistent skills by using them. Death drops carried assets while preserving learned skills and property.
 
@@ -39,6 +39,8 @@ Startup holds the city authority lock before running migrations. A legacy JSONB 
 
 The old separate base lane has been retired. Walk through open doors or around barriers; there is no teleport into storage. Roads remain unbuildable, so player walls cannot seal the district's public routes.
 
-Construction now uses shared `snapBuildPoint` and `floorContainsCell` rules for the authoritative server and client preview. Wall/door segments align with the chosen owned floor's perimeter and storage fits inside; adjacent floors may touch but not overlap. Existing structure positions are retained. Legacy roof records are preserved but hidden, and new roof actions are rejected.
+Construction now uses shared `snapBuildPoint` and `floorContainsCell` rules for the authoritative server and client preview. Wall/door segments align with the hovered owned floor's outer or interior grid lines and storage fits inside; adjacent floors may touch but not overlap. Existing structure positions are retained. Legacy roof records are preserved but hidden, and new roof actions are rejected.
 
 `structureFootprint` supplies wall/door rectangles to placement overlap checks, movement collision, line of sight and the build guide. Perpendicular end joints may overlap at the corner cap; other overlapping objects are rejected. Roof records do not count against the active build budget or prevent floor dismantling.
+
+Placement resolves the owned floor under the pointer before snapping and sends that floor ID with the displayed target. A previously selected dropdown floor is only a preference at shared borders. Segment ends clamp to the nearest valid slot at corners. Walls on the boundary of an otherwise valid owned floor are allowed at the parcel edge; roads and public obstacles remain protected.

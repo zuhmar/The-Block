@@ -78,7 +78,7 @@ test("placement masks, ownership, costs and foundation immunity", () => {
       type: "build",
       kind: "wall",
       x: 3040,
-      y: 1312,
+      y: 1280,
       foundation: f.id,
     }),
   );
@@ -91,7 +91,7 @@ test("placement masks, ownership, costs and foundation immunity", () => {
     type: "build",
     kind: "wall",
     x: 3040,
-    y: 1312,
+    y: 1280,
     foundation: f.id,
   });
   assert.throws(
@@ -100,7 +100,7 @@ test("placement masks, ownership, costs and foundation immunity", () => {
         type: "build",
         kind: "door",
         x: 3040,
-        y: 1312,
+        y: 1280,
         foundation: f.id,
       }),
     /occupied/,
@@ -254,7 +254,7 @@ test("top-down walls block movement while protected roads remain open", () => {
     type: "build",
     kind: "wall",
     x: 3040,
-    y: 1312,
+    y: 1280,
     foundation: f.id,
   });
   r.x = 2980;

@@ -22,7 +22,7 @@ import {
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
 import { constructionVisual } from "./construction-visuals";
-import { constructionTarget, pointerToWorld } from "./world-pointer";
+import { constructionPlan, pointerToWorld } from "./world-pointer";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down survival world"></div><header id="masthead"><a class="brand" href="#">STREET <strong>SURVIVAL</strong><small>THE BLOCK / URBAN FRONTIER</small></a><div id="connection"><i></i><span>CONNECT TO THE CITY</span></div></header><div id="game-ui" hidden><nav id="top-tools" aria-label="Game menus">${[
@@ -224,18 +224,20 @@ class City extends Phaser.Scene {
         return;
       }
       if (panel === "build") {
-        const target = constructionTarget(
+        const target = constructionPlan(
           p,
           this.cameras.main,
           buildKind,
-          snapshot.structures.find((s) => s.id === foundation),
+          self.id,
+          snapshot.structures,
+          foundation,
         );
         send({
           type: "build",
           kind: buildKind,
-          x: target.x,
-          y: target.y,
-          foundation,
+          x: target.point.x,
+          y: target.point.y,
+          foundation: target.foundation,
         });
         return;
       }
@@ -727,25 +729,28 @@ class City extends Phaser.Scene {
     this.previewText.setVisible(building);
     if (building) {
       const p = this.input.activePointer,
-        point = constructionTarget(
+        plan = constructionPlan(
           p,
           this.cameras.main,
           buildKind,
-          snapshot.structures.find((s) => s.id === foundation),
+          self!.id,
+          snapshot.structures,
+          foundation,
         ),
+        point = plan.point,
         reason = placementReason(
           self!,
           buildKind,
           point,
           snapshot.structures,
-          foundation,
+          plan.foundation,
         );
       const guides = this.buildGuides,
         half = BUILDING.floorSize / 2;
       for (const floor of snapshot.structures.filter(
         (s) => s.kind === "foundation" && s.owner === self!.id,
       )) {
-        const selected = floor.id === foundation;
+        const selected = floor.id === plan.foundation;
         guides.lineStyle(
           selected ? 2 : 1,
           selected ? 0xd5c47d : 0x8fa68a,
@@ -992,7 +997,7 @@ function renderPanel() {
   } else if (panel === "build") {
     title = "Construction";
     subtitle = "A PLACE WORTH DEFENDING";
-    html = `<p class="panel-intro">Place floors first, then select a floor and snap walls and doors along its edges, with storage inside. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap along floor edges; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Build on floor<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
+    html = `<p class="panel-intro">Place floors first, then hover a floor to snap walls and doors along its outer or interior grid lines, with storage inside. The floor under your cursor is selected automatically. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap to outer or interior floor grid lines; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Preferred floor at shared edges<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
       .filter((s) => s.kind === "foundation" && s.owner === p.id)
       .sort((a, b) => distance(a, p) - distance(b, p))
       .map(

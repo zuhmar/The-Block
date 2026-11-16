@@ -78,7 +78,7 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
         type: "build",
         kind: "door",
         x: 3040,
-        y: 1312,
+        y: 1280,
         foundation: f.id,
       });
       const d = Object.values(w.structures).find((s) => s.kind === "door")!;
