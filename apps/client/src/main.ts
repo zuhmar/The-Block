@@ -18,6 +18,7 @@ import {
 } from "../../../packages/shared/src/index";
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
+import { constructionVisual } from "./construction-visuals";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down survival world"></div><header id="masthead"><a class="brand" href="#">STREET <strong>SURVIVAL</strong><small>THE BLOCK / URBAN FRONTIER</small></a><div id="connection"><i></i><span>CONNECT TO THE CITY</span></div></header><div id="game-ui" hidden><nav id="top-tools" aria-label="Game menus">${[
@@ -641,13 +642,13 @@ class City extends Phaser.Scene {
         s.setAlpha(e.protected ? 0.82 : 1);
       } else {
         s.setTexture(e.asset).setOrigin(0.5, 0.65);
-        if (e.kind === "foundation")
-          s.setDisplaySize(256, 256).setOrigin(0.5, 0.5);
-        else if (e.kind === "wall" || e.kind === "door")
-          s.setDisplaySize(64, 74);
-        else if (e.kind === "roof")
-          s.setDisplaySize(256, 256).setOrigin(0.5, 0.5);
-        else s.setScale(e.entity === "bag" ? 0.45 : 0.6);
+        if (e.entity === "structure") {
+          const visual = constructionVisual(e.kind as Kind);
+          s.setDisplaySize(visual.width, visual.height).setOrigin(
+            visual.originX,
+            visual.originY,
+          );
+        } else s.setScale(0.45);
         s.setAlpha(
           e.kind === "door" && e.open
             ? 0.3
@@ -718,13 +719,12 @@ class City extends Phaser.Scene {
           snapshot.structures,
           foundation,
         );
+      const visual = constructionVisual(buildKind);
       this.preview
         .setPosition(point.x, point.y)
         .setTexture(buildKind + "-intact")
-        .setDisplaySize(
-          buildKind === "foundation" || buildKind === "roof" ? 256 : 64,
-          buildKind === "foundation" || buildKind === "roof" ? 256 : 74,
-        )
+        .setDisplaySize(visual.width, visual.height)
+        .setOrigin(visual.originX, visual.originY)
         .setTint(reason ? 0xf0917b : 0xa1d6aa);
       this.previewText
         .setPosition(point.x, point.y - 75)
