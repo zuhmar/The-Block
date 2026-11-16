@@ -123,7 +123,13 @@ app.get("/world", (_req, res) => {
     res.status(503).json({ error: "City starting" });
     return;
   }
-  res.json({ roomId, version: VERSION, layout: "top-down" });
+  res.json({
+    roomId,
+    version: VERSION,
+    layout: "top-down",
+    construction: "floor-edges-v1",
+    roofs: false,
+  });
 });
 app.get("/health", async (_req, res) => {
   if (!roomId) {

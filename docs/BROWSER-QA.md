@@ -14,3 +14,5 @@
 12. Record browser/device versions and screenshots before marking visual acceptance complete. Server and WebSocket tests alone do not prove rendering or touch usability.
 
 AI world pack: check the 16 distinct inventory icons in inventory/crafting/shop panels; inspect dumpsters, bins, trees, benches, car, pallets and lamps. Check boxes, barricade, tires, cart, barrel, fence and static campfire on the map. Confirm city shop/workshop art, construction previews, damage tint, breach rubble and door-open transparency remain aligned with gameplay. These visual checks are pending.
+
+Floor construction: join two floors edge to edge, select each in turn and place walls/doors along its edges and storage inside. Verify vertical segments rotate, corners connect and opening a door clears its narrow collision footprint. Check previews and placed pieces share their centers and scale, occupied/off-floor/foreign-floor/insufficient-wood previews are invalid, and the server agrees. Confirm roof options and roof overlays are absent. New construction has distinct damaged/breached art rather than damage tints. Existing saved structures must remain intact.

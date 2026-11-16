@@ -1,6 +1,6 @@
 # AI world sprite pack
 
-41 original AI-generated sprites matching The Block's cartoon art direction. All 41 source sprites are mapped into the game by `packages/art-tools/import-world.ts` during `pnpm assets:generate`.
+41 original AI-generated sprites matching The Block's cartoon art direction. The world pack is imported by `packages/art-tools/import-world.ts` during `pnpm assets:generate`. Its original floor, wall, door and storage sprites have been superseded by the coordinated atlas in `art/ai/construction/`; original source artwork is retained here. Roof art is archived and not displayed in player construction.
 
 - **16 street props:** dumpster, trash can, bench, pallet, streetlamp, abandoned car, cardboard boxes, barricade, tree, bush, rubble, tires, shopping cart, water barrel, fence and campfire.
 - **16 inventory items:** water, snack, bandage, wood, scrap, stone, brick, concrete, steel, glass, electronics, backpack, cash, bat, pistol and ammunition.
@@ -14,4 +14,4 @@ Reproduce the technical crop/scale/packing step with:
 pnpm exec tsx packages/art-tools/pack-world-sprites.ts
 ```
 
-Packing code only processes the AI source artwork; it does not draw sprites. The packer checks dimensions, nonempty alpha silhouettes and transparent padding. Static sheet composition was inspected. Browser/mobile visual playtesting remains unverified. Damaged construction pieces reuse the intact AI silhouette with a runtime tint and existing HP feedback; breached construction pieces use the AI rubble sprite. The campfire is a single pose rather than an animation.
+Packing code only processes the AI source artwork; it does not draw sprites. The packer checks dimensions, nonempty alpha silhouettes and transparent padding. Static sheet composition was inspected. Browser/mobile visual playtesting remains unverified. Player construction now uses distinct AI-generated intact, damaged and breached cells from the coordinated construction atlas. The campfire is a single pose rather than an animation.

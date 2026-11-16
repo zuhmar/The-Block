@@ -135,6 +135,81 @@ export const PIECES = {
   roof: { wood: 4, hp: 70 },
   storage: { wood: 5, hp: 60 },
 } as const;
+export const BUILD_KINDS = ["foundation", "wall", "door", "storage"] as const;
+export const BUILDING = {
+  floorSize: 128,
+  cellSize: 64,
+  wallThickness: 16,
+} as const;
+export function snapBuildPoint(
+  kind: Kind,
+  point: Point,
+  floor?: Point,
+): Point & { rotation?: 0 | 90 } {
+  const cell = BUILDING.cellSize,
+    half = BUILDING.floorSize / 2;
+  const cx = floor?.x || 0,
+    cy = floor?.y || 0;
+  const snap = (value: number, center: number) =>
+    Math.round((value - center - cell / 2) / cell) * cell + center + cell / 2;
+  if (
+    (kind === "wall" || kind === "door") &&
+    floor &&
+    Math.max(Math.abs(point.x - cx), Math.abs(point.y - cy)) <= half + cell / 2
+  ) {
+    if (Math.abs(point.x - cx) > Math.abs(point.y - cy))
+      return {
+        x: cx + (point.x < cx ? -half : half),
+        y: snap(point.y, cy),
+        rotation: 90,
+      };
+    return {
+      x: snap(point.x, cx),
+      y: cy + (point.y < cy ? -half : half),
+      rotation: 0,
+    };
+  }
+  if (kind === "foundation")
+    return {
+      x: Math.round(point.x / cell) * cell,
+      y: Math.round(point.y / cell) * cell,
+    };
+  return { x: snap(point.x, cx), y: snap(point.y, cy), rotation: 0 };
+}
+export function floorContainsCell(floor: Point, point: Point) {
+  const inset = (BUILDING.floorSize - BUILDING.cellSize) / 2;
+  return (
+    Math.abs(floor.x - point.x) <= inset && Math.abs(floor.y - point.y) <= inset
+  );
+}
+export function floorSupportsPiece(floor: Point, point: Point, kind: Kind) {
+  if (kind === "storage") return floorContainsCell(floor, point);
+  const dx = Math.abs(floor.x - point.x),
+    dy = Math.abs(floor.y - point.y),
+    half = BUILDING.floorSize / 2;
+  return (
+    (dx === half && dy <= half - BUILDING.cellSize / 2) ||
+    (dy === half && dx <= half - BUILDING.cellSize / 2)
+  );
+}
+export function structureFootprint(
+  s: Point & { kind: Kind; rotation?: 0 | 90 },
+): Rect {
+  const wall = s.kind === "wall" || s.kind === "door";
+  const width = wall
+    ? s.rotation === 90
+      ? BUILDING.wallThickness
+      : BUILDING.cellSize
+    : s.kind === "foundation"
+      ? BUILDING.floorSize
+      : 40;
+  const height = wall
+    ? s.rotation === 90
+      ? BUILDING.cellSize
+      : BUILDING.wallThickness
+    : width;
+  return { x: s.x - width / 2, y: s.y - height / 2, width, height };
+}
 export type Kind = keyof typeof PIECES;
 export const appearanceSchema = z.object({
   skin: z.enum(["#c98c62", "#865641", "#efbe95"]),
@@ -253,6 +328,7 @@ export interface Player {
 export interface Structure {
   id: string;
   kind: Kind;
+  rotation?: 0 | 90;
   x: number;
   y: number;
   owner: string;
@@ -296,8 +372,10 @@ export function placementReason(
   structures: Structure[],
   foundationId?: string,
 ) {
+  if (kind === "roof") return "Roofs are not needed";
   if (distance(player, point) > 210) return "Move closer";
-  const margin = kind === "foundation" ? 128 : 32;
+  const margin =
+    kind === "foundation" ? BUILDING.floorSize / 2 : BUILDING.cellSize / 2;
   if (
     safe(point.x, point.y) ||
     !WORLD.parcelRects.some((r) =>
@@ -312,37 +390,76 @@ export function placementReason(
     WORLD.obstacles.some((r) => inRect(point, r, 32))
   )
     return "Protected road, public area or parcel edge";
-  if (structures.filter((s) => s.owner === player.id).length >= 40)
-    return "Build budget reached";
   if (
-    structures.some(
-      (s) =>
-        distance(s, point) < 48 &&
-        (s.kind === kind ||
-          (["wall", "door", "storage"].includes(s.kind) &&
-            ["wall", "door", "storage"].includes(kind))),
-    )
+    structures.filter((s) => s.owner === player.id && s.kind !== "roof")
+      .length >= 40
   )
-    return "Space occupied";
+    return "Build budget reached";
+  if (kind !== "foundation") {
+    const candidate = structureFootprint({
+      ...point,
+      kind,
+      rotation: snapBuildPoint(
+        kind,
+        point,
+        structures.find((s) => s.id === foundationId),
+      ).rotation,
+    });
+    if (
+      structures.some((s) => {
+        if (s.kind === "foundation" || s.kind === "roof") return false;
+        const existing = structureFootprint(s);
+        const overlapX =
+          Math.min(candidate.x + candidate.width, existing.x + existing.width) -
+          Math.max(candidate.x, existing.x);
+        const overlapY =
+          Math.min(
+            candidate.y + candidate.height,
+            existing.y + existing.height,
+          ) - Math.max(candidate.y, existing.y);
+        if (overlapX <= 0 || overlapY <= 0) return false;
+        const joinsCorner =
+          (kind === "wall" || kind === "door") &&
+          (s.kind === "wall" || s.kind === "door") &&
+          overlapX * overlapY <= BUILDING.wallThickness ** 2 / 4;
+        return !joinsCorner;
+      })
+    )
+      return "Space occupied";
+  }
   if (kind === "foundation") {
     if (
       structures.some(
-        (s) => s.kind === "foundation" && distance(s, point) < 192,
+        (s) =>
+          s.kind === "foundation" &&
+          Math.abs(s.x - point.x) < BUILDING.floorSize &&
+          Math.abs(s.y - point.y) < BUILDING.floorSize,
       )
     )
-      return "Foundation too close";
+      return "Floor overlaps another floor";
   } else {
     const f = structures.find((s) => s.id === foundationId);
     if (
       !f ||
       f.kind !== "foundation" ||
       f.owner !== player.id ||
-      distance(f, point) > 128
+      !floorSupportsPiece(f, point, kind)
     )
-      return "Select a nearby owned foundation";
+      return "Place walls and doors on a selected floor edge; storage goes inside";
   }
   if (kind === "wall" || kind === "door" || kind === "storage") {
-    if (distance(player, point) < 42) return "Move out of the placement cell";
+    const candidate = structureFootprint({
+      ...point,
+      kind,
+      rotation: snapBuildPoint(
+        kind,
+        point,
+        structures.find((s) => s.id === foundationId),
+      ).rotation,
+    });
+    if (inRect(player, candidate, 12)) return "Move out of the placement cell";
   }
+  if ((player.inventory.wood || 0) < PIECES[kind].wood)
+    return "Not enough wood";
   return "";
 }

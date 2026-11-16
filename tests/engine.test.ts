@@ -73,17 +73,35 @@ test("placement masks, ownership, costs and foundation immunity", () => {
   const f = Object.values(w.structures)[0];
   assert.equal(p.inventory.wood, 37);
   assert.throws(() =>
-    act(w, r.id, { type: "build", kind: "wall", x: 3072, foundation: f.id }),
+    act(w, r.id, {
+      type: "build",
+      kind: "wall",
+      x: 3040,
+      y: 1312,
+      foundation: f.id,
+    }),
   );
   assert.throws(
     () => act(w, r.id, { type: "attack", weapon: "bat", target: f.id }),
     /cannot be raided/,
   );
   assert.equal(f.hp, 9999);
-  act(w, p.id, { type: "build", kind: "wall", x: 3072, foundation: f.id });
+  act(w, p.id, {
+    type: "build",
+    kind: "wall",
+    x: 3040,
+    y: 1312,
+    foundation: f.id,
+  });
   assert.throws(
     () =>
-      act(w, p.id, { type: "build", kind: "door", x: 3072, foundation: f.id }),
+      act(w, p.id, {
+        type: "build",
+        kind: "door",
+        x: 3040,
+        y: 1312,
+        foundation: f.id,
+      }),
     /occupied/,
   );
 });
@@ -130,16 +148,34 @@ test("offline-owner raid: access blocked until breach; loot is public and single
   const { w, p, r } = fixture();
   act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
   const f = Object.values(w.structures)[0];
-  act(w, p.id, { type: "build", kind: "door", x: 3072, foundation: f.id });
-  act(w, p.id, { type: "build", kind: "storage", x: 3136, foundation: f.id });
+  act(w, p.id, {
+    type: "build",
+    kind: "door",
+    x: 3072,
+    y: 1312,
+    foundation: f.id,
+  });
+  act(w, p.id, { type: "build", kind: "foundation", x: 3136, y: 1344 });
+  const secondFloor = Object.values(w.structures).find(
+    (s) => s.kind === "foundation" && s.id !== f.id,
+  )!;
+  act(w, p.id, {
+    type: "build",
+    kind: "storage",
+    x: 3104,
+    y: 1312,
+    foundation: secondFloor.id,
+  });
   const door = Object.values(w.structures).find((s) => s.kind === "door")!,
     crate = Object.values(w.structures).find((s) => s.kind === "storage")!;
-  p.x = 3136;
+  p.x = 3104;
+  p.y = 1312;
   p.lane = "parcel";
   p.parcel = f.id;
   p.inventory.scrap = 1;
   act(w, p.id, { type: "store", id: crate.id, item: "scrap" });
-  r.x = 3050;
+  r.x = 3000;
+  r.y = 1312;
   r.lane = "parcel";
   r.parcel = f.id;
   r.facing = 1;
@@ -213,11 +249,18 @@ test("top-down walls block movement while protected roads remain open", () => {
   const { w, p, r } = fixture();
   act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
   const f = Object.values(w.structures)[0];
-  act(w, p.id, { type: "build", kind: "wall", x: 3072, foundation: f.id });
-  r.x = 3030;
-  r.y = 1344;
+  act(w, p.id, {
+    type: "build",
+    kind: "wall",
+    x: 3040,
+    y: 1312,
+    foundation: f.id,
+  });
+  r.x = 2980;
+  r.y = 1280;
   move(w, r, 1, false, false, 0.25);
-  assert(r.x < 3036);
+  assert(r.x < 3004);
+  r.x = 3030;
   r.y = 1410;
   move(w, r, 1, false, false, 0.25);
   assert(r.x > 3060);

@@ -711,10 +711,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-foundation"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 0,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 52,
+        "top": 124,
+        "width": 232,
+        "height": 235
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "foundation-damaged": {
       "file": "foundation-damaged.png",
@@ -725,11 +736,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-foundation",
-      "damageVisual": "tint"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 1,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 52,
+        "top": 443,
+        "width": 232,
+        "height": 234
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "foundation-breached": {
       "file": "foundation-breached.png",
@@ -740,10 +761,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "street-props-rubble"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 2,
+        "column": 0
+      },
+      "sourceCrop": {
+        "left": 51,
+        "top": 765,
+        "width": 233,
+        "height": 235
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "wall-intact": {
       "file": "wall-intact.png",
@@ -754,10 +786,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-wall"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 0,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 357,
+        "top": 202,
+        "width": 353,
+        "height": 82
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "wall-damaged": {
       "file": "wall-damaged.png",
@@ -768,11 +811,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-wall",
-      "damageVisual": "tint"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 1,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 357,
+        "top": 520,
+        "width": 353,
+        "height": 82
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "wall-breached": {
       "file": "wall-breached.png",
@@ -783,10 +836,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "street-props-rubble"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 2,
+        "column": 1
+      },
+      "sourceCrop": {
+        "left": 357,
+        "top": 842,
+        "width": 353,
+        "height": 83
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "door-intact": {
       "file": "door-intact.png",
@@ -797,10 +861,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-door"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 0,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 781,
+        "top": 202,
+        "width": 368,
+        "height": 83
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "door-damaged": {
       "file": "door-damaged.png",
@@ -811,11 +886,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-door",
-      "damageVisual": "tint"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 1,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 781,
+        "top": 520,
+        "width": 368,
+        "height": 83
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "door-breached": {
       "file": "door-breached.png",
@@ -826,10 +911,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "street-props-rubble"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 2,
+        "column": 2
+      },
+      "sourceCrop": {
+        "left": 781,
+        "top": 842,
+        "width": 368,
+        "height": 91
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "roof-intact": {
       "file": "roof-intact.png",
@@ -883,10 +979,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-storage-chest"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 0,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1246,
+        "top": 179,
+        "width": 130,
+        "height": 141
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "storage-damaged": {
       "file": "storage-damaged.png",
@@ -897,11 +1004,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "buildings-storage-chest",
-      "damageVisual": "tint"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 1,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1246,
+        "top": 497,
+        "width": 130,
+        "height": 141
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "storage-breached": {
       "file": "storage-breached.png",
@@ -912,10 +1029,21 @@
       "frames": 1,
       "anchor": {
         "x": 0.5,
-        "y": 1
+        "y": 0.5
       },
       "source": "ai-generated",
-      "sourceAsset": "street-props-rubble"
+      "sourceGroup": "construction",
+      "sourceCell": {
+        "row": 2,
+        "column": 3
+      },
+      "sourceCrop": {
+        "left": 1246,
+        "top": 812,
+        "width": 159,
+        "height": 151
+      },
+      "artSource": "art/ai/construction/source.png"
     },
     "water": {
       "file": "water.png",

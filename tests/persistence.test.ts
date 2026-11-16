@@ -74,7 +74,13 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
       w.players.a.y = 1344;
       act(w, "a", { type: "build", kind: "foundation", x: 3008 });
       const f = Object.values(w.structures)[0];
-      act(w, "a", { type: "build", kind: "door", x: 3072, foundation: f.id });
+      act(w, "a", {
+        type: "build",
+        kind: "door",
+        x: 3040,
+        y: 1312,
+        foundation: f.id,
+      });
       const d = Object.values(w.structures).find((s) => s.kind === "door")!;
       const b = w.players.b;
       b.x = 3030;

@@ -2,6 +2,10 @@ import Phaser from "phaser";
 import { Client, type Room } from "colyseus.js";
 import {
   WORLD,
+  BUILD_KINDS,
+  BUILDING,
+  snapBuildPoint,
+  structureFootprint,
   VERSION,
   ITEMS,
   PIECES,
@@ -95,7 +99,8 @@ const img = (key: string, cls = "") =>
   `<img class="${cls}" src="/assets/${key}.png" alt="">`;
 const btn = (label: string, action: Action, disabled = false) =>
   `<button class="action" data-action='${esc(JSON.stringify(action))}' ${disabled ? "disabled" : ""}>${label}</button>`;
-const nice = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+const nice = (s: string) =>
+  s === "foundation" ? "Floor" : s.replace(/\b\w/g, (c) => c.toUpperCase());
 function facing(p: Player) {
   return Math.abs(p.facingY) > Math.abs(p.facing)
     ? p.facingY < 0
@@ -153,17 +158,19 @@ function nearest() {
       type: "loot",
       hint: "Anyone can take these items",
     })),
-    ...snapshot.structures.map((s) => ({
-      ...s,
-      title: nice(s.kind) + (s.owner === self!.id ? " · Yours" : ""),
-      type: s.kind === "storage" ? "storage" : "structure",
-      hint:
-        s.kind === "foundation"
-          ? "Raid-proof foundation"
-          : s.hp <= 0
-            ? "Breached"
-            : s.hp + " HP",
-    })),
+    ...snapshot.structures
+      .filter((s) => s.kind !== "roof")
+      .map((s) => ({
+        ...s,
+        title: nice(s.kind) + (s.owner === self!.id ? " · Yours" : ""),
+        type: s.kind === "storage" ? "storage" : "structure",
+        hint:
+          s.kind === "foundation"
+            ? "Raid-proof floor"
+            : s.hp <= 0
+              ? "Breached"
+              : s.hp + " HP",
+      })),
   ];
   return candidates
     .filter((c) => distance(c, self!) < 150)
@@ -182,6 +189,7 @@ class City extends Phaser.Scene {
   lastSend = 0;
   preview!: Phaser.GameObjects.Image;
   previewText!: Phaser.GameObjects.Text;
+  buildGuides!: Phaser.GameObjects.Graphics;
   lastY = new Map<string, number>();
   constructor() {
     super("city");
@@ -461,7 +469,8 @@ class City extends Phaser.Scene {
       .setAlpha(0.65)
       .setDepth(9000)
       .setVisible(false);
-    this.previewText = this.text(0, 0, "", 12).setDepth(9001).setVisible(false);
+    this.previewText = this.text(0, 0, "", 12).setDepth(9002).setVisible(false);
+    this.buildGuides = this.add.graphics().setDepth(9000);
     for (const key of Object.keys(manifest))
       if (key.startsWith("player-") && this.textures.exists(key))
         this.makeAnimations(key);
@@ -569,18 +578,20 @@ class City extends Phaser.Scene {
         asset: appearanceKey() + "-" + facing(p),
         entity: "player",
       })),
-      ...snapshot.structures.map((s) => ({
-        ...s,
-        asset:
-          s.kind +
-          "-" +
-          (s.hp <= 0
-            ? "breached"
-            : s.hp < PIECES[s.kind].hp * 0.5
-              ? "damaged"
-              : "intact"),
-        entity: "structure",
-      })),
+      ...snapshot.structures
+        .filter((s) => s.kind !== "roof")
+        .map((s) => ({
+          ...s,
+          asset:
+            s.kind +
+            "-" +
+            (s.hp <= 0
+              ? "breached"
+              : s.hp < PIECES[s.kind].hp * 0.5
+                ? "damaged"
+                : "intact"),
+          entity: "structure",
+        })),
       ...snapshot.bags.map((b) => ({ ...b, asset: "loot", entity: "bag" })),
     ];
     const ids = new Set(entities.map((e) => e.id));
@@ -644,6 +655,7 @@ class City extends Phaser.Scene {
         s.setTexture(e.asset).setOrigin(0.5, 0.65);
         if (e.entity === "structure") {
           const visual = constructionVisual(e.kind as Kind);
+          s.setAngle(e.rotation || 0);
           s.setDisplaySize(visual.width, visual.height).setOrigin(
             visual.originX,
             visual.originY,
@@ -704,14 +716,16 @@ class City extends Phaser.Scene {
       }
     }
     const building = panel === "build" && !!self;
+    this.buildGuides.clear();
     this.preview.setVisible(building);
     this.previewText.setVisible(building);
     if (building) {
       const p = this.input.activePointer,
-        point = {
-          x: Math.round(p.worldX / 64) * 64,
-          y: Math.round(p.worldY / 64) * 64,
-        },
+        point = snapBuildPoint(
+          buildKind,
+          { x: p.worldX, y: p.worldY },
+          snapshot.structures.find((s) => s.id === foundation),
+        ),
         reason = placementReason(
           self!,
           buildKind,
@@ -719,11 +733,40 @@ class City extends Phaser.Scene {
           snapshot.structures,
           foundation,
         );
+      const guides = this.buildGuides,
+        half = BUILDING.floorSize / 2;
+      for (const floor of snapshot.structures.filter(
+        (s) => s.kind === "foundation" && s.owner === self!.id,
+      )) {
+        const selected = floor.id === foundation;
+        guides.lineStyle(
+          selected ? 2 : 1,
+          selected ? 0xd5c47d : 0x8fa68a,
+          selected ? 0.9 : 0.4,
+        );
+        guides.strokeRect(floor.x - half, floor.y - half, half * 2, half * 2);
+        guides.lineBetween(floor.x, floor.y - half, floor.x, floor.y + half);
+        guides.lineBetween(floor.x - half, floor.y, floor.x + half, floor.y);
+      }
+      const color = reason ? 0xf0917b : 0xa1d6aa;
+      const footprint = structureFootprint({ ...point, kind: buildKind });
+      guides
+        .fillStyle(color, 0.12)
+        .fillRect(footprint.x, footprint.y, footprint.width, footprint.height);
+      guides
+        .lineStyle(2, color, 0.9)
+        .strokeRect(
+          footprint.x,
+          footprint.y,
+          footprint.width,
+          footprint.height,
+        );
       const visual = constructionVisual(buildKind);
       this.preview
         .setPosition(point.x, point.y)
         .setTexture(buildKind + "-intact")
         .setDisplaySize(visual.width, visual.height)
+        .setAngle(point.rotation || 0)
         .setOrigin(visual.originX, visual.originY)
         .setTint(reason ? 0xf0917b : 0xa1d6aa);
       this.previewText
@@ -768,7 +811,9 @@ function attack(point?: Point) {
   const range = self.weapon === "pistol" ? 560 : 90;
   const targets = [
     ...snapshot.players.filter((p) => p.id !== self!.id && !p.dead),
-    ...snapshot.structures.filter((s) => s.hp > 0 && s.kind !== "foundation"),
+    ...snapshot.structures.filter(
+      (s) => s.hp > 0 && s.kind !== "foundation" && s.kind !== "roof",
+    ),
   ].filter((t) => distance(t, self!) <= range);
   targets.sort(
     (a, b) => distance(a, point || self!) - distance(b, point || self!),
@@ -880,7 +925,7 @@ function renderHud() {
   );
   const wood = (p.inventory.wood || 0) > 0;
   $("#objective").innerHTML =
-    `<span class="eyebrow">A FOOTHOLD IN THE CITY</span><b>${built ? "Make it your home" : wood ? "Lay your first foundation" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls, a door and storage." : wood ? "Find vacant ground east of the crossing." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
+    `<span class="eyebrow">A FOOTHOLD IN THE CITY</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Find vacant ground east of the crossing." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
   const near = nearest();
   $("#context").innerHTML = near
     ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
@@ -936,11 +981,11 @@ function renderPanel() {
   } else if (panel === "craft") {
     title = "Crafting";
     subtitle = "MAKE SOMETHING USEFUL";
-    html = `<div class="recipe featured-recipe">${img("bat")}<div><span class="eyebrow">HANDCRAFT / MELEE</span><h4>Wooden bat</h4><p>A simple close-range weapon. Crafted by hand.</p><span class="recipe-cost">${img("wood")} ${p.inventory.wood || 0} / 3 wood</span></div>${btn("Craft bat", { type: "craft", item: "bat" }, (p.inventory.wood || 0) < 3)}</div><h4 class="section-label">SHELTER & STORAGE</h4><div class="recipe-grid">${(Object.keys(PIECES) as Kind[]).map((k) => `<button class="recipe-card" data-open-build="${k}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood · place on valid ground</span><small>OPEN BUILD MODE ↗</small></button>`).join("")}</div>`;
+    html = `<div class="recipe featured-recipe">${img("bat")}<div><span class="eyebrow">HANDCRAFT / MELEE</span><h4>Wooden bat</h4><p>A simple close-range weapon. Crafted by hand.</p><span class="recipe-cost">${img("wood")} ${p.inventory.wood || 0} / 3 wood</span></div>${btn("Craft bat", { type: "craft", item: "bat" }, (p.inventory.wood || 0) < 3)}</div><h4 class="section-label">SHELTER & STORAGE</h4><div class="recipe-grid">${BUILD_KINDS.map((k) => `<button class="recipe-card" data-open-build="${k}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood · place on valid ground</span><small>OPEN BUILD MODE ↗</small></button>`).join("")}</div>`;
   } else if (panel === "build") {
     title = "Construction";
     subtitle = "A PLACE WORTH DEFENDING";
-    html = `<p class="panel-intro">Choose a piece, then click the world to place it. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${(Object.keys(PIECES) as Kind[]).map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof foundation" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "Claims a footprint on vacant ground. Supports your walls, doors, roof and storage." : "Must connect to one of your nearby foundations."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Attach to foundation<select id="foundation"><option value="">Select your foundation</option>${snapshot.structures
+    html = `<p class="panel-intro">Place floors first, then select a floor and snap walls and doors along its edges, with storage inside. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap along floor edges; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Build on floor<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
       .filter((s) => s.kind === "foundation" && s.owner === p.id)
       .sort((a, b) => distance(a, p) - distance(b, p))
       .map(
@@ -1086,7 +1131,11 @@ async function connect(token: string) {
     self = s.self;
     snapshot = s;
     renderHud();
-    if (!foundation) {
+    if (
+      !snapshot.structures.some(
+        (s) => s.id === foundation && s.owner === self!.id,
+      )
+    ) {
       foundation =
         snapshot.structures
           .filter((s) => s.kind === "foundation" && s.owner === self!.id)

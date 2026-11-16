@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { importConstruction } from "./import-construction.js";
 import { importWorld } from "./import-world.js";
 import { importCharacters } from "./import-characters.js";
 import { mkdir, writeFile, readdir, unlink } from "node:fs/promises";
@@ -404,6 +405,7 @@ for (const [key, body] of Object.entries({
 }))
   await asset(key, body);
 await importWorld(root, manifest);
+await importConstruction(root, manifest);
 await writeFile(
   new URL("manifest.json", root),
   JSON.stringify(

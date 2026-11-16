@@ -9,6 +9,8 @@ import {
   inRect,
   segmentRect,
   placementReason,
+  snapBuildPoint,
+  structureFootprint,
   type Point,
   type Player,
   type WorldState,
@@ -89,7 +91,7 @@ export function obstruction(
         s.id !== ignoreId &&
         s.hp > 0 &&
         (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
-        segmentRect(a, b, { x: s.x - 24, y: s.y - 24, width: 48, height: 48 }),
+        segmentRect(a, b, structureFootprint(s)),
     )
   );
 }
@@ -105,7 +107,7 @@ export function blocked(w: WorldState, p: Point) {
       (s) =>
         s.hp > 0 &&
         (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
-        inRect(p, { x: s.x - 24, y: s.y - 24, width: 48, height: 48 }, 12),
+        inRect(p, structureFootprint(s), 12),
     )
   );
 }
@@ -333,8 +335,11 @@ export function act(
       return a.sell ? "Item sold" : "Purchased " + a.item;
     }
     case "build": {
-      const x = Math.round(a.x / 64) * 64,
-        y = Math.round((a.y ?? p.y) / 64) * 64;
+      const { x, y, rotation } = snapBuildPoint(
+        a.kind,
+        { x: a.x, y: a.y ?? p.y },
+        w.structures[a.foundation || ""],
+      );
       const reason = placementReason(
         p,
         a.kind,
@@ -350,6 +355,7 @@ export function act(
       w.structures[sid] = {
         id: sid,
         kind: a.kind,
+        ...(rotation !== undefined ? { rotation } : {}),
         x,
         y,
         owner: id,
@@ -386,7 +392,7 @@ export function act(
       if (
         s.kind === "foundation" &&
         Object.values(w.structures).some(
-          (o) => o.id !== s.id && o.foundation === s.id,
+          (o) => o.id !== s.id && o.foundation === s.id && o.kind !== "roof",
         )
       )
         fail("Remove attached modules first");

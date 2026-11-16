@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 import assert from "node:assert/strict";
-import { ITEMS, PIECES } from "../shared/src/index.js";
+import { ITEMS, PIECES, BUILD_KINDS } from "../shared/src/index.js";
 const root = new URL("../../apps/client/public/assets/", import.meta.url);
 const { assets, version, view } = JSON.parse(
   await readFile(new URL("manifest.json", root), "utf8"),
@@ -73,13 +73,32 @@ const worldPack = JSON.parse(
     "utf8",
   ),
 );
-for (const sourceKey of Object.keys(worldPack.assets))
+for (const sourceKey of Object.keys(worldPack.assets).filter(
+  (key) =>
+    ![
+      "buildings-foundation",
+      "buildings-wall",
+      "buildings-door",
+      "buildings-storage-chest",
+    ].includes(key),
+))
   assert(
     Object.values(assets).some(
       (a: any) => a.source === "ai-generated" && a.sourceAsset === sourceKey,
     ),
     `Missing runtime mapping for ${sourceKey}`,
   );
+for (const kind of BUILD_KINDS)
+  for (const [row, state] of ["intact", "damaged", "breached"].entries()) {
+    const asset = assets[`${kind}-${state}`];
+    assert.equal(asset.sourceGroup, "construction");
+    assert.equal(
+      asset.sourceCell.row,
+      row,
+      "Actual AI damage-state art is required",
+    );
+    assert.deepEqual(asset.anchor, { x: 0.5, y: 0.5 });
+  }
 for (const item of Object.keys(ITEMS))
   assert.equal(assets[item].source, "ai-generated", item);
 for (const [key, a] of Object.entries(assets) as [string, any][]) {
