@@ -2100,7 +2100,7 @@ canvas {
     grid-row: 1/4;
     width: 64px;
     height: 64px;
-    background-size: 384px 512px;
+    background-size: 512px 512px;
     transform: none;
     margin: 0;
   }
