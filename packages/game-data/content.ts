@@ -1,7 +1,7 @@
 export const district = {
   id: "the-block",
   name: "The Block",
-  future: ["Downtown", "Industrial District", "The Projects", "Uptown"],
+  connected: ["Downtown", "Industrial District", "The Projects", "Uptown"],
 };
 export const skills = [
   "scavenging",
@@ -14,7 +14,7 @@ export const skills = [
   "survival",
 ];
 export const npcs = [
-  { key: "caretaker", name: "June · Shelter", x: 550, y: 510 },
-  { key: "shopkeeper", name: "Mara · Store", x: 1090, y: 650 },
-  { key: "trader", name: "Otis · Scrap", x: 1510, y: 650 },
+  { key: "caretaker", name: "June · Shelter", x: 4646, y: 4606 },
+  { key: "shopkeeper", name: "Mara · Store", x: 5186, y: 4746 },
+  { key: "trader", name: "Otis · Scrap", x: 5606, y: 4746 },
 ];

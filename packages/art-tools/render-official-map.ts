@@ -1,0 +1,104 @@
+import sharp from "sharp";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import {
+  COAST,
+  RIVER,
+  STREAM,
+  LAKES,
+  ROADS,
+  mapObjects,
+  groundKind,
+  mountainBlend,
+} from "../shared/src/terrain.js";
+import {
+  BUILDINGS,
+  MAP_SIZE,
+  LEGACY_BUILDINGS,
+  PARKING_LOTS,
+  INDUSTRIAL_YARDS,
+} from "../shared/src/official-map.js";
+const root = "apps/client/public/assets/",
+  { assets } = JSON.parse(await readFile(root + "manifest.json", "utf8"));
+const path = (ps: readonly { x: number; y: number }[]) =>
+  ps
+    .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+    .join(" ");
+const objects = [...BUILDINGS, ...mapObjects()].sort(
+  (a, b) => a.y + a.height / 2 - (b.y + b.height / 2),
+);
+const keys = new Set([
+  ...objects.map((o) => o.asset),
+  "map-tile-grass",
+  "map-tile-water",
+  "map-tile-gravel",
+  "map-tile-asphalt",
+  "map-tile-dirt",
+  "map-tile-concrete",
+]);
+let defs = "";
+for (const key of keys) {
+  const a = assets[key],
+    b64 = (await readFile(root + a.file)).toString("base64");
+  defs += `<image id="${key}" width="${a.width}" height="${a.height}" href="data:image/png;base64,${b64}"/>`;
+  if (key.startsWith("map-tile"))
+    defs += `<pattern id="pattern-${key}" width="64" height="64" patternUnits="userSpaceOnUse"><use href="#${key}"/></pattern>`;
+}
+const start = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 ${MAP_SIZE} ${MAP_SIZE}"><defs>${defs}<clipPath id="land"><path d="${path(COAST)}Z"/></clipPath></defs>`;
+let body = `<rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-water)"/><g clip-path="url(#land)"><rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-grass)"/>`;
+for (let y = 0; y < 256; y++)
+  for (let x = 0; x < 256; x++) {
+    const k = groundKind({ x: x * 64 + 32, y: y * 64 + 32 });
+    if (k === "mountain" || k === "rocky")
+      body += `<rect x="${x * 64}" y="${y * 64}" width="64" height="64" fill="url(#pattern-map-tile-gravel)" opacity="${k === "mountain" ? mountainBlend({ x: x * 64 + 32, y: y * 64 + 32 }) * 0.6 : 0.18}"/>`;
+  }
+body += `<path d="${path(COAST)}Z" fill="none" stroke="#b9bb8a" stroke-width="46"/>`;
+for (const [r, w] of [
+  [RIVER, 448],
+  [STREAM, 84],
+] as const)
+  body += `<path d="${path(r)}" fill="none" stroke="#b2b28b" stroke-width="${w + 34}"/><path d="${path(r)}" fill="none" stroke="#397c91" stroke-width="${w}"/>`;
+for (const l of LAKES)
+  body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
+for (const b of BUILDINGS)
+  body += `<rect x="${b.x - b.width / 2 - 128}" y="${b.y - b.height / 2 - 120}" width="${b.width + 256}" height="${b.height + 240}" rx="48" fill="url(#pattern-map-tile-concrete)" opacity=".55"/>`;
+for (const b of BUILDINGS)
+  body += `<rect x="${b.x - b.width / 2 - 32}" y="${b.y - b.height / 2 - 32}" width="${b.width + 64}" height="${b.height + 64}" fill="url(#pattern-map-tile-concrete)"/>`;
+for (const lot of [...PARKING_LOTS, ...INDUSTRIAL_YARDS])
+  body += `<rect x="${lot.x - lot.width / 2}" y="${lot.y - lot.height / 2}" width="${lot.width}" height="${lot.height}" rx="32" fill="url(#pattern-map-tile-${INDUSTRIAL_YARDS.includes(lot) ? "gravel" : "concrete"})"/>`;
+for (const lot of PARKING_LOTS)
+  for (let i = 0; i <= 4; i++)
+    body += `<path d="M${lot.x - 288 + i * 144} ${lot.y - 75}V${lot.y + 130}" stroke="#eee9cc" stroke-width="4"/>`;
+for (const road of ROADS)
+  body +=
+    `<path d="${path(road.points)}" fill="none" stroke="${road.width < 100 ? "#8e926c" : "#c2c3ac"}" stroke-width="${road.width + 40}"/><path d="${path(road.points)}" fill="none" stroke="url(#pattern-map-tile-${road.width < 100 ? "dirt" : "asphalt"})" stroke-width="${road.width}"/>` +
+    (road.width < 100
+      ? ""
+      : `<path d="${path(road.points)}" fill="none" stroke="#e1d6a4" stroke-width="3" stroke-dasharray="32 90"/>`);
+for (const o of objects) {
+  const tree = o.kind === "tree",
+    mountain = o.kind === "mountain",
+    w = tree ? 128 : o.width,
+    h = tree
+      ? 158
+      : mountain
+        ? o.height + 100
+        : o.height + (o.kind === "building" ? 60 : 0),
+    oy = tree ? -60 : mountain ? -50 : o.kind === "building" ? -30 : 0,
+    a = assets[o.asset];
+  body += `<use href="#${o.asset}" transform="translate(${o.x} ${o.y + oy}) rotate(${o.rotation || 0}) scale(${(o.rotation ? h : w) / a.width} ${(o.rotation ? w : h) / a.height}) translate(${-a.width / 2} ${-a.height / 2})"/>`;
+}
+for (const r of LEGACY_BUILDINGS.slice(0, 5))
+  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-tile-concrete)"/>`;
+body += "</g></svg>";
+await mkdir("work", { recursive: true });
+await writeFile("work/official-world-preview.svg", start + body);
+await sharp(Buffer.from(start + body))
+  .png()
+  .toFile("work/official-world-preview.png");
+// A close-up exposes sprite scale and walkable street spacing, without pretending to be a browser screenshot.
+const close = (start + body).replace(
+  'width="2048" height="2048" viewBox="0 0 16384 16384"',
+  'width="1536" height="1024" viewBox="6800 4500 4608 3072"',
+);
+await sharp(Buffer.from(close)).png().toFile("work/official-city-preview.png");
+console.log("Rendered actual map-model world and city previews.");

@@ -191,7 +191,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
         (p: any) => p.id !== aid,
       ) as any;
     owner.inventory = { wood: 20 };
-    raider.x = 3030;
+    raider.x = 7126;
     raider.y = 1344;
     raider.lane = "parcel";
     raider.parcel = "offline-foundation";
@@ -205,7 +205,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       "offline-foundation": {
         id: "offline-foundation",
         kind: "foundation",
-        x: 3008,
+        x: 7104,
         y: 1344,
         owner: aid,
         foundation: "offline-foundation",
@@ -217,7 +217,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       "offline-door": {
         id: "offline-door",
         kind: "door",
-        x: 3072,
+        x: 7168,
         y: 1344,
         owner: aid,
         foundation: "offline-foundation",
@@ -229,7 +229,7 @@ test("real WebSocket clients: authentication, movement, replay, chat, reconnect 
       "offline-crate": {
         id: "offline-crate",
         kind: "storage",
-        x: 3136,
+        x: 7232,
         y: 1344,
         owner: aid,
         foundation: "offline-foundation",

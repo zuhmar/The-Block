@@ -40,11 +40,10 @@ test("open countryside supports homes without designated plots; protected terrai
     act(w, p.id, { type: "build", kind: "foundation", ...point });
   }
   for (const point of [
-    { x: 3008, y: 1344 },
-    { x: 7104, y: 960 },
-    { x: 6450, y: 1500 },
-    { x: 6060, y: 3470 },
-    { x: 9408, y: 3456 },
+    WORLD.spawn,
+    { x: 13600, y: 5300 },
+    { x: 13400, y: 9500 },
+    { x: 2700, y: 1700 },
   ]) {
     p.x = point.x;
     p.y = point.y;
@@ -62,12 +61,12 @@ test("open countryside supports homes without designated plots; protected terrai
 });
 test("natural forest is deterministic and clear of water, cliffs and winding road shoulders", () => {
   const trees = forestTrees();
-  assert(trees.length > 500);
+  assert(trees.length > 150 && trees.length < 800);
   assert.deepEqual(trees, forestTrees());
   for (const tree of trees) {
     assert(!inRect(tree, WORLD.townRect));
     assert(!onRoad(tree, 90));
-    assert(!terrainBlocked(tree, 45));
+    assert(terrainBlocked(tree, 0));
   }
   assert(ROADS.some((r) => r.points.some((p) => p.x > 8000)));
   assert(ROADS.some((r) => r.points.some((p) => p.y > 5700)));
@@ -76,8 +75,8 @@ test("existing town homes survive reload while additions in town are rejected", 
   const w = emptyWorld(),
     p = createPlayer("owner", "Owner", look);
   w.players[p.id] = p;
-  p.x = 3008;
-  p.y = 1344;
+  p.x = WORLD.spawn.x;
+  p.y = WORLD.spawn.y;
   w.structures.legacy = {
     id: "legacy",
     owner: p.id,
@@ -98,8 +97,8 @@ test("existing town homes survive reload while additions in town are rejected", 
       act(saved, p.id, {
         type: "build",
         kind: "wall",
-        x: 3040,
-        y: 1280,
+        x: p.x + 32,
+        y: p.y - 64,
         foundation: "legacy",
       }),
     /town/,

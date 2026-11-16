@@ -31,10 +31,10 @@ const look = {
 test("coastline, river and lake block travel while routes and bridge crossings stay usable", () => {
   assert(COAST.length > 100);
   for (const point of [
-    { x: 9500, y: 6000 },
-    { x: 500, y: 5200 },
-    { x: 6450, y: 1500 },
-    { x: 7800, y: 3000 },
+    { x: 16370, y: 16370 },
+    { x: 30, y: 30 },
+    { x: 13400, y: 9500 },
+    { x: 7450, y: 13200 },
   ])
     assert(isWater(point), JSON.stringify(point));
   const w = emptyWorld();
@@ -78,7 +78,7 @@ test("cliffs stop movement and sight; a footprint cannot straddle the shore or r
       { x: cliff.x + cliff.width + 50, y: cliff.y + 40 },
     ),
   );
-  assert(terrainRectBlocked({ x: 6380, y: 1500, width: 128, height: 128 }));
+  assert(terrainRectBlocked({ x: 13400, y: 9500, width: 128, height: 128 }));
   p.x = cliff.x + 64;
   p.y = cliff.y + 64;
   assert.match(placementReason(p, "foundation", p, []), /cliffs/);
@@ -96,8 +96,8 @@ test("saved characters stranded beyond the new coast return to dry ground withou
   const w = emptyWorld(),
     p = createPlayer("saved", "Saved", look);
   w.players[p.id] = p;
-  p.x = 9500;
-  p.y = 6000;
+  p.x = 16370;
+  p.y = 16370;
   p.cash = 42;
   const inventory = { ...p.inventory };
   upgradeWorld(w);

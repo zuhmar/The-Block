@@ -108,16 +108,16 @@ test("placement masks, ownership, costs and foundation immunity", () => {
 });
 test("shelter edge prevents attacks from either side", () => {
   const { w, p, r } = fixture();
-  p.x = 720;
-  p.y = r.y = 560;
-  r.x = 760;
+  p.x = 4816;
+  p.y = r.y = 4656;
+  r.x = 4856;
   p.facing = 1;
   assert.throws(
     () => act(w, p.id, { type: "attack", weapon: "fists", target: r.id }),
     /Shelter/,
   );
-  p.x = 760;
-  r.x = 720;
+  p.x = 4856;
+  r.x = 4816;
   p.facing = -1;
   assert.throws(
     () => act(w, p.id, { type: "attack", weapon: "fists", target: r.id }),
@@ -216,9 +216,9 @@ test("server movement limits speed and dead characters cannot walk", () => {
 test("survival ticks, shelter recovery and interest privacy", () => {
   const { w, p, r } = fixture();
   p.health = 60;
-  p.x = 400;
-  p.y = 560;
-  r.x = 5000;
+  p.x = 4496;
+  p.y = 4656;
+  r.x = 12000;
   tick(w, 1, new Set([p.id]));
   assert(p.health > 60);
   assert(p.thirst < 100);
@@ -265,13 +265,14 @@ test("top-down walls block movement while protected roads remain open", () => {
   r.y = 1410;
   move(w, r, 1, false, false, 0.25);
   assert(r.x > 7156);
-  r.x = 7126;
-  r.y = 976;
+  r.x = 11200;
+  r.y = 5072;
   move(w, r, 1, false, false, 0.25);
-  assert(r.x > 7156);
+  assert(r.x > 11230);
   assert.throws(
-    () => act(w, r.id, { type: "build", kind: "foundation", x: 7168, y: 976 }),
-    /roads/,
+    () =>
+      act(w, r.id, { type: "build", kind: "foundation", x: 11264, y: 5072 }),
+    /town|roads/,
   );
 });
 test("diagonal speed is normalized and vertical range cannot be spoofed", () => {
@@ -288,11 +289,11 @@ test("diagonal speed is normalized and vertical range cannot be spoofed", () => 
 });
 test("safe zones use both coordinates and spawn protection expires through the exit", () => {
   const { w, p } = fixture();
-  p.x = 400;
-  p.y = 790;
+  p.x = 4496;
+  p.y = 4886;
   p.protected = true;
   move(w, p, 0, false, false, 0.2, 1);
-  assert(p.y > 800);
+  assert(p.y > 4896);
   assert(!p.protected);
 });
 test("legacy layout migration retains progress, inventory, cash and owned structures", () => {

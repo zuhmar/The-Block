@@ -15,7 +15,8 @@
     "build": "pnpm typecheck && pnpm assets:validate && pnpm --filter @street/client build",
     "verify": "pnpm lint && pnpm test && pnpm build",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "map:preview": "tsx packages/art-tools/render-official-map.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

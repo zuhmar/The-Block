@@ -135,7 +135,15 @@ app.get("/world", (_req, res) => {
     buildBudget: BUILD_BUDGET,
     lootCrateTiers: LOOT_CRATES.length,
     wildlife: "stray-dogs-v1",
-    terrain: "natural-coast-v2",
+    terrain: "official-world-v3",
+    map: {
+      width: 16384,
+      height: 16384,
+      tileSize: 64,
+      tiles: 256,
+      chunkTiles: 16,
+      districts: 5,
+    },
     openGroundBuilding: true,
     visiblePistolShots: true,
   });

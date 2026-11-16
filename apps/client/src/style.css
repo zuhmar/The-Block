@@ -1281,7 +1281,9 @@ canvas {
   line-height: 1.9;
 }
 #district-map {
-  width: 100%;
+  display: block;
+  width: min(100%, 50vh);
+  margin: 0 auto;
   height: auto;
   border: 1px solid #8e9b72;
 }
@@ -2480,5 +2482,5 @@ canvas {
 /* Preserve the expanded world proportions at every responsive map size. */
 #minimap {
   height: auto;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 1 / 1;
 }

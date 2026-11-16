@@ -23,6 +23,13 @@ export async function migrate() {
   await pool.query(
     "INSERT INTO world_layout_backups(layout,data) SELECT 1,data FROM worlds WHERE id=1 AND COALESCE((data->>'layoutVersion')::integer,1)<2 ON CONFLICT(layout) DO NOTHING",
   );
+  const mapBackup = await pool.query(
+    "INSERT INTO world_layout_backups(layout,data) SELECT 3,data FROM worlds WHERE id=1 AND COALESCE((data->>'mapVersion')::integer,0)<3 ON CONFLICT(layout) DO NOTHING RETURNING layout",
+  );
+  if (mapBackup.rowCount)
+    console.log(
+      "Saved original world as layout backup 3 before official-map migration.",
+    );
   await transaction((w) => upgradeWorld(w));
 }
 export async function transaction<T>(fn: (world: WorldState) => T): Promise<T> {

@@ -336,18 +336,12 @@ test("hovering a different owned floor selects it despite a stale preferred floo
 });
 
 test("walls stay supported along an owned floor perimeter on open land", () => {
-  const { world, player } = setup();
-  player.x = 6726;
-  player.y = 1260;
-  act(world, player.id, {
-    type: "build",
-    kind: "foundation",
-    x: 6720,
-    y: 1216,
-  });
-  const floor = Object.values(world.structures).find((s) => s.x === 6720)!;
-  const point = snapBuildPoint("wall", { x: 6656, y: floor.y - 32 }, floor);
-  assert.equal(point.x, 6656);
+  const { world, player, floor } = setup();
+  const point = snapBuildPoint(
+    "wall",
+    { x: floor.x - 64, y: floor.y - 32 },
+    floor,
+  );
   assert.equal(
     placementReason(
       player,

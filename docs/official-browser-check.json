@@ -1,0 +1,12 @@
+{
+  "actualPhaserWebGL": true,
+  "desktopViewport": "1360x900",
+  "mobileViewport": "390x844",
+  "peakLoadedChunks": 20,
+  "chunksUnloadedOnTravel": true,
+  "chunksLoadedOnTravel": true,
+  "currentChunkObjects": 75,
+  "pageErrors": [],
+  "mobilePlayerOnScreen": true,
+  "scope": "Local Chromium with software WebGL and an isolated database; responsive mobile viewport and camera zoom, not physical-device performance."
+}

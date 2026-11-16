@@ -1,0 +1,24 @@
+{
+  "worldPixels": 16384,
+  "tilePixels": 64,
+  "tiles": 65536,
+  "chunkTiles": 16,
+  "chunks": 256,
+  "districts": [
+    "The Block",
+    "Downtown",
+    "Industrial District",
+    "The Projects",
+    "Uptown"
+  ],
+  "buildings": 105,
+  "staticObjects": 1500,
+  "roads": 13,
+  "percentages": {
+    "water": 7.55,
+    "rocky": 3.11,
+    "grassland": 39.25,
+    "mountain": 15.4,
+    "city": 34.69
+  }
+}

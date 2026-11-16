@@ -1,4 +1,15 @@
-// One authored terrain model for server rules, the world renderer and the map.
+import {
+  MAP_SIZE,
+  CITY,
+  BUILDINGS,
+  MOUNTAIN_REGIONS,
+  chunkKey,
+  type MapObject,
+  LEGACY_BUILDINGS,
+  PARKS,
+  PARKING_LOTS,
+  INDUSTRIAL_YARDS,
+} from "./official-map.js";
 export interface TerrainPoint {
   x: number;
   y: number;
@@ -12,127 +23,300 @@ export interface Route {
   width: number;
   points: TerrainPoint[];
 }
+let reservations: TerrainRect[] = [];
+export function setMapReservations(rects: TerrainRect[]) {
+  if (JSON.stringify(reservations) !== JSON.stringify(rects)) {
+    reservations = rects;
+    chunkCache.clear();
+  }
+}
+export function mapReservations() {
+  return reservations;
+}
+export function mapObjectEnabled(o: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}) {
+  return !reservations.some(
+    (r) =>
+      o.x + o.width / 2 > r.x &&
+      o.x - o.width / 2 < r.x + r.width &&
+      o.y + o.height / 2 > r.y &&
+      o.y - o.height / 2 < r.y + r.height,
+  );
+}
+export function mapObstacleEnabled(r: TerrainRect) {
+  return mapObjectEnabled({
+    x: r.x + r.width / 2,
+    y: r.y + r.height / 2,
+    width: r.width,
+    height: r.height,
+  });
+}
 const pt = (pairs: number[][]) => pairs.map(([x, y]) => ({ x, y }));
 const coastControls = pt([
-  [45, 170],
-  [650, 35],
-  [1550, 80],
-  [2450, 30],
-  [3400, 110],
-  [4400, 45],
-  [5500, 100],
-  [6150, 220],
-  [6800, 80],
-  [7350, 230],
-  [7800, 120],
-  [8370, 430],
-  [8810, 310],
-  [9280, 720],
-  [9440, 1350],
-  [9220, 1840],
-  [9360, 2380],
-  [9090, 2900],
-  [9230, 3500],
-  [8830, 3880],
-  [8750, 4500],
-  [8220, 4800],
-  [8100, 5270],
-  [7540, 5390],
-  [7240, 5860],
-  [6650, 6150],
-  [6120, 5990],
-  [5500, 6210],
-  [4910, 5860],
-  [4300, 6050],
-  [3750, 5710],
-  [3100, 5950],
-  [2610, 5550],
-  [2010, 5680],
-  [1680, 5170],
-  [1110, 5090],
-  [950, 4550],
-  [450, 4370],
-  [350, 3890],
-  [80, 3520],
-  [100, 2820],
-  [35, 2250],
-  [85, 1640],
-  [35, 1070],
+  [80, 480],
+  [1500, 90],
+  [3800, 180],
+  [6200, 64],
+  [9000, 190],
+  [11800, 90],
+  [14500, 140],
+  [16180, 800],
+  [16300, 3200],
+  [16170, 5800],
+  [16260, 9000],
+  [16080, 12300],
+  [16200, 15100],
+  [15000, 16200],
+  [12400, 16120],
+  [9800, 16280],
+  [7200, 16110],
+  [4400, 16200],
+  [1800, 16080],
+  [200, 15000],
+  [90, 12000],
+  [190, 8800],
+  [70, 5800],
+  [180, 3000],
 ]);
-export const COAST = smoothPath([...coastControls, coastControls[0]], 24);
+export const COAST = smoothPath([...coastControls, coastControls[0]], 48);
+export const RIVER = smoothPath(
+  pt([
+    [13900, 0],
+    [13600, 1800],
+    [14000, 3500],
+    [13550, 4800],
+    [13400, 6500],
+    [13620, 8200],
+    [13150, 10300],
+    [13600, 12100],
+    [12900, 14100],
+    [13300, 16384],
+  ]),
+  32,
+);
+export const STREAM = smoothPath(
+  pt([
+    [2800, 800],
+    [2900, 1600],
+    [3150, 2250],
+    [3100, 2800],
+    [3650, 3300],
+    [3900, 3650],
+  ]),
+  24,
+);
+export const LAKES = [
+  pt([
+    [3700, 3400],
+    [4100, 3300],
+    [4370, 3520],
+    [4300, 3900],
+    [3950, 4080],
+    [3650, 3850],
+  ]),
+  pt([
+    [7000, 13200],
+    [7450, 12920],
+    [7900, 13100],
+    [8000, 13540],
+    [7650, 13800],
+    [7150, 13650],
+  ]),
+  pt([
+    [14500, 11000],
+    [14900, 10850],
+    [15200, 11100],
+    [15080, 11500],
+    [14700, 11600],
+    [14420, 11300],
+  ]),
+];
 export const ROUTES: Route[] = [
   {
-    name: "Coast Road",
-    width: 192,
-    points: pt([
-      [130, 976],
-      [900, 950],
-      [1750, 1060],
-      [2750, 960],
-      [3900, 1020],
-      [4950, 950],
-      [5900, 1040],
-      [6600, 980],
-      [7104, 976],
-      [7850, 1120],
-      [8600, 1030],
-      [9030, 1170],
-    ]),
-  },
-  {
-    name: "Mill Road",
+    name: "Shelter Avenue",
     width: 160,
     points: pt([
-      [140, 2160],
-      [1700, 2220],
-      [2900, 2100],
-      [4100, 2260],
-      [5300, 2080],
-      [6250, 2160],
-      [6860, 2280],
-      [7600, 2500],
-      [8500, 2630],
+      [400, 5400],
+      [1800, 5000],
+      [3100, 5050],
+      [4226, 5072],
+      [5000, 5046],
+      [5846, 5156],
+      [6846, 5056],
+      [7996, 5116],
+      [9046, 5046],
+      [9996, 5136],
+      [10696, 5076],
+      [11200, 5072],
+      [12500, 5300],
+      [13600, 5300],
+      [14900, 5500],
+      [16000, 5200],
     ]),
   },
   {
-    name: "South Pass",
-    width: 192,
+    name: "Market Avenue",
+    width: 160,
     points: pt([
-      [2496, 180],
-      [2530, 700],
-      [2470, 1400],
-      [2510, 2100],
-      [2496, 2900],
-      [2600, 3450],
-      [2940, 3910],
-      [3600, 4230],
-      [4800, 4400],
-      [5600, 4760],
-      [6060, 5380],
-      [6300, 5790],
+      [3400, 6256],
+      [4236, 6256],
+      [5796, 6316],
+      [6996, 6196],
+      [8196, 6356],
+      [9396, 6176],
+      [10346, 6256],
+      [11700, 6500],
+      [12800, 6800],
+      [13700, 6800],
+      [15700, 7200],
     ]),
   },
   {
-    name: "Woodland Loop",
+    name: "Central Road",
+    width: 176,
+    points: pt([
+      [8000, 200],
+      [7800, 1500],
+      [7200, 2900],
+      [6592, 4276],
+      [6626, 4796],
+      [6566, 5496],
+      [6606, 6196],
+      [6592, 6996],
+      [6696, 7546],
+      [7036, 8006],
+      [7696, 8326],
+      [8896, 8496],
+      [9696, 8856],
+      [10156, 9476],
+      [10396, 9886],
+      [10400, 11200],
+      [10700, 12800],
+      [10200, 14300],
+      [10600, 16100],
+    ]),
+  },
+  {
+    name: "City Loop",
     width: 144,
     points: pt([
-      [8600, 1030],
-      [8690, 1740],
-      [8500, 2630],
-      [8260, 3350],
-      [8100, 3980],
-      [7560, 4450],
-      [6670, 4670],
-      [5710, 4520],
-      [4800, 4400],
-      [3660, 4480],
-      [2900, 4630],
-      [2190, 4470],
-      [1590, 4020],
-      [1190, 3540],
-      [700, 3280],
+      [4500, 3900],
+      [6200, 3650],
+      [9000, 3650],
+      [11700, 3900],
+      [12800, 4700],
+      [12800, 7200],
+      [12700, 9800],
+      [12400, 11600],
+      [10000, 11800],
+      [7200, 11700],
+      [4200, 11200],
+      [3650, 9200],
+      [3650, 7100],
+      [3600, 4800],
+      [4500, 3900],
     ]),
   },
+  {
+    name: "Downtown Boulevard",
+    width: 144,
+    points: pt([
+      [9448, 3650],
+      [9448, 4350],
+      [9448, 4800],
+      [8896, 5072],
+      [8896, 6256],
+      [8896, 8496],
+      [8896, 10560],
+      [9200, 11800],
+    ]),
+  },
+  {
+    name: "Waterfront Drive",
+    width: 144,
+    points: pt([
+      [11700, 3900],
+      [11700, 5300],
+      [11700, 6500],
+      [11700, 8256],
+      [11800, 10560],
+      [12400, 11600],
+    ]),
+  },
+  {
+    name: "Courtyard Street",
+    width: 144,
+    points: pt([
+      [3650, 8256],
+      [5300, 8256],
+      [7036, 8006],
+      [8896, 8496],
+      [10300, 8256],
+      [11700, 8256],
+      [13300, 8500],
+      [14400, 8500],
+      [16000, 9000],
+    ]),
+  },
+  {
+    name: "Parkway",
+    width: 144,
+    points: pt([
+      [3900, 10560],
+      [6600, 10560],
+      [8896, 10560],
+      [10500, 10560],
+      [11800, 10560],
+      [13000, 10750],
+      [14200, 10800],
+    ]),
+  },
+  {
+    name: "West Trail",
+    width: 72,
+    points: pt([
+      [3650, 9200],
+      [2600, 9400],
+      [1800, 10800],
+      [2400, 12200],
+      [3400, 13000],
+    ]),
+  },
+  {
+    name: "Falls Trail",
+    width: 72,
+    points: pt([
+      [3600, 4800],
+      [3200, 4100],
+      [2700, 3500],
+      [2600, 2900],
+      [2200, 2400],
+    ]),
+  },
+];
+for (const [i, y] of [8960, 9984, 11008].entries())
+  ROUTES.push({
+    name: ["Courtyard Lane", "Garden Street", "South Terrace"][i],
+    width: 112,
+    points: pt([
+      [3900, y],
+      [6500, y + 18],
+      [8896, y],
+      [11700, y - 20],
+      [12700, y],
+    ]),
+  });
+export const CLIFFS = [
+  { x: 2600, y: 1650, width: 360, height: 130 },
+  { x: 2860, y: 2080, width: 360, height: 130 },
+  { x: 3100, y: 2600, width: 300, height: 120 },
+  { x: 14800, y: 2550, width: 380, height: 140 },
+  { x: 12100, y: 14500, width: 420, height: 150 },
+  { x: 4400, y: 14500, width: 400, height: 140 },
 ];
 export function smoothPath(points: readonly TerrainPoint[], step = 24) {
   const out: TerrainPoint[] = [];
@@ -160,41 +344,24 @@ export function smoothPath(points: readonly TerrainPoint[], step = 24) {
 }
 export const ROADS = ROUTES.map((r) => ({
   ...r,
-  points: smoothPath(r.points),
+  points: smoothPath(r.points, 32),
 }));
-export const RIVER = smoothPath(
-  pt([
-    [6480, 80],
-    [6500, 650],
-    [6450, 1300],
-    [6440, 2100],
-    [6410, 2820],
-    [6440, 3450],
-    [6500, 4200],
-    [6370, 4870],
-    [6570, 5480],
-    [6670, 6200],
-  ]),
-);
-export const LAKES = [
-  pt([
-    [7640, 2910],
-    [7830, 2760],
-    [7980, 2860],
-    [8040, 3130],
-    [7900, 3310],
-    [7680, 3210],
-    [7560, 3040],
-  ]),
-];
-export const CLIFFS = [
-  { x: 6000, y: 3420, width: 290, height: 110 },
-  { x: 5940, y: 3550, width: 260, height: 110 },
-  { x: 6000, y: 3670, width: 290, height: 115 },
-  { x: 6900, y: 5300, width: 400, height: 130 },
-  { x: 7200, y: 5180, width: 350, height: 125 },
-  { x: 7920, y: 550, width: 360, height: 120 },
-];
+// New static architecture yields to existing circulation and original service entrances.
+for (let i = BUILDINGS.length - 1; i >= 12; i--) {
+  const b = BUILDINGS[i];
+  if (
+    roadOverlapsRect(
+      {
+        x: b.x - b.width / 2,
+        y: b.y - b.height / 2,
+        width: b.width,
+        height: b.height,
+      },
+      32,
+    )
+  )
+    BUILDINGS.splice(i, 1);
+}
 const polygonCache = new WeakMap<
   readonly TerrainPoint[],
   {
@@ -288,18 +455,39 @@ export function pathNear(
   }
   return false;
 }
-export const onRoad = (p: TerrainPoint, padding = 0) =>
-  ROADS.some((r) => pathNear(p, r.points, r.width / 2 + padding));
+export function onRoad(p: TerrainPoint, padding = 0) {
+  return ROADS.some((r) => pathNear(p, r.points, r.width / 2 + padding));
+}
+export const DOCKS = [4700, 5300, 5900, 6500, 7100].map((y) => {
+  const r = RIVER.reduce((a, b) =>
+    Math.abs(a.y - y) < Math.abs(b.y - y) ? a : b,
+  );
+  return {
+    id: "dock-" + y,
+    x: r.x - 110,
+    y,
+    width: 384,
+    height: 160,
+    asset: "map-prop-0",
+    rotation: 90,
+    kind: "decoration" as const,
+  };
+});
 export const onBridge = (p: TerrainPoint) =>
-  pathNear(p, RIVER, 145) && onRoad(p, -12);
+  ((pathNear(p, RIVER, 300) || pathNear(p, STREAM, 90)) && onRoad(p, -12)) ||
+  DOCKS.some(
+    (r) =>
+      Math.abs(p.x - r.x) < r.width / 2 - 12 &&
+      Math.abs(p.y - r.y) < r.height / 2 - 12,
+  );
 export function isWater(p: TerrainPoint) {
   return (
     !pointInPolygon(p, COAST) ||
     LAKES.some((l) => pointInPolygon(p, l)) ||
-    (pathNear(p, RIVER, 74) && !onBridge(p))
+    ((pathNear(p, RIVER, 224) || pathNear(p, STREAM, 42)) && !onBridge(p))
   );
 }
-export function terrainBlocked(p: TerrainPoint, padding = 12) {
+function naturalBlocked(p: TerrainPoint, padding = 12) {
   if (isWater(p)) return true;
   if (
     !onBridge(p) &&
@@ -386,9 +574,22 @@ function pathBox(
   }
   return false;
 }
-export const roadOverlapsRect = (r: TerrainRect, padding = 32) =>
-  ROADS.some((road) => pathBox(road.points, r, road.width / 2 + padding));
+export function roadOverlapsRect(r: TerrainRect, padding = 32) {
+  return ROADS.some((road) =>
+    pathBox(road.points, r, road.width / 2 + padding),
+  );
+}
 export function terrainRectBlocked(r: TerrainRect) {
+  if (
+    reservations.some(
+      (a) =>
+        r.x >= a.x &&
+        r.y >= a.y &&
+        r.x + r.width <= a.x + a.width &&
+        r.y + r.height <= a.y + a.height,
+    )
+  )
+    return false;
   const cs = corners(r);
   if (cs.some((p) => !pointInPolygon(p, COAST)) || pathBox(COAST, r, 0, true))
     return true;
@@ -401,7 +602,7 @@ export function terrainRectBlocked(r: TerrainRect) {
     )
   )
     return true;
-  if (pathBox(RIVER, r, 74)) return true;
+  if (pathBox(RIVER, r, 224) || pathBox(STREAM, r, 42)) return true;
   return CLIFFS.some(
     (c) =>
       r.x < c.x + c.width &&
@@ -411,45 +612,470 @@ export function terrainRectBlocked(r: TerrainRect) {
   );
 }
 export const terrainObstruction = (a: TerrainPoint, b: TerrainPoint) =>
-  CLIFFS.some((r) => segmentBox(a, b, r));
-let treeCache:
-  | { x: number; y: number; variant: number; scale: number }[]
-  | undefined;
-export function forestTrees() {
-  if (treeCache) return treeCache;
-  const trees: { x: number; y: number; variant: number; scale: number }[] = [];
-  let seed = 78231;
+  CLIFFS.some((r) => segmentBox(a, b, r)) ||
+  solidObjectsNear({
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    width: Math.abs(a.x - b.x),
+    height: Math.abs(a.y - b.y),
+  }).some((o) =>
+    segmentBox(a, b, {
+      x: o.x - o.width / 2,
+      y: o.y - o.height / 2,
+      width: o.width,
+      height: o.height,
+    }),
+  );
+
+export function mountainBlend(p: TerrainPoint) {
+  if (Math.hypot(p.x - 7104, p.y - 1344) < 800) return 0;
+  let a = 0;
+  for (const r of MOUNTAIN_REGIONS) {
+    const nx = (p.x - r.x - r.width / 2) / (r.width / 2),
+      ny = (p.y - r.y - r.height / 2) / (r.height / 2);
+    a = Math.max(
+      a,
+      Math.min(
+        1,
+        Math.max(
+          0,
+          (0.82 + Math.sin(p.x / 280) * 0.09 - nx * nx - ny * ny) * 3,
+        ),
+      ),
+    );
+  }
+  return a;
+}
+export function mountainRegion(p: TerrainPoint) {
+  if (Math.hypot(p.x - 7104, p.y - 1344) < 800) return false;
+  return MOUNTAIN_REGIONS.some((r) => {
+    const nx = (p.x - r.x - r.width / 2) / (r.width / 2),
+      ny = (p.y - r.y - r.height / 2) / (r.height / 2);
+    return nx * nx + ny * ny < 0.82 + Math.sin(p.x / 280) * 0.09;
+  });
+}
+let objectsCache: MapObject[] | undefined;
+const objectBins = new Map<string, MapObject[]>();
+const insideCity = (p: TerrainPoint) =>
+  p.x >= CITY.x &&
+  p.x <= CITY.x + CITY.width &&
+  p.y >= CITY.y &&
+  p.y <= CITY.y + CITY.height;
+export function mapObjects(): MapObject[] {
+  if (objectsCache) return objectsCache;
+  const out: MapObject[] = [];
+  let seed = 82371;
   const random = () =>
     (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
-  for (let y = 96; y < 6300; y += 80)
-    for (let x = 96; x < 9500; x += 80) {
-      const p = { x: x + random() * 36 - 18, y: y + random() * 36 - 18 };
-      const clearing =
-        Math.sin(x / 540) * Math.cos(y / 390) + Math.sin((x + y) / 760);
+  // Sparse woodland: trunks roughly 200–400 pixels apart, with broad unmarked grassland.
+  for (let y = 192; y < MAP_SIZE - 160; y += 224)
+    for (let x = 192; x < MAP_SIZE - 160; x += 224) {
+      const p = { x: x + random() * 100 - 50, y: y + random() * 100 - 50 };
+      if (naturalBlocked(p, 65) || onRoad(p, 140)) continue;
+      if (insideCity(p) || Math.hypot(p.x - 7104, p.y - 1344) < 650) continue;
+      const mountain = mountainRegion(p),
+        cluster =
+          Math.sin(x / 610) * Math.cos(y / 730) + Math.sin((x + y) / 1130);
+      if (mountain) {
+        if (random() < 0.32) continue;
+        out.push({
+          id: "mountain-" + x + "-" + y,
+          ...p,
+          width: 320,
+          height: 220,
+          asset: "map-nature-" + (8 + Math.floor(random() * 4)),
+          solid: true,
+          kind: "mountain",
+        });
+      } else if (cluster > 0.05 && random() < 0.3) {
+        out.push({
+          id: "tree-" + x + "-" + y,
+          ...p,
+          width: 64,
+          height: 64,
+          asset: "map-nature-" + (random() < 0.5 ? 0 : 1),
+          solid: true,
+          kind: "tree",
+        });
+      } else if (random() < 0.12) {
+        out.push({
+          id: "rock-" + x + "-" + y,
+          ...p,
+          width: 70,
+          height: 48,
+          asset: "map-nature-" + (random() < 0.5 ? 4 : 5),
+          solid: true,
+          kind: "rock",
+        });
+      } else if (random() < 0.16)
+        out.push({
+          id: "detail-" + x + "-" + y,
+          ...p,
+          width: 54,
+          height: 40,
+          asset: "map-nature-" + [2, 3, 6, 7][Math.floor(random() * 4)],
+          kind: "decoration",
+        });
+    }
+  CLIFFS.forEach((r, i) =>
+    out.push({
+      id: "cliff-" + i,
+      x: r.x + r.width / 2,
+      y: r.y + r.height / 2,
+      width: r.width,
+      height: r.height,
+      asset: "map-nature-" + (12 + (i % 2)),
+      solid: true,
+      kind: "cliff",
+    }),
+  );
+  out.push(
+    {
+      id: "falls-nw",
+      x: 2910,
+      y: 2100,
+      width: 320,
+      height: 330,
+      asset: "map-nature-14",
+      kind: "waterfall",
+    },
+    {
+      id: "falls-stream",
+      x: 3210,
+      y: 2690,
+      width: 230,
+      height: 260,
+      asset: "map-nature-15",
+      kind: "waterfall",
+    },
+  );
+  out.push(...DOCKS);
+  for (let y = 4700; y < 7300; y += 600) {
+    out.push(
+      {
+        id: "crane-" + y,
+        x:
+          RIVER.reduce((a, b) =>
+            Math.abs(a.y - y) < Math.abs(b.y - y) ? a : b,
+          ).x - 390,
+        y,
+        width: 220,
+        height: 260,
+        asset: "map-prop-1",
+        kind: "decoration",
+      },
+      {
+        id: "cargo-" + y,
+        x: 12400,
+        y: y + 220,
+        width: 190,
+        height: 110,
+        asset: "map-prop-2",
+        solid: true,
+        kind: "rock",
+      },
+    );
+  }
+  for (const p of PARKING_LOTS)
+    for (let i = 0; i < 4; i++)
+      out.push({
+        id: "parked-car-" + p.x + "-" + i,
+        x: p.x - 216 + i * 144,
+        y: p.y + 26,
+        width: 72,
+        height: 128,
+        asset: "map-prop-6",
+        solid: true,
+        kind: "rock",
+      });
+  for (const p of INDUSTRIAL_YARDS) {
+    out.push(
+      {
+        id: "yard-tank-" + p.x,
+        x: p.x - 140,
+        y: p.y - 55,
+        width: 140,
+        height: 170,
+        asset: "map-prop-7",
+        solid: true,
+        kind: "rock",
+      },
+      {
+        id: "yard-cargo-" + p.x,
+        x: p.x + 50,
+        y: p.y + 120,
+        width: 130,
+        height: 100,
+        asset: "map-prop-8",
+        solid: true,
+        kind: "rock",
+      },
+      {
+        id: "yard-wreck-" + p.x,
+        x: p.x + 200,
+        y: p.y - 100,
+        width: 70,
+        height: 120,
+        asset: "map-prop-6",
+        solid: true,
+        kind: "rock",
+      },
+    );
+  }
+  for (const [i, p] of PARKS.entries()) {
+    out.push({
+      id: "park-fountain-" + i,
+      x: p.x,
+      y: p.y,
+      width: 150,
+      height: 140,
+      asset: "map-prop-3",
+      solid: true,
+      kind: "rock",
+    });
+    for (let j = 0; j < 14; j++) {
+      const angle = (j / 14) * Math.PI * 2,
+        q = {
+          x: p.x + Math.cos(angle) * (p.width / 2 - 55),
+          y: p.y + Math.sin(angle) * (p.height / 2 - 48),
+        };
       if (
-        (p.x <= 6400 && p.y <= 3200) ||
-        onRoad(p, 90) ||
-        terrainBlocked(p, 45) ||
-        clearing < 0.05 ||
-        Math.hypot(p.x - 7104, (p.y - 1400) * 1.6) < 550 ||
-        random() < 0.22
+        onRoad(q, 90) ||
+        BUILDINGS.some(
+          (b) =>
+            Math.abs(b.x - q.x) < b.width / 2 + 70 &&
+            Math.abs(b.y - q.y) < b.height / 2 + 70,
+        )
       )
         continue;
-      trees.push({
-        ...p,
-        variant: Math.floor(random() * 4),
-        scale: 0.8 + random() * 0.35,
+      out.push({
+        id: "park-tree-" + i + "-" + j,
+        ...q,
+        width: 64,
+        height: 64,
+        asset: "map-nature-0",
+        solid: true,
+        kind: "tree",
       });
     }
-  treeCache = trees;
-  return trees;
+    out.push({
+      id: "park-bench-" + i,
+      x: p.x - 150,
+      y: p.y + 70,
+      width: 110,
+      height: 52,
+      asset: "map-prop-5",
+      kind: "decoration",
+    });
+  }
+  for (const road of ROADS)
+    for (let i = 8; i < road.points.length; i += 18) {
+      const p = road.points[i];
+      if (!insideCity(p) || naturalBlocked(p)) continue;
+      out.push({
+        id: "lamp-" + road.name + i,
+        x: p.x + road.width / 2 + 40,
+        y: p.y + road.width / 2 + 40,
+        width: 40,
+        height: 100,
+        asset: "map-prop-4",
+        kind: "decoration",
+      });
+    }
+  for (let i = out.length - 1; i >= 0; i--) {
+    const o = out[i];
+    if (o.solid && onRoad(o, Math.hypot(o.width, o.height) / 2 + 32))
+      out.splice(i, 1);
+  }
+  objectsCache = out;
+  for (const o of out)
+    if (o.solid) {
+      const w = o.kind === "tree" ? 28 : o.width,
+        h = o.kind === "tree" ? 24 : o.height;
+      for (
+        let cy = Math.floor((o.y - h / 2) / 1024);
+        cy <= Math.floor((o.y + h / 2) / 1024);
+        cy++
+      )
+        for (
+          let cx = Math.floor((o.x - w / 2) / 1024);
+          cx <= Math.floor((o.x + w / 2) / 1024);
+          cx++
+        ) {
+          const key = cx + "," + cy,
+            list = objectBins.get(key) || [];
+          list.push({ ...o, width: w, height: h });
+          objectBins.set(key, list);
+        }
+    }
+  return out;
 }
-export function treeOverlapsRect(r: TerrainRect) {
-  return forestTrees().some(
-    (p) =>
-      p.x + 22 > r.x &&
-      p.x - 22 < r.x + r.width &&
-      p.y + 22 > r.y &&
-      p.y - 22 < r.y + r.height,
+function solidObjectsNear(r: TerrainRect) {
+  mapObjects();
+  const set = new Set<MapObject>();
+  for (
+    let y = Math.floor(r.y / 1024);
+    y <= Math.floor((r.y + r.height) / 1024);
+    y++
+  )
+    for (
+      let x = Math.floor(r.x / 1024);
+      x <= Math.floor((r.x + r.width) / 1024);
+      x++
+    )
+      for (const o of objectBins.get(x + "," + y) || []) set.add(o);
+  return [...set].filter(mapObjectEnabled);
+}
+export function terrainBlocked(p: TerrainPoint, padding = 12) {
+  if (reservations.some((r) => inBox(p, r))) return false;
+  if (naturalBlocked(p, padding)) return true;
+  return solidObjectsNear({
+    x: p.x - padding,
+    y: p.y - padding,
+    width: padding * 2,
+    height: padding * 2,
+  }).some(
+    (o) =>
+      Math.abs(o.x - p.x) <= o.width / 2 + padding &&
+      Math.abs(o.y - p.y) <= o.height / 2 + padding,
   );
+}
+export const forestTrees = () =>
+  mapObjects()
+    .filter((o) => o.kind === "tree" && !insideCity(o))
+    .map((o) => ({
+      x: o.x,
+      y: o.y,
+      variant: o.asset.endsWith("0") ? 0 : 1,
+      scale: 0.8,
+    }));
+export const treeOverlapsRect = (r: TerrainRect) =>
+  solidObjectsNear({
+    x: r.x - 160,
+    y: r.y - 160,
+    width: r.width + 320,
+    height: r.height + 320,
+  }).some((o) => {
+    const b =
+      o.kind === "tree"
+        ? { x: o.x - 64, y: o.y - 139, width: 128, height: 158 }
+        : {
+            x: o.x - o.width / 2,
+            y: o.y - o.height / 2,
+            width: o.width,
+            height: o.height,
+          };
+    return (
+      r.x < b.x + b.width &&
+      r.x + r.width > b.x &&
+      r.y < b.y + b.height &&
+      r.y + r.height > b.y
+    );
+  });
+export function groundKind(p: TerrainPoint) {
+  if (isWater(p)) return "water";
+  if (insideCity(p)) return "city";
+  if (mountainRegion(p)) return "mountain";
+  if (Math.sin(p.x / 900) + Math.cos(p.y / 730) > 1.5) return "rocky";
+  return "grassland";
+}
+export const terrainChunkObjects = (key: string) =>
+  [...BUILDINGS, ...mapObjects()].filter((o) => chunkKey(o.x, o.y) === key);
+export function tileData(tx: number, ty: number) {
+  const p = { x: tx * 64 + 32, y: ty * 64 + 32 };
+  return {
+    x: tx,
+    y: ty,
+    terrain: groundKind(p),
+    blocked:
+      terrainBlocked(p) ||
+      [
+        ...BUILDINGS.map((b) => ({
+          x: b.x - b.width / 2,
+          y: b.y - b.height / 2,
+          width: b.width,
+          height: b.height,
+        })),
+        ...LEGACY_BUILDINGS.slice(0, 5),
+      ].some((r) => inBox(p, r)),
+    buildable:
+      !insideCity(p) &&
+      !onRoad(p, 64) &&
+      !terrainRectBlocked({
+        x: p.x - 32,
+        y: p.y - 32,
+        width: 64,
+        height: 64,
+      }) &&
+      !treeOverlapsRect({ x: p.x - 32, y: p.y - 32, width: 64, height: 64 }),
+  };
+}
+
+const chunkCache = new Map<string, ReturnType<typeof tileData>[]>();
+export function mapChunk(cx: number, cy: number) {
+  if (
+    !Number.isInteger(cx) ||
+    !Number.isInteger(cy) ||
+    cx < 0 ||
+    cy < 0 ||
+    cx >= 16 ||
+    cy >= 16
+  )
+    throw Error("Invalid map chunk");
+  const key = cx + "," + cy;
+  let tiles = chunkCache.get(key);
+  if (!tiles) {
+    tiles = [];
+    for (let y = 0; y < 16; y++)
+      for (let x = 0; x < 16; x++)
+        tiles.push(tileData(cx * 16 + x, cy * 16 + y));
+    chunkCache.set(key, tiles);
+  }
+  return { cx, cy, tiles, objects: terrainChunkObjects(key) };
+}
+
+// Physical street intersections drive presentation only; no road or movement rules change.
+export function roadJunctions() {
+  const out: { x: number; y: number; angleA: number; angleB: number }[] = [];
+  for (let i = 0; i < ROADS.length; i++)
+    for (let j = i + 1; j < ROADS.length; j++) {
+      const a = ROADS[i],
+        b = ROADS[j];
+      if (a.width < 100 || b.width < 100) continue;
+      for (let u = 1; u < a.points.length; u++)
+        for (let v = 1; v < b.points.length; v++) {
+          const p = a.points[u - 1],
+            q = a.points[u],
+            r = b.points[v - 1],
+            s = b.points[v];
+          if (
+            Math.max(p.x, q.x) < Math.min(r.x, s.x) ||
+            Math.min(p.x, q.x) > Math.max(r.x, s.x) ||
+            Math.max(p.y, q.y) < Math.min(r.y, s.y) ||
+            Math.min(p.y, q.y) > Math.max(r.y, s.y)
+          )
+            continue;
+          const ax = q.x - p.x,
+            ay = q.y - p.y,
+            bx = s.x - r.x,
+            by = s.y - r.y,
+            den = ax * by - ay * bx;
+          if (Math.abs(den) < 0.01) continue;
+          const t = ((r.x - p.x) * by - (r.y - p.y) * bx) / den,
+            k = ((r.x - p.x) * ay - (r.y - p.y) * ax) / den;
+          if (t < 0 || t > 1 || k < 0 || k > 1) continue;
+          const c = {
+            x: p.x + t * ax,
+            y: p.y + t * ay,
+            angleA: Math.atan2(ay, ax),
+            angleB: Math.atan2(by, bx),
+          };
+          if (
+            insideCity(c) &&
+            !out.some((o) => Math.hypot(o.x - c.x, o.y - c.y) < 180)
+          )
+            out.push(c);
+        }
+    }
+  return out;
 }

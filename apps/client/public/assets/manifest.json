@@ -3161,6 +3161,711 @@
       "source": "ai-generated",
       "sourceGroup": "terrain",
       "sourceAsset": "cliff-sheet.png"
+    },
+    "map-building-shelter": {
+      "file": "map-building-shelter.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-store": {
+      "file": "map-building-store.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-bank": {
+      "file": "map-building-bank.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-hospital": {
+      "file": "map-building-hospital.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-police": {
+      "file": "map-building-police.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-restaurant": {
+      "file": "map-building-restaurant.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-office": {
+      "file": "map-building-office.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-premium": {
+      "file": "map-building-premium.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-warehouse": {
+      "file": "map-building-warehouse.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-factory": {
+      "file": "map-building-factory.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-abandoned": {
+      "file": "map-building-abandoned.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-apartments": {
+      "file": "map-building-apartments.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-luxury": {
+      "file": "map-building-luxury.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-house": {
+      "file": "map-building-house.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-shop": {
+      "file": "map-building-shop.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-building-workshop": {
+      "file": "map-building-workshop.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "buildings.png"
+    },
+    "map-nature-0": {
+      "file": "map-nature-0.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-1": {
+      "file": "map-nature-1.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-2": {
+      "file": "map-nature-2.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-3": {
+      "file": "map-nature-3.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-4": {
+      "file": "map-nature-4.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-5": {
+      "file": "map-nature-5.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-6": {
+      "file": "map-nature-6.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-7": {
+      "file": "map-nature-7.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-8": {
+      "file": "map-nature-8.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-9": {
+      "file": "map-nature-9.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-10": {
+      "file": "map-nature-10.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-11": {
+      "file": "map-nature-11.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-12": {
+      "file": "map-nature-12.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-13": {
+      "file": "map-nature-13.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-14": {
+      "file": "map-nature-14.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-nature-15": {
+      "file": "map-nature-15.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature.png"
+    },
+    "map-prop-0": {
+      "file": "map-prop-0.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-1": {
+      "file": "map-prop-1.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-2": {
+      "file": "map-prop-2.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-3": {
+      "file": "map-prop-3.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-4": {
+      "file": "map-prop-4.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-5": {
+      "file": "map-prop-5.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-6": {
+      "file": "map-prop-6.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-7": {
+      "file": "map-prop-7.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-prop-8": {
+      "file": "map-prop-8.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "props.png"
+    },
+    "map-tile-grass": {
+      "file": "map-tile-grass.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
+    },
+    "map-tile-dirt": {
+      "file": "map-tile-dirt.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
+    },
+    "map-tile-gravel": {
+      "file": "map-tile-gravel.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
+    },
+    "map-tile-asphalt": {
+      "file": "map-tile-asphalt.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
+    },
+    "map-tile-concrete": {
+      "file": "map-tile-concrete.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
+    },
+    "map-tile-water": {
+      "file": "map-tile-water.png",
+      "width": 64,
+      "height": 64,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "tiles.png"
     }
   }
 }

@@ -23,11 +23,11 @@ const look = {
 function setup(playerX = 1535, dogX = 1500) {
   const world = emptyWorld(),
     player = createPlayer("owner", "Owner", look);
-  player.x = playerX;
-  player.y = 1100;
+  player.x = playerX + 4096;
+  player.y = 5196;
   player.protected = false;
   world.players[player.id] = player;
-  const dog = createDog("test-dog", { x: dogX, y: 1100 });
+  const dog = createDog("test-dog", { x: dogX + 4096, y: 5196 });
   world.dogs = { [dog.id]: dog };
   world.shots = {};
   world.wildlifeVersion = 1;
@@ -51,7 +51,7 @@ test("dogs chase eligible nearby players and bite only after the wind-up, once p
   const chase = setup(1700);
   tick(chase.world, 0.25, chase.active, 1000);
   assert.equal(chase.dog.state, "chase");
-  assert(chase.dog.x > 1500);
+  assert(chase.dog.x > 5596);
   const { world, player, dog, active } = setup();
   tick(world, 0.05, active, 1000);
   assert.equal(dog.state, "attack");
@@ -81,8 +81,8 @@ test("closed doors block bites, while the Haven remains safe even during a chase
     id: "door",
     kind: "door",
     rotation: 90,
-    x: 1520,
-    y: 1100,
+    x: 5616,
+    y: 5196,
     owner: player.id,
     foundation: "floor",
     hp: 80,
@@ -96,10 +96,10 @@ test("closed doors block bites, while the Haven remains safe even during a chase
   tick(world, 0.05, active, 1250);
   assert.equal(player.health, 100);
   const haven = setup(760, 800);
-  haven.player.y = 650;
-  haven.dog.y = haven.dog.homeY = 650;
+  haven.player.y = 4746;
+  haven.dog.y = haven.dog.homeY = 4746;
   tick(haven.world, 0.05, haven.active, 1000);
-  haven.player.x = 730;
+  haven.player.x = 4826;
   for (let i = 0; i < 60; i++) {
     tick(haven.world, 0.1, haven.active, 1250 + i * 100);
     assert(!safe(haven.dog.x, haven.dog.y));
@@ -173,8 +173,8 @@ test("failed or blocked pistol attacks spend no ammunition and create no bullet 
     id: "wall",
     kind: "wall",
     rotation: 90,
-    x: 1470,
-    y: 1100,
+    x: 5566,
+    y: 5196,
     owner: player.id,
     foundation: "floor",
     hp: 100,

@@ -132,6 +132,33 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
       0,
     );
 
+    const oldMap = JSON.parse(JSON.stringify(migrated));
+    delete oldMap.mapVersion;
+    delete oldMap.mapReservations;
+    await pool.query("DELETE FROM world_layout_backups WHERE layout=3");
+    await pool.query("UPDATE worlds SET data=$1 WHERE id=1", [
+      JSON.stringify(oldMap),
+    ]);
+    await migrate();
+    await migrate();
+    const mapBackup = (
+      await pool.query("SELECT data FROM world_layout_backups WHERE layout=3")
+    ).rows;
+    assert.equal(mapBackup.length, 1);
+    assert.deepEqual(mapBackup[0].data, oldMap);
+    const newMap = await load();
+    assert.equal(newMap.mapVersion, 3);
+    assert.deepEqual(newMap.players.a.inventory, oldMap.players.a.inventory);
+    for (const [id, s] of Object.entries(oldMap.structures) as [
+      string,
+      any,
+    ][]) {
+      assert.equal(newMap.structures[id].x, s.x + 4096);
+      assert.equal(newMap.structures[id].y, (s.y ?? 1344) + 4096);
+      assert.equal(newMap.structures[id].owner, s.owner);
+      assert.deepEqual(newMap.structures[id].inventory, s.inventory);
+    }
+
     const predecessor = await pool.connect(),
       successor = await pool.connect(),
       observer = await pool.connect();

@@ -1,3 +1,4 @@
+import { CITY, MAP_SIZE, LEGACY_BUILDINGS, BUILDINGS } from "./official-map.js";
 import {
   onRoad,
   roadOverlapsRect,
@@ -17,44 +18,34 @@ export interface Rect {
   height: number;
 }
 export const WORLD = {
-  width: 9600,
-  height: 6400,
-  townRect: { x: 0, y: 0, width: 6400, height: 3200 },
-  ground: 560,
-  spawn: { x: 400, y: 560 },
-  safe: [80, 740],
-  safeRect: { x: 80, y: 400, width: 660, height: 400 },
-  store: 1090,
-  trader: 1510,
-  storePoint: { x: 1090, y: 650 },
-  traderPoint: { x: 1510, y: 650 },
-  scavenge: [1850, 2240, 2720, 3430, 4220, 5330],
+  width: MAP_SIZE,
+  height: MAP_SIZE,
+  townRect: CITY,
+  ground: 4656,
+  spawn: { x: 4496, y: 4656 },
+  safe: [4176, 4836],
+  safeRect: { x: 4176, y: 4496, width: 660, height: 400 },
+  store: 5186,
+  trader: 5606,
+  storePoint: { x: 5186, y: 4746 },
+  traderPoint: { x: 5606, y: 4746 },
+  scavenge: [5946, 6336, 6816, 7526, 8316, 9426],
   scavengePoints: [
-    { x: 1850, y: 760 },
-    { x: 2240, y: 650 },
-    { x: 2720, y: 1200 },
-    { x: 3430, y: 650 },
-    { x: 4220, y: 1900 },
-    { x: 5330, y: 1200 },
+    { x: 5946, y: 4856 },
+    { x: 6336, y: 4746 },
+    { x: 6816, y: 5296 },
+    { x: 7526, y: 4746 },
+    { x: 8316, y: 5996 },
+    { x: 9426, y: 5296 },
   ],
   obstacles: [
-    { x: 80, y: 376, width: 660, height: 24 },
-    { x: 80, y: 376, width: 24, height: 424 },
-    { x: 716, y: 376, width: 24, height: 424 },
-    { x: 80, y: 776, width: 220, height: 24 },
-    { x: 520, y: 776, width: 220, height: 24 },
-    { x: 928, y: 352, width: 320, height: 224 },
-    { x: 1408, y: 352, width: 288, height: 224 },
-    { x: 1800, y: 240, width: 384, height: 288 },
-    { x: 2848, y: 256, width: 448, height: 320 },
-    { x: 3520, y: 288, width: 448, height: 288 },
-    { x: 4704, y: 320, width: 544, height: 320 },
-    { x: 5456, y: 272, width: 512, height: 320 },
-    { x: 512, y: 1280, width: 480, height: 416 },
-    { x: 1216, y: 1312, width: 480, height: 352 },
-    { x: 1792, y: 1440, width: 352, height: 352 },
-    { x: 3136, y: 2464, width: 544, height: 352 },
-    { x: 4224, y: 2464, width: 544, height: 352 },
+    ...LEGACY_BUILDINGS.slice(0, 5),
+    ...BUILDINGS.map((b) => ({
+      x: b.x - b.width / 2,
+      y: b.y - b.height / 2,
+      width: b.width,
+      height: b.height,
+    })),
   ],
   grid: 64,
 } as const;
@@ -423,6 +414,8 @@ export interface WorldState {
   clock: number;
   actions: Record<string, { at: number; result: string }>;
   layoutVersion?: number;
+  mapVersion?: number;
+  mapReservations?: Rect[];
 }
 export function canCarry(inv: Inventory, item: Item, n = 1) {
   const next = { ...inv, [item]: (inv[item] || 0) + n };
@@ -471,7 +464,7 @@ export function placementReason(
   if (terrainRectBlocked(footprint))
     return "Cannot build in water or on cliffs. Find open ground.";
   if (treeOverlapsRect(footprint))
-    return "Trees block this space. Find open ground.";
+    return "Trees or rocks block this space. Find open ground.";
   if (WORLD.obstacles.some((r) => rectsOverlap(footprint, r)))
     return "Public buildings cannot be claimed";
   if (

@@ -1,6 +1,9 @@
+import { MAP_VERSION } from "../../../packages/shared/src/official-map.js";
 import {
   terrainBlocked,
   terrainObstruction,
+  setMapReservations,
+  mapObstacleEnabled,
 } from "../../../packages/shared/src/terrain.js";
 import { randomUUID } from "node:crypto";
 import {
@@ -39,6 +42,7 @@ export const emptyWorld = (): WorldState => ({
   clock: 0,
   actions: {},
   layoutVersion: 2,
+  mapVersion: MAP_VERSION,
 });
 export function createPlayer(
   id: string,
@@ -96,7 +100,9 @@ export function obstruction(
 ) {
   return (
     terrainObstruction(a, b) ||
-    WORLD.obstacles.some((r) => segmentRect(a, b, r)) ||
+    WORLD.obstacles.some(
+      (r) => mapObstacleEnabled(r) && segmentRect(a, b, r),
+    ) ||
     Object.values(w.structures).some(
       (s) =>
         s.id !== ignoreId &&
@@ -114,7 +120,7 @@ function access(w: WorldState, p: Player, s: Structure) {
 export function blocked(w: WorldState, p: Point) {
   return (
     terrainBlocked(p) ||
-    WORLD.obstacles.some((r) => inRect(p, r, 12)) ||
+    WORLD.obstacles.some((r) => mapObstacleEnabled(r) && inRect(p, r, 12)) ||
     Object.values(w.structures).some(
       (s) =>
         s.hp > 0 &&
@@ -124,6 +130,63 @@ export function blocked(w: WorldState, p: Point) {
   );
 }
 export function upgradeWorld(w: WorldState) {
+  if ((w.mapVersion || 0) < MAP_VERSION) {
+    // Rigid, grid-aligned translation preserves every house and relative position.
+    for (const p of Object.values(w.players)) {
+      p.x += 4096;
+      p.y = (p.y ?? (p.lane === "parcel" ? 1344 : 560)) + 4096;
+    }
+    for (const s of Object.values(w.structures)) {
+      s.x += 4096;
+      s.y = (s.y ?? 1344) + 4096;
+    }
+    for (const b of Object.values(w.bags)) {
+      b.x += 4096;
+      b.y = (b.y ?? 560) + 4096;
+    }
+    for (const d of Object.values(w.dogs || {})) {
+      d.x += 4096;
+      d.y += 4096;
+      d.homeX += 4096;
+      d.homeY += 4096;
+      d.goalX += 4096;
+      d.goalY += 4096;
+    }
+    for (const shot of Object.values(w.shots || {})) {
+      shot.from.x += 4096;
+      shot.from.y += 4096;
+      shot.to.x += 4096;
+      shot.to.y += 4096;
+    }
+    w.mapReservations = Object.values(w.structures)
+      .filter((s) => s.kind === "foundation")
+      .map((s) => ({ x: s.x - 128, y: s.y - 128, width: 256, height: 256 }));
+    // Adjacent legacy floors become a single map reservation, keeping snapshots small.
+    const merged = w.mapReservations;
+    for (let i = 0; i < merged.length; i++)
+      for (let j = i + 1; j < merged.length; j++) {
+        const a = merged[i],
+          b = merged[j];
+        if (
+          a.x <= b.x + b.width &&
+          a.x + a.width >= b.x &&
+          a.y <= b.y + b.height &&
+          a.y + a.height >= b.y
+        ) {
+          const right = Math.max(a.x + a.width, b.x + b.width),
+            bottom = Math.max(a.y + a.height, b.y + b.height);
+          a.x = Math.min(a.x, b.x);
+          a.y = Math.min(a.y, b.y);
+          a.width = right - a.x;
+          a.height = bottom - a.y;
+          merged.splice(j, 1);
+          i = -1;
+          break;
+        }
+      }
+    w.mapVersion = MAP_VERSION;
+  }
+  setMapReservations(w.mapReservations || []);
   w.layoutVersion = 2;
   w.actions ||= {};
   w.shots ||= {};
@@ -595,6 +658,7 @@ export function visible(w: WorldState, id: string, online: Set<string>) {
         hurtUntil: d.hurtUntil,
         respawnAt: d.respawnAt,
       })),
+    mapReservations: w.mapReservations || [],
     shots: Object.values(w.shots || {}).filter(
       (s) => distance(s.from, p) < 1400 || distance(s.to, p) < 1400,
     ),

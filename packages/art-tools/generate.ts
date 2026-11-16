@@ -1,3 +1,4 @@
+import { importOfficialMap } from "./import-official-map.js";
 import { importTerrain } from "./import-terrain.js";
 import sharp from "sharp";
 import { importWildlife } from "./import-wildlife.js";
@@ -412,6 +413,7 @@ await importConstruction(root, manifest);
 await importLootCrates(root, manifest);
 await importWildlife(root, manifest);
 await importTerrain(root, manifest);
+await importOfficialMap(root, manifest);
 await writeFile(
   new URL("manifest.json", root),
   JSON.stringify(

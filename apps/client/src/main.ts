@@ -1,12 +1,7 @@
+import { DISTRICTS } from "../../../packages/shared/src/official-map";
+import { setMapReservations } from "../../../packages/shared/src/terrain";
+import { MapWorld } from "./map-world";
 import { cartographySVG } from "../../../packages/game-data/cartography";
-import {
-  COAST,
-  RIVER,
-  LAKES,
-  CLIFFS,
-  ROADS,
-  onRoad,
-} from "../../../packages/shared/src/terrain";
 import Phaser from "phaser";
 import { Client, type Room } from "colyseus.js";
 import {
@@ -32,8 +27,6 @@ import {
   type Item,
   type Point,
 } from "../../../packages/shared/src/index";
-import { forestTrees } from "../../../packages/game-data/forest";
-const woodlandTrees = forestTrees();
 
 import { DOG_RULES } from "../../../packages/game-data/wildlife";
 import { lootCrateAt } from "../../../packages/game-data/loot-crates";
@@ -63,7 +56,7 @@ app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down 
   )
   .join(
     "",
-  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="133"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><p class="character-style">Your survivor is a black stick figure. Make your name on the block.</p><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with 10,000 wood, $10, water and a snack.<br>Practice building. Wood uses no carry weight or carrying slot.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
+  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="200"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><p class="character-style">Your survivor is a black stick figure. Make your name on the block.</p><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with 10,000 wood, $10, water and a snack.<br>Practice building. Wood uses no carry weight or carrying slot.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
 const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
 let room: Room | undefined,
   seq = 0,
@@ -76,6 +69,7 @@ let snapshot: {
   dogs?: DogView[];
   shots?: ShotVisual[];
   clock: number;
+  mapReservations?: { x: number; y: number; width: number; height: number }[];
 } = { players: [], structures: [], bags: [], clock: 0 };
 let manifest: Record<string, any> = {},
   panel = "",
@@ -220,6 +214,8 @@ class City extends Phaser.Scene {
   lastHealth = new Map<string, number>();
   hurtUntil = new Map<string, number>();
   staticBuilt = false;
+  mapWorld?: MapWorld;
+  private cameraPlayer?: string;
   lastSend = 0;
   preview!: Phaser.GameObjects.Image;
   previewText!: Phaser.GameObjects.Text;
@@ -303,193 +299,10 @@ class City extends Phaser.Scene {
   }
   drawWorld() {
     this.staticBuilt = true;
-    this.lootGuides = this.add.graphics().setDepth(8500);
-    const random = new Phaser.Math.RandomDataGenerator([
-      "street-survival-the-block-v2",
-    ]);
-    this.add
-      .rectangle(
-        WORLD.width / 2,
-        WORLD.height / 2,
-        WORLD.width,
-        WORLD.height,
-        0x315f73,
-      )
-      .setDepth(-11000);
-    const grass = this.add
-      .tileSprite(
-        WORLD.width / 2,
-        WORLD.height / 2,
-        WORLD.width,
-        WORLD.height,
-        "td-grass",
-      )
-      .setDepth(-10000);
-    const landMask = this.make.graphics({ x: 0, y: 0 }, false);
-    landMask.fillStyle(0xffffff).fillPoints(COAST, true);
-    grass.setMask(landMask.createGeometryMask());
-    const groundDetail = this.add.graphics().setDepth(-9900);
-    groundDetail.setMask(landMask.createGeometryMask());
-    // Soft terrain variation breaks up the repeating grass without marking house plots.
-    for (let i = 0; i < 750; i++) {
-      const x = random.integerInRange(80, WORLD.width - 80),
-        y = random.integerInRange(80, WORLD.height - 80);
-      groundDetail
-        .fillStyle(i % 3 === 0 ? 0xb0a576 : 0x536e49, 0.045)
-        .fillEllipse(
-          x,
-          y,
-          random.integerInRange(90, 420),
-          random.integerInRange(60, 220),
-        );
-    }
-    const shores = this.add.graphics().setDepth(-9800);
-    shores.lineStyle(148, 0x659b9c, 0.18).strokePoints(COAST, true);
-    shores.lineStyle(92, 0x88b4ac, 0.24).strokePoints(COAST, true);
-    shores.lineStyle(54, 0xacc4ad, 0.3).strokePoints(COAST, true);
-    shores.lineStyle(36, 0xc1b48a, 1).strokePoints(COAST, true);
-    shores.lineStyle(8, 0x7ba8a8, 0.8).strokePoints(COAST, true);
-    for (const lake of LAKES) {
-      shores.fillStyle(0x3f7784).fillPoints(lake, true);
-      shores.lineStyle(22, 0xb5b28a).strokePoints(lake, true);
-      shores.lineStyle(5, 0x8dbbb5).strokePoints(lake, true);
-    }
-    shores.lineStyle(180, 0xb5b28a).strokePoints(RIVER, false);
-    shores.lineStyle(148, 0x3f7784).strokePoints(RIVER, false);
-    shores.lineStyle(116, 0x447f8c, 0.7).strokePoints(RIVER, false);
-    // Small current marks keep the water readable without obscuring the coastline.
-    for (let i = 4; i < RIVER.length; i += 12) {
-      const p = RIVER[i];
-      shores
-        .lineStyle(3, 0x9bc9c7, 0.5)
-        .lineBetween(p.x - 18, p.y, p.x + 16, p.y - 4);
-    }
-    for (const tree of woodlandTrees)
-      this.add
-        .image(tree.x, tree.y, "td-tree-" + tree.variant)
-        .setOrigin(0.5, 0.83)
-        .setScale(tree.scale)
-        .setDepth(tree.y);
-    this.text(6170, 1150, "TOWN LIMIT · EAST WOODLAND →", 14, "#e2dcc5");
-    this.text(2780, 3160, "TOWN LIMIT · SOUTH WOODLAND ↓", 14, "#e2dcc5");
-    const roads = this.add.graphics().setDepth(-7800);
-    for (const road of ROADS) {
-      roads
-        .lineStyle(road.width + 56, 0xaaa58b)
-        .strokePoints(road.points, false);
-      roads.lineStyle(road.width, 0x505b5b).strokePoints(road.points, false);
-      roads.lineStyle(3, 0xc8c299, 0.8);
-      for (let i = 2; i < road.points.length - 2; i += 6)
-        roads.strokePoints(road.points.slice(i, i + 3), false);
-      // Timber bridge decks sit where a route crosses the river.
-      for (let i = 1; i < road.points.length; i++) {
-        const p = road.points[i];
-        if (
-          Math.abs(p.x - 6450) < 150 &&
-          RIVER.some((r) => Math.hypot(r.x - p.x, r.y - p.y) < 115)
-        ) {
-          const prev = road.points[i - 1],
-            angle = Math.atan2(p.y - prev.y, p.x - prev.x),
-            dx = Math.cos(angle + Math.PI / 2) * (road.width / 2 - 8),
-            dy = Math.sin(angle + Math.PI / 2) * (road.width / 2 - 8);
-          roads
-            .lineStyle(10, 0x9e8665)
-            .lineBetween(p.x - dx, p.y - dy, p.x + dx, p.y + dy);
-        }
-      }
-    }
-    for (const [i, r] of CLIFFS.entries())
-      this.add
-        .image(
-          r.x + r.width / 2,
-          r.y + r.height / 2,
-          "terrain-cliff-" + (i % 4),
-        )
-        .setDisplaySize(r.width + 20, r.height + 20)
-        .setDepth(r.y + r.height);
-    this.add.tileSprite(410, 590, 660, 400, "td-floor").setDepth(-7000);
-    this.add.tileSprite(1270, 675, 1020, 180, "td-concrete").setDepth(-7000);
-    this.add.tileSprite(1930, 675, 450, 180, "td-dirt").setDepth(-6900);
-    const safeOutline = this.add.graphics().setDepth(-6500);
-    safeOutline.lineStyle(3, 0xa6c185, 0.65);
-    safeOutline.strokeRoundedRect(83, 403, 654, 394, 8);
-    WORLD.obstacles.forEach((r, i) => {
-      if (i < 5) {
-        this.add
-          .tileSprite(
-            r.x + r.width / 2,
-            r.y + r.height / 2,
-            r.width,
-            r.height + 8,
-            "td-concrete",
-          )
-          .setTint(0xc4cbb6)
-          .setDepth(r.y + r.height);
-      } else {
-        this.add
-          .image(
-            r.x + r.width / 2,
-            r.y + r.height,
-            "td-building-" + (i === 5 ? 1 : i === 6 ? 2 : i % 4),
-          )
-          .setOrigin(0.5, 0.91)
-          .setDisplaySize(r.width + 22, r.height + 60)
-          .setDepth(r.y + r.height);
-      }
-    });
-    for (const x of [160, 270, 590])
-      this.add
-        .image(x, 452, "td-bed")
-        .setOrigin(0.5, 0.8)
-        .setScale(0.6)
-        .setDepth(470);
-    this.add
-      .image(148, 680, "td-bench")
-      .setOrigin(0.5, 0.8)
-      .setScale(0.65)
-      .setDepth(680);
-    this.add
-      .image(650, 660, "td-bench")
-      .setOrigin(0.5, 0.8)
-      .setScale(0.65)
-      .setDepth(660);
-    this.text(410, 360, "THE HAVEN · PUBLIC SHELTER", 15, "#d2d9b8").setDepth(
-      1000,
-    );
-    this.text(1090, 342, "CORNER MART", 13).setDepth(1000);
-    this.text(1550, 342, "SCRAP EXCHANGE", 13).setDepth(1000);
-    for (let i = 0; i < 150; i++) {
-      const p = {
-        x: random.integerInRange(40, 6350),
-        y: random.integerInRange(80, 3100),
-      };
-      if (
-        onRoad(p, 65) ||
-        WORLD.obstacles.some(
-          (r) =>
-            p.x > r.x - 100 &&
-            p.x < r.x + r.width + 100 &&
-            p.y > r.y - 100 &&
-            p.y < r.y + r.height + 100,
-        ) ||
-        safe(p.x, p.y) ||
-        (p.x < 1800 && p.y < 840)
-      )
-        continue;
-      const tree = i % 3 !== 0,
-        key = tree ? "td-tree-" + (i % 4) : i % 2 ? "td-bush" : "td-rubble";
-      this.add
-        .image(p.x, p.y, key)
-        .setOrigin(0.5, tree ? 0.83 : 0.8)
-        .setScale(tree ? random.realInRange(0.65, 0.95) : 0.5)
-        .setDepth(p.y);
-    }
-    for (let x = 170; x < 6400; x += 620)
-      this.add
-        .image(x, 830, "td-streetlamp")
-        .setOrigin(0.5, 0.83)
-        .setScale(0.75)
-        .setDepth(830);
+    this.lootGuides = this.add.graphics().setDepth(WORLD.height + 1000);
+    this.mapWorld = new MapWorld(this);
+    this.mapWorld.update(this.cameras.main.worldView);
+    this.events.once("shutdown", () => this.mapWorld?.destroy());
     for (const [i, p] of WORLD.scavengePoints.entries()) {
       const crate = lootCrateAt(i),
         visual = lootVisualSize(i);
@@ -505,39 +318,13 @@ class City extends Phaser.Scene {
         i,
         this.text(p.x, p.y - visual.height / 2 - 12, "", 10, crate.color)
           .setPadding(5, 3)
-          .setDepth(8501),
+          .setDepth(WORLD.height + 1001),
       );
       this.add
         .image(p.x + 62, p.y - 10, "td-pallet")
         .setOrigin(0.5, 0.8)
         .setScale(0.55)
         .setDepth(p.y - 10);
-    }
-    for (const p of [
-      { x: 800, y: 830 },
-      { x: 2010, y: 1120 },
-      { x: 3810, y: 1980 },
-    ])
-      this.add
-        .image(p.x, p.y, "vehicle")
-        .setOrigin(0.5, 0.75)
-        .setScale(0.55)
-        .setDepth(p.y);
-    // Decorative AI props stay outside roads, build parcels and interaction points.
-    for (const p of [
-      { key: "td-boxes", x: 1750, y: 660, scale: 0.6 },
-      { key: "td-barricade", x: 2670, y: 790, scale: 0.65 },
-      { key: "td-tires", x: 2100, y: 700, scale: 0.55 },
-      { key: "td-shopping-cart", x: 1980, y: 690, scale: 0.65 },
-      { key: "td-water-barrel", x: 1740, y: 745, scale: 0.55 },
-      { key: "td-fence", x: 2050, y: 570, scale: 0.8 },
-      { key: "td-campfire", x: 655, y: 735, scale: 0.4 },
-    ]) {
-      this.add
-        .image(p.x, p.y, p.key)
-        .setOrigin(0.5, 0.8)
-        .setScale(p.scale)
-        .setDepth(p.y);
     }
     for (const n of npcs) {
       this.add
@@ -551,15 +338,17 @@ class City extends Phaser.Scene {
       .image(0, 0, "foundation-intact")
       .setOrigin(0.5, 0.5)
       .setAlpha(0.65)
-      .setDepth(9000)
+      .setDepth(WORLD.height + 2000)
       .setVisible(false);
-    this.previewText = this.text(0, 0, "", 12).setDepth(9002).setVisible(false);
-    this.buildGuides = this.add.graphics().setDepth(9000);
+    this.previewText = this.text(0, 0, "", 12)
+      .setDepth(WORLD.height + 2002)
+      .setVisible(false);
+    this.buildGuides = this.add.graphics().setDepth(WORLD.height + 2000);
     for (const key of Object.keys(manifest))
       if (manifest[key].animations && this.textures.exists(key))
         this.makeAnimations(key);
     this.cameras.main.setZoom(this.scale.width < 700 ? 0.84 : 1.03);
-    this.cameras.main.centerOn(680, 640);
+    this.cameras.main.centerOn(WORLD.spawn.x, WORLD.spawn.y);
   }
   makeAnimations(key: string) {
     for (const [name, a] of Object.entries(manifest[key].animations) as [
@@ -693,6 +482,8 @@ class City extends Phaser.Scene {
   }
   update(time: number, delta: number) {
     if (!this.staticBuilt) return;
+    this.mapWorld?.setReservations(snapshot.mapReservations || []);
+    this.mapWorld?.update(this.cameras.main.worldView);
     const typing = ["INPUT", "SELECT", "TEXTAREA"].includes(
       document.activeElement?.tagName || "",
     );
@@ -747,6 +538,10 @@ class City extends Phaser.Scene {
         this.lastSend = time;
       }
       const cam = this.cameras.main;
+      if (this.cameraPlayer !== self.id) {
+        cam.centerOn(self.x, self.y);
+        this.cameraPlayer = self.id;
+      }
       cam.scrollX = Phaser.Math.Linear(
         cam.scrollX,
         self.x - cam.width / 2,
@@ -1093,14 +888,21 @@ function attack(point?: Point) {
   send({ type: "attack", target: target.id, weapon: self.weapon });
 }
 const mapBases = new Map<string, HTMLImageElement>();
-function mapBase(width: number, height: number) {
-  const key = width + "x" + height;
+function mapBase(width: number, height: number, logicalWidth: number) {
+  setMapReservations(snapshot.mapReservations || []);
+  const key =
+    width +
+    "x" +
+    height +
+    "@" +
+    logicalWidth +
+    JSON.stringify(snapshot.mapReservations || []);
   let img = mapBases.get(key);
   if (!img) {
     img = new Image();
     img.src =
       "data:image/svg+xml;charset=utf-8," +
-      encodeURIComponent(cartographySVG(width, height));
+      encodeURIComponent(cartographySVG(width, height, logicalWidth));
     img.onload = () => {
       if (snapshot) {
         drawMap($("#minimap") as HTMLCanvasElement);
@@ -1114,10 +916,18 @@ function mapBase(width: number, height: number) {
   return img;
 }
 function drawMap(canvas: HTMLCanvasElement) {
+  const logicalWidth = canvas.clientWidth || canvas.width,
+    pixels = Math.round(
+      logicalWidth * Math.min(window.devicePixelRatio || 1, 2),
+    );
+  if (canvas.width !== pixels || canvas.height !== pixels) {
+    canvas.width = pixels;
+    canvas.height = pixels;
+  }
   const ctx = canvas.getContext("2d")!;
   const sx = canvas.width / WORLD.width,
     sy = canvas.height / WORLD.height;
-  const base = mapBase(canvas.width, canvas.height);
+  const base = mapBase(canvas.width, canvas.height, logicalWidth);
   if (!base.complete || !base.naturalWidth) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
@@ -1178,7 +988,7 @@ function renderHud() {
   $("#connection").innerHTML =
     `<i class="live"></i><span>CONNECTED · ${snapshot.players.length} NEARBY</span><button data-ui="logout" title="Sign out">EXIT</button>`;
   $("#world-status").innerHTML =
-    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : inRect(p, WORLD.townRect) ? 'THE BLOCK <b class="danger">TOWN · NO BUILDING</b>' : 'WOODLAND <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`;
+    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : inRect(p, WORLD.townRect) ? `${DISTRICTS.find((d) => inRect(p, d))?.name.toUpperCase() || "CITY OUTSKIRTS"} <b class="danger">TOWN · NO BUILDING</b>` : 'WOODLAND <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`;
   $("#vitals").innerHTML =
     `<div class="player-name"><b>${esc(p.name)}</b><span>${p.weapon === "fists" ? "UNARMED" : nice(p.weapon)}${p.weapon === "pistol" ? " · " + p.ammo + "/6" : ""}</span></div>${meter("HEALTH", p.health, "#b95b4d")}${meter("ENERGY", p.energy, "#c6a858")}`;
   $("#needs").innerHTML =
@@ -1209,7 +1019,7 @@ function renderHud() {
   );
   const wood = (p.inventory.wood || 0) > 0;
   $("#objective").innerHTML =
-    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow the roads east or south out of town. Find open ground for your home." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
+    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow a road beyond city limits. Find open ground for your home." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
   const near = nearest();
   $("#context").innerHTML = near
     ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
@@ -1320,9 +1130,9 @@ function renderPanel() {
         "",
       )}</ol><div class="field-notes"><h4>Know the rules</h4><p>Eat and drink before your supplies run dry. The Haven protects everyone inside. Outside, combat is open. Death drops all carried gear and cash immediately. Your skills, bank and buildings remain. Walls and doors protect a base only while they stand.</p></div>`;
   } else if (panel === "map") {
-    title = "The Block";
-    subtitle = "DISTRICT 01 / SHARED CITY";
-    html = `<canvas id="district-map" width="760" height="507"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Open ground outside town</span><span>Dark green · Forest · Blue · Water · Grey · Cliffs</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Follow the winding roads and bridges out of town. Build anywhere on open land outside town; roads, water, cliffs and trees must stay clear.</p>`;
+    title = "World Map";
+    subtitle = "STREET SURVIVAL / FIVE DISTRICTS";
+    html = `<canvas id="district-map" width="760" height="760"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Open ground outside town</span><span>Dark green · Forest · Blue · Water · Grey · Cliffs</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Follow the winding roads and bridges out of town. Build anywhere on open land outside town; roads, water, cliffs and trees must stay clear.</p>`;
   } else if (panel === "chat") {
     title = "Neighborhood chat";
     subtitle = "THE BLOCK / LIVE";
