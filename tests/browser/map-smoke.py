@@ -61,7 +61,7 @@ with sync_playwright() as runner:
     page.evaluate("""() => {const scene=window.__mapSmoke.instance.scene;scene.__qaFrame=()=>{scene.cameras.main.setZoom(.65).centerOn(8200,6100);};scene.events.on("postupdate",scene.__qaFrame);}""")
     page.wait_for_timeout(7000)
     page.screenshot(path=str(out / 'polished-downtown.png'))
-    page.evaluate("""() => {const s=window.__mapSmoke.instance.scene;s.events.off("postupdate",s.__qaFrame);s.cameras.main.setZoom(1.03);}""")
+    page.evaluate("""() => {const s=window.__mapSmoke.instance.scene;s.events.off("postupdate",s.__qaFrame);s.cameras.main.setZoom(1);}""")
     page.locator('#minimap-button').click()
     page.locator('#district-map').wait_for(state='visible')
     page.wait_for_timeout(600)
@@ -69,7 +69,7 @@ with sync_playwright() as runner:
     print('Desktop map and chunk travel passed:',final)
     context.close()
     print('Starting fresh mobile browser context')
-    mobile=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
+    mobile=browser.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True)
     phone=mobile.new_page()
     phone.on('pageerror',lambda error:errors.append(str(error)))
     phone.add_locator_handler(phone.locator('#death'), lambda: phone.locator('#respawn').click())
@@ -86,8 +86,13 @@ with sync_playwright() as runner:
         phone.locator('#respawn').click()
         phone.locator('#death').wait_for(state='hidden')
         phone.wait_for_timeout(600)
-    point=phone.evaluate('''()=>{const s=window.__phoneMap.scene,actor=[...s.sprites.values()].find(p=>p.texture.key.startsWith('player-stick')),cam=s.cameras.main;const p=cam.matrix.transformPoint(actor.x-cam.scrollX,actor.y-cam.scrollY);return {x:p.x,y:p.y};}''')
+    point=phone.evaluate('''()=>{const s=window.__phoneMap.scene,actor=[...s.sprites.values()].find(p=>p.texture.key.startsWith('player-stick')),cam=s.cameras.main;const p=cam.matrix.transformPoint(actor.x-cam.scrollX,actor.y-cam.scrollY);const ratio=s.game.canvas.getBoundingClientRect().width/s.game.canvas.width;return {x:p.x*ratio,y:p.y*ratio};}''')
     assert 0<point['x']<390 and 0<point['y']<844,point
+    density=phone.evaluate("""()=>{const s=window.__phoneMap.scene,c=s.game.canvas,b=c.getBoundingClientRect();return {width:c.width,height:c.height,cssWidth:b.width,cssHeight:b.height,zoom:s.cameras.main.zoom,smoothing:s.game.config.antialias,chunkWidth:s.textures.get([...window.__phoneMap.chunks.values()][0].texture).getSourceImage().width};}""")
+    assert density['width']==780 and density['height']==1688,density
+    assert abs(density['cssWidth']-390)<1 and abs(density['cssHeight']-844)<1,density
+    assert density['chunkWidth']==2052,density
+    assert density['smoothing'], 'Glossy art must retain smooth edges'
     phone.screenshot(path=str(out/'official-mobile-world.png'))
     print('Mobile world captured')
     phone.locator('#minimap-button').click()
@@ -96,7 +101,7 @@ with sync_playwright() as runner:
     phone.screenshot(path=str(out/'official-mobile-map.png'))
     print('Mobile map captured')
     assert not errors, errors
-    result = {'actualPhaserWebGL': True, 'desktopViewport': '1360x900', 'mobileViewport': '390x844', 'peakLoadedChunks': final['peak'], 'chunksUnloadedOnTravel': True, 'chunksLoadedOnTravel': True, 'currentChunkObjects': final['objects'], 'pageErrors': errors, 'mobilePlayerOnScreen': True, 'scope': 'Local Chromium with software WebGL and an isolated database; responsive mobile viewport and camera zoom, not physical-device performance.'}
+    result = {'actualPhaserWebGL': True, 'desktopViewport': '1360x900', 'mobileViewport': '390x844', 'peakLoadedChunks': final['peak'], 'chunksUnloadedOnTravel': True, 'chunksLoadedOnTravel': True, 'currentChunkObjects': final['objects'], 'pageErrors': errors, 'mobilePlayerOnScreen': True, 'mobileRenderDensity': density, 'scope': 'Local Chromium with software WebGL and an isolated database; responsive mobile viewport and camera zoom, not physical-device performance.'}
     (out / 'official-browser-results.json').write_text(json.dumps(result, indent=2))
     print(json.dumps(result))
     mobile.close()

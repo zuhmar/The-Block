@@ -302,7 +302,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
       }
       continue;
     }
-    const size = key.startsWith("map-paving-") ? 128 : 64;
+    const size = key.startsWith("map-paving-") ? 256 : 64;
     assert.equal(info.width, size);
     assert.equal(info.height, size);
     for (let i = 0; i < size; i++)

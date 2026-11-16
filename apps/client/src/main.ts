@@ -1,3 +1,4 @@
+import { renderProfile, defaultViewZoom, viewZoom } from "./render-quality";
 import { DISTRICTS } from "../../../packages/shared/src/official-map";
 import { setMapReservations } from "../../../packages/shared/src/terrain";
 import { MapWorld } from "./map-world";
@@ -203,6 +204,11 @@ function lootVisualSize(index: number) {
   };
 }
 
+let renderRatio = renderProfile(
+  window.innerWidth,
+  window.innerHeight,
+  window.devicePixelRatio,
+).ratio;
 class City extends Phaser.Scene {
   keys!: Record<string, Phaser.Input.Keyboard.Key>;
   sprites = new Map<string, Phaser.GameObjects.Sprite>();
@@ -280,7 +286,7 @@ class City extends Phaser.Scene {
       (_p: unknown, _o: unknown, _dx: number, dy: number) => {
         if (panel) return;
         this.cameras.main.setZoom(
-          Phaser.Math.Clamp(this.cameras.main.zoom - dy * 0.0007, 0.65, 1.45),
+          viewZoom(this.cameras.main.zoom, renderRatio, dy) * renderRatio,
         );
       },
     );
@@ -290,6 +296,7 @@ class City extends Phaser.Scene {
       .text(x, y, text, {
         fontFamily: "Arial",
         fontSize: size,
+        resolution: renderRatio,
         color,
         backgroundColor: "#24392cd9",
         padding: { x: 9, y: 5 },
@@ -300,7 +307,7 @@ class City extends Phaser.Scene {
   drawWorld() {
     this.staticBuilt = true;
     this.lootGuides = this.add.graphics().setDepth(WORLD.height + 1000);
-    this.mapWorld = new MapWorld(this);
+    this.mapWorld = new MapWorld(this, renderRatio);
     this.mapWorld.update(this.cameras.main.worldView);
     this.events.once("shutdown", () => this.mapWorld?.destroy());
     for (const [i, p] of WORLD.scavengePoints.entries()) {
@@ -347,7 +354,9 @@ class City extends Phaser.Scene {
     for (const key of Object.keys(manifest))
       if (manifest[key].animations && this.textures.exists(key))
         this.makeAnimations(key);
-    this.cameras.main.setZoom(this.scale.width < 700 ? 0.84 : 1.03);
+    this.cameras.main.setZoom(
+      defaultViewZoom(this.scale.width / renderRatio) * renderRatio,
+    );
     this.cameras.main.centerOn(WORLD.spawn.x, WORLD.spawn.y);
   }
   makeAnimations(key: string) {
@@ -839,8 +848,55 @@ new Phaser.Game({
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: "#6d7b58",
-  scale: { mode: Phaser.Scale.RESIZE, width: "100%", height: "100%" },
-  render: { antialias: true },
+  scale: {
+    mode: Phaser.Scale.NONE,
+    width: Math.round(window.innerWidth * renderRatio),
+    height: Math.round(window.innerHeight * renderRatio),
+    zoom: 1 / renderRatio,
+  },
+  render: {
+    antialias: true,
+    antialiasGL: false,
+    pixelArt: false,
+    roundPixels: true,
+  },
+  callbacks: {
+    postBoot(game) {
+      const resize = () => {
+        const profile = renderProfile(
+            window.innerWidth,
+            window.innerHeight,
+            window.devicePixelRatio,
+          ),
+          oldRatio = renderRatio;
+        const cameras = game.scene
+          .getScenes(true)
+          .flatMap((scene) =>
+            scene.cameras.cameras.map((camera) => ({
+              scene,
+              camera,
+              zoom: camera.zoom / oldRatio,
+              x: camera.scrollX + camera.width / 2,
+              y: camera.scrollY + camera.height / 2,
+            })),
+          );
+        renderRatio = profile.ratio;
+        game.scale.setZoom(1 / renderRatio);
+        game.scale.resize(profile.width, profile.height);
+        for (const { scene, camera, zoom, x, y } of cameras) {
+          camera.setZoom(zoom * renderRatio).centerOn(x, y);
+          if (scene instanceof City) scene.mapWorld?.setPixelRatio(renderRatio);
+          for (const child of scene.children.list)
+            if (child instanceof Phaser.GameObjects.Text)
+              child.setResolution(renderRatio);
+        }
+      };
+      window.addEventListener("resize", resize);
+      game.events.once("destroy", () =>
+        window.removeEventListener("resize", resize),
+      );
+    },
+  },
 });
 
 function toggle(name: string) {

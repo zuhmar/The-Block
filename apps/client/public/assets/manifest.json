@@ -4379,10 +4379,10 @@
     },
     "map-paving-slab": {
       "file": "map-paving-slab.png",
-      "width": 128,
-      "height": 128,
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
       "frames": 1,
       "anchor": {
         "x": 0.5,
@@ -4394,10 +4394,10 @@
     },
     "map-paving-pavers": {
       "file": "map-paving-pavers.png",
-      "width": 128,
-      "height": 128,
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
       "frames": 1,
       "anchor": {
         "x": 0.5,
@@ -4409,10 +4409,10 @@
     },
     "map-paving-service": {
       "file": "map-paving-service.png",
-      "width": 128,
-      "height": 128,
-      "frameWidth": 128,
-      "frameHeight": 128,
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
       "frames": 1,
       "anchor": {
         "x": 0.5,

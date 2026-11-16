@@ -31,7 +31,21 @@ export class MapWorld {
     { objects: Phaser.GameObjects.GameObject[]; texture: string }
   >();
   private reservationKey = "";
-  constructor(private scene: Phaser.Scene) {}
+  private pixelRatio: number;
+  private gravelBrush?: HTMLCanvasElement;
+  constructor(
+    private scene: Phaser.Scene,
+    ratio = 1,
+  ) {
+    this.pixelRatio = Math.ceil(ratio);
+  }
+  setPixelRatio(ratio: number) {
+    const next = Math.ceil(ratio);
+    if (next === this.pixelRatio) return;
+    this.pixelRatio = next;
+    this.gravelBrush = undefined;
+    for (const key of this.chunks.keys()) this.unload(key);
+  }
   setReservations(
     rects: { x: number; y: number; width: number; height: number }[],
   ) {
@@ -42,7 +56,7 @@ export class MapWorld {
     for (const key of this.chunks.keys()) this.unload(key);
   }
   update(view: Phaser.Geom.Rectangle) {
-    const wanted = new Set(visibleChunkKeys(view));
+    const wanted = new Set(visibleChunkKeys(view, this.pixelRatio > 1 ? 0 : 1));
     for (const key of this.chunks.keys())
       if (!wanted.has(key)) this.unload(key);
     const cx = (view.x + view.width / 2) / 1024,
@@ -77,24 +91,29 @@ export class MapWorld {
       texture = "map-chunk-" + key;
     const canvas = scene.textures.createCanvas(
       texture,
-      CHUNK_SIZE + 2,
-      CHUNK_SIZE + 2,
+      (CHUNK_SIZE + 2) * this.pixelRatio,
+      (CHUNK_SIZE + 2) * this.pixelRatio,
     )!;
     const ctx = canvas.getContext();
     ctx.save();
+    ctx.scale(this.pixelRatio, this.pixelRatio);
     ctx.translate(1, 1);
     this.paint(ctx, x, y);
     ctx.restore();
     const source = canvas.getSourceImage() as HTMLCanvasElement;
-    ctx.drawImage(source, 1, 1, 1024, 1, 1, 0, 1024, 1);
-    ctx.drawImage(source, 1, 1024, 1024, 1, 1, 1025, 1024, 1);
-    ctx.drawImage(source, 1, 0, 1, 1026, 0, 0, 1, 1026);
-    ctx.drawImage(source, 1024, 0, 1, 1026, 1025, 0, 1, 1026);
+    const p = this.pixelRatio,
+      size = CHUNK_SIZE * p,
+      full = (CHUNK_SIZE + 2) * p;
+    ctx.drawImage(source, p, p, size, p, p, 0, size, p);
+    ctx.drawImage(source, p, size, size, p, p, size + p, size, p);
+    ctx.drawImage(source, p, 0, p, full, 0, 0, p, full);
+    ctx.drawImage(source, size, 0, p, full, size + p, 0, p, full);
     canvas.refresh();
     const objects: Phaser.GameObjects.GameObject[] = [
       scene.add
         .image(x - 1, y - 1, texture)
         .setOrigin(0, 0)
+        .setDisplaySize(CHUNK_SIZE + 2, CHUNK_SIZE + 2)
         .setDepth(-10000),
     ];
     for (const o of terrainChunkObjects(key)) {
@@ -138,11 +157,15 @@ export class MapWorld {
     this.chunks.set(key, { objects, texture });
   }
   private paint(ctx: CanvasRenderingContext2D, x: number, y: number) {
-    const pattern = (name: string) =>
-      ctx.createPattern(
-        this.scene.textures.get(name).getSourceImage() as HTMLImageElement,
-        "repeat",
-      )!;
+    const pattern = (name: string) => {
+      const source = this.scene.textures
+        .get(name)
+        .getSourceImage() as HTMLImageElement;
+      const fill = ctx.createPattern(source, "repeat")!;
+      if (name.startsWith("map-paving-"))
+        fill.setTransform(new DOMMatrix().scale(128 / source.width));
+      return fill;
+    };
     const path = (
       points: readonly { x: number; y: number }[],
       closed = false,
@@ -197,6 +220,27 @@ export class MapWorld {
       service = pattern("map-paving-service"),
       asphalt = pattern("map-tile-asphalt"),
       dirt = pattern("map-tile-dirt");
+    if (!this.gravelBrush) {
+      const brush = document.createElement("canvas");
+      brush.width = brush.height = 96 * this.pixelRatio;
+      const painter = brush.getContext("2d")!;
+      painter.scale(this.pixelRatio, this.pixelRatio);
+      painter.fillStyle = painter.createPattern(
+        this.scene.textures
+          .get("map-tile-gravel")
+          .getSourceImage() as HTMLImageElement,
+        "repeat",
+      )!;
+      painter.fillRect(0, 0, 96, 96);
+      const fade = painter.createRadialGradient(48, 48, 4, 48, 48, 48);
+      fade.addColorStop(0, "#000");
+      fade.addColorStop(0.45, "#0009");
+      fade.addColorStop(1, "#0000");
+      painter.globalCompositeOperation = "destination-in";
+      painter.fillStyle = fade;
+      painter.fillRect(0, 0, 96, 96);
+      this.gravelBrush = brush;
+    }
     ctx.fillStyle = water;
     ctx.fillRect(x, y, 1024, 1024);
     ctx.globalAlpha = 0.16;
@@ -209,17 +253,22 @@ export class MapWorld {
     ctx.clip();
     ctx.fillStyle = grass;
     ctx.fillRect(x, y, 1024, 1024);
-    for (let ty = 0; ty < 16; ty++)
-      for (let tx = 0; tx < 16; tx++) {
+    for (let ty = -1; ty <= 16; ty++)
+      for (let tx = -1; tx <= 16; tx++) {
         const p = { x: x + tx * 64 + 32, y: y + ty * 64 + 32 },
           k = groundKind(p);
         if (k === "mountain" || k === "rocky") {
-          ctx.globalAlpha = k === "mountain" ? mountainBlend(p) * 0.6 : 0.18;
-          ctx.fillStyle = gravel;
+          ctx.globalAlpha = k === "mountain" ? mountainBlend(p) * 0.6 : 0.14;
           const radius = k === "mountain" ? 48 : 40;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y, radius, radius * 0.86, 0, 0, Math.PI * 2);
-          ctx.fill();
+          const dx = Math.sin(p.x * 0.013 + p.y * 0.021) * 12,
+            dy = Math.cos(p.x * 0.017 - p.y * 0.019) * 12;
+          ctx.drawImage(
+            this.gravelBrush!,
+            p.x + dx - radius,
+            p.y + dy - radius,
+            radius * 2,
+            radius * 2,
+          );
         }
       }
     ctx.globalAlpha = 1;
@@ -232,6 +281,27 @@ export class MapWorld {
     stroke(COAST, 10, "#a5d0be", true);
     for (const lake of LAKES) {
       path(lake, true);
+      if (!this.gravelBrush) {
+        const brush = document.createElement("canvas");
+        brush.width = brush.height = 96 * this.pixelRatio;
+        const painter = brush.getContext("2d")!;
+        painter.scale(this.pixelRatio, this.pixelRatio);
+        painter.fillStyle = painter.createPattern(
+          this.scene.textures
+            .get("map-tile-gravel")
+            .getSourceImage() as HTMLImageElement,
+          "repeat",
+        )!;
+        painter.fillRect(0, 0, 96, 96);
+        const fade = painter.createRadialGradient(48, 48, 4, 48, 48, 48);
+        fade.addColorStop(0, "#000");
+        fade.addColorStop(0.45, "#0009");
+        fade.addColorStop(1, "#0000");
+        painter.globalCompositeOperation = "destination-in";
+        painter.fillStyle = fade;
+        painter.fillRect(0, 0, 96, 96);
+        this.gravelBrush = brush;
+      }
       ctx.fillStyle = water;
       ctx.fill();
       ctx.lineWidth = 22;

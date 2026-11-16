@@ -47,21 +47,26 @@ const keys = new Set([
   "map-paving-pavers",
   "map-paving-service",
 ]);
-let defs = "";
+let defs = `<radialGradient id="terrain-fade"><stop offset="0" stop-color="white"/><stop offset=".45" stop-color="white" stop-opacity=".6"/><stop offset="1" stop-color="white" stop-opacity="0"/></radialGradient><mask id="terrain-brush" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1"><rect width="1" height="1" fill="url(#terrain-fade)"/></mask>`;
 for (const key of keys) {
   const a = assets[key],
     b64 = (await readFile(root + a.file)).toString("base64");
   defs += `<image id="${key}" width="${a.width}" height="${a.height}" href="data:image/png;base64,${b64}"/>`;
   if (key.startsWith("map-tile") || key.startsWith("map-paving-"))
-    defs += `<pattern id="pattern-${key}" width="${a.width}" height="${a.height}" patternUnits="userSpaceOnUse"><use href="#${key}"/></pattern>`;
+    defs += `<pattern id="pattern-${key}" width="${key.startsWith("map-paving-") ? 128 : a.width}" height="${key.startsWith("map-paving-") ? 128 : a.height}" patternUnits="userSpaceOnUse"><use href="#${key}" transform="scale(${key.startsWith("map-paving-") ? 128 / a.width : 1})"/></pattern>`;
 }
 const start = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 ${MAP_SIZE} ${MAP_SIZE}"><defs>${defs}<clipPath id="land"><path d="${path(COAST)}Z"/></clipPath></defs>`;
 let body = `<rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-water)"/><g clip-path="url(#land)"><rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-grass)"/>`;
 for (let y = 0; y < 256; y++)
   for (let x = 0; x < 256; x++) {
     const k = groundKind({ x: x * 64 + 32, y: y * 64 + 32 });
-    if (k === "mountain" || k === "rocky")
-      body += `<rect x="${x * 64}" y="${y * 64}" width="64" height="64" fill="url(#pattern-map-tile-gravel)" opacity="${k === "mountain" ? mountainBlend({ x: x * 64 + 32, y: y * 64 + 32 }) * 0.6 : 0.18}"/>`;
+    if (k === "mountain" || k === "rocky") {
+      const p = { x: x * 64 + 32, y: y * 64 + 32 },
+        radius = k === "mountain" ? 48 : 40;
+      const dx = Math.sin(p.x * 0.013 + p.y * 0.021) * 12,
+        dy = Math.cos(p.x * 0.017 - p.y * 0.019) * 12;
+      body += `<circle cx="${p.x + dx}" cy="${p.y + dy}" r="${radius}" fill="url(#pattern-map-tile-gravel)" mask="url(#terrain-brush)" opacity="${k === "mountain" ? mountainBlend(p) * 0.6 : 0.14}"/>`;
+    }
   }
 body += `<path d="${path(COAST)}Z" fill="none" stroke="#b9bb8a" stroke-width="46"/>`;
 for (const [r, w] of [

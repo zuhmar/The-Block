@@ -40,5 +40,12 @@
   "pavementMaterials": ["slab concrete", "plaza pavers", "worn service paving"],
   "natureDetails": 300,
   "solidNatureDetails": 12,
-  "treeVariants": 4
+  "treeVariants": 4,
+  "renderQuality": {
+    "maxScreenDensity": 2,
+    "targetBackingPixels": 6000000,
+    "hiDpiChunkPixels": 2052,
+    "pavementTexturePixels": 256,
+    "pavementRepeatWorldPixels": 128
+  }
 }

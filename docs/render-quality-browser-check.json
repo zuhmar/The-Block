@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "viewport": "960x700",
+      "ratio": 2,
+      "pointerAndBuildProjection": true,
+      "cameraWidth": 1920,
+      "cameraHeight": 1400,
+      "actorX": 480,
+      "actorY": 350,
+      "width": 1920,
+      "height": 1400,
+      "cssWidth": 960,
+      "cssHeight": 700,
+      "zoom": 1,
+      "chunks": 2,
+      "chunkWidth": 2052
+    },
+    {
+      "viewport": "1920x1080",
+      "ratio": 1.5,
+      "pointerAndBuildProjection": true,
+      "cameraWidth": 2880,
+      "cameraHeight": 1620,
+      "actorX": 960,
+      "actorY": 540,
+      "width": 2880,
+      "height": 1620,
+      "cssWidth": 1920,
+      "cssHeight": 1080,
+      "zoom": 1,
+      "chunks": 6,
+      "chunkWidth": 2052
+    },
+    {
+      "viewport": "390x844",
+      "ratio": 2,
+      "pointerAndBuildProjection": true,
+      "cameraWidth": 780,
+      "cameraHeight": 1688,
+      "actorX": 195,
+      "actorY": 422,
+      "width": 780,
+      "height": 1688,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "zoom": 1,
+      "chunks": 1,
+      "chunkWidth": 2052
+    }
+  ],
+  "pageErrors": []
+}

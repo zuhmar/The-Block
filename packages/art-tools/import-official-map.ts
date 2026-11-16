@@ -129,8 +129,8 @@ export async function importOfficialMap(
       columns: 3,
       rows: 1,
       keys: ["slab", "pavers", "service"].map((n) => "map-paving-" + n),
-      width: 128,
-      height: 128,
+      width: 256,
+      height: 256,
     },
     {
       name: "tiles",
@@ -261,26 +261,26 @@ export async function importOfficialMap(
       }
       if (group.name === "pavement") {
         const { data, info } = await sharp(crop)
-          .resize(128, 128)
+          .resize(256, 256)
           .ensureAlpha()
           .raw()
           .toBuffer({ resolveWithObject: true });
         // Feather a narrow wrap margin; retain the AI's slab and brick layout.
-        for (let y = 0; y < 128; y++)
+        for (let y = 0; y < 256; y++)
           for (let k = 0; k < 4; k++)
             for (let c = 0; c < 4; c++) {
-              const a = (y * 128 + k) * 4 + c,
-                b = (y * 128 + 127 - k) * 4 + c,
+              const a = (y * 256 + k) * 4 + c,
+                b = (y * 256 + 255 - k) * 4 + c,
                 average = (data[a] + data[b]) / 2,
                 t = (4 - k) / 4;
               data[a] = Math.round(data[a] * (1 - t) + average * t);
               data[b] = Math.round(data[b] * (1 - t) + average * t);
             }
-        for (let x = 0; x < 128; x++)
+        for (let x = 0; x < 256; x++)
           for (let k = 0; k < 4; k++)
             for (let c = 0; c < 4; c++) {
-              const a = (k * 128 + x) * 4 + c,
-                b = ((127 - k) * 128 + x) * 4 + c,
+              const a = (k * 256 + x) * 4 + c,
+                b = ((255 - k) * 256 + x) * 4 + c,
                 average = (data[a] + data[b]) / 2,
                 t = (4 - k) / 4;
               data[a] = Math.round(data[a] * (1 - t) + average * t);

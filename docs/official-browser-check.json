@@ -8,5 +8,14 @@
   "currentChunkObjects": 207,
   "pageErrors": [],
   "mobilePlayerOnScreen": true,
+  "mobileRenderDensity": {
+    "width": 780,
+    "height": 1688,
+    "cssWidth": 390,
+    "cssHeight": 844,
+    "zoom": 1.8,
+    "smoothing": true,
+    "chunkWidth": 2052
+  },
   "scope": "Local Chromium with software WebGL and an isolated database; responsive mobile viewport and camera zoom, not physical-device performance."
 }
