@@ -5,7 +5,11 @@ import {
   PARKS,
   CIVIC_PLAZA,
 } from "../shared/src/official-map.js";
-import { nearestRoadPoint, mapObjectEnabled } from "../shared/src/terrain.js";
+import {
+  nearestRoadPoint,
+  mapObjectEnabled,
+  mapObjects,
+} from "../shared/src/terrain.js";
 import { segmentRect } from "../shared/src/index.js";
 export const districtFor = (p: { x: number; y: number }) =>
   DISTRICTS.find(
@@ -140,6 +144,41 @@ export function citySurfaces(): CitySurface[] {
   }
   return surfaces;
 }
+let paving:
+  | { x: number; y: number; width: number; height: number }[]
+  | undefined;
+export function cityPaving() {
+  if (paving) return paving;
+  paving = [];
+  const district = DISTRICTS.find((d) => d.id === "downtown")!;
+  for (let y = district.y; y < district.y + district.height; y += 64) {
+    let start: number | undefined;
+    for (let x = district.x; x <= district.x + district.width; x += 64) {
+      const p = { x: x + 32, y: y + 32 };
+      const occupied =
+        x < district.x + district.width &&
+        BUILDINGS.some(
+          (b) =>
+            districtFor(b)?.id === "downtown" &&
+            Math.abs(b.x - p.x) < b.width / 2 + 144 &&
+            Math.abs(b.y - p.y) < b.height / 2 + 144,
+        ) &&
+        !PARKS.some(
+          (r) =>
+            Math.hypot(
+              (p.x - r.x) / (r.width / 2 + 32),
+              (p.y - r.y) / (r.height / 2 + 32),
+            ) < 1,
+        );
+      if (occupied && start === undefined) start = x;
+      if (!occupied && start !== undefined) {
+        paving.push({ x: start, y, width: x - start, height: 64 });
+        start = undefined;
+      }
+    }
+  }
+  return paving;
+}
 export function paintCityFrontage(
   ctx: CanvasRenderingContext2D,
   bounds: { x: number; y: number; width: number; height: number },
@@ -158,23 +197,47 @@ export function paintCityFrontage(
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  // Continuous hardscape is the default for downtown commercial blocks.
-  for (const b of BUILDINGS) {
-    if (!near(b) || !mapObjectEnabled(b) || districtFor(b)?.id !== "downtown")
+  // Joined rows form a continuous commercial surface instead of overlapping pads.
+  ctx.fillStyle = materials.concrete;
+  for (const r of cityPaving()) {
+    if (
+      r.x > bounds.x + bounds.width ||
+      r.x + r.width < bounds.x ||
+      r.y > bounds.y + bounds.height ||
+      r.y + r.height < bounds.y
+    )
       continue;
-    const padX = 72,
-      padY = 96;
-    ctx.fillStyle = materials.concrete;
-    ctx.beginPath();
-    ctx.roundRect(
-      b.x - b.width / 2 - padX,
-      b.y - b.height / 2 - padY,
-      b.width + padX * 2,
-      b.height + padY * 2,
-      18,
-    );
-    ctx.fill();
+    ctx.fillRect(r.x, r.y, r.width, r.height);
   }
+  const tiles = new Set(
+    cityPaving().flatMap((r) =>
+      Array.from({ length: r.width / 64 }, (_, i) => `${r.x + i * 64},${r.y}`),
+    ),
+  );
+  ctx.strokeStyle = "#b9bca7";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  for (const key of tiles) {
+    const [x, y] = key.split(",").map(Number);
+    if (
+      x < bounds.x - 64 ||
+      x > bounds.x + bounds.width ||
+      y < bounds.y - 64 ||
+      y > bounds.y + bounds.height
+    )
+      continue;
+    for (const [dx, dy, ax, ay, bx, by] of [
+      [0, -64, 0, 0, 64, 0],
+      [0, 64, 0, 64, 64, 64],
+      [-64, 0, 0, 0, 0, 64],
+      [64, 0, 64, 0, 64, 64],
+    ]) {
+      if (tiles.has(`${x + dx},${y + dy}`)) continue;
+      ctx.moveTo(x + ax, y + ay);
+      ctx.lineTo(x + bx, y + by);
+    }
+  }
+  ctx.stroke();
   const plaza = CIVIC_PLAZA;
   if (near({ x: plaza.x + plaza.width / 2, y: plaza.y + plaza.height / 2 })) {
     ctx.fillStyle = materials.concrete;
@@ -235,6 +298,25 @@ export function paintCityFrontage(
       }
     }
   }
+  for (const car of mapObjects().filter(
+    (o) => o.asset === "map-street-sedan" || o.asset === "map-street-van",
+  )) {
+    if (!near(car) || !mapObjectEnabled(car)) continue;
+    const x = car.x - car.width / 2 - 14,
+      y = car.y - car.height / 2 - 12,
+      w = car.width + 28,
+      h = car.height + 24;
+    ctx.fillStyle = "#7e8580";
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = "#e3dfbd";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.stroke();
+  }
   for (const p of PARKS) {
     if (!near(p)) continue;
     ctx.fillStyle = materials.grass;
@@ -269,7 +351,13 @@ export function paintCityFrontage(
     ctx.fillStyle =
       s.material === "gravel" ? materials.gravel : materials.concrete;
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, s.district === "uptown" ? 24 : 8);
+    ctx.roundRect(
+      x,
+      y,
+      w,
+      h,
+      s.district === "uptown" ? 24 : s.district === "downtown" ? 0 : 8,
+    );
     ctx.fill();
     const shop = ["cafe", "laundry", "grocery", "books"].find(
       (n) => b.asset === "map-building-" + n,

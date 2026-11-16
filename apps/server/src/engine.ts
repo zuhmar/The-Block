@@ -43,7 +43,7 @@ export const emptyWorld = (): WorldState => ({
   actions: {},
   layoutVersion: 2,
   mapVersion: MAP_VERSION,
-  sceneryVersion: 2,
+  sceneryVersion: 3,
 });
 export function createPlayer(
   id: string,
@@ -187,7 +187,7 @@ export function upgradeWorld(w: WorldState) {
       }
     w.mapVersion = MAP_VERSION;
   }
-  if ((w.sceneryVersion || 0) < 2) {
+  if ((w.sceneryVersion || 0) < 3) {
     const areas = [
       ...(w.mapReservations || []),
       ...Object.values(w.structures)
@@ -216,7 +216,7 @@ export function upgradeWorld(w: WorldState) {
         }
       }
     w.mapReservations = areas;
-    w.sceneryVersion = 2;
+    w.sceneryVersion = 3;
   }
   setMapReservations(w.mapReservations || []);
   w.layoutVersion = 2;

@@ -72,6 +72,7 @@ with sync_playwright() as runner:
     mobile=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
     phone=mobile.new_page()
     phone.on('pageerror',lambda error:errors.append(str(error)))
+    phone.add_locator_handler(phone.locator('#death'), lambda: phone.locator('#respawn').click())
     phone.goto('http://127.0.0.1:5173',wait_until='networkidle')
     print('Mobile page loaded')
     phone.locator('input[name="name"]').fill(name)
@@ -81,6 +82,10 @@ with sync_playwright() as runner:
     phone.wait_for_timeout(1500)
     point=phone.evaluate('''async()=>{const url=performance.getEntriesByType('resource').findLast(e=>e.name.includes('/src/map-world.ts')).name;const {MapWorld}=await import(url);const update=MapWorld.prototype.update;window.__phoneMap=null;MapWorld.prototype.update=function(view){window.__phoneMap=this;return update.call(this,view);};}''')
     phone.wait_for_function('window.__phoneMap && window.__phoneMap.scene.sprites.size>0')
+    if phone.locator('#respawn').is_visible():
+        phone.locator('#respawn').click()
+        phone.locator('#death').wait_for(state='hidden')
+        phone.wait_for_timeout(600)
     point=phone.evaluate('''()=>{const s=window.__phoneMap.scene,actor=[...s.sprites.values()].find(p=>p.texture.key.startsWith('player-stick')),cam=s.cameras.main;const p=cam.matrix.transformPoint(actor.x-cam.scrollX,actor.y-cam.scrollY);return {x:p.x,y:p.y};}''')
     assert 0<point['x']<390 and 0<point['y']<844,point
     phone.screenshot(path=str(out/'official-mobile-world.png'))

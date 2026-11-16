@@ -42,6 +42,44 @@ export async function importOfficialMap(
       height: 384,
     },
     {
+      name: "city-buildings",
+      columns: 4,
+      rows: 2,
+      keys: [
+        "kiosk",
+        "bakery",
+        "garage",
+        "diner",
+        "apartment-slab",
+        "brick-warehouse",
+        "corner-office",
+        "duplex",
+      ].map((n) => "map-building-" + n),
+      width: 384,
+      height: 384,
+    },
+    {
+      name: "street-props",
+      columns: 4,
+      rows: 3,
+      keys: [
+        "dumpster",
+        "recycling",
+        "bollards",
+        "hydrant",
+        "planter",
+        "cafe-table",
+        "bicycle",
+        "bus-stop",
+        "sedan",
+        "van",
+        "cones",
+        "bench",
+      ].map((n) => "map-street-" + n),
+      width: 256,
+      height: 256,
+    },
+    {
       name: "nature",
       columns: 4,
       rows: 4,
@@ -73,17 +111,27 @@ export async function importOfficialMap(
       cw = Math.floor(meta.width! / group.columns),
       ch = Math.floor(meta.height! / group.rows);
     for (const [i, key] of group.keys.entries()) {
+      const row = Math.floor(i / group.columns);
+      const rowEdges =
+        group.name === "street-props" ? [0, 362, 690, meta.height!] : undefined;
+      const inset = ["city-buildings", "street-props"].includes(group.name)
+        ? 4
+        : 0;
       let crop = await sharp(input)
         .extract({
           left: (i % group.columns) * cw,
-          top: Math.floor(i / group.columns) * ch,
+          top: rowEdges ? rowEdges[row] : row * ch,
           width: cw,
-          height: ch,
+          height: rowEdges ? rowEdges[row + 1] - rowEdges[row] : ch,
         })
         .png()
         .toBuffer();
       const file = key + ".png";
-      if (group.name === "buildings" || group.name === "storefronts") {
+      if (
+        ["buildings", "storefronts", "city-buildings", "street-props"].includes(
+          group.name,
+        )
+      ) {
         const raw = await sharp(crop)
             .ensureAlpha()
             .raw()
@@ -189,8 +237,15 @@ export async function importOfficialMap(
       } else
         await sharp(crop)
           .trim({ threshold: 10 })
-          .resize(group.width, group.height, {
+          .resize(group.width - inset * 2, group.height - inset * 2, {
             fit: "contain",
+            background: "#00000000",
+          })
+          .extend({
+            top: inset,
+            bottom: inset,
+            left: inset,
+            right: inset,
             background: "#00000000",
           })
           .png()

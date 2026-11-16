@@ -3462,6 +3462,306 @@
       "sourceGroup": "official-map",
       "sourceAsset": "storefronts.png"
     },
+    "map-building-kiosk": {
+      "file": "map-building-kiosk.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-bakery": {
+      "file": "map-building-bakery.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-garage": {
+      "file": "map-building-garage.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-diner": {
+      "file": "map-building-diner.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-apartment-slab": {
+      "file": "map-building-apartment-slab.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-brick-warehouse": {
+      "file": "map-building-brick-warehouse.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-corner-office": {
+      "file": "map-building-corner-office.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-building-duplex": {
+      "file": "map-building-duplex.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "city-buildings.png"
+    },
+    "map-street-dumpster": {
+      "file": "map-street-dumpster.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-recycling": {
+      "file": "map-street-recycling.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-bollards": {
+      "file": "map-street-bollards.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-hydrant": {
+      "file": "map-street-hydrant.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-planter": {
+      "file": "map-street-planter.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-cafe-table": {
+      "file": "map-street-cafe-table.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-bicycle": {
+      "file": "map-street-bicycle.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-bus-stop": {
+      "file": "map-street-bus-stop.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-sedan": {
+      "file": "map-street-sedan.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-van": {
+      "file": "map-street-van.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-cones": {
+      "file": "map-street-cones.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
+    "map-street-bench": {
+      "file": "map-street-bench.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "street-props.png"
+    },
     "map-nature-0": {
       "file": "map-nature-0.png",
       "width": 384,

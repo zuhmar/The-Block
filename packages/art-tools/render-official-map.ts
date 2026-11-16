@@ -1,6 +1,7 @@
 import {
   frontageStyle,
   citySurfaces,
+  cityPaving,
   streetConnections,
 } from "../game-data/map-presentation.js";
 import sharp from "sharp";
@@ -66,10 +67,8 @@ for (const [r, w] of [
   body += `<path d="${path(r)}" fill="none" stroke="#b2b28b" stroke-width="${w + 34}"/><path d="${path(r)}" fill="none" stroke="#397c91" stroke-width="${w}"/>`;
 for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
-for (const b of BUILDINGS) {
-  if (frontageStyle(b).district !== "downtown") continue;
-  body += `<rect x="${b.x - b.width / 2 - 72}" y="${b.y - b.height / 2 - 96}" width="${b.width + 144}" height="${b.height + 192}" rx="18" fill="url(#pattern-map-tile-concrete)"/>`;
-}
+for (const r of cityPaving())
+  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-tile-concrete)"/>`;
 body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-tile-concrete)"/>`;
 for (const surface of citySurfaces()) {
   body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-map-tile-${surface.material})" stroke="#b9b9a3" stroke-width="5"/>`;

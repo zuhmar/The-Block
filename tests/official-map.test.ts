@@ -258,7 +258,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
   const keys = Object.keys(assets).filter(
     (k) => assets[k].sourceGroup === "official-map",
   );
-  assert.equal(keys.length, 51);
+  assert.equal(keys.length, 71);
   for (const key of keys) {
     assert.equal(assets[key].source, "ai-generated");
     const { data, info } = await sharp(root + assets[key].file)
@@ -270,6 +270,28 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
         data.some((v, i) => i % 4 === 3 && v === 0),
         key,
       );
+      if (
+        ["city-buildings.png", "street-props.png"].includes(
+          assets[key].sourceAsset,
+        )
+      ) {
+        for (let x = 0; x < info.width; x++) {
+          assert.equal(data[x * 4 + 3], 0, key + " top framing");
+          assert.equal(
+            data[((info.height - 1) * info.width + x) * 4 + 3],
+            0,
+            key + " bottom framing",
+          );
+        }
+        for (let y = 0; y < info.height; y++) {
+          assert.equal(data[y * info.width * 4 + 3], 0, key + " left framing");
+          assert.equal(
+            data[(y * info.width + info.width - 1) * 4 + 3],
+            0,
+            key + " right framing",
+          );
+        }
+      }
       continue;
     }
     assert.equal(info.width, 64);
@@ -284,7 +306,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  w.sceneryVersion = 1;
+  w.sceneryVersion = 2;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -301,7 +323,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 2);
+  assert.equal(w.sceneryVersion, 3);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
@@ -348,4 +370,34 @@ test("commercial infill preserves road shoulders and civic landmarks stay unique
       (s) => s.buildings.length > 0 && s.points.length === 4,
     ),
   );
+});
+
+test("city variety uses all new artwork at varied sizes without blocking entrances", () => {
+  for (const name of [
+    "kiosk",
+    "bakery",
+    "garage",
+    "diner",
+    "apartment-slab",
+    "brick-warehouse",
+    "corner-office",
+    "duplex",
+  ])
+    assert(
+      BUILDINGS.some((b) => b.asset === "map-building-" + name),
+      name,
+    );
+  assert(BUILDINGS.some((b) => b.width === 96));
+  assert(
+    BUILDINGS.some(
+      (b) => b.asset === "map-building-brick-warehouse" && b.width >= 320,
+    ),
+  );
+  const props = mapObjects().filter((o) => o.id.startsWith("street-detail-"));
+  assert.equal(new Set(props.map((o) => o.asset)).size, 12);
+  for (const b of BUILDINGS.filter((b) => !b.id.startsWith("legacy")))
+    assert(
+      !blocked(emptyWorld(), { x: b.x, y: b.y + b.height / 2 + 24 }),
+      b.id + " doorway",
+    );
 });

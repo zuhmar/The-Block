@@ -561,6 +561,68 @@ for (const [i, b] of BUILDINGS.entries()) {
       storefronts.find((asset) => !neighbors.some((o) => o.asset === asset)) ||
       b.asset;
 }
+// New silhouettes occupy existing safe envelopes, with deliberately varied footprints.
+const cityVariants: Record<string, [string, number, number][]> = {
+  "the-block": [
+    ["kiosk", 96, 104],
+    ["bakery", 128, 176],
+    ["duplex", 224, 192],
+  ],
+  downtown: [
+    ["kiosk", 96, 104],
+    ["bakery", 128, 176],
+    ["diner", 240, 160],
+    ["corner-office", 224, 192],
+  ],
+  industrial: [
+    ["garage", 288, 176],
+    ["brick-warehouse", 352, 256],
+  ],
+  projects: [
+    ["apartment-slab", 320, 240],
+    ["duplex", 224, 192],
+    ["kiosk", 96, 104],
+  ],
+  uptown: [
+    ["duplex", 224, 192],
+    ["corner-office", 224, 192],
+  ],
+};
+const variantCounts = new Map<string, number>();
+const retainedRoles = new Set<string>();
+for (const [i, b] of BUILDINGS.entries()) {
+  if (
+    b.id.startsWith("legacy") ||
+    ["bank", "hospital", "police"].some((n) => b.asset === "map-building-" + n)
+  )
+    continue;
+  if (
+    ["warehouse", "factory", "apartments", "luxury", "premium"].some(
+      (n) => b.asset === "map-building-" + n,
+    ) &&
+    !retainedRoles.has(b.asset)
+  ) {
+    retainedRoles.add(b.asset);
+    continue;
+  }
+  const d = DISTRICTS.find(
+    (d) =>
+      b.x >= d.x && b.x < d.x + d.width && b.y >= d.y && b.y < d.y + d.height,
+  );
+  if (!d || i % 3 === 0) continue;
+  const count = variantCounts.get(d.id) || 0;
+  variantCounts.set(d.id, count + 1);
+  const [asset, width, height] =
+    cityVariants[d.id][count % cityVariants[d.id].length];
+  if (
+    (asset === "apartment-slab" || asset === "brick-warehouse") &&
+    b.width < 300
+  )
+    continue;
+  b.asset = "map-building-" + asset;
+  b.width = Math.min(b.width, width);
+  b.height = Math.min(b.height, height);
+}
 export function nearestRoadPoint(p: TerrainPoint) {
   let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
   for (const road of ROADS) {
@@ -1208,6 +1270,59 @@ export function mapObjects(): MapObject[] {
       )
         continue;
       out.push({ id: "shop-detail-" + i + "-" + j, ...p, kind: "decoration" });
+    }
+  }
+  const streetDetails: [string, number, number][] = [
+    ["dumpster", 48, 42],
+    ["recycling", 28, 38],
+    ["bollards", 40, 28],
+    ["hydrant", 24, 30],
+    ["planter", 64, 32],
+    ["cafe-table", 58, 48],
+    ["bicycle", 42, 52],
+    ["bus-stop", 96, 56],
+    ["sedan", 52, 100],
+    ["van", 58, 112],
+    ["cones", 28, 40],
+    ["bench", 64, 32],
+  ];
+  const placed: MapObject[] = [];
+  for (const [i, b] of BUILDINGS.entries()) {
+    if (b.id.startsWith("legacy")) continue;
+    const [name, width, height] = streetDetails[i % streetDetails.length];
+    for (const side of [-1, 1]) {
+      const p = {
+        x: b.x + side * (b.width / 2 + width / 2 + 22),
+        y: b.y - b.height / 2 + height / 2,
+      };
+      if (
+        onRoad(p, Math.max(width, height) / 2 + 28) ||
+        SERVICE_POINTS.some((s) => Math.hypot(s.x - p.x, s.y - p.y) < 140)
+      )
+        continue;
+      if (
+        BUILDINGS.some(
+          (o) =>
+            Math.abs(o.x - p.x) < (o.width + width) / 2 + 18 &&
+            Math.abs(o.y - p.y) < (o.height + height) / 2 + 18,
+        )
+      )
+        continue;
+      if (placed.some((o) => Math.hypot(o.x - p.x, o.y - p.y) < 100)) continue;
+      const o: MapObject = {
+        id: "street-detail-" + i + "-" + side,
+        ...p,
+        width,
+        height,
+        asset: "map-street-" + name,
+        kind: "decoration",
+        solid: ["sedan", "van", "dumpster", "planter", "bus-stop"].includes(
+          name,
+        ),
+      };
+      placed.push(o);
+      out.push(o);
+      break;
     }
   }
   for (const road of ROADS)

@@ -143,7 +143,7 @@ app.get("/world", (_req, res) => {
       tiles: 256,
       chunkTiles: 16,
       districts: 5,
-      sceneryRevision: 2,
+      sceneryRevision: 3,
     },
     openGroundBuilding: true,
     visiblePistolShots: true,
