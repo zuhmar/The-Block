@@ -7,6 +7,7 @@ import {
   frontageStyle,
   citySurfaces,
   cityPaving,
+  pavingEdges,
   streetConnections,
 } from "../game-data/map-presentation.js";
 import sharp from "sharp";
@@ -58,7 +59,7 @@ for (const key of keys) {
     b64 = (await readFile(root + a.file)).toString("base64");
   defs += `<image id="${key}" width="${a.width}" height="${a.height}" href="data:image/png;base64,${b64}"/>`;
   if (key.startsWith("map-tile") || key.startsWith("map-paving-"))
-    defs += `<pattern id="pattern-${key}" width="${key.startsWith("map-paving-") ? 128 : a.width}" height="${key.startsWith("map-paving-") ? 128 : a.height}" patternUnits="userSpaceOnUse"><use href="#${key}" transform="scale(${key.startsWith("map-paving-") ? 128 / a.width : 1})"/></pattern>`;
+    defs += `<pattern id="pattern-${key}" width="${key.startsWith("map-paving-") ? 128 : a.width}" height="${key.startsWith("map-paving-") ? 128 : a.height}" patternUnits="userSpaceOnUse"><use href="#${key}" transform="scale(${key.startsWith("map-paving-") ? 128 / a.width : 1})"/>${key === "map-paving-slab" ? '<rect width="128" height="128" fill="#b5b7b0" opacity=".22"/>' : ""}</pattern>`;
 }
 const start = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 ${MAP_SIZE} ${MAP_SIZE}"><defs>${defs}<clipPath id="land"><path d="${path(COAST)}Z"/></clipPath></defs>`;
 let body = `<rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-water)"/><g clip-path="url(#land)"><rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-grass)"/>`;
@@ -83,9 +84,16 @@ for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
 for (const r of cityPaving())
   body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-paving-slab)"/>`;
+for (const [width, color] of [
+  [8, "#81877b"],
+  [4, "#c7c7b1"],
+] as const)
+  body += `<path d="${pavingEdges()
+    .map((e) => `M${e.a.x},${e.a.y}L${e.b.x},${e.b.y}`)
+    .join(" ")}" fill="none" stroke="${color}" stroke-width="${width}"/>`;
 body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-paving-pavers)"/>`;
 for (const surface of citySurfaces()) {
-  body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-${surface.service ? "map-paving-service" : surface.court ? "map-paving-pavers" : surface.material === "concrete" ? "map-paving-slab" : "map-tile-gravel"})" stroke="#b9b9a3" stroke-width="5"/>`;
+  body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-${surface.service ? "map-paving-service" : surface.court ? "map-paving-pavers" : surface.material === "concrete" ? "map-paving-slab" : "map-tile-gravel"})" stroke="#9a9d8e" stroke-width="2"/>`;
   if (surface.court) {
     const a = surface.points[0],
       b = surface.points[2];
@@ -103,7 +111,7 @@ for (const surface of citySurfaces()) {
   }
 }
 for (const p of PARKS)
-  body += `<ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2}" ry="${p.height / 2}" fill="url(#pattern-map-tile-grass)"/>`;
+  body += `<ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2 + 12}" ry="${p.height / 2 + 12}" fill="url(#pattern-map-tile-dirt)" stroke="#a6aa8d" stroke-width="3"/><ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2}" ry="${p.height / 2}" fill="url(#pattern-map-tile-grass)"/>`;
 for (const route of MARKET_QUARTER.paths)
   body += `<polyline points="${route.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="none" stroke="url(#pattern-map-paving-slab)" stroke-width="${route.width}" stroke-linejoin="round"/>`;
 for (const c of streetConnections()) {

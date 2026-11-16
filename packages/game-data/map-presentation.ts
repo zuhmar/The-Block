@@ -1,4 +1,9 @@
 import {
+  groundFootprint,
+  isPublicPlanter,
+  gridEnvelope,
+} from "../shared/src/map-placement.js";
+import {
   MARKET_QUARTER,
   inMarketQuarter,
 } from "../shared/src/market-quarter.js";
@@ -89,25 +94,69 @@ export function cityPaving() {
   if (paving) return paving;
   paving = [];
   const district = DISTRICTS.find((d) => d.id === "downtown")!;
-  for (let y = district.y; y < district.y + district.height; y += 64) {
-    let start: number | undefined;
-    for (let x = district.x; x <= district.x + district.width; x += 64) {
-      const p = { x: x + 32, y: y + 32 };
-      const occupied =
-        x < district.x + district.width &&
+  const tiles = new Set<string>(),
+    protectedLawn = (x: number, y: number) =>
+      PARKS.some(
+        (r) =>
+          Math.hypot(
+            (x + 32 - r.x) / (r.width / 2 + 32),
+            (y + 32 - r.y) / (r.height / 2 + 32),
+          ) < 1,
+      );
+  for (let y = district.y; y < district.y + district.height; y += 64)
+    for (let x = district.x; x < district.x + district.width; x += 64) {
+      if (
+        !protectedLawn(x, y) &&
         BUILDINGS.some(
           (b) =>
             districtFor(b)?.id === "downtown" &&
-            Math.abs(b.x - p.x) < b.width / 2 + 96 &&
-            Math.abs(b.y - p.y) < b.height / 2 + 80,
-        ) &&
-        !PARKS.some(
-          (r) =>
-            Math.hypot(
-              (p.x - r.x) / (r.width / 2 + 32),
-              (p.y - r.y) / (r.height / 2 + 32),
-            ) < 1,
-        );
+            Math.abs(b.x - x - 32) < b.width / 2 + 96 &&
+            Math.abs(b.y - y - 32) < b.height / 2 + 80,
+        )
+      )
+        tiles.add(`${x},${y}`);
+    }
+  // Join the civic plaza and its existing raised planters into the same surface.
+  // An exposed curb must not cut through the base of an existing planter.
+  const anchors = [
+    CIVIC_PLAZA,
+    ...mapObjects()
+      .filter(
+        (o) =>
+          districtFor(o)?.id === "downtown" &&
+          (isPublicPlanter(o) || o.asset === "map-street-planter"),
+      )
+      .map((o) => gridEnvelope(groundFootprint(o), 64)),
+  ];
+  for (const r of anchors)
+    for (let y = r.y; y < r.y + r.height; y += 64)
+      for (let x = r.x; x < r.x + r.width; x += 64)
+        if (!protectedLawn(x, y)) tiles.add(`${x},${y}`);
+  // Close only one- or two-cell slivers enclosed by paving. Keep broad lawns open.
+  for (let pass = 0; pass < 2; pass++) {
+    const infill = new Set<string>();
+    for (const key of tiles) {
+      const [x, y] = key.split(",").map(Number);
+      for (const [dx, dy] of [
+        [64, 0],
+        [0, 64],
+      ])
+        for (const gap of [1, 2]) {
+          if (!tiles.has(`${x + dx * (gap + 1)},${y + dy * (gap + 1)}`))
+            continue;
+          for (let i = 1; i <= gap; i++) {
+            const px = x + dx * i,
+              py = y + dy * i;
+            if (!protectedLawn(px, py)) infill.add(`${px},${py}`);
+          }
+        }
+    }
+    for (const key of infill) tiles.add(key);
+  }
+  for (let y = district.y; y < district.y + district.height; y += 64) {
+    let start: number | undefined;
+    for (let x = district.x; x <= district.x + district.width; x += 64) {
+      const occupied = tiles.has(`${x},${y}`);
       if (occupied && start === undefined) start = x;
       if (!occupied && start !== undefined) {
         paving.push({ x: start, y, width: x - start, height: 64 });
@@ -116,6 +165,33 @@ export function cityPaving() {
     }
   }
   return paving;
+}
+let exposedPavingEdges:
+  | { a: { x: number; y: number }; b: { x: number; y: number } }[]
+  | undefined;
+export function pavingEdges() {
+  if (exposedPavingEdges) return exposedPavingEdges;
+  const tiles = new Set(
+    cityPaving().flatMap((r) =>
+      Array.from({ length: r.width / 64 }, (_, i) => `${r.x + i * 64},${r.y}`),
+    ),
+  );
+  exposedPavingEdges = [];
+  for (const key of tiles) {
+    const [x, y] = key.split(",").map(Number);
+    for (const [dx, dy, ax, ay, bx, by] of [
+      [0, -64, 0, 0, 64, 0],
+      [0, 64, 0, 64, 64, 64],
+      [-64, 0, 0, 0, 0, 64],
+      [64, 0, 64, 0, 64, 64],
+    ])
+      if (!tiles.has(`${x + dx},${y + dy}`))
+        exposedPavingEdges.push({
+          a: { x: x + ax, y: y + ay },
+          b: { x: x + bx, y: y + by },
+        });
+  }
+  return exposedPavingEdges;
 }
 export function paintCityFrontage(
   ctx: CanvasRenderingContext2D,
@@ -149,35 +225,29 @@ export function paintCityFrontage(
       continue;
     ctx.fillRect(r.x, r.y, r.width, r.height);
   }
-  const tiles = new Set(
-    cityPaving().flatMap((r) =>
-      Array.from({ length: r.width / 64 }, (_, i) => `${r.x + i * 64},${r.y}`),
-    ),
+  // Only the exposed outline gets an edge; shared tile borders stay seamless.
+  const edges = pavingEdges().filter(
+    (e) =>
+      e.a.x >= bounds.x - 64 &&
+      e.a.x <= bounds.x + bounds.width + 64 &&
+      e.a.y >= bounds.y - 64 &&
+      e.a.y <= bounds.y + bounds.height + 64,
   );
-  ctx.strokeStyle = "#687578";
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  for (const key of tiles) {
-    const [x, y] = key.split(",").map(Number);
-    if (
-      x < bounds.x - 64 ||
-      x > bounds.x + bounds.width ||
-      y < bounds.y - 64 ||
-      y > bounds.y + bounds.height
-    )
-      continue;
-    for (const [dx, dy, ax, ay, bx, by] of [
-      [0, -64, 0, 0, 64, 0],
-      [0, 64, 0, 64, 64, 64],
-      [-64, 0, 0, 0, 0, 64],
-      [64, 0, 64, 0, 64, 64],
-    ]) {
-      if (tiles.has(`${x + dx},${y + dy}`)) continue;
-      ctx.moveTo(x + ax, y + ay);
-      ctx.lineTo(x + bx, y + by);
+  for (const [width, color] of [
+    [8, "#81877b"],
+    [4, "#c7c7b1"],
+  ] as const) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = "butt";
+    ctx.beginPath();
+    for (const edge of edges) {
+      ctx.moveTo(edge.a.x, edge.a.y);
+      ctx.lineTo(edge.b.x, edge.b.y);
     }
+    ctx.stroke();
   }
-  ctx.stroke();
+  ctx.lineCap = "round";
   const plaza = CIVIC_PLAZA;
   if (near({ x: plaza.x + plaza.width / 2, y: plaza.y + plaza.height / 2 })) {
     ctx.fillStyle = materials.pavers;
@@ -185,7 +255,7 @@ export function paintCityFrontage(
     ctx.roundRect(plaza.x, plaza.y, plaza.width, plaza.height, 28);
     ctx.fill();
     ctx.strokeStyle = "#727d7d";
-    ctx.lineWidth = 7;
+    ctx.lineWidth = 4;
     ctx.stroke();
   }
   for (const surface of citySurfaces()) {
@@ -205,8 +275,8 @@ export function paintCityFrontage(
         ? materials.pavers
         : materials[surface.material];
     ctx.fill();
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = "#718082";
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#9a9d8e";
     if (!surface.buildings.every(inMarketQuarter)) ctx.stroke();
     if (surface.court) {
       const a = surface.points[0],
@@ -263,9 +333,24 @@ export function paintCityFrontage(
   }
   for (const p of PARKS) {
     if (!near(p)) continue;
-    ctx.fillStyle = materials.grass;
+    ctx.beginPath();
+    ctx.ellipse(
+      p.x,
+      p.y,
+      p.width / 2 + 12,
+      p.height / 2 + 12,
+      0,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fillStyle = materials.dirt;
+    ctx.fill();
+    ctx.strokeStyle = "#a6aa8d";
+    ctx.lineWidth = 3;
+    ctx.stroke();
     ctx.beginPath();
     ctx.ellipse(p.x, p.y, p.width / 2, p.height / 2, 0, 0, Math.PI * 2);
+    ctx.fillStyle = materials.grass;
     ctx.fill();
   }
   for (const route of MARKET_QUARTER.paths) {

@@ -38,6 +38,7 @@ export class MapWorld {
   private reservationKey = "";
   private pixelRatio: number;
   private gravelBrush?: HTMLCanvasElement;
+  private slabSurface?: HTMLCanvasElement;
   constructor(
     private scene: Phaser.Scene,
     ratio = 1,
@@ -183,7 +184,21 @@ export class MapWorld {
       const source = this.scene.textures
         .get(name)
         .getSourceImage() as HTMLImageElement;
-      const fill = ctx.createPattern(source, "repeat")!;
+      if (name === "map-paving-slab" && !this.slabSurface) {
+        const surface = document.createElement("canvas");
+        surface.width = source.width;
+        surface.height = source.height;
+        const painter = surface.getContext("2d")!;
+        painter.drawImage(source, 0, 0);
+        // Keep the AI slab detail, with less contrast against the surrounding landscape.
+        painter.fillStyle = "rgba(181,183,176,0.22)";
+        painter.fillRect(0, 0, surface.width, surface.height);
+        this.slabSurface = surface;
+      }
+      const fill = ctx.createPattern(
+        name === "map-paving-slab" ? this.slabSurface! : source,
+        "repeat",
+      )!;
       if (name.startsWith("map-paving-"))
         fill.setTransform(new DOMMatrix().scale(128 / source.width));
       return fill;
