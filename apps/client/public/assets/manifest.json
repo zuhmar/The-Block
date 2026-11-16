@@ -3101,6 +3101,66 @@
       },
       "source": "ai-generated",
       "sourceGroup": "combat-effects"
+    },
+    "terrain-cliff-0": {
+      "file": "terrain-cliff-0.png",
+      "width": 384,
+      "height": 144,
+      "frameWidth": 384,
+      "frameHeight": 144,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "terrain",
+      "sourceAsset": "cliff-sheet.png"
+    },
+    "terrain-cliff-1": {
+      "file": "terrain-cliff-1.png",
+      "width": 384,
+      "height": 144,
+      "frameWidth": 384,
+      "frameHeight": 144,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "terrain",
+      "sourceAsset": "cliff-sheet.png"
+    },
+    "terrain-cliff-2": {
+      "file": "terrain-cliff-2.png",
+      "width": 384,
+      "height": 144,
+      "frameWidth": 384,
+      "frameHeight": 144,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "terrain",
+      "sourceAsset": "cliff-sheet.png"
+    },
+    "terrain-cliff-3": {
+      "file": "terrain-cliff-3.png",
+      "width": 384,
+      "height": 144,
+      "frameWidth": 384,
+      "frameHeight": 144,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "terrain",
+      "sourceAsset": "cliff-sheet.png"
     }
   }
 }

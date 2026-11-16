@@ -1,3 +1,7 @@
+import {
+  terrainBlocked,
+  terrainObstruction,
+} from "../../../packages/shared/src/terrain.js";
 import { randomUUID } from "node:crypto";
 import {
   WORLD,
@@ -91,6 +95,7 @@ export function obstruction(
   ignoreId?: string,
 ) {
   return (
+    terrainObstruction(a, b) ||
     WORLD.obstacles.some((r) => segmentRect(a, b, r)) ||
     Object.values(w.structures).some(
       (s) =>
@@ -108,6 +113,7 @@ function access(w: WorldState, p: Player, s: Structure) {
 }
 export function blocked(w: WorldState, p: Point) {
   return (
+    terrainBlocked(p) ||
     WORLD.obstacles.some((r) => inRect(p, r, 12)) ||
     Object.values(w.structures).some(
       (s) =>
@@ -164,6 +170,11 @@ export function upgradeWorld(w: WorldState) {
             break;
           }
         }
+      // A saved character can be far beyond a newly authored coastline.
+      if (!found) {
+        p.x = WORLD.spawn.x;
+        p.y = WORLD.spawn.y;
+      }
     }
   }
   return w;

@@ -1,3 +1,9 @@
+import {
+  onRoad,
+  roadOverlapsRect,
+  terrainRectBlocked,
+  treeOverlapsRect,
+} from "./terrain.js";
 import { z } from "zod";
 export const VERSION = 2;
 export interface Point {
@@ -31,30 +37,6 @@ export const WORLD = {
     { x: 4220, y: 1900 },
     { x: 5330, y: 1200 },
   ],
-  parcels: [
-    [2900, 3300],
-    [3700, 4100],
-    [4600, 5100],
-    [5600, 6150],
-  ],
-  // Large woodland clearings, separated from the protected town and road network.
-  parcelRects: [
-    { x: 6656, y: 128, width: 2560, height: 640 },
-    { x: 6656, y: 1152, width: 2560, height: 832 },
-    { x: 6656, y: 2368, width: 2560, height: 1920 },
-    { x: 128, y: 3392, width: 2112, height: 896 },
-    { x: 2752, y: 3392, width: 3456, height: 896 },
-    { x: 128, y: 4736, width: 2112, height: 1408 },
-    { x: 2752, y: 4736, width: 3456, height: 1408 },
-    { x: 6656, y: 4736, width: 2560, height: 1408 },
-  ],
-  roads: [
-    { x: 0, y: 880, width: 9600, height: 192 },
-    { x: 2400, y: 0, width: 192, height: 6400 },
-    { x: 0, y: 2080, width: 9600, height: 160 },
-    { x: 0, y: 4480, width: 9600, height: 160 },
-    { x: 9344, y: 0, width: 160, height: 6400 },
-  ],
   obstacles: [
     { x: 80, y: 376, width: 660, height: 24 },
     { x: 80, y: 376, width: 24, height: 424 },
@@ -87,15 +69,9 @@ export const safe = (x: number, y: number = WORLD.ground) =>
   inRect({ x, y }, WORLD.safeRect);
 export const buildGround = (p: Point) =>
   !inRect(p, WORLD.townRect) &&
-  !WORLD.roads.some((r) => inRect(p, r, 32)) &&
-  WORLD.parcelRects.some((r) =>
-    inRect(p, {
-      x: r.x + 32,
-      y: r.y + 32,
-      width: r.width - 64,
-      height: r.height - 64,
-    }),
-  );
+  !onRoad(p, 32) &&
+  !terrainRectBlocked({ x: p.x - 64, y: p.y - 64, width: 128, height: 128 }) &&
+  !treeOverlapsRect({ x: p.x - 64, y: p.y - 64, width: 128, height: 128 });
 export function segmentRect(a: Point, b: Point, r: Rect) {
   let lo = 0,
     hi = 1;
@@ -489,30 +465,15 @@ export function placementReason(
     height: Math.max(margin, 32) * 2,
   };
   if (rectsOverlap(footprint, WORLD.townRect))
-    return "Cannot build in town. Find a woodland clearing outside town.";
-  if (
-    WORLD.roads.some((r) =>
-      rectsOverlap(footprint, {
-        x: r.x - 32,
-        y: r.y - 32,
-        width: r.width + 64,
-        height: r.height + 64,
-      }),
-    )
-  )
+    return "Cannot build in town. Find open ground outside town.";
+  if (roadOverlapsRect(footprint))
     return "Cannot build on roads or road shoulders";
-  if (
-    !WORLD.parcelRects.some((r) =>
-      inRect(point, {
-        x: r.x + margin,
-        y: r.y + margin,
-        width: r.width - margin * 2,
-        height: r.height - margin * 2,
-      }),
-    ) ||
-    WORLD.obstacles.some((r) => rectsOverlap(footprint, r))
-  )
-    return "Find an open woodland clearing; keep the whole floor inside it";
+  if (terrainRectBlocked(footprint))
+    return "Cannot build in water or on cliffs. Find open ground.";
+  if (treeOverlapsRect(footprint))
+    return "Trees block this space. Find open ground.";
+  if (WORLD.obstacles.some((r) => rectsOverlap(footprint, r)))
+    return "Public buildings cannot be claimed";
   if (
     structures.filter((s) => s.owner === player.id && s.kind !== "roof")
       .length >= BUILD_BUDGET

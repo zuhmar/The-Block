@@ -6,7 +6,12 @@ import {
   placementReason,
   buildGround,
 } from "../packages/shared/src/index.js";
-import { forestTrees } from "../packages/game-data/forest.js";
+import {
+  forestTrees,
+  onRoad,
+  terrainBlocked,
+  ROADS,
+} from "../packages/shared/src/terrain.js";
 import {
   act,
   createPlayer,
@@ -20,24 +25,26 @@ const look = {
   body: "standard",
   style: "short",
 } as const;
-test("every woodland clearing supports a complete floor; town and road placement spend no wood", () => {
+test("open countryside supports homes without designated plots; protected terrain spends no wood", () => {
   const w = emptyWorld(),
     p = createPlayer("builder", "Builder", look);
   w.players[p.id] = p;
-  for (const r of WORLD.parcelRects) {
-    p.x = Math.ceil((r.x + 128) / 64) * 64;
-    p.y = Math.ceil((r.y + 128) / 64) * 64;
+  for (const point of [
+    { x: 7104, y: 1344 },
+    { x: 7104, y: 1536 },
+    { x: 6848, y: 1536 },
+  ]) {
+    p.x = point.x;
+    p.y = point.y;
     assert(buildGround(p));
-    act(w, p.id, { type: "build", kind: "foundation", x: p.x, y: p.y });
+    act(w, p.id, { type: "build", kind: "foundation", ...point });
   }
   for (const point of [
     { x: 3008, y: 1344 },
     { x: 7104, y: 960 },
-    { x: 7104, y: 2080 },
-    { x: 7104, y: 4480 },
+    { x: 6450, y: 1500 },
+    { x: 6060, y: 3470 },
     { x: 9408, y: 3456 },
-    { x: 2496, y: 5120 },
-    { x: 7104, y: 1152 },
   ]) {
     p.x = point.x;
     p.y = point.y;
@@ -53,17 +60,17 @@ test("every woodland clearing supports a complete floor; town and road placement
     assert.equal(Object.keys(w.structures).length, count);
   }
 });
-test("forest is deterministic, dense and clear of house plots and connecting roads", () => {
+test("natural forest is deterministic and clear of water, cliffs and winding road shoulders", () => {
   const trees = forestTrees();
   assert(trees.length > 500);
   assert.deepEqual(trees, forestTrees());
   for (const tree of trees) {
     assert(!inRect(tree, WORLD.townRect));
-    assert(!WORLD.roads.some((r) => inRect(tree, r, 100)));
-    assert(!WORLD.parcelRects.some((r) => inRect(tree, r, 72)));
+    assert(!onRoad(tree, 90));
+    assert(!terrainBlocked(tree, 45));
   }
-  assert(WORLD.roads.some((r) => r.width === WORLD.width));
-  assert(WORLD.roads.some((r) => r.height === WORLD.height));
+  assert(ROADS.some((r) => r.points.some((p) => p.x > 8000)));
+  assert(ROADS.some((r) => r.points.some((p) => p.y > 5700)));
 });
 test("existing town homes survive reload while additions in town are rejected", () => {
   const w = emptyWorld(),

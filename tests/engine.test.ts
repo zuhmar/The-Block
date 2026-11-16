@@ -68,7 +68,7 @@ test("contracts reject untrusted state and invalid movement", () => {
 test("placement masks, ownership, costs and foundation immunity", () => {
   const { w, p, r } = fixture();
   assert.throws(() =>
-    act(w, p.id, { type: "build", kind: "foundation", x: 6656 }),
+    act(w, p.id, { type: "build", kind: "foundation", x: 7104, y: 1100 }),
   );
   act(w, p.id, { type: "build", kind: "foundation", x: 7104 });
   const f = Object.values(w.structures)[0];

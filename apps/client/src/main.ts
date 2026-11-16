@@ -1,3 +1,11 @@
+import {
+  COAST,
+  RIVER,
+  LAKES,
+  CLIFFS,
+  ROADS,
+  onRoad,
+} from "../../../packages/shared/src/terrain";
 import Phaser from "phaser";
 import { Client, type Room } from "colyseus.js";
 import {
@@ -299,6 +307,15 @@ class City extends Phaser.Scene {
       "street-survival-the-block-v2",
     ]);
     this.add
+      .rectangle(
+        WORLD.width / 2,
+        WORLD.height / 2,
+        WORLD.width,
+        WORLD.height,
+        0x315f73,
+      )
+      .setDepth(-11000);
+    const grass = this.add
       .tileSprite(
         WORLD.width / 2,
         WORLD.height / 2,
@@ -307,14 +324,27 @@ class City extends Phaser.Scene {
         "td-grass",
       )
       .setDepth(-10000);
-    const townBoundary = this.add.graphics().setDepth(-9600);
-    townBoundary.lineStyle(5, 0xc5ba92, 0.65);
-    townBoundary.strokeRect(
-      2,
-      2,
-      WORLD.townRect.width - 4,
-      WORLD.townRect.height - 4,
-    );
+    const landMask = this.make.graphics({ x: 0, y: 0 }, false);
+    landMask.fillStyle(0xffffff).fillPoints(COAST, true);
+    grass.setMask(landMask.createGeometryMask());
+    const shores = this.add.graphics().setDepth(-9800);
+    shores.lineStyle(36, 0xc1b48a, 1).strokePoints(COAST, true);
+    shores.lineStyle(8, 0x7ba8a8, 0.8).strokePoints(COAST, true);
+    for (const lake of LAKES) {
+      shores.fillStyle(0x3f7784).fillPoints(lake, true);
+      shores.lineStyle(22, 0xb5b28a).strokePoints(lake, true);
+      shores.lineStyle(5, 0x8dbbb5).strokePoints(lake, true);
+    }
+    shores.lineStyle(180, 0xb5b28a).strokePoints(RIVER, false);
+    shores.lineStyle(148, 0x3f7784).strokePoints(RIVER, false);
+    shores.lineStyle(116, 0x447f8c, 0.7).strokePoints(RIVER, false);
+    // Small current marks keep the water readable without obscuring the coastline.
+    for (let i = 4; i < RIVER.length; i += 12) {
+      const p = RIVER[i];
+      shores
+        .lineStyle(3, 0x9bc9c7, 0.5)
+        .lineBetween(p.x - 18, p.y, p.x + 16, p.y - 4);
+    }
     for (const tree of woodlandTrees)
       this.add
         .image(tree.x, tree.y, "td-tree-" + tree.variant)
@@ -323,55 +353,41 @@ class City extends Phaser.Scene {
         .setDepth(tree.y);
     this.text(6170, 1150, "TOWN LIMIT · EAST WOODLAND →", 14, "#e2dcc5");
     this.text(2780, 3160, "TOWN LIMIT · SOUTH WOODLAND ↓", 14, "#e2dcc5");
-    for (const r of WORLD.parcelRects) {
-      this.add
-        .tileSprite(
-          r.x + r.width / 2,
-          r.y + r.height / 2,
-          r.width,
-          r.height,
-          "td-dirt",
-        )
-        .setDepth(-9500);
-      const g = this.add.graphics().setDepth(-9000);
-      g.lineStyle(2, 0xd2c397, 0.35);
-      g.strokeRect(r.x + 8, r.y + 8, r.width - 16, r.height - 16);
-      this.text(
-        r.x + r.width / 2,
-        r.y + 24,
-        "WOODLAND CLEARING / BUILD YOUR HOME",
-        10,
-        "#d4ccad",
-      ).setDepth(-8900);
+    const roads = this.add.graphics().setDepth(-7800);
+    for (const road of ROADS) {
+      roads
+        .lineStyle(road.width + 56, 0xaaa58b)
+        .strokePoints(road.points, false);
+      roads.lineStyle(road.width, 0x505b5b).strokePoints(road.points, false);
+      roads.lineStyle(3, 0xc8c299, 0.8);
+      for (let i = 2; i < road.points.length - 2; i += 6)
+        roads.strokePoints(road.points.slice(i, i + 3), false);
+      // Timber bridge decks sit where a route crosses the river.
+      for (let i = 1; i < road.points.length; i++) {
+        const p = road.points[i];
+        if (
+          Math.abs(p.x - 6450) < 150 &&
+          RIVER.some((r) => Math.hypot(r.x - p.x, r.y - p.y) < 115)
+        ) {
+          const prev = road.points[i - 1],
+            angle = Math.atan2(p.y - prev.y, p.x - prev.x),
+            dx = Math.cos(angle + Math.PI / 2) * (road.width / 2 - 8),
+            dy = Math.sin(angle + Math.PI / 2) * (road.width / 2 - 8);
+          roads
+            .lineStyle(10, 0x9e8665)
+            .lineBetween(p.x - dx, p.y - dy, p.x + dx, p.y + dy);
+        }
+      }
     }
-    for (const r of WORLD.roads) {
+    for (const [i, r] of CLIFFS.entries())
       this.add
-        .tileSprite(
+        .image(
           r.x + r.width / 2,
           r.y + r.height / 2,
-          r.width + 64,
-          r.height + 64,
-          "td-concrete",
+          "terrain-cliff-" + (i % 4),
         )
-        .setDepth(-8000);
-      this.add
-        .tileSprite(
-          r.x + r.width / 2,
-          r.y + r.height / 2,
-          r.width,
-          r.height,
-          "td-asphalt",
-        )
-        .setDepth(-7900);
-      const g = this.add.graphics().setDepth(-7800);
-      g.lineStyle(3, 0xd0cda7, 0.6);
-      if (r.width > r.height)
-        for (let x = 0; x < r.width; x += 136)
-          g.lineBetween(x + 20, r.y + r.height / 2, x + 80, r.y + r.height / 2);
-      else
-        for (let y = 0; y < r.height; y += 136)
-          g.lineBetween(r.x + r.width / 2, y + 20, r.x + r.width / 2, y + 80);
-    }
+        .setDisplaySize(r.width + 20, r.height + 20)
+        .setDepth(r.y + r.height);
     this.add.tileSprite(410, 590, 660, 400, "td-floor").setDepth(-7000);
     this.add.tileSprite(1270, 675, 1020, 180, "td-concrete").setDepth(-7000);
     this.add.tileSprite(1930, 675, 450, 180, "td-dirt").setDepth(-6900);
@@ -429,20 +445,7 @@ class City extends Phaser.Scene {
         y: random.integerInRange(80, 3100),
       };
       if (
-        WORLD.roads.some(
-          (r) =>
-            p.x > r.x - 65 &&
-            p.x < r.x + r.width + 65 &&
-            p.y > r.y - 65 &&
-            p.y < r.y + r.height + 65,
-        ) ||
-        WORLD.parcelRects.some(
-          (r) =>
-            p.x > r.x - 80 &&
-            p.x < r.x + r.width + 80 &&
-            p.y > r.y - 80 &&
-            p.y < r.y + r.height + 80,
-        ) ||
+        onRoad(p, 65) ||
         WORLD.obstacles.some(
           (r) =>
             p.x > r.x - 100 &&
@@ -1074,31 +1077,63 @@ function drawMap(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d")!;
   const sx = canvas.width / WORLD.width,
     sy = canvas.height / WORLD.height;
-  ctx.fillStyle = "#405c42";
+  ctx.fillStyle = "#284f64";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#82916b";
-  ctx.lineWidth = 0.5;
-  for (let x = 0; x < canvas.width; x += canvas.width / 8) {
+  const polygon = (
+    points: readonly { x: number; y: number }[],
+    fill: string,
+    stroke?: string,
+  ) => {
     ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-    ctx.stroke();
-  }
-  for (let y = 0; y < canvas.height; y += canvas.height / 5) {
+    points.forEach((p, i) =>
+      i ? ctx.lineTo(p.x * sx, p.y * sy) : ctx.moveTo(p.x * sx, p.y * sy),
+    );
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if (stroke) {
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  };
+  polygon(COAST, "#758567", "#c2ba91");
+  ctx.fillStyle = "#405f43";
+  for (const tree of woodlandTrees) {
     ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-    ctx.stroke();
+    ctx.arc(
+      tree.x * sx,
+      tree.y * sy,
+      canvas.width > 300 ? 2 : 1,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fill();
   }
-  ctx.fillStyle = "#6d795a";
-  ctx.fillRect(0, 0, WORLD.townRect.width * sx, WORLD.townRect.height * sy);
-  ctx.fillStyle = "#2c4734";
-  for (const tree of woodlandTrees)
-    ctx.fillRect(tree.x * sx, tree.y * sy, 1.5, 1.5);
-  ctx.strokeStyle = "#d5c89e";
-  ctx.strokeRect(0, 0, WORLD.townRect.width * sx, WORLD.townRect.height * sy);
-  for (const r of WORLD.roads) {
-    ctx.fillStyle = "#b4ad8b";
+  for (const lake of LAKES) polygon(lake, "#427c8b", "#afbc9f");
+  const path = (
+    points: readonly { x: number; y: number }[],
+    color: string,
+    width: number,
+  ) => {
+    ctx.beginPath();
+    points.forEach((p, i) =>
+      i ? ctx.lineTo(p.x * sx, p.y * sy) : ctx.moveTo(p.x * sx, p.y * sy),
+    );
+    ctx.strokeStyle = color;
+    ctx.lineWidth = Math.max(1, width * sx);
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+  };
+  path(RIVER, "#aab699", 176);
+  path(RIVER, "#427c8b", 148);
+  for (const road of ROADS) {
+    path(road.points, "#d5c9a2", road.width + 35);
+    path(road.points, "#747369", road.width);
+  }
+  for (const r of CLIFFS) {
+    ctx.fillStyle = "#4b5551";
     ctx.fillRect(r.x * sx, r.y * sy, r.width * sx, r.height * sy);
   }
   for (const r of WORLD.obstacles) {
@@ -1109,10 +1144,6 @@ function drawMap(canvas: HTMLCanvasElement) {
       Math.max(1, r.width * sx),
       Math.max(1, r.height * sy),
     );
-  }
-  for (const r of WORLD.parcelRects) {
-    ctx.fillStyle = "#9d9067";
-    ctx.fillRect(r.x * sx, r.y * sy, r.width * sx, r.height * sy);
   }
   ctx.fillStyle = "#90bc88";
   const s = WORLD.safeRect;
@@ -1202,7 +1233,7 @@ function renderHud() {
   );
   const wood = (p.inventory.wood || 0) > 0;
   $("#objective").innerHTML =
-    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow the roads east or south out of town. Build in a woodland clearing." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
+    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow the roads east or south out of town. Find open ground for your home." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
   const near = nearest();
   $("#context").innerHTML = near
     ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
@@ -1262,7 +1293,7 @@ function renderPanel() {
   } else if (panel === "build") {
     title = "Construction";
     subtitle = "A PLACE WORTH DEFENDING";
-    html = `<p class="panel-intro">Build only in woodland clearings outside town. Town streets and road shoulders are protected. Place floors first, then hover a floor to snap walls and doors along its outer or interior grid lines, with storage inside. The floor under your cursor is selected automatically. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap to outer or interior floor grid lines; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Preferred floor at shared edges<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
+    html = `<p class="panel-intro">Build on open ground outside town. Water, cliffs and trees block placement. Town streets and road shoulders are protected. Place floors first, then hover a floor to snap walls and doors along its outer or interior grid lines, with storage inside. The floor under your cursor is selected automatically. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap to outer or interior floor grid lines; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Preferred floor at shared edges<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
       .filter((s) => s.kind === "foundation" && s.owner === p.id)
       .sort((a, b) => distance(a, p) - distance(b, p))
       .map(
@@ -1302,7 +1333,7 @@ function renderPanel() {
           (s) => s.kind === "foundation" && s.owner === p.id,
         ),
         "Claim a foothold",
-        "Follow the roads east or south beyond town to a woodland clearing. Open B to build.",
+        "Follow the roads east or south beyond town and find open ground. Open B to build.",
       ],
     ]
       .map(
@@ -1315,7 +1346,7 @@ function renderPanel() {
   } else if (panel === "map") {
     title = "The Block";
     subtitle = "DISTRICT 01 / SHARED CITY";
-    html = `<canvas id="district-map" width="760" height="507"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> House clearings</span><span>Dark green · Forest</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Woodland clearings east (x ≥ 6656) and south (y ≥ 3392) have room for homes. Follow the roads out of town. Town and all roads are protected from building.</p>`;
+    html = `<canvas id="district-map" width="760" height="507"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Open ground outside town</span><span>Dark green · Forest · Blue · Water · Grey · Cliffs</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Follow the winding roads and bridges out of town. Build anywhere on open land outside town; roads, water, cliffs and trees must stay clear.</p>`;
   } else if (panel === "chat") {
     title = "Neighborhood chat";
     subtitle = "THE BLOCK / LIVE";

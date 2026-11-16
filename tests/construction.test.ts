@@ -335,7 +335,7 @@ test("hovering a different owned floor selects it despite a stale preferred floo
   );
 });
 
-test("walls on a floor at the parcel boundary are allowed without extending the floor outside the parcel", () => {
+test("walls stay supported along an owned floor perimeter on open land", () => {
   const { world, player } = setup();
   player.x = 6726;
   player.y = 1260;

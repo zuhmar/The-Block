@@ -186,3 +186,15 @@ for (const [key, a] of Object.entries(assets) as [string, any][]) {
 console.log(
   `Validated ${Object.keys(assets).length} images, dimensions, alpha, cells, animations and required keys.`,
 );
+
+for (let i = 0; i < 4; i++) {
+  const key = `terrain-cliff-${i}`;
+  assert.equal(assets[key]?.source, "ai-generated", key);
+  assert.equal(assets[key]?.sourceGroup, "terrain", key);
+  const metadata = await sharp(
+    new URL(assets[key].file, root).pathname,
+  ).metadata();
+  assert(metadata.hasAlpha, key);
+  assert.equal(metadata.width, 384, key);
+  assert.equal(metadata.height, 144, key);
+}
