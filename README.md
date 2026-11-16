@@ -63,7 +63,7 @@ pnpm test
 pnpm build
 ```
 
-The asset build produces **114 manifest entries**. Characters use original AI-generated black stick-figure PNGs: four directions, eight state rows, NPC roles and matching portraits. `art/ai/characters/README.md` documents the source poses and held-frame states. The importer crops, scales and packs existing artwork reproducibly; local setup needs no image API. World, item, effect and UI art still uses the procedural SVG/PNG pipeline. Validation checks required keys, dimensions, alpha and nonempty character cells. All four character atlases load together; saved legacy appearance data remains intact.
+The asset build produces **121 manifest entries**. Characters use original AI-generated black stick-figure PNGs: four directions, eight state rows, NPC roles and matching portraits. `art/ai/characters/README.md` documents the source poses and held-frame states. The importer crops, scales and packs existing artwork reproducibly; local setup needs no image API. All 41 world-pack sprites are integrated: inventory icons, street props, city buildings and construction pieces. Damaged structures retain the AI silhouette with a tint; breached structures use AI rubble. Terrain, bed, effects and UI symbols retain procedural SVG/PNG art. Validation checks required keys, dimensions, alpha and nonempty character cells. All four character atlases load together; saved legacy appearance data remains intact.
 
 Browser automation was unavailable in the build environment. Asset sheets were inspected and network/rules checks run, but visual browser/mobile acceptance is not claimed. Follow `docs/BROWSER-QA.md` locally.
 

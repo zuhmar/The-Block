@@ -628,7 +628,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-shelter"
     },
     "shop": {
       "file": "shop.png",
@@ -640,7 +642,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-convenience-store"
     },
     "dumpster": {
       "file": "dumpster.png",
@@ -652,7 +656,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-dumpster"
     },
     "trash": {
       "file": "trash.png",
@@ -664,7 +670,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-trash-can"
     },
     "streetlight": {
       "file": "streetlight.png",
@@ -676,7 +684,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-streetlamp"
     },
     "vehicle": {
       "file": "vehicle.png",
@@ -688,7 +698,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-abandoned-car"
     },
     "foundation-intact": {
       "file": "foundation-intact.png",
@@ -700,7 +712,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-foundation"
     },
     "foundation-damaged": {
       "file": "foundation-damaged.png",
@@ -712,7 +726,10 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-foundation",
+      "damageVisual": "tint"
     },
     "foundation-breached": {
       "file": "foundation-breached.png",
@@ -724,7 +741,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "wall-intact": {
       "file": "wall-intact.png",
@@ -736,7 +755,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-wall"
     },
     "wall-damaged": {
       "file": "wall-damaged.png",
@@ -748,7 +769,10 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-wall",
+      "damageVisual": "tint"
     },
     "wall-breached": {
       "file": "wall-breached.png",
@@ -760,7 +784,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "door-intact": {
       "file": "door-intact.png",
@@ -772,7 +798,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-door"
     },
     "door-damaged": {
       "file": "door-damaged.png",
@@ -784,7 +812,10 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-door",
+      "damageVisual": "tint"
     },
     "door-breached": {
       "file": "door-breached.png",
@@ -796,7 +827,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "roof-intact": {
       "file": "roof-intact.png",
@@ -808,7 +841,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-roof"
     },
     "roof-damaged": {
       "file": "roof-damaged.png",
@@ -820,7 +855,10 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-roof",
+      "damageVisual": "tint"
     },
     "roof-breached": {
       "file": "roof-breached.png",
@@ -832,7 +870,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "storage-intact": {
       "file": "storage-intact.png",
@@ -844,7 +884,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-storage-chest"
     },
     "storage-damaged": {
       "file": "storage-damaged.png",
@@ -856,7 +898,10 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-storage-chest",
+      "damageVisual": "tint"
     },
     "storage-breached": {
       "file": "storage-breached.png",
@@ -868,7 +913,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "water": {
       "file": "water.png",
@@ -880,7 +927,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-water"
     },
     "snack": {
       "file": "snack.png",
@@ -892,7 +941,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-snack"
     },
     "bandage": {
       "file": "bandage.png",
@@ -904,7 +955,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-bandage"
     },
     "wood": {
       "file": "wood.png",
@@ -916,7 +969,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-wood"
     },
     "scrap": {
       "file": "scrap.png",
@@ -928,7 +983,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-scrap"
     },
     "stone": {
       "file": "stone.png",
@@ -940,7 +997,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-stone"
     },
     "brick": {
       "file": "brick.png",
@@ -952,7 +1011,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-brick"
     },
     "concrete": {
       "file": "concrete.png",
@@ -964,7 +1025,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-concrete"
     },
     "steel": {
       "file": "steel.png",
@@ -976,7 +1039,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-steel"
     },
     "glass": {
       "file": "glass.png",
@@ -988,7 +1053,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-glass"
     },
     "electronics": {
       "file": "electronics.png",
@@ -1000,7 +1067,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-electronics"
     },
     "backpack": {
       "file": "backpack.png",
@@ -1012,7 +1081,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-backpack"
     },
     "cash": {
       "file": "cash.png",
@@ -1024,7 +1095,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-cash"
     },
     "bat": {
       "file": "bat.png",
@@ -1036,7 +1109,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-bat"
     },
     "pistol": {
       "file": "pistol.png",
@@ -1048,7 +1123,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-pistol"
     },
     "ammo": {
       "file": "ammo.png",
@@ -1060,7 +1137,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "inventory-items-ammo"
     },
     "health": {
       "file": "health.png",
@@ -1312,7 +1391,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.83
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-tree"
     },
     "td-tree-1": {
       "file": "td-tree-1.png",
@@ -1324,7 +1405,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.83
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-tree"
     },
     "td-tree-2": {
       "file": "td-tree-2.png",
@@ -1336,7 +1419,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.83
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-tree"
     },
     "td-tree-3": {
       "file": "td-tree-3.png",
@@ -1348,7 +1433,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.83
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-tree"
     },
     "td-building-0": {
       "file": "td-building-0.png",
@@ -1360,7 +1447,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.91
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-shelter"
     },
     "td-building-1": {
       "file": "td-building-1.png",
@@ -1372,7 +1461,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.91
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-convenience-store"
     },
     "td-building-2": {
       "file": "td-building-2.png",
@@ -1384,7 +1475,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.91
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-workshop"
     },
     "td-building-3": {
       "file": "td-building-3.png",
@@ -1396,7 +1489,9 @@
       "anchor": {
         "x": 0.5,
         "y": 0.91
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "buildings-ruined-building"
     },
     "td-rubble": {
       "file": "td-rubble.png",
@@ -1408,7 +1503,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-rubble"
     },
     "td-bush": {
       "file": "td-bush.png",
@@ -1420,7 +1517,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-bush"
     },
     "td-pallet": {
       "file": "td-pallet.png",
@@ -1432,7 +1531,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-pallet"
     },
     "td-bench": {
       "file": "td-bench.png",
@@ -1444,7 +1545,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-bench"
     },
     "td-bed": {
       "file": "td-bed.png",
@@ -1468,7 +1571,9 @@
       "anchor": {
         "x": 0.5,
         "y": 1
-      }
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-streetlamp"
     },
     "ui-craft": {
       "file": "ui-craft.png",
@@ -1565,6 +1670,104 @@
         "x": 0.5,
         "y": 1
       }
+    },
+    "td-boxes": {
+      "file": "td-boxes.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-cardboard-boxes"
+    },
+    "td-barricade": {
+      "file": "td-barricade.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-road-barricade"
+    },
+    "td-tires": {
+      "file": "td-tires.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-tires"
+    },
+    "td-shopping-cart": {
+      "file": "td-shopping-cart.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-shopping-cart"
+    },
+    "td-water-barrel": {
+      "file": "td-water-barrel.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-water-barrel"
+    },
+    "td-fence": {
+      "file": "td-fence.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-chainlink-fence"
+    },
+    "td-campfire": {
+      "file": "td-campfire.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.8
+      },
+      "source": "ai-generated",
+      "sourceAsset": "street-props-campfire"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "runtimeIntegrated": false,
+  "runtimeIntegrated": true,
   "assets": {
     "street-props-dumpster": {
       "file": "sprites/street-props-dumpster.png",

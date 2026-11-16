@@ -332,7 +332,11 @@ class City extends Phaser.Scene {
           .setDepth(r.y + r.height);
       } else {
         this.add
-          .image(r.x + r.width / 2, r.y + r.height, "td-building-" + (i % 4))
+          .image(
+            r.x + r.width / 2,
+            r.y + r.height,
+            "td-building-" + (i === 5 ? 1 : i === 6 ? 2 : i % 4),
+          )
           .setOrigin(0.5, 0.91)
           .setDisplaySize(r.width + 22, r.height + 60)
           .setDepth(r.y + r.height);
@@ -426,6 +430,22 @@ class City extends Phaser.Scene {
         .setOrigin(0.5, 0.75)
         .setScale(0.55)
         .setDepth(p.y);
+    // Decorative AI props stay outside roads, build parcels and interaction points.
+    for (const p of [
+      { key: "td-boxes", x: 1750, y: 660, scale: 0.6 },
+      { key: "td-barricade", x: 2670, y: 790, scale: 0.65 },
+      { key: "td-tires", x: 2100, y: 700, scale: 0.55 },
+      { key: "td-shopping-cart", x: 1980, y: 690, scale: 0.65 },
+      { key: "td-water-barrel", x: 1740, y: 745, scale: 0.55 },
+      { key: "td-fence", x: 2050, y: 570, scale: 0.8 },
+      { key: "td-campfire", x: 655, y: 735, scale: 0.4 },
+    ]) {
+      this.add
+        .image(p.x, p.y, p.key)
+        .setOrigin(0.5, 0.8)
+        .setScale(p.scale)
+        .setDepth(p.y);
+    }
     for (const n of npcs) {
       this.add
         .image(n.x, n.y, n.key)
@@ -636,7 +656,13 @@ class City extends Phaser.Scene {
               : 1,
         );
       }
-      s.setTint(e.id === near?.id ? 0xe1dda9 : 0xffffff);
+      s.setTint(
+        e.id === near?.id
+          ? 0xe1dda9
+          : manifest[e.asset]?.damageVisual === "tint"
+            ? 0xc88f76
+            : 0xffffff,
+      );
       const label = this.labels.get(e.id)!;
       label
         .setPosition(s.x, s.y - (e.entity === "player" ? 74 : 65))

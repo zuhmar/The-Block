@@ -67,6 +67,21 @@ for (const key of [
   "debris",
 ])
   assert(assets[key], `Missing ${key}`);
+const worldPack = JSON.parse(
+  await readFile(
+    new URL("../../art/ai/world/manifest.json", import.meta.url),
+    "utf8",
+  ),
+);
+for (const sourceKey of Object.keys(worldPack.assets))
+  assert(
+    Object.values(assets).some(
+      (a: any) => a.source === "ai-generated" && a.sourceAsset === sourceKey,
+    ),
+    `Missing runtime mapping for ${sourceKey}`,
+  );
+for (const item of Object.keys(ITEMS))
+  assert.equal(assets[item].source, "ai-generated", item);
 for (const [key, a] of Object.entries(assets) as [string, any][]) {
   const image = sharp(new URL(a.file, root).pathname);
   const m = await image.metadata();

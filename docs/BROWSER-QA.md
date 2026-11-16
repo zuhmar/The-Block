@@ -12,3 +12,5 @@
 10. Upgrade a disposable legacy database. Verify a pre-layout backup is retained, inventory/skills/cash/buildings persist, coordinates are assigned once, and a second migration changes nothing.
 11. At 390px width and landscape phone dimensions, check login scrolling, touch movement, meters, minimap, hotbar, all floating panels and build preview. Blur/switch tabs while moving to check for stuck controls.
 12. Record browser/device versions and screenshots before marking visual acceptance complete. Server and WebSocket tests alone do not prove rendering or touch usability.
+
+AI world pack: check the 16 distinct inventory icons in inventory/crafting/shop panels; inspect dumpsters, bins, trees, benches, car, pallets and lamps. Check boxes, barricade, tires, cart, barrel, fence and static campfire on the map. Confirm city shop/workshop art, construction previews, damage tint, breach rubble and door-open transparency remain aligned with gameplay. These visual checks are pending.

@@ -16,4 +16,4 @@ Runtime atlases use 128 × 128 cells, eight columns and eight state rows. Walk/r
 
 The importer finds alpha bounds within each source cell, crops the faint outer halo, scales without stretching, and aligns feet at y=105. Each direction gets one `player-stick-*` atlas. NPC roles get four directional images; the current stationary NPCs display their south pose. Legacy appearance data remains stored, while every player renders as a black stick figure. Skin/hair selectors are removed.
 
-Original generated PNGs remain unchanged here. Non-character world, item and UI art still uses the existing procedural pipeline. Animation smoothness and browser/mobile rendering still require visual playtesting.
+Original generated PNGs remain unchanged here. World props, inventory items and buildings now also use AI source artwork. Terrain, bed, effects and UI symbols still use the existing procedural pipeline. Animation smoothness and browser/mobile rendering still require visual playtesting.

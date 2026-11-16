@@ -143,7 +143,7 @@ for (const pack of packs) {
 }
 await writeFile(
   new URL("manifest.json", root),
-  JSON.stringify({ version: 1, runtimeIntegrated: false, assets }, null, 2) +
+  JSON.stringify({ version: 1, runtimeIntegrated: true, assets }, null, 2) +
     "\n",
 );
 console.log(
