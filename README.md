@@ -84,3 +84,5 @@ Browser automation was unavailable in the build environment. Asset sheets were i
 The `pg` repository and SQL migration are authoritative; Prisma is a model reference rather than the runtime ORM. A transactionally locked JSONB row holds the city. Accounts and hashed sessions are separate tables. `world_layout_backups` retains the pre-top-down world before its first upgrade; progress, inventory, ownership, storage and damage are preserved. This serialized first-district design needs profiling and normalization before larger scale.
 
 See `docs/REVIEW.md` for remaining product gaps and `docs/DEPLOYMENT.md` for operations.
+
+New characters start with 10,000 wood for building practice, alongside water, a snack and $10. Wood stacks to 10,000 in one slot and uses no carry weight, so other supplies remain usable. Existing saved inventories are unchanged.

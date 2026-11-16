@@ -61,7 +61,8 @@ test("contracts reject untrusted state and invalid movement", () => {
       action: { type: "damage", health: 0 },
     }).success,
   );
-  assert(!canCarry({ wood: 50 }, "wood"));
+  assert(!canCarry({ wood: 10000 }, "wood"));
+  assert(canCarry({ wood: 10000, water: 1, snack: 1 }, "bandage"));
   assert(!canCarry({ stone: 32 }, "stone"));
 });
 test("placement masks, ownership, costs and foundation immunity", () => {

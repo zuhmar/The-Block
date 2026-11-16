@@ -190,3 +190,29 @@ test("perimeter segments join at corners and an open door clears the actual wall
     90,
   );
 });
+
+test("new characters can build immediately using their 10000 starter wood", () => {
+  const world = emptyWorld(),
+    player = createPlayer("practice", "Practice", look);
+  world.players[player.id] = player;
+  assert.equal(player.inventory.wood, 10000);
+  player.x = 3000;
+  player.y = 1344;
+  act(world, player.id, {
+    type: "build",
+    kind: "foundation",
+    x: 3008,
+    y: 1344,
+  });
+  const floor = Object.values(world.structures)[0];
+  act(world, player.id, {
+    type: "build",
+    kind: "wall",
+    x: 3040,
+    y: 1280,
+    foundation: floor.id,
+  });
+  assert.equal(player.inventory.wood, 9987);
+  assert.equal(player.inventory.water, 1);
+  assert.equal(player.inventory.snack, 1);
+});

@@ -50,7 +50,7 @@ export function createPlayer(
     thirst: 100,
     energy: 100,
     temperature: 20,
-    inventory: { water: 1, snack: 1 },
+    inventory: { water: 1, snack: 1, wood: 10000 },
     equipped: { backpack: 1 },
     cash: 10,
     bank: 0,

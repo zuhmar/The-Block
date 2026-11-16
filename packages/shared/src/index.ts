@@ -112,7 +112,8 @@ export const ITEMS = {
   water: { weight: 1, stack: 8, price: 3 },
   snack: { weight: 0.2, stack: 8, price: 3 },
   bandage: { weight: 0.1, stack: 8, price: 5 },
-  wood: { weight: 1, stack: 50, price: 1 },
+  // Building practice: starter wood occupies one slot without carry weight.
+  wood: { weight: 0, stack: 10000, price: 1 },
   scrap: { weight: 1, stack: 50, price: 2 },
   stone: { weight: 2, stack: 50, price: 1 },
   brick: { weight: 2, stack: 50, price: 2 },
