@@ -9,6 +9,8 @@ import {
   PARKS,
   PARKING_LOTS,
   INDUSTRIAL_YARDS,
+  DISTRICTS,
+  SERVICE_POINTS,
 } from "./official-map.js";
 export interface TerrainPoint {
   x: number;
@@ -362,6 +364,127 @@ for (let i = BUILDINGS.length - 1; i >= 12; i--) {
   )
     BUILDINGS.splice(i, 1);
 }
+// Street-facing infill establishes readable blocks rather than scattered building icons.
+for (const district of DISTRICTS) {
+  let serial = 0;
+  const spacing =
+    district.id === "downtown"
+      ? 344
+      : district.id === "projects"
+        ? 408
+        : district.id === "industrial"
+          ? 472
+          : district.id === "uptown"
+            ? 600
+            : 392;
+  for (const road of ROADS) {
+    if (road.width < 100) continue;
+    let traveled = 0,
+      next = spacing / 2;
+    for (let i = 1; i < road.points.length; i++) {
+      const a = road.points[i - 1],
+        b = road.points[i],
+        length = Math.hypot(b.x - a.x, b.y - a.y);
+      traveled += length;
+      if (traveled < next) continue;
+      next += spacing;
+      if (Math.abs(b.y - a.y) > Math.abs(b.x - a.x) * 0.35) continue;
+      const width =
+          district.id === "downtown"
+            ? 288
+            : district.id === "projects"
+              ? 320
+              : district.id === "industrial"
+                ? 352
+                : 224,
+        height =
+          district.id === "downtown"
+            ? 240
+            : district.id === "projects"
+              ? 240
+              : district.id === "industrial"
+                ? 256
+                : 192;
+      const candidate = {
+        x: b.x,
+        y: b.y - road.width / 2 - 48 - height / 2,
+        width,
+        height,
+      };
+      if (
+        candidate.x - width / 2 < district.x ||
+        candidate.x + width / 2 > district.x + district.width ||
+        candidate.y - height / 2 < district.y ||
+        candidate.y + height / 2 > district.y + district.height
+      )
+        continue;
+      if (candidate.x < 6400 && candidate.y < 5100) continue;
+      const rect = {
+        x: candidate.x - width / 2,
+        y: candidate.y - height / 2,
+        width,
+        height,
+      };
+      if (
+        roadOverlapsRect(rect, 28) ||
+        SERVICE_POINTS.some(
+          (p) =>
+            Math.abs(p.x - candidate.x) < width / 2 + 120 &&
+            Math.abs(p.y - candidate.y) < height / 2 + 120,
+        )
+      )
+        continue;
+      if (
+        [...PARKS, ...PARKING_LOTS, ...INDUSTRIAL_YARDS].some(
+          (p) =>
+            Math.abs(p.x - candidate.x) < (p.width + width) / 2 + 48 &&
+            Math.abs(p.y - candidate.y) < (p.height + height) / 2 + 48,
+        )
+      )
+        continue;
+      if (
+        BUILDINGS.some(
+          (p) =>
+            Math.abs(p.x - candidate.x) < (p.width + width) / 2 + 48 &&
+            Math.abs(p.y - candidate.y) < (p.height + height) / 2 + 48,
+        )
+      )
+        continue;
+      BUILDINGS.push({
+        id: "frontage-" + district.id + "-" + serial,
+        asset: district.assets[serial++ % district.assets.length],
+        ...candidate,
+        solid: true,
+        kind: "building",
+      });
+    }
+  }
+}
+export function nearestRoadPoint(p: TerrainPoint) {
+  let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
+  for (const road of ROADS) {
+    if (road.width < 100) continue;
+    for (let i = 1; i < road.points.length; i++) {
+      const a = road.points[i - 1],
+        b = road.points[i],
+        dx = b.x - a.x,
+        dy = b.y - a.y,
+        t = Math.max(
+          0,
+          Math.min(
+            1,
+            ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1),
+          ),
+        ),
+        x = a.x + dx * t,
+        y = a.y + dy * t,
+        distance = Math.hypot(p.x - x, p.y - y);
+      if (distance < nearest.distance)
+        nearest = { x, y, distance, width: road.width };
+    }
+  }
+  return nearest;
+}
 const polygonCache = new WeakMap<
   readonly TerrainPoint[],
   {
@@ -677,16 +800,8 @@ export function mapObjects(): MapObject[] {
         cluster =
           Math.sin(x / 610) * Math.cos(y / 730) + Math.sin((x + y) / 1130);
       if (mountain) {
-        if (random() < 0.32) continue;
-        out.push({
-          id: "mountain-" + x + "-" + y,
-          ...p,
-          width: 320,
-          height: 220,
-          asset: "map-nature-" + (8 + Math.floor(random() * 4)),
-          solid: true,
-          kind: "mountain",
-        });
+        if (random() >= 0.32) random();
+        continue;
       } else if (cluster > 0.05 && random() < 0.3) {
         out.push({
           id: "tree-" + x + "-" + y,
@@ -717,6 +832,32 @@ export function mapObjects(): MapObject[] {
           kind: "decoration",
         });
     }
+  for (const [region, r] of MOUNTAIN_REGIONS.entries())
+    for (let row = -1; row <= 1; row++)
+      for (let step = 0; step <= Math.floor(r.width / 210); step++) {
+        const t = step / Math.floor(r.width / 210),
+          p = {
+            x: r.x + 150 + t * (r.width - 300),
+            y:
+              r.y +
+              r.height / 2 +
+              row * r.height * 0.22 +
+              Math.sin(t * Math.PI * 2 + region * 0.7) * r.height * 0.13,
+          };
+        if (!mountainRegion(p) || naturalBlocked(p, 100) || onRoad(p, 260))
+          continue;
+        const foothill = row === 1,
+          variant = foothill ? 10 : step % 4 === 0 ? 9 : 8;
+        out.push({
+          id: "ridge-" + region + "-" + row + "-" + step,
+          ...p,
+          width: foothill ? 360 : 430,
+          height: foothill ? 220 : 290,
+          asset: "map-nature-" + variant,
+          solid: true,
+          kind: "mountain",
+        });
+      }
   CLIFFS.forEach((r, i) =>
     out.push({
       id: "cliff-" + i,
@@ -867,6 +1008,41 @@ export function mapObjects(): MapObject[] {
       asset: "map-prop-5",
       kind: "decoration",
     });
+  }
+  // Small repeated details make district character visible without terrain labels.
+  for (const b of BUILDINGS) {
+    const d = DISTRICTS.find(
+      (d) =>
+        b.x >= d.x && b.x < d.x + d.width && b.y >= d.y && b.y < d.y + d.height,
+    );
+    if (!d || b.id.startsWith("legacy")) continue;
+    const key =
+      d.id === "industrial"
+        ? "map-prop-8"
+        : d.id === "projects"
+          ? "map-prop-5"
+          : d.id === "downtown"
+            ? "map-nature-3"
+            : "map-nature-2";
+    for (const side of [-1, 1]) {
+      const p = {
+        x: b.x + side * (b.width / 2 - 28),
+        y: b.y + b.height / 2 + 32,
+      };
+      if (
+        onRoad(p, 24) ||
+        SERVICE_POINTS.some((s) => Math.hypot(s.x - p.x, s.y - p.y) < 95)
+      )
+        continue;
+      out.push({
+        id: "streetscape-" + b.id + "-" + side,
+        ...p,
+        width: d.id === "industrial" ? 62 : 48,
+        height: d.id === "industrial" ? 48 : 36,
+        asset: key,
+        kind: "decoration",
+      });
+    }
   }
   for (const road of ROADS)
     for (let i = 8; i < road.points.length; i += 18) {

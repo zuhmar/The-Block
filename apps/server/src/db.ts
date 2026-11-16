@@ -30,6 +30,11 @@ export async function migrate() {
     console.log(
       "Saved original world as layout backup 3 before official-map migration.",
     );
+  const sceneryBackup = await pool.query(
+    "INSERT INTO world_layout_backups(layout,data) SELECT 4,data FROM worlds WHERE id=1 AND COALESCE((data->>'sceneryVersion')::integer,0)<1 ON CONFLICT(layout) DO NOTHING RETURNING layout",
+  );
+  if (sceneryBackup.rowCount)
+    console.log("Saved world backup 4 before map scenery polish.");
   await transaction((w) => upgradeWorld(w));
 }
 export async function transaction<T>(fn: (world: WorldState) => T): Promise<T> {

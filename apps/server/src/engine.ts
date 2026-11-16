@@ -43,6 +43,7 @@ export const emptyWorld = (): WorldState => ({
   actions: {},
   layoutVersion: 2,
   mapVersion: MAP_VERSION,
+  sceneryVersion: 1,
 });
 export function createPlayer(
   id: string,
@@ -185,6 +186,37 @@ export function upgradeWorld(w: WorldState) {
         }
       }
     w.mapVersion = MAP_VERSION;
+  }
+  if ((w.sceneryVersion || 0) < 1) {
+    const areas = [
+      ...(w.mapReservations || []),
+      ...Object.values(w.structures)
+        .filter((s) => s.kind === "foundation")
+        .map((s) => ({ x: s.x - 128, y: s.y - 128, width: 256, height: 256 })),
+    ];
+    for (let i = 0; i < areas.length; i++)
+      for (let j = i + 1; j < areas.length; j++) {
+        const a = areas[i],
+          b = areas[j];
+        if (
+          a.x <= b.x + b.width &&
+          a.x + a.width >= b.x &&
+          a.y <= b.y + b.height &&
+          a.y + a.height >= b.y
+        ) {
+          const right = Math.max(a.x + a.width, b.x + b.width),
+            bottom = Math.max(a.y + a.height, b.y + b.height);
+          a.x = Math.min(a.x, b.x);
+          a.y = Math.min(a.y, b.y);
+          a.width = right - a.x;
+          a.height = bottom - a.y;
+          areas.splice(j, 1);
+          i = -1;
+          break;
+        }
+      }
+    w.mapReservations = areas;
+    w.sceneryVersion = 1;
   }
   setMapReservations(w.mapReservations || []);
   w.layoutVersion = 2;

@@ -58,6 +58,10 @@ with sync_playwright() as runner:
     assert len(set(first) - set(final['keys'])) > 0, 'Camera travel did not unload old chunks'
     assert len(set(final['keys']) - set(first)) > 0, 'Camera travel did not load new chunks'
     page.screenshot(path=str(out / 'official-desktop-world.png'))
+    page.evaluate("""() => {const scene=window.__mapSmoke.instance.scene;scene.__qaFrame=()=>{scene.cameras.main.setZoom(.65).centerOn(8200,6100);};scene.events.on("postupdate",scene.__qaFrame);}""")
+    page.wait_for_timeout(7000)
+    page.screenshot(path=str(out / 'polished-downtown.png'))
+    page.evaluate("""() => {const s=window.__mapSmoke.instance.scene;s.events.off("postupdate",s.__qaFrame);s.cameras.main.setZoom(1.03);}""")
     page.locator('#minimap-button').click()
     page.locator('#district-map').wait_for(state='visible')
     page.wait_for_timeout(600)

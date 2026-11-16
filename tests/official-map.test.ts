@@ -1,3 +1,4 @@
+import { streetConnections } from "../packages/game-data/map-presentation.js";
 import { test, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -275,5 +276,47 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
         assert.equal(data[i * 64 * 4 + c], data[(i * 64 + 63) * 4 + c], key);
         assert.equal(data[i * 4 + c], data[(63 * 64 + i) * 4 + c], key);
       }
+  }
+});
+
+test("scenery polish reserves current bases without moving players or container contents", () => {
+  const w = emptyWorld();
+  delete w.sceneryVersion;
+  const p = createPlayer("resident", "Resident", look);
+  w.players[p.id] = p;
+  w.structures.base = {
+    id: "base",
+    kind: "foundation",
+    owner: p.id,
+    foundation: "base",
+    x: 8200,
+    y: 6200,
+    hp: 9999,
+    open: false,
+    inventory: { wood: 17 },
+    cash: 23,
+  };
+  const before = structuredClone(w);
+  upgradeWorld(w);
+  assert.equal(w.sceneryVersion, 1);
+  assert.deepEqual(w.players, before.players);
+  assert.deepEqual(w.structures, before.structures);
+  assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
+  const saved = structuredClone(w);
+  upgradeWorld(w);
+  assert.deepEqual(w, saved);
+});
+
+test("street infill has frontage connections stay inside the world", () => {
+  assert(BUILDINGS.filter((b) => b.id.startsWith("frontage-")).length >= 25);
+  const walks = streetConnections();
+  assert(walks.length >= 100);
+  for (const walk of walks) {
+    assert(
+      walk.points.every(
+        (p) => p.x >= 0 && p.y >= 0 && p.x < MAP_SIZE && p.y < MAP_SIZE,
+      ),
+    );
+    assert(walk.width >= 44 && walk.width <= 72);
   }
 });

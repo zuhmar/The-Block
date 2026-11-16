@@ -415,6 +415,7 @@ export interface WorldState {
   actions: Record<string, { at: number; result: string }>;
   layoutVersion?: number;
   mapVersion?: number;
+  sceneryVersion?: number;
   mapReservations?: Rect[];
 }
 export function canCarry(inv: Inventory, item: Item, n = 1) {

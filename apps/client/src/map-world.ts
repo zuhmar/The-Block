@@ -1,10 +1,10 @@
+import { paintCityFrontage } from "../../../packages/game-data/map-presentation";
 import Phaser from "phaser";
 import { WORLD } from "../../../packages/shared/src/index";
 import {
   CHUNK_SIZE,
   visibleChunkKeys,
   LEGACY_BUILDINGS,
-  BUILDINGS,
   PARKING_LOTS,
   INDUSTRIAL_YARDS,
 } from "../../../packages/shared/src/official-map";
@@ -191,6 +191,11 @@ export class MapWorld {
       dirt = pattern("map-tile-dirt");
     ctx.fillStyle = water;
     ctx.fillRect(x, y, 1024, 1024);
+    ctx.globalAlpha = 0.16;
+    stroke(COAST, 180, "#89b8ad", true);
+    ctx.globalAlpha = 0.22;
+    stroke(COAST, 94, "#b1cdb5", true);
+    ctx.globalAlpha = 1;
     ctx.save();
     path(COAST, true);
     ctx.clip();
@@ -203,37 +208,18 @@ export class MapWorld {
         if (k === "mountain" || k === "rocky") {
           ctx.globalAlpha = k === "mountain" ? mountainBlend(p) * 0.6 : 0.18;
           ctx.fillStyle = gravel;
-          ctx.fillRect(p.x - 32, p.y - 32, 64, 64);
+          const radius = k === "mountain" ? 48 : 40;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y, radius, radius * 0.86, 0, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
     ctx.globalAlpha = 1;
-    for (const b of BUILDINGS)
-      if (
-        b.x > x - 700 &&
-        b.x < x + 1724 &&
-        b.y > y - 700 &&
-        b.y < y + 1724 &&
-        mapObjectEnabled(b)
-      ) {
-        ctx.globalAlpha = 0.55;
-        ctx.fillStyle = concrete;
-        ctx.beginPath();
-        ctx.roundRect(
-          b.x - b.width / 2 - 128,
-          b.y - b.height / 2 - 120,
-          b.width + 256,
-          b.height + 240,
-          48,
-        );
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.fillRect(
-          b.x - b.width / 2 - 32,
-          b.y - b.height / 2 - 32,
-          b.width + 64,
-          b.height + 64,
-        );
-      }
+    paintCityFrontage(
+      ctx,
+      { x, y, width: 1024, height: 1024 },
+      { concrete, gravel, dirt },
+    );
     stroke(COAST, 46, "#b9bb8a", true);
     stroke(COAST, 10, "#a5d0be", true);
     for (const lake of LAKES) {

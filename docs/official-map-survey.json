@@ -11,8 +11,8 @@
     "The Projects",
     "Uptown"
   ],
-  "buildings": 105,
-  "staticObjects": 1500,
+  "buildings": 135,
+  "staticObjects": 1424,
   "roads": 13,
   "percentages": {
     "water": 7.55,
@@ -20,5 +20,7 @@
     "grassland": 39.25,
     "mountain": 15.4,
     "city": 34.69
-  }
+  },
+  "streetConnections": 126,
+  "sceneryRevision": 1
 }

@@ -1,3 +1,7 @@
+import {
+  frontageStyle,
+  streetConnections,
+} from "../game-data/map-presentation.js";
 import sharp from "sharp";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import {
@@ -59,10 +63,15 @@ for (const [r, w] of [
   body += `<path d="${path(r)}" fill="none" stroke="#b2b28b" stroke-width="${w + 34}"/><path d="${path(r)}" fill="none" stroke="#397c91" stroke-width="${w}"/>`;
 for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
-for (const b of BUILDINGS)
-  body += `<rect x="${b.x - b.width / 2 - 128}" y="${b.y - b.height / 2 - 120}" width="${b.width + 256}" height="${b.height + 240}" rx="48" fill="url(#pattern-map-tile-concrete)" opacity=".55"/>`;
-for (const b of BUILDINGS)
-  body += `<rect x="${b.x - b.width / 2 - 32}" y="${b.y - b.height / 2 - 32}" width="${b.width + 64}" height="${b.height + 64}" fill="url(#pattern-map-tile-concrete)"/>`;
+for (const c of streetConnections()) {
+  const points = c.points.map((p) => `${p.x},${p.y}`).join(" ");
+  body += `<polyline points="${points}" fill="none" stroke="url(#pattern-map-tile-concrete)" stroke-width="${c.width + 10}" stroke-linejoin="round"/>`;
+}
+for (const b of BUILDINGS) {
+  const style = frontageStyle(b),
+    pad = style.apron;
+  body += `<rect x="${b.x - b.width / 2 - pad}" y="${b.y - b.height / 2 - 12}" width="${b.width + pad * 2}" height="${b.height + pad + 32}" rx="8" fill="url(#pattern-map-tile-${style.material})"/>`;
+}
 for (const lot of [...PARKING_LOTS, ...INDUSTRIAL_YARDS])
   body += `<rect x="${lot.x - lot.width / 2}" y="${lot.y - lot.height / 2}" width="${lot.width}" height="${lot.height}" rx="32" fill="url(#pattern-map-tile-${INDUSTRIAL_YARDS.includes(lot) ? "gravel" : "concrete"})"/>`;
 for (const lot of PARKING_LOTS)
