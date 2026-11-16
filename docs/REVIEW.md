@@ -11,7 +11,7 @@ The original master prompt describes a complete multiplayer urban survival game.
 - Survival, scavenging, item/weight limits, merchants, bat crafting, firearm ammo/reload and skills that persist through death.
 - Two-dimensional foundation/wall/door/roof/storage construction, owner permissions, physical access, repair, controlled dismantling, offline raiding and public death loot.
 - Full-screen world, navigation rail, minimap, hotbar, survival meters and inventory/equipment, crafting, skills, journal, merchant, building, chat and map panels.
-- 526 manifest-backed original procedural SVG/PNG assets. Character art has 108 appearance combinations, four directions and eight states. Required keys, dimensions, alpha, cells and nonempty frames validate.
+- 114 manifest entries: AI-generated black stick-figure characters in four directions and eight state rows, plus the existing procedural environment/item/UI art. Held-frame states and source mappings are documented in art/ai/characters/README.md. Required keys, dimensions, alpha, cells and nonempty frames validate.
 - 19 tests, lint, typecheck and production build pass, including two-axis real-WebSocket movement/reconnect/restart, concurrent claims, offline raids, stored damage/theft, 2D range/collision and legacy layout preservation.
 
 The database migration keeps a one-time pre-layout world backup. IDs, inventory, cash, bank, skills, property, storage and damage remain. Legacy bases receive y=1344; a player inside a new solid footprint moves to nearby free ground. No foundations are silently deleted.
@@ -19,7 +19,7 @@ The database migration keeps a one-time pre-layout world backup. IDs, inventory,
 ## Verification limits and remaining product work
 
 1. Browser rendering, two-window manual gameplay and mobile-device QA remain unverified because managed browser tooling was unavailable. Asset contact sheets were inspected; this is not a substitute for browser screenshots.
-2. Full modular equipment visuals, selectable bottoms/shoes, durability and distinct equipment-slot transfers remain. Current appearance selection and weapon/backpack gameplay work.
+2. Full modular equipment visuals, selectable bottoms/shoes, durability and distinct equipment-slot transfers remain. All players now render as black stick figures; legacy appearance data and weapon/backpack gameplay are retained.
 3. Hostile NPC AI is not implemented. Merchant interactions and the shelter's recovery area work; the caretaker links to the survival guide.
 4. Temperature exposure effects, combat blocking, recoil and richer aim/accuracy mechanics remain. Current attacks validate distance, facing, LOS, cooldown, stamina, ammo and reload on the server.
 5. Rotatable wall modules, collaborator permission editing, bounded crate capacity and more advanced building interiors remain. Current 2D barriers can physically enclose storage and be breached.

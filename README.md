@@ -63,7 +63,7 @@ pnpm test
 pnpm build
 ```
 
-The deterministic pipeline generates **526 original SVG/PNG assets**, including 108 appearance combinations in four directions with eight animation states, roofs, overhead terrain, construction, props, NPCs, items, effects and UI icons. It checks required keys, dimensions, real alpha, frame consistency and nonempty character cells. Only nearby character appearances are loaded into the GPU.
+The asset build produces **114 manifest entries**. Characters use original AI-generated black stick-figure PNGs: four directions, eight state rows, NPC roles and matching portraits. `art/ai/characters/README.md` documents the source poses and held-frame states. The importer crops, scales and packs existing artwork reproducibly; local setup needs no image API. World, item, effect and UI art still uses the procedural SVG/PNG pipeline. Validation checks required keys, dimensions, alpha and nonempty character cells. All four character atlases load together; saved legacy appearance data remains intact.
 
 Browser automation was unavailable in the build environment. Asset sheets were inspected and network/rules checks run, but visual browser/mobile acceptance is not claimed. Follow `docs/BROWSER-QA.md` locally.
 

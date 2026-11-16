@@ -832,7 +832,7 @@ canvas {
 }
 .portrait {
   background-repeat: no-repeat;
-  background-size: 768px 1024px;
+  background-size: 1024px 1024px;
   background-position: 0 0;
   width: 128px;
   height: 128px;

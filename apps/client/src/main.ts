@@ -35,7 +35,7 @@ app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down 
   )
   .join(
     "",
-  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="150"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><div class="appearance"><label>Skin<select name="skin"><option value="#c98c62">Warm</option><option value="#865641">Deep</option><option value="#efbe95">Light</option></select></label><label>Top<select name="top"><option value="#ec8753">Terracotta</option><option value="#5ba9aa">Teal</option><option value="#a897cf">Lilac</option></select></label><label>Hair<select name="hair"><option value="#252939">Ink</option><option value="#72492e">Brown</option><option value="#e4bb65">Blond</option></select></label></div><div class="appearance"><label>Body<select name="body"><option value="standard">Standard</option><option value="broad">Broad</option></select></label><label>Hair style<select name="style"><option value="short">Short</option><option value="long">Long</option></select></label></div><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with $10, water and a snack.<br>No classes. No paid advantages. Just you and the city.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
+  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="150"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><p class="character-style">Your survivor is a black stick figure. Make your name on the block.</p><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with $10, water and a snack.<br>No classes. No paid advantages. Just you and the city.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
 const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
 let room: Room | undefined,
   seq = 0,
@@ -71,8 +71,7 @@ const esc = (s: string) =>
         c
       ]!,
   );
-const appearanceKey = (p: Player) =>
-  `player-${["#c98c62", "#865641", "#efbe95"].indexOf(p.appearance.skin)}-${["#252939", "#72492e", "#e4bb65"].indexOf(p.appearance.hair)}-${["#ec8753", "#5ba9aa", "#a897cf"].indexOf(p.appearance.top)}-${p.appearance.body}-${p.appearance.style}`;
+const appearanceKey = () => "player-stick";
 const send = (action: Action) =>
   room?.send("intent", {
     v: VERSION,
@@ -192,12 +191,11 @@ class City extends Phaser.Scene {
   create() {
     manifest = this.cache.json.get("manifest").assets;
     for (const [key, a] of Object.entries(manifest)) {
-      if (key.startsWith("player-")) {
-        if (key.startsWith("player-0-0-0-standard-short-"))
-          this.load.spritesheet(key, "/assets/" + a.file, {
-            frameWidth: 128,
-            frameHeight: 128,
-          });
+      if (a.animations) {
+        this.load.spritesheet(key, "/assets/" + a.file, {
+          frameWidth: a.frameWidth,
+          frameHeight: a.frameHeight,
+        });
       } else this.load.image(key, "/assets/" + a.file);
     }
     this.load.once("complete", () => this.drawWorld());
@@ -547,7 +545,7 @@ class City extends Phaser.Scene {
     const entities: any[] = [
       ...snapshot.players.map((p) => ({
         ...p,
-        asset: appearanceKey(p) + "-" + facing(p),
+        asset: appearanceKey() + "-" + facing(p),
         entity: "player",
       })),
       ...snapshot.structures.map((s) => ({
@@ -605,7 +603,9 @@ class City extends Phaser.Scene {
             : e.attackAt > Date.now()
               ? e.weapon === "pistol"
                 ? "firearm"
-                : "melee"
+                : e.weapon === "bat"
+                  ? "melee"
+                  : "idle"
               : e.id === self?.id && (this.keys.CTRL.isDown || hold.crouch)
                 ? "crouch"
                 : moving
@@ -896,7 +896,7 @@ function renderPanel() {
       (sum, [k, n]) => sum + ITEMS[k].weight * n,
       0,
     );
-    html = `<div class="inventory-layout"><aside class="character-card"><div class="portrait" style="background-image:url('/assets/${appearanceKey(p)}-south.png')"></div><h4>${esc(p.name)}</h4><span class="character-class">SURVIVOR · NO CLASS</span><div class="equipment-slot">${img("backpack")}<span>${p.equipped.backpack ? "Worn backpack" : "No backpack equipped"}<small>8 carrying slots</small></span></div><div class="equipment-slot">${img(p.weapon === "fists" ? "ui-fists" : p.weapon)}<span>${nice(p.weapon)}<small>${p.weapon === "pistol" ? p.ammo + "/6 loaded" : "Active weapon"}</small></span></div><div class="wallet"><span>Carried cash</span><b>$${p.cash}</b><small>Banked $${p.bank} · stays after death</small></div></aside><div class="bag-content"><div class="bag-meta"><b>BACKPACK</b><span>${entries.length}/8 slots · ${weight.toFixed(1)}/65 kg</span></div><div class="inventory-grid">${Array.from(
+    html = `<div class="inventory-layout"><aside class="character-card"><div class="portrait" style="background-image:url('/assets/${appearanceKey()}-south.png')"></div><h4>${esc(p.name)}</h4><span class="character-class">SURVIVOR · NO CLASS</span><div class="equipment-slot">${img("backpack")}<span>${p.equipped.backpack ? "Worn backpack" : "No backpack equipped"}<small>8 carrying slots</small></span></div><div class="equipment-slot">${img(p.weapon === "fists" ? "ui-fists" : p.weapon)}<span>${nice(p.weapon)}<small>${p.weapon === "pistol" ? p.ammo + "/6 loaded" : "Active weapon"}</small></span></div><div class="wallet"><span>Carried cash</span><b>$${p.cash}</b><small>Banked $${p.bank} · stays after death</small></div></aside><div class="bag-content"><div class="bag-meta"><b>BACKPACK</b><span>${entries.length}/8 slots · ${weight.toFixed(1)}/65 kg</span></div><div class="inventory-grid">${Array.from(
       { length: 8 },
       (_, i) => {
         const e = entries[i];
@@ -927,7 +927,7 @@ function renderPanel() {
   } else if (panel === "skills") {
     title = "Character & skills";
     subtitle = "LEARN BY DOING";
-    html = `<div class="skill-header"><div class="portrait" style="background-image:url('/assets/${appearanceKey(p)}-south.png')"></div><div><h4>${esc(p.name)}</h4><p>Explore, craft, trade and survive to gain field experience.<br>Learned skills persist through death.</p></div></div><div class="skill-grid">${Object.entries(
+    html = `<div class="skill-header"><div class="portrait" style="background-image:url('/assets/${appearanceKey()}-south.png')"></div><div><h4>${esc(p.name)}</h4><p>Explore, craft, trade and survive to gain field experience.<br>Learned skills persist through death.</p></div></div><div class="skill-grid">${Object.entries(
       p.skills,
     )
       .map(
@@ -1110,9 +1110,13 @@ $("#login").addEventListener("submit", async (event) => {
         name: data.get("name"),
         password: data.get("password"),
         register: button.value === "true",
-        appearance: Object.fromEntries(
-          ["skin", "hair", "top", "body", "style"].map((k) => [k, data.get(k)]),
-        ),
+        appearance: {
+          skin: "#c98c62",
+          hair: "#252939",
+          top: "#ec8753",
+          body: "standard",
+          style: "short",
+        },
       }),
     });
     const body = await res.json();

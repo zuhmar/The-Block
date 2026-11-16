@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { importCharacters } from "./import-characters.js";
 import { mkdir, writeFile, readdir, unlink } from "node:fs/promises";
 import { ITEMS, PIECES } from "../shared/src/index.js";
 const root = new URL("../../apps/client/public/assets/", import.meta.url);
@@ -37,194 +38,7 @@ async function asset(
     ...extra,
   };
 }
-const animations = [
-  "idle",
-  "walk",
-  "run",
-  "crouch",
-  "melee",
-  "firearm",
-  "hurt",
-  "death",
-];
-function person(
-  skin: string,
-  hair: string,
-  top: string,
-  body: string,
-  style: string,
-  state: string,
-  f: number,
-  face: string,
-) {
-  const phase = Math.sin((f / 6) * Math.PI * 2),
-    walk = ["walk", "run"].includes(state),
-    stride = walk ? phase * (state === "run" ? 7 : 4) : 0,
-    bob = walk ? Math.abs(phase) * 1.5 : Math.sin((f / 6) * Math.PI * 2) * 0.6;
-  const back = face === "north",
-    side = face === "east" || face === "west",
-    low = state === "crouch" ? 8 : 0;
-  const b = ellipse(64, 105, 24, 9, "#17251e38");
-  let actor =
-    rect(46, 82 + stride, 13, 19, "#414e48", 5) +
-    rect(69, 82 - stride, 13, 19, "#414e48", 5) +
-    ellipse(52, 101 + stride, 9, 5, "#b6b9a7") +
-    ellipse(76, 101 - stride, 9, 5, "#b6b9a7");
-  actor +=
-    rect(
-      body === "broad" ? 36 : 40,
-      53 + low,
-      body === "broad" ? 56 : 48,
-      34 - low,
-      top,
-      12,
-    ) +
-    path("M43 75Q64 82 86 75L84 88H44Z", "#00000015") +
-    gloss(49, 59 + low, 25);
-  actor +=
-    ellipse(35, 74 + low, 8, 12, skin) + ellipse(92, 74 + low, 8, 12, skin);
-  actor +=
-    ellipse(64, 42 + low, 23, 21, skin) +
-    path(
-      "M42 " +
-        (43 + low) +
-        "Q36 " +
-        (17 + low) +
-        " 61 " +
-        (16 + low) +
-        "Q92 " +
-        (15 + low) +
-        " 87 " +
-        (43 + low) +
-        "L80 " +
-        (30 + low) +
-        "Q60 " +
-        (38 + low) +
-        " 45 " +
-        (30 + low) +
-        "Z",
-      hair,
-    );
-  if (back)
-    actor +=
-      ellipse(64, 37 + low, 23, 21, hair) +
-      path(
-        "M47 " + (29 + low) + "Q62 " + (22 + low) + " 79 " + (29 + low),
-        "none",
-      );
-  else if (side)
-    actor +=
-      ellipse(77, 44 + low, 2.4, 3, "#202a26") +
-      path("M83 " + (49 + low) + "l6 2l-7 4", skin);
-  else
-    actor +=
-      ellipse(55, 45 + low, 2.4, f === 5 ? 1 : 3, "#202a26") +
-      ellipse(73, 45 + low, 2.4, f === 5 ? 1 : 3, "#202a26") +
-      path("M59 " + (55 + low) + "q5 3 10 0", "none");
-  if (style === "long")
-    actor += path(
-      "M43 " +
-        (28 + low) +
-        "L38 " +
-        (63 + low) +
-        "L49 " +
-        (66 + low) +
-        "L49 " +
-        (34 + low) +
-        "Z",
-      hair,
-    );
-  if (state === "melee") {
-    if (side) actor += rect(89 + Math.max(0, phase) * 5, 61, 23, 11, skin, 5);
-    else
-      actor += rect(
-        86,
-        face === "north" ? 39 - Math.max(0, phase) * 4 : 76,
-        11,
-        24,
-        skin,
-        5,
-      );
-  }
-  if (state === "firearm") {
-    if (side)
-      actor += rect(89, 62, 25, 9, "#59635e") + rect(96, 69, 7, 12, "#59635e");
-    else
-      actor +=
-        rect(87, face === "north" ? 28 : 78, 9, 29, "#59635e") +
-        rect(81, face === "north" ? 49 : 81, 10, 8, skin);
-  }
-  if (state === "hurt")
-    actor =
-      '<g transform="translate(' +
-      -Math.sin((f / 5) * Math.PI) * 4 +
-      ' 0)">' +
-      actor +
-      "</g>";
-  if (state === "death")
-    actor =
-      '<g transform="translate(0 ' +
-      (f / 5) * 26 +
-      ") rotate(" +
-      (-f / 5) * 90 +
-      ' 64 64)">' +
-      actor +
-      "</g>";
-  if (face === "west")
-    actor = '<g transform="translate(128 0) scale(-1 1)">' + actor + "</g>";
-  return b + '<g transform="translate(0 ' + bob + ')">' + actor + "</g>";
-}
-for (let skin = 0; skin < 3; skin++)
-  for (let hair = 0; hair < 3; hair++)
-    for (let top = 0; top < 3; top++)
-      for (const body of ["standard", "broad"])
-        for (const style of ["short", "long"])
-          for (const face of ["south", "north", "east", "west"]) {
-            const skins = ["#c98c62", "#865641", "#efbe95"],
-              tops = ["#ec8753", "#5ba9aa", "#a897cf"],
-              hairs = ["#252939", "#72492e", "#e4bb65"];
-            let frames = "";
-            for (let row = 0; row < 8; row++)
-              for (let f = 0; f < 6; f++)
-                frames += `<g transform="translate(${f * 128} ${row * 128})">${person(skins[skin], hairs[hair], tops[top], body, style, animations[row], f, face)}</g>`;
-            await asset(
-              `player-${skin}-${hair}-${top}-${body}-${style}-${face}`,
-              frames,
-              768,
-              1024,
-              {
-                frameWidth: 128,
-                frameHeight: 128,
-                frames: 48,
-                animations: Object.fromEntries(
-                  animations.map((a, i) => [
-                    a,
-                    { start: i * 6, end: i * 6 + 5, fps: a === "run" ? 12 : 8 },
-                  ]),
-                ),
-                anchor: { x: 0.5, y: 0.82 },
-              },
-            );
-          }
-for (const [i, key] of [
-  "caretaker",
-  "trader",
-  "shopkeeper",
-  "hostile",
-].entries())
-  await asset(
-    key,
-    person(
-      ["#efbe95", "#865641", "#c98c62", "#865641"][i],
-      "#394050",
-      ["#a6b9b6", "#d9aa59", "#a897cf", "#b94f54"][i],
-      "standard",
-      "short",
-      "idle",
-      0,
-      "south",
-    ),
-  );
+await importCharacters(root, manifest);
 for (const [key, color] of Object.entries({
   sidewalk: "#bbb6aa",
   asphalt: "#485160",
@@ -602,11 +416,15 @@ await writeFile(
   ),
 );
 console.log(
-  `Generated ${Object.keys(manifest).length} deterministic SVG + PNG assets.`,
+  `Built ${Object.keys(manifest).length} assets including AI-generated character atlases.`,
 );
 
 const retained = new Set(
-  Object.keys(manifest).flatMap((key) => [key + ".svg", key + ".png"]),
+  Object.values(manifest).flatMap((a) =>
+    a.source === "ai-generated"
+      ? [a.file]
+      : [a.file, a.file.replace(/\.png$/, ".svg")],
+  ),
 );
 for (const file of await readdir(root))
   if (/\.(svg|png)$/.test(file) && !retained.has(file))

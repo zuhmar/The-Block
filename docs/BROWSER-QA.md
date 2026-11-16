@@ -1,7 +1,7 @@
 # Top-down browser acceptance
 
 1. Run `pnpm setup && pnpm dev`. Open localhost:5173 in two independent browser profiles at desktop width. Confirm assets load and there are no console errors.
-2. Create two different appearances. Confirm all skin/hair/body/top choices persist and render, with distinct north/south/east/west poses. Walk on both axes, diagonally, sprint and crouch; verify the second session sees both X and Y movement.
+2. Create two accounts. Confirm both render as black stick figures and the skin/hair selectors are absent. Check north/south/east/west poses, portraits and NPC role accessories. Walk on both axes, diagonally, sprint and crouch; verify the second session sees both X and Y movement. Check bat/pistol attacks, unarmed impact feedback and held death pose; watch for clipped limbs, weapon edges or foot drift.
 3. Leave The Haven through the southern opening. Confirm the safe-zone HUD changes and protection expires. Try walking into a building footprint or closed wall: collision should hold, corners should slide and sprinting should not tunnel through.
 4. Check the minimap tracks both coordinates, wheel zoom stays usable, and all navigation buttons/keyboard shortcuts work. Verify 1–0 hotbar actions use real inventory/weapon state.
 5. Search containers with E, buy at the store, sell at Otis, consume supplies and craft/equip a bat. Confirm merchants/containers cannot be used from far north/south while sharing the same X coordinate.

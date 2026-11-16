@@ -8,18 +8,11 @@ const { assets, version, view } = JSON.parse(
 );
 assert.equal(version, 2);
 assert.equal(view, "top-down");
-for (let skin = 0; skin < 3; skin++)
-  for (let hair = 0; hair < 3; hair++)
-    for (let top = 0; top < 3; top++)
-      for (const body of ["standard", "broad"])
-        for (const style of ["short", "long"])
-          for (const direction of ["south", "north", "east", "west"])
-            assert(
-              assets[
-                `player-${skin}-${hair}-${top}-${body}-${style}-${direction}`
-              ],
-              "Every appearance needs four directions",
-            );
+for (const direction of ["south", "north", "east", "west"])
+  assert(
+    assets[`player-stick-${direction}`]?.source === "ai-generated",
+    "AI stick figures required in all four directions",
+  );
 for (const key of [
   ...Object.keys(ITEMS),
   "td-grass",
@@ -88,7 +81,7 @@ for (const [key, a] of Object.entries(assets) as [string, any][]) {
   assert(a.anchor.x >= 0 && a.anchor.y <= 1, key);
   if (key.startsWith("player-")) {
     assert.equal(a.frameWidth, 128);
-    assert.equal(a.frames, 48);
+    assert.equal(a.frames, 64);
     assert.equal(Object.keys(a.animations).length, 8);
     for (const v of Object.values(a.animations) as any[])
       assert(v.start >= 0 && v.end < a.frames && v.fps > 0);
@@ -101,8 +94,8 @@ for (const [key, a] of Object.entries(assets) as [string, any][]) {
       "Real transparent pixels required",
     );
     for (let frame = 0; frame < a.frames; frame++) {
-      const left = (frame % 6) * 128,
-        top = Math.floor(frame / 6) * 128;
+      const left = (frame % (a.width / 128)) * 128,
+        top = Math.floor(frame / (a.width / 128)) * 128;
       let visible = 0;
       for (let y = 4; y < 124; y += 4)
         for (let x = 4; x < 124; x += 4)
