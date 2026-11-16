@@ -3402,6 +3402,66 @@
       "sourceGroup": "official-map",
       "sourceAsset": "buildings.png"
     },
+    "map-building-cafe": {
+      "file": "map-building-cafe.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png"
+    },
+    "map-building-laundry": {
+      "file": "map-building-laundry.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png"
+    },
+    "map-building-grocery": {
+      "file": "map-building-grocery.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png"
+    },
+    "map-building-books": {
+      "file": "map-building-books.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "storefronts.png"
+    },
     "map-nature-0": {
       "file": "map-nature-0.png",
       "width": 384,

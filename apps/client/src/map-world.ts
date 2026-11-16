@@ -218,7 +218,7 @@ export class MapWorld {
     paintCityFrontage(
       ctx,
       { x, y, width: 1024, height: 1024 },
-      { concrete, gravel, dirt },
+      { concrete, gravel, dirt, grass },
     );
     stroke(COAST, 46, "#b9bb8a", true);
     stroke(COAST, 10, "#a5d0be", true);

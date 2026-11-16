@@ -11,8 +11,8 @@
     "The Projects",
     "Uptown"
   ],
-  "buildings": 135,
-  "staticObjects": 1424,
+  "buildings": 177,
+  "staticObjects": 1579,
   "roads": 13,
   "percentages": {
     "water": 7.55,
@@ -21,6 +21,15 @@
     "mountain": 15.4,
     "city": 34.69
   },
-  "streetConnections": 126,
-  "sceneryRevision": 1
+  "streetConnections": 161,
+  "sceneryRevision": 2,
+  "pavedForecourts": 62,
+  "serviceAlleys": 81,
+  "aiMapAssets": 51,
+  "civicPlaza": {
+    "x": 7936,
+    "y": 5504,
+    "width": 960,
+    "height": 768
+  }
 }

@@ -93,6 +93,7 @@ export const DISTRICTS = [
     ],
   },
 ];
+export const CIVIC_PLAZA = { x: 7936, y: 5504, width: 960, height: 768 };
 export const PARKS = [
   { x: 9600, y: 9400, width: 640, height: 480 },
   { x: 8500, y: 7200, width: 480, height: 384 },

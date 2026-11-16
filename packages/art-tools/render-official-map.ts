@@ -1,5 +1,6 @@
 import {
   frontageStyle,
+  citySurfaces,
   streetConnections,
 } from "../game-data/map-presentation.js";
 import sharp from "sharp";
@@ -20,6 +21,8 @@ import {
   LEGACY_BUILDINGS,
   PARKING_LOTS,
   INDUSTRIAL_YARDS,
+  CIVIC_PLAZA,
+  PARKS,
 } from "../shared/src/official-map.js";
 const root = "apps/client/public/assets/",
   { assets } = JSON.parse(await readFile(root + "manifest.json", "utf8"));
@@ -63,6 +66,21 @@ for (const [r, w] of [
   body += `<path d="${path(r)}" fill="none" stroke="#b2b28b" stroke-width="${w + 34}"/><path d="${path(r)}" fill="none" stroke="#397c91" stroke-width="${w}"/>`;
 for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
+for (const b of BUILDINGS) {
+  if (frontageStyle(b).district !== "downtown") continue;
+  body += `<rect x="${b.x - b.width / 2 - 72}" y="${b.y - b.height / 2 - 96}" width="${b.width + 144}" height="${b.height + 192}" rx="18" fill="url(#pattern-map-tile-concrete)"/>`;
+}
+body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-tile-concrete)"/>`;
+for (const surface of citySurfaces()) {
+  body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-map-tile-${surface.material})" stroke="#b9b9a3" stroke-width="5"/>`;
+  if (surface.alley) {
+    const a = surface.points[0],
+      b = surface.points[2];
+    body += `<rect x="${(a.x + b.x) / 2 - 18}" y="${a.y}" width="36" height="${b.y - a.y}" fill="#727c77"/>`;
+  }
+}
+for (const p of PARKS)
+  body += `<ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2}" ry="${p.height / 2}" fill="url(#pattern-map-tile-grass)"/>`;
 for (const c of streetConnections()) {
   const points = c.points.map((p) => `${p.x},${p.y}`).join(" ");
   body += `<polyline points="${points}" fill="none" stroke="url(#pattern-map-tile-concrete)" stroke-width="${c.width + 10}" stroke-linejoin="round"/>`;

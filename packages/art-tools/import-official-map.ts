@@ -32,6 +32,16 @@ export async function importOfficialMap(
       height: 384,
     },
     {
+      name: "storefronts",
+      columns: 2,
+      rows: 2,
+      keys: ["cafe", "laundry", "grocery", "books"].map(
+        (n) => "map-building-" + n,
+      ),
+      width: 384,
+      height: 384,
+    },
+    {
       name: "nature",
       columns: 4,
       rows: 4,
@@ -73,7 +83,7 @@ export async function importOfficialMap(
         .png()
         .toBuffer();
       const file = key + ".png";
-      if (group.name === "buildings") {
+      if (group.name === "buildings" || group.name === "storefronts") {
         const raw = await sharp(crop)
             .ensureAlpha()
             .raw()
@@ -85,6 +95,7 @@ export async function importOfficialMap(
           for (let x = 0; x < rw; x++) {
             const i = (y * rw + x) * 4;
             if (
+              group.name !== "buildings" ||
               raw.data[i] < 210 ||
               raw.data[i + 1] > 110 ||
               raw.data[i + 2] > 110

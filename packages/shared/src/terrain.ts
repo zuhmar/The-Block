@@ -11,6 +11,7 @@ import {
   INDUSTRIAL_YARDS,
   DISTRICTS,
   SERVICE_POINTS,
+  CIVIC_PLAZA,
 } from "./official-map.js";
 export interface TerrainPoint {
   x: number;
@@ -459,6 +460,106 @@ for (const district of DISTRICTS) {
       });
     }
   }
+}
+// Keep civic buildings as landmarks; the remaining downtown fabric is commerce.
+const civic = new Set<string>();
+const storefronts = ["cafe", "laundry", "grocery", "books"].map(
+  (n) => "map-building-" + n,
+);
+for (const [i, b] of BUILDINGS.entries()) {
+  if (
+    b.x < 7040 ||
+    b.x >= 9664 ||
+    b.y < 4096 ||
+    b.y >= 7488 ||
+    b.id.startsWith("legacy")
+  )
+    continue;
+  if (
+    [
+      "map-building-bank",
+      "map-building-hospital",
+      "map-building-police",
+    ].includes(b.asset) &&
+    !civic.has(b.asset)
+  ) {
+    civic.add(b.asset);
+    continue;
+  }
+  if (i % 3 !== 0) b.asset = storefronts[i % storefronts.length];
+  else if (
+    [
+      "map-building-bank",
+      "map-building-hospital",
+      "map-building-police",
+    ].includes(b.asset)
+  )
+    b.asset = "map-building-office";
+}
+// Smaller shop footprints fit the gaps between larger public buildings.
+for (const district of DISTRICTS.filter((d) => d.id !== "uptown")) {
+  let serial = 0;
+  const width = district.id === "industrial" ? 224 : 176,
+    height = district.id === "industrial" ? 176 : 160;
+  const stride = district.id === "downtown" ? 224 : 320;
+  for (
+    let y = district.y + 224;
+    y < district.y + district.height - 224;
+    y += 256
+  )
+    for (
+      let x = district.x + 160;
+      x < district.x + district.width - 160;
+      x += stride
+    ) {
+      if (x < 6400 && y < 5100) continue;
+      const p = { x, y },
+        road = nearestRoadPoint(p);
+      if (road.distance > 400 || road.distance < road.width / 2 + 90) continue;
+      const rect = { x: x - width / 2, y: y - height / 2, width, height };
+      if (
+        roadOverlapsRect(rect, 36) ||
+        SERVICE_POINTS.some(
+          (s) =>
+            Math.abs(s.x - x) < width / 2 + 140 &&
+            Math.abs(s.y - y) < height / 2 + 140,
+        )
+      )
+        continue;
+      if (
+        [...PARKS, ...PARKING_LOTS, ...INDUSTRIAL_YARDS, ...BUILDINGS].some(
+          (b) =>
+            Math.abs(b.x - x) < (b.width + width) / 2 + 48 &&
+            Math.abs(b.y - y) < (b.height + height) / 2 + 48,
+        )
+      )
+        continue;
+      BUILDINGS.push({
+        id: "shoprow-" + district.id + "-" + serial,
+        x,
+        y,
+        width,
+        height,
+        asset:
+          district.id === "industrial"
+            ? "map-building-workshop"
+            : storefronts[serial % storefronts.length],
+        solid: true,
+        kind: "building",
+      });
+      serial++;
+    }
+}
+// Avoid identical shopfronts immediately beside one another.
+for (const [i, b] of BUILDINGS.entries()) {
+  if (!storefronts.includes(b.asset)) continue;
+  const neighbors = BUILDINGS.slice(0, i).filter(
+    (o) => Math.hypot(o.x - b.x, o.y - b.y) < 400,
+  );
+  if (neighbors.some((o) => o.asset === b.asset))
+    b.asset =
+      storefronts.find((asset) => !neighbors.some((o) => o.asset === asset)) ||
+      b.asset;
 }
 export function nearestRoadPoint(p: TerrainPoint) {
   let nearest = { x: p.x, y: p.y, distance: Infinity, width: 0 };
@@ -1042,6 +1143,71 @@ export function mapObjects(): MapObject[] {
         asset: key,
         kind: "decoration",
       });
+    }
+  }
+  for (const [i, x] of [
+    CIVIC_PLAZA.x + 80,
+    CIVIC_PLAZA.x + CIVIC_PLAZA.width - 116,
+  ].entries()) {
+    for (const [j, y] of [
+      CIVIC_PLAZA.y + 120,
+      CIVIC_PLAZA.y + CIVIC_PLAZA.height - 80,
+    ].entries()) {
+      out.push({
+        id: "plaza-plant-" + i + "-" + j,
+        x,
+        y,
+        width: 64,
+        height: 48,
+        asset: "map-nature-3",
+        kind: "decoration",
+      });
+      out.push({
+        id: "plaza-seat-" + i + "-" + j,
+        x: x + 24,
+        y: y + 54,
+        width: 64,
+        height: 32,
+        asset: "map-prop-5",
+        kind: "decoration",
+      });
+    }
+  }
+  // Furnish side/rear edges, leaving every shop doorway and road shoulder clear.
+  for (const [i, b] of BUILDINGS.entries()) {
+    if (!b.asset.match(/map-building-(cafe|laundry|grocery|books)$/)) continue;
+    const details = [
+      {
+        x: b.x - b.width / 2 - 24,
+        y: b.y + b.height / 2 - 24,
+        width: 48,
+        height: 30,
+        asset: "map-prop-5",
+      },
+      {
+        x: b.x + b.width / 2 + 22,
+        y: b.y - b.height / 2 + 28,
+        width: 34,
+        height: 30,
+        asset: "map-nature-3",
+      },
+    ];
+    for (const [j, p] of details.entries()) {
+      if (
+        onRoad(p, 28) ||
+        SERVICE_POINTS.some((s) => Math.hypot(p.x - s.x, p.y - s.y) < 110)
+      )
+        continue;
+      if (
+        BUILDINGS.some(
+          (o) =>
+            o !== b &&
+            Math.abs(o.x - p.x) < o.width / 2 + p.width / 2 &&
+            Math.abs(o.y - p.y) < o.height / 2 + p.height / 2,
+        )
+      )
+        continue;
+      out.push({ id: "shop-detail-" + i + "-" + j, ...p, kind: "decoration" });
     }
   }
   for (const road of ROADS)

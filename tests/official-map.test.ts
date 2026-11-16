@@ -1,4 +1,7 @@
-import { streetConnections } from "../packages/game-data/map-presentation.js";
+import {
+  citySurfaces,
+  streetConnections,
+} from "../packages/game-data/map-presentation.js";
 import { test, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -255,7 +258,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
   const keys = Object.keys(assets).filter(
     (k) => assets[k].sourceGroup === "official-map",
   );
-  assert.equal(keys.length, 47);
+  assert.equal(keys.length, 51);
   for (const key of keys) {
     assert.equal(assets[key].source, "ai-generated");
     const { data, info } = await sharp(root + assets[key].file)
@@ -281,7 +284,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  delete w.sceneryVersion;
+  w.sceneryVersion = 1;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -298,7 +301,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 1);
+  assert.equal(w.sceneryVersion, 2);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
@@ -319,4 +322,30 @@ test("street infill has frontage connections stay inside the world", () => {
     );
     assert(walk.width >= 44 && walk.width <= 72);
   }
+});
+
+test("commercial infill preserves road shoulders and civic landmarks stay unique", () => {
+  const shops = BUILDINGS.filter((b) => b.id.startsWith("shoprow-"));
+  assert(shops.length >= 30);
+  for (const shop of shops) {
+    assert(
+      !blocked(emptyWorld(), { x: shop.x, y: shop.y + shop.height / 2 + 24 }),
+      shop.id + " entrance",
+    );
+  }
+  const downtown = BUILDINGS.filter(
+    (b) => b.x >= 7040 && b.x < 9664 && b.y >= 4096 && b.y < 7488,
+  );
+  for (const role of ["bank", "hospital", "police"])
+    assert.equal(
+      downtown.filter((b) => b.asset === "map-building-" + role).length,
+      1,
+      role,
+    );
+  assert(citySurfaces().filter((s) => s.alley).length >= 30);
+  assert(
+    citySurfaces().every(
+      (s) => s.buildings.length > 0 && s.points.length === 4,
+    ),
+  );
 });
