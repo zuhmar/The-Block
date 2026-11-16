@@ -96,23 +96,23 @@ test("preview, clicked build target and authoritative structure agree at every s
   for (const zoom of [0.65, 0.84, 1.03, 1.45]) {
     const camera = new CameraFixture(390, 844);
     camera.zoom = zoom;
-    camera.scrollX = 3000 - camera.width / 2;
+    camera.scrollX = 7096 - camera.width / 2;
     camera.scrollY = 1344 - camera.height / 2;
     camera.preRender();
     const world = emptyWorld(),
       player = createPlayer("builder", "Builder", look);
-    player.x = 3000;
+    player.x = 7096;
     player.y = 1344;
     world.players[player.id] = player;
     act(world, player.id, {
       type: "build",
       kind: "foundation",
-      x: 3008,
+      x: 7104,
       y: 1344,
     });
     const floor = Object.values(world.structures)[0];
     const pointer = {
-      ...camera.screenPoint({ x: 3034, y: 1279 }),
+      ...camera.screenPoint({ x: 7130, y: 1279 }),
       worldX: 400,
       worldY: 560,
     };
@@ -149,13 +149,13 @@ test("clicked placement uses the hovered floor rather than the earlier dropdown 
   camera.preRender();
   const world = emptyWorld(),
     player = createPlayer("builder", "Builder", look);
-  player.x = 3000;
+  player.x = 7096;
   player.y = 1344;
   world.players[player.id] = player;
-  for (const x of [3008, 3136])
+  for (const x of [7104, 7232])
     act(world, player.id, { type: "build", kind: "foundation", x, y: 1344 });
   const floors = Object.values(world.structures);
-  const pointer = camera.screenPoint({ x: 3165, y: 1281 });
+  const pointer = camera.screenPoint({ x: 7261, y: 1281 });
   const plan = constructionPlan(
     pointer,
     camera,

@@ -25,11 +25,11 @@ function fixture() {
   const p = createPlayer("owner", "Owner", look),
     r = createPlayer("raider", "Raider", look);
   w.players = { owner: p, raider: r };
-  p.x = 3000;
+  p.x = 7096;
   p.y = 1344;
   p.protected = false;
   p.inventory = { wood: 45, bat: 1 };
-  r.x = 3000;
+  r.x = 7096;
   r.y = 1344;
   r.protected = false;
   r.inventory = { bat: 1 };
@@ -68,16 +68,16 @@ test("contracts reject untrusted state and invalid movement", () => {
 test("placement masks, ownership, costs and foundation immunity", () => {
   const { w, p, r } = fixture();
   assert.throws(() =>
-    act(w, p.id, { type: "build", kind: "foundation", x: 2800 }),
+    act(w, p.id, { type: "build", kind: "foundation", x: 6656 }),
   );
-  act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
+  act(w, p.id, { type: "build", kind: "foundation", x: 7104 });
   const f = Object.values(w.structures)[0];
   assert.equal(p.inventory.wood, 37);
   assert.throws(() =>
     act(w, r.id, {
       type: "build",
       kind: "wall",
-      x: 3040,
+      x: 7136,
       y: 1280,
       foundation: f.id,
     }),
@@ -90,7 +90,7 @@ test("placement masks, ownership, costs and foundation immunity", () => {
   act(w, p.id, {
     type: "build",
     kind: "wall",
-    x: 3040,
+    x: 7136,
     y: 1280,
     foundation: f.id,
   });
@@ -99,7 +99,7 @@ test("placement masks, ownership, costs and foundation immunity", () => {
       act(w, p.id, {
         type: "build",
         kind: "door",
-        x: 3040,
+        x: 7136,
         y: 1280,
         foundation: f.id,
       }),
@@ -147,35 +147,35 @@ test("death drops all inventory, equipment, cash once; preserves progression and
 });
 test("offline-owner raid: access blocked until breach; loot is public and single-claim", () => {
   const { w, p, r } = fixture();
-  act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
+  act(w, p.id, { type: "build", kind: "foundation", x: 7104 });
   const f = Object.values(w.structures)[0];
   act(w, p.id, {
     type: "build",
     kind: "door",
-    x: 3072,
+    x: 7168,
     y: 1312,
     foundation: f.id,
   });
-  act(w, p.id, { type: "build", kind: "foundation", x: 3136, y: 1344 });
+  act(w, p.id, { type: "build", kind: "foundation", x: 7232, y: 1344 });
   const secondFloor = Object.values(w.structures).find(
     (s) => s.kind === "foundation" && s.id !== f.id,
   )!;
   act(w, p.id, {
     type: "build",
     kind: "storage",
-    x: 3104,
+    x: 7200,
     y: 1312,
     foundation: secondFloor.id,
   });
   const door = Object.values(w.structures).find((s) => s.kind === "door")!,
     crate = Object.values(w.structures).find((s) => s.kind === "storage")!;
-  p.x = 3104;
+  p.x = 7200;
   p.y = 1312;
   p.lane = "parcel";
   p.parcel = f.id;
   p.inventory.scrap = 1;
   act(w, p.id, { type: "store", id: crate.id, item: "scrap" });
-  r.x = 3000;
+  r.x = 7096;
   r.y = 1312;
   r.lane = "parcel";
   r.parcel = f.id;
@@ -248,30 +248,30 @@ test("firearm reload, range and ammunition are server validated", () => {
 
 test("top-down walls block movement while protected roads remain open", () => {
   const { w, p, r } = fixture();
-  act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
+  act(w, p.id, { type: "build", kind: "foundation", x: 7104 });
   const f = Object.values(w.structures)[0];
   act(w, p.id, {
     type: "build",
     kind: "wall",
-    x: 3040,
+    x: 7136,
     y: 1280,
     foundation: f.id,
   });
-  r.x = 2980;
+  r.x = 7076;
   r.y = 1280;
   move(w, r, 1, false, false, 0.25);
-  assert(r.x < 3004);
-  r.x = 3030;
+  assert(r.x < 7100);
+  r.x = 7126;
   r.y = 1410;
   move(w, r, 1, false, false, 0.25);
-  assert(r.x > 3060);
-  r.x = 3030;
+  assert(r.x > 7156);
+  r.x = 7126;
   r.y = 976;
   move(w, r, 1, false, false, 0.25);
-  assert(r.x > 3060);
+  assert(r.x > 7156);
   assert.throws(
-    () => act(w, r.id, { type: "build", kind: "foundation", x: 3072, y: 976 }),
-    /Protected/,
+    () => act(w, r.id, { type: "build", kind: "foundation", x: 7168, y: 976 }),
+    /roads/,
   );
 });
 test("diagonal speed is normalized and vertical range cannot be spoofed", () => {
@@ -297,7 +297,7 @@ test("safe zones use both coordinates and spawn protection expires through the e
 });
 test("legacy layout migration retains progress, inventory, cash and owned structures", () => {
   const { w, p } = fixture();
-  act(w, p.id, { type: "build", kind: "foundation", x: 3008 });
+  act(w, p.id, { type: "build", kind: "foundation", x: 7104 });
   p.inventory = { wood: 7, water: 1 };
   p.cash = 42;
   p.skills.scavenging = 9;

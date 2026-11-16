@@ -10,6 +10,7 @@ import {
   ITEMS,
   PIECES,
   safe,
+  inRect,
   distance,
   placementReason,
   type Action,
@@ -22,6 +23,9 @@ import {
   type Item,
   type Point,
 } from "../../../packages/shared/src/index";
+import { forestTrees } from "../../../packages/game-data/forest";
+const woodlandTrees = forestTrees();
+
 import { DOG_RULES } from "../../../packages/game-data/wildlife";
 import { lootCrateAt } from "../../../packages/game-data/loot-crates";
 import { npcs } from "../../../packages/game-data/content";
@@ -50,7 +54,7 @@ app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down 
   )
   .join(
     "",
-  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="150"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><p class="character-style">Your survivor is a black stick figure. Make your name on the block.</p><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with 10,000 wood, $10, water and a snack.<br>Practice building. Wood uses no carry weight or carrying slot.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
+  )}</nav><section id="world-status"></section><button id="minimap-button" data-ui="map" aria-label="Open district map"><div class="map-heading"><span>THE BLOCK</span><b>N ↑</b></div><canvas id="minimap" width="200" height="133"></canvas><div id="coordinates"></div></button><aside id="objective"></aside><section id="vitals"></section><section id="needs"></section><div id="hotbar" aria-label="Quick actions"></div><div id="context"></div><div id="chat-feed" aria-live="polite"></div><div id="touch"><div class="dpad"><button data-hold="up" aria-label="Move north">▲</button><div><button data-hold="left" aria-label="Move west">◀</button><button data-hold="down" aria-label="Move south">▼</button><button data-hold="right" aria-label="Move east">▶</button></div></div><div class="touch-actions"><button data-hold="sprint">RUN</button><button data-hold="crouch">LOW</button><button data-ui="interact">E</button><button data-ui="attack">HIT</button></div></div><div id="key-help">W A S D <span>MOVE</span> · SHIFT <span>SPRINT</span> · E <span>INTERACT</span> · R <span>RELOAD</span></div></div><div id="notice" role="status"></div><section id="panel" hidden></section><div id="death" hidden><span class="eyebrow">LIFE ON THE BLOCK</span><h2>Left behind.</h2><p>Your carried gear and cash are now public loot.<br>Your skills, bank and property remain yours.</p><button id="respawn">Return to the shelter</button></div><div id="auth"><div class="auth-card"><div class="auth-mark"><span class="eyebrow">A PERSISTENT URBAN SANDBOX</span><h1>Make this<br>block <em>yours.</em></h1><p>Search the ruins. Craft your tools.<br>Build something worth protecting.</p></div><form id="login"><span class="eyebrow">YOUR LIFE ON THE BLOCK</span><h3>Step onto the street</h3><label>Street name<input name="name" autocomplete="username" placeholder="Your unique name" pattern="[a-zA-Z][a-zA-Z0-9_]{2,19}" required maxlength="20"></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 10 characters" minlength="10" maxlength="128" required></label><p class="character-style">Your survivor is a black stick figure. Make your name on the block.</p><button name="register" value="true" type="submit">Create character <span>↗</span></button><button class="secondary" name="register" value="false" type="submit">I already live here · Sign in</button><p id="auth-error" role="alert"></p><small>Start with 10,000 wood, $10, water and a snack.<br>Practice building. Wood uses no carry weight or carrying slot.</small></form><div class="auth-foot"><i></i> ONE SHARED CITY · NO PAID ADVANTAGES</div></div><aside class="auth-caption"><span>THE HAVEN / DISTRICT 01</span><b>A safe start.<br>An open world.</b><p>Leave the shelter when you’re ready.<br>The rest is up to you.</p></aside></div></main>`;
 const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
 let room: Room | undefined,
   seq = 0,
@@ -303,6 +307,22 @@ class City extends Phaser.Scene {
         "td-grass",
       )
       .setDepth(-10000);
+    const townBoundary = this.add.graphics().setDepth(-9600);
+    townBoundary.lineStyle(5, 0xc5ba92, 0.65);
+    townBoundary.strokeRect(
+      2,
+      2,
+      WORLD.townRect.width - 4,
+      WORLD.townRect.height - 4,
+    );
+    for (const tree of woodlandTrees)
+      this.add
+        .image(tree.x, tree.y, "td-tree-" + tree.variant)
+        .setOrigin(0.5, 0.83)
+        .setScale(tree.scale)
+        .setDepth(tree.y);
+    this.text(6170, 1150, "TOWN LIMIT · EAST WOODLAND →", 14, "#e2dcc5");
+    this.text(2780, 3160, "TOWN LIMIT · SOUTH WOODLAND ↓", 14, "#e2dcc5");
     for (const r of WORLD.parcelRects) {
       this.add
         .tileSprite(
@@ -319,7 +339,7 @@ class City extends Phaser.Scene {
       this.text(
         r.x + r.width / 2,
         r.y + 24,
-        "VACANT GROUND / BUILDABLE",
+        "WOODLAND CLEARING / BUILD YOUR HOME",
         10,
         "#d4ccad",
       ).setDepth(-8900);
@@ -1054,7 +1074,7 @@ function drawMap(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d")!;
   const sx = canvas.width / WORLD.width,
     sy = canvas.height / WORLD.height;
-  ctx.fillStyle = "#6d795a";
+  ctx.fillStyle = "#405c42";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = "#82916b";
   ctx.lineWidth = 0.5;
@@ -1070,6 +1090,13 @@ function drawMap(canvas: HTMLCanvasElement) {
     ctx.lineTo(canvas.width, y);
     ctx.stroke();
   }
+  ctx.fillStyle = "#6d795a";
+  ctx.fillRect(0, 0, WORLD.townRect.width * sx, WORLD.townRect.height * sy);
+  ctx.fillStyle = "#2c4734";
+  for (const tree of woodlandTrees)
+    ctx.fillRect(tree.x * sx, tree.y * sy, 1.5, 1.5);
+  ctx.strokeStyle = "#d5c89e";
+  ctx.strokeRect(0, 0, WORLD.townRect.width * sx, WORLD.townRect.height * sy);
   for (const r of WORLD.roads) {
     ctx.fillStyle = "#b4ad8b";
     ctx.fillRect(r.x * sx, r.y * sy, r.width * sx, r.height * sy);
@@ -1144,7 +1171,7 @@ function renderHud() {
   $("#connection").innerHTML =
     `<i class="live"></i><span>CONNECTED · ${snapshot.players.length} NEARBY</span><button data-ui="logout" title="Sign out">EXIT</button>`;
   $("#world-status").innerHTML =
-    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : 'THE BLOCK <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`;
+    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : inRect(p, WORLD.townRect) ? 'THE BLOCK <b class="danger">TOWN · NO BUILDING</b>' : 'WOODLAND <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`;
   $("#vitals").innerHTML =
     `<div class="player-name"><b>${esc(p.name)}</b><span>${p.weapon === "fists" ? "UNARMED" : nice(p.weapon)}${p.weapon === "pistol" ? " · " + p.ammo + "/6" : ""}</span></div>${meter("HEALTH", p.health, "#b95b4d")}${meter("ENERGY", p.energy, "#c6a858")}`;
   $("#needs").innerHTML =
@@ -1175,7 +1202,7 @@ function renderHud() {
   );
   const wood = (p.inventory.wood || 0) > 0;
   $("#objective").innerHTML =
-    `<span class="eyebrow">A FOOTHOLD IN THE CITY</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Find vacant ground east of the crossing." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
+    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow the roads east or south out of town. Build in a woodland clearing." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
   const near = nearest();
   $("#context").innerHTML = near
     ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
@@ -1235,7 +1262,7 @@ function renderPanel() {
   } else if (panel === "build") {
     title = "Construction";
     subtitle = "A PLACE WORTH DEFENDING";
-    html = `<p class="panel-intro">Place floors first, then hover a floor to snap walls and doors along its outer or interior grid lines, with storage inside. The floor under your cursor is selected automatically. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap to outer or interior floor grid lines; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Preferred floor at shared edges<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
+    html = `<p class="panel-intro">Build only in woodland clearings outside town. Town streets and road shoulders are protected. Place floors first, then hover a floor to snap walls and doors along its outer or interior grid lines, with storage inside. The floor under your cursor is selected automatically. Floors can join edge to edge. Green is valid; red explains what is blocked. WASD keeps you moving while building.</p><div class="build-options">${BUILD_KINDS.map((k) => `<button data-kind="${k}" class="${buildKind === k ? "selected" : ""}">${img(k + "-intact")}<b>${nice(k)}</b><span>${PIECES[k].wood} wood</span></button>`).join("")}</div><div class="construction-info"><div><span class="eyebrow">${nice(buildKind)}</span><h4>${buildKind === "foundation" ? "Raid-proof floor" : PIECES[buildKind].hp + " structure HP"}</h4><p>${buildKind === "foundation" ? "A two-by-two floor tile. Join floors edge to edge to expand your base." : "Walls and doors snap to outer or interior floor grid lines; storage fits inside the floor."}</p></div><b>${p.inventory.wood || 0}<small>WOOD AVAILABLE</small></b></div><label>Preferred floor at shared edges<select id="foundation"><option value="">Select your floor</option>${snapshot.structures
       .filter((s) => s.kind === "foundation" && s.owner === p.id)
       .sort((a, b) => distance(a, p) - distance(b, p))
       .map(
@@ -1275,7 +1302,7 @@ function renderPanel() {
           (s) => s.kind === "foundation" && s.owner === p.id,
         ),
         "Claim a foothold",
-        "Find the vacant grounds south-east of the main crossing. Open B to build.",
+        "Follow the roads east or south beyond town to a woodland clearing. Open B to build.",
       ],
     ]
       .map(
@@ -1288,7 +1315,7 @@ function renderPanel() {
   } else if (panel === "map") {
     title = "The Block";
     subtitle = "DISTRICT 01 / SHARED CITY";
-    html = `<canvas id="district-map" width="760" height="380"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Buildable ground</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Vacant ground lies east of the north/south crossing. Roads and public buildings cannot be claimed.</p>`;
+    html = `<canvas id="district-map" width="760" height="507"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> House clearings</span><span>Dark green · Forest</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Woodland clearings east (x ≥ 6656) and south (y ≥ 3392) have room for homes. Follow the roads out of town. Town and all roads are protected from building.</p>`;
   } else if (panel === "chat") {
     title = "Neighborhood chat";
     subtitle = "THE BLOCK / LIVE";

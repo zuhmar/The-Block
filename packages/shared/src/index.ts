@@ -11,8 +11,9 @@ export interface Rect {
   height: number;
 }
 export const WORLD = {
-  width: 6400,
-  height: 3200,
+  width: 9600,
+  height: 6400,
+  townRect: { x: 0, y: 0, width: 6400, height: 3200 },
   ground: 560,
   spawn: { x: 400, y: 560 },
   safe: [80, 740],
@@ -36,16 +37,23 @@ export const WORLD = {
     [4600, 5100],
     [5600, 6150],
   ],
+  // Large woodland clearings, separated from the protected town and road network.
   parcelRects: [
-    { x: 2880, y: 1120, width: 448, height: 576 },
-    { x: 3648, y: 1120, width: 512, height: 576 },
-    { x: 4544, y: 1120, width: 576, height: 576 },
-    { x: 5568, y: 1120, width: 640, height: 576 },
+    { x: 6656, y: 128, width: 2560, height: 640 },
+    { x: 6656, y: 1152, width: 2560, height: 832 },
+    { x: 6656, y: 2368, width: 2560, height: 1920 },
+    { x: 128, y: 3392, width: 2112, height: 896 },
+    { x: 2752, y: 3392, width: 3456, height: 896 },
+    { x: 128, y: 4736, width: 2112, height: 1408 },
+    { x: 2752, y: 4736, width: 3456, height: 1408 },
+    { x: 6656, y: 4736, width: 2560, height: 1408 },
   ],
   roads: [
-    { x: 0, y: 880, width: 6400, height: 192 },
-    { x: 2400, y: 0, width: 192, height: 3200 },
-    { x: 0, y: 2080, width: 6400, height: 160 },
+    { x: 0, y: 880, width: 9600, height: 192 },
+    { x: 2400, y: 0, width: 192, height: 6400 },
+    { x: 0, y: 2080, width: 9600, height: 160 },
+    { x: 0, y: 4480, width: 9600, height: 160 },
+    { x: 9344, y: 0, width: 160, height: 6400 },
   ],
   obstacles: [
     { x: 80, y: 376, width: 660, height: 24 },
@@ -78,6 +86,8 @@ export const inRect = (p: Point, r: Rect, padding = 0) =>
 export const safe = (x: number, y: number = WORLD.ground) =>
   inRect({ x, y }, WORLD.safeRect);
 export const buildGround = (p: Point) =>
+  !inRect(p, WORLD.townRect) &&
+  !WORLD.roads.some((r) => inRect(p, r, 32)) &&
   WORLD.parcelRects.some((r) =>
     inRect(p, {
       x: r.x + 32,
@@ -451,6 +461,12 @@ export function canCarry(inv: Inventory, item: Item, n = 1) {
   );
 }
 
+export const rectsOverlap = (a: Rect, b: Rect) =>
+  a.x < b.x + b.width &&
+  a.x + a.width > b.x &&
+  a.y < b.y + b.height &&
+  a.y + a.height > b.y;
+
 export function placementReason(
   player: Pick<Player, "id" | "x" | "y" | "inventory">,
   kind: Kind,
@@ -466,8 +482,26 @@ export function placementReason(
       : kind === "storage"
         ? 20
         : 0;
+  const footprint = {
+    x: point.x - Math.max(margin, 32),
+    y: point.y - Math.max(margin, 32),
+    width: Math.max(margin, 32) * 2,
+    height: Math.max(margin, 32) * 2,
+  };
+  if (rectsOverlap(footprint, WORLD.townRect))
+    return "Cannot build in town. Find a woodland clearing outside town.";
   if (
-    safe(point.x, point.y) ||
+    WORLD.roads.some((r) =>
+      rectsOverlap(footprint, {
+        x: r.x - 32,
+        y: r.y - 32,
+        width: r.width + 64,
+        height: r.height + 64,
+      }),
+    )
+  )
+    return "Cannot build on roads or road shoulders";
+  if (
     !WORLD.parcelRects.some((r) =>
       inRect(point, {
         x: r.x + margin,
@@ -476,10 +510,9 @@ export function placementReason(
         height: r.height - margin * 2,
       }),
     ) ||
-    WORLD.roads.some((r) => inRect(point, r, 32)) ||
-    WORLD.obstacles.some((r) => inRect(point, r, 32))
+    WORLD.obstacles.some((r) => rectsOverlap(footprint, r))
   )
-    return "Protected road, public area or parcel edge";
+    return "Find an open woodland clearing; keep the whole floor inside it";
   if (
     structures.filter((s) => s.owner === player.id && s.kind !== "roof")
       .length >= BUILD_BUDGET

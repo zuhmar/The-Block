@@ -92,3 +92,5 @@ Lootable world caches have five AI sprite tiers: small, supply, reinforced, long
 Equipped pistols and bats have dedicated AI character atlases in all four directions, including idle, walking, running, crouching and hurt states. The renderer and portraits select the equipped set for local and remote players.
 
 Twelve server-controlled stray dogs roam outside the Haven. They spot and chase exposed players, wind up before biting, respect walls/closed doors, and respawn after defeat. Fists, bats and pistols can fight them. New AI dog/punch animations and bullet, muzzle, impact and bite sprites are included. Pistol damage remains authoritative hitscan; visible bullet tracers show confirmed shots without changing ammunition, range or line-of-sight rules.
+
+The 9600 × 6400 world includes protected town limits, forest belts and eight large woodland house clearings east and south of town. Roads extend to the world edges and connect through an outer road for future towns. Build outside town in the marked clearings; town, roads and shoulders reject all new construction. Existing town homes are retained.

@@ -26,14 +26,14 @@ const look = {
 function setup() {
   const world = emptyWorld(),
     player = createPlayer("owner", "Builder", look);
-  player.x = 3000;
+  player.x = 7096;
   player.y = 1344;
   player.inventory = { wood: 50 };
   world.players[player.id] = player;
   act(world, player.id, {
     type: "build",
     kind: "foundation",
-    x: 3008,
+    x: 7104,
     y: 1344,
   });
   const floor = Object.values(world.structures)[0];
@@ -41,7 +41,7 @@ function setup() {
 }
 test("walls snap to a floor edge and the authoritative placement matches the preview", () => {
   const { world, player, floor } = setup();
-  const requested = { x: 3034, y: 1279 },
+  const requested = { x: 7130, y: 1279 },
     point = snapBuildPoint("wall", requested, floor);
   assert(floorSupportsPiece(floor, point, "wall"));
   assert.equal(
@@ -73,7 +73,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
       act(world, player.id, {
         type: "build",
         kind: "foundation",
-        x: 3072,
+        x: 7168,
         y: 1344,
       }),
     /overlaps/,
@@ -82,7 +82,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
   act(world, player.id, {
     type: "build",
     kind: "foundation",
-    x: 3136,
+    x: 7232,
     y: 1344,
   });
   assert.equal(
@@ -95,7 +95,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
       act(world, player.id, {
         type: "build",
         kind: "wall",
-        x: 3168,
+        x: 7264,
         y: 1280,
         foundation: floor.id,
       }),
@@ -104,7 +104,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
   act(world, player.id, {
     type: "build",
     kind: "door",
-    x: 3040,
+    x: 7136,
     y: 1280,
     foundation: floor.id,
   });
@@ -113,7 +113,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
       act(world, player.id, {
         type: "build",
         kind: "wall",
-        x: 3040,
+        x: 7136,
         y: 1280,
         foundation: floor.id,
       }),
@@ -125,7 +125,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
       act(world, player.id, {
         type: "build",
         kind: "roof",
-        x: 3040,
+        x: 7136,
         y: 1376,
         foundation: floor.id,
       }),
@@ -134,7 +134,7 @@ test("floors join without overlap and off-floor pieces, occupied cells and roofs
 });
 test("a green preview requires sufficient wood and a floor owned by the builder", () => {
   const { world, player, floor } = setup();
-  const point = snapBuildPoint("storage", { x: 3040, y: 1312 }, floor);
+  const point = snapBuildPoint("storage", { x: 7136, y: 1312 }, floor);
   player.inventory = {};
   assert.match(
     placementReason(player, "storage", point, [floor], floor.id),
@@ -199,19 +199,19 @@ test("new characters can build immediately using their 10000 starter wood", () =
     player = createPlayer("practice", "Practice", look);
   world.players[player.id] = player;
   assert.equal(player.inventory.wood, 10000);
-  player.x = 3000;
+  player.x = 7096;
   player.y = 1344;
   act(world, player.id, {
     type: "build",
     kind: "foundation",
-    x: 3008,
+    x: 7104,
     y: 1344,
   });
   const floor = Object.values(world.structures)[0];
   act(world, player.id, {
     type: "build",
     kind: "wall",
-    x: 3040,
+    x: 7136,
     y: 1280,
     foundation: floor.id,
   });
@@ -337,17 +337,17 @@ test("hovering a different owned floor selects it despite a stale preferred floo
 
 test("walls on a floor at the parcel boundary are allowed without extending the floor outside the parcel", () => {
   const { world, player } = setup();
-  player.x = 2950;
+  player.x = 6726;
   player.y = 1260;
   act(world, player.id, {
     type: "build",
     kind: "foundation",
-    x: 2944,
+    x: 6720,
     y: 1216,
   });
-  const floor = Object.values(world.structures).find((s) => s.x === 2944)!;
-  const point = snapBuildPoint("wall", { x: 2880, y: floor.y - 32 }, floor);
-  assert.equal(point.x, 2880);
+  const floor = Object.values(world.structures).find((s) => s.x === 6720)!;
+  const point = snapBuildPoint("wall", { x: 6656, y: floor.y - 32 }, floor);
+  assert.equal(point.x, 6656);
   assert.equal(
     placementReason(
       player,
@@ -370,7 +370,7 @@ test("a player can place their 100th piece but not their 101st", () => {
   const { world, player, floor } = setup();
   for (let i = 0; i < 98; i++) {
     const id = `existing-${i}`;
-    world.structures[id] = { ...floor, id, kind: "storage", x: 6000, y: 2800 };
+    world.structures[id] = { ...floor, id, kind: "storage", x: 6000, y: 6896 };
   }
   act(world, player.id, {
     type: "build",

@@ -102,19 +102,19 @@ test("a full backpack does not lose items or consume a cache cooldown", () => {
 });
 test("craftable storage stays the original empty storage piece", () => {
   const { world, player } = setup();
-  player.x = 3000;
+  player.x = 7096;
   player.y = 1344;
   act(world, player.id, {
     type: "build",
     kind: "foundation",
-    x: 3008,
+    x: 7104,
     y: 1344,
   });
   const floor = Object.values(world.structures)[0];
   act(world, player.id, {
     type: "build",
     kind: "storage",
-    x: 3040,
+    x: 7136,
     y: 1312,
     foundation: floor.id,
   });

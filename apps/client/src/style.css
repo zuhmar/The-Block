@@ -2476,3 +2476,9 @@ canvas {
 .map-legend i.dogs {
   background: #de8065;
 }
+
+/* Preserve the expanded world proportions at every responsive map size. */
+#minimap {
+  height: auto;
+  aspect-ratio: 3 / 2;
+}

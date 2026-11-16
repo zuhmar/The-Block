@@ -135,6 +135,7 @@ app.get("/world", (_req, res) => {
     buildBudget: BUILD_BUDGET,
     lootCrateTiers: LOOT_CRATES.length,
     wildlife: "stray-dogs-v1",
+    terrain: "woodland-v1",
     visiblePistolShots: true,
   });
 });

@@ -33,12 +33,12 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
     await transaction((w) => {
       const a = createPlayer("a", "A", look),
         b = createPlayer("b", "B", look);
-      a.x = b.x = 3000;
+      a.x = b.x = 7096;
       a.y = b.y = 1344;
       w.players = { a, b };
       w.bags.bag = {
         id: "bag",
-        x: 3000,
+        x: 7096,
         y: 1344,
         cash: 0,
         inventory: { scrap: 1 },
@@ -70,20 +70,20 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
     assert.equal(saved.players.a.cash, 10);
     await transaction((w) => {
       w.players.a.inventory = { wood: 50 };
-      w.players.a.x = 3000;
+      w.players.a.x = 7096;
       w.players.a.y = 1344;
-      act(w, "a", { type: "build", kind: "foundation", x: 3008 });
+      act(w, "a", { type: "build", kind: "foundation", x: 7104 });
       const f = Object.values(w.structures)[0];
       act(w, "a", {
         type: "build",
         kind: "door",
-        x: 3040,
+        x: 7136,
         y: 1280,
         foundation: f.id,
       });
       const d = Object.values(w.structures).find((s) => s.kind === "door")!;
       const b = w.players.b;
-      b.x = 3030;
+      b.x = 7126;
       b.y = 1344;
       b.protected = false;
       b.inventory.bat = 1;
@@ -137,7 +137,7 @@ test("PostgreSQL concurrent claims serialize, failed actions roll back, raiding 
       observer = await pool.connect();
     try {
       await acquireAuthority(predecessor);
-      const transition = acquireAuthority(successor, 3000);
+      const transition = acquireAuthority(successor, 7096);
       await new Promise((resolve) => setTimeout(resolve, 150));
       assert(
         !(await observer.query("SELECT pg_try_advisory_lock(739481) AS locked"))
