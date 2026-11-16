@@ -24,6 +24,7 @@ export async function importCharacters(
   >();
   for (const name of [
     "base",
+    "punch",
     "walk",
     "run",
     "combat",
@@ -96,11 +97,13 @@ export async function importCharacters(
           let sheet: string, sourceColumn: number;
           if (weapon === "fists") {
             sheet =
-              state === "walk" || state === "run"
-                ? state
-                : state === "melee" || state === "firearm"
-                  ? "combat"
-                  : "base";
+              state === "melee"
+                ? "punch"
+                : state === "walk" || state === "run"
+                  ? state
+                  : state === "melee" || state === "firearm"
+                    ? "combat"
+                    : "base";
             sourceColumn =
               sheet === "combat"
                 ? Math.floor(column / 2) + (state === "firearm" ? 4 : 0)

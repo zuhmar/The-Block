@@ -19,6 +19,7 @@ import {
   type Appearance,
   type Structure,
 } from "../../../packages/shared/src/index.js";
+import { ensureDogs, tickDogs, damageDog } from "./wildlife.js";
 import { skills } from "../../../packages/game-data/content.js";
 import {
   lootCrateAt,
@@ -119,6 +120,7 @@ export function blocked(w: WorldState, p: Point) {
 export function upgradeWorld(w: WorldState) {
   w.layoutVersion = 2;
   w.actions ||= {};
+  w.shots ||= {};
   for (const p of Object.values(w.players)) {
     p.y ??= p.lane === "parcel" ? 1344 : WORLD.spawn.y;
     p.facingY ??= 0;
@@ -129,6 +131,7 @@ export function upgradeWorld(w: WorldState) {
   }
   for (const s of Object.values(w.structures)) s.y ??= 1344;
   for (const b of Object.values(w.bags)) b.y ??= WORLD.spawn.y;
+  ensureDogs(w, (point) => blocked(w, point));
   for (const p of Object.values(w.players)) {
     if (blocked(w, p)) {
       const original = { x: p.x, y: p.y };
@@ -224,6 +227,9 @@ export function tick(
   w.actions ||= {};
   for (const [key, value] of Object.entries(w.actions))
     if (value.at < now - 60000) delete w.actions[key];
+  w.shots ||= {};
+  for (const [id, shot] of Object.entries(w.shots))
+    if (now - shot.at > 1500) delete w.shots[id];
   w.clock = (w.clock + dt) % 3600;
   for (const p of Object.values(w.players)) {
     if ((!active.has(p.id) && p.combatUntil < now) || p.dead) continue;
@@ -244,6 +250,11 @@ export function tick(
       p.reloadAt = 0;
     }
   }
+  tickDogs(w, dt, active, now, {
+    blocked: (point) => blocked(w, point),
+    obstruction: (a, b) => obstruction(w, a, b),
+    kill: (player) => kill(w, player),
+  });
 }
 export function act(
   w: WorldState,
@@ -473,9 +484,10 @@ export function act(
       if (p.attackAt > now || p.reloadAt) fail("Weapon not ready");
       if (p.energy < 8) fail("Too exhausted");
       const t = w.players[a.target],
-        s = w.structures[a.target];
-      if (!t && !s) fail("Target missing");
-      const target = t || s;
+        s = w.structures[a.target],
+        dog = w.dogs?.[a.target];
+      if (!t && !s && !dog) fail("Target missing");
+      const target = t || s || dog!;
       const range = a.weapon === "pistol" ? 560 : 90;
       near(p, target, range);
       if ((target.x - p.x) * p.facing + (target.y - p.y) * p.facingY < -1)
@@ -485,6 +497,7 @@ export function act(
       if (obstruction(w, p, target, target.id)) fail("Line of sight blocked");
       if (s?.kind === "foundation") fail("Foundations cannot be raided");
       if (s && s.hp <= 0) fail("Already breached");
+      if (dog && dog.health <= 0) fail("Dog is already down");
       if (a.weapon === "pistol") {
         if (!p.ammo) fail("Reload first");
         p.ammo--;
@@ -494,11 +507,25 @@ export function act(
       p.combatUntil = now + 20000;
       const damage = a.weapon === "pistol" ? 28 : a.weapon === "bat" ? 18 : 9;
       if (t) t.health -= damage;
-      else s.hp -= damage;
+      else if (dog) {
+        damageDog(dog, damage, now);
+        if (dog.health > 0) dog.targetId = id;
+      } else s.hp -= damage;
       if (t) {
         t.combatUntil = now + 20000;
         if (t.health <= 0) kill(w, t);
-      } else s.hp = Math.max(0, s.hp);
+      } else if (s) s.hp = Math.max(0, s.hp);
+      if (a.weapon === "pistol") {
+        w.shots ||= {};
+        const shotId = randomUUID();
+        w.shots[shotId] = {
+          id: shotId,
+          shooterId: id,
+          from: { x: p.x, y: p.y },
+          to: { x: target.x, y: target.y },
+          at: now,
+        };
+      }
       p.skills[a.weapon === "pistol" ? "marksmanship" : "melee"] += 0.2;
       return "Hit · " + damage;
     }
@@ -542,6 +569,24 @@ export function visible(w: WorldState, id: string, online: Set<string>) {
   const p = w.players[id];
   return {
     clock: w.clock,
+    dogs: Object.values(w.dogs || {})
+      .filter((d) => distance(d, p) < 1400)
+      .map((d) => ({
+        id: d.id,
+        x: d.x,
+        y: d.y,
+        health: d.health,
+        facing: d.facing,
+        facingY: d.facingY,
+        state: d.state,
+        attackAt: d.attackAt,
+        attackUntil: d.attackUntil,
+        hurtUntil: d.hurtUntil,
+        respawnAt: d.respawnAt,
+      })),
+    shots: Object.values(w.shots || {}).filter(
+      (s) => distance(s.from, p) < 1400 || distance(s.to, p) < 1400,
+    ),
     self: p,
     players: Object.values(w.players)
       .filter((t) => online.has(t.id) && distance(t, p) < 1400)

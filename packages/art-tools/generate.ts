@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { importWildlife } from "./import-wildlife.js";
 import { importLootCrates } from "./import-loot-crates.js";
 import { importConstruction } from "./import-construction.js";
 import { importWorld } from "./import-world.js";
@@ -408,6 +409,7 @@ for (const [key, body] of Object.entries({
 await importWorld(root, manifest);
 await importConstruction(root, manifest);
 await importLootCrates(root, manifest);
+await importWildlife(root, manifest);
 await writeFile(
   new URL("manifest.json", root),
   JSON.stringify(

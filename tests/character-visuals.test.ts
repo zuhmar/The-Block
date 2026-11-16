@@ -83,3 +83,10 @@ test("authoritative equip changes the local and remote character artwork, and de
   assert.equal(characterState(player, options), "death");
   assert.equal(Object.values(world.bags)[0].inventory.pistol, 1);
 });
+
+test("unarmed attacks select the new punch animation", () => {
+  assert.equal(
+    characterState({ weapon: "fists", dead: false, attackAt: 1500 }, options),
+    "melee",
+  );
+});

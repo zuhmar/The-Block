@@ -386,7 +386,51 @@ export interface Bag {
   inventory: Inventory;
   cash: number;
 }
+export interface StrayDog extends Point {
+  id: string;
+  homeX: number;
+  homeY: number;
+  health: number;
+  facing: number;
+  facingY: number;
+  state: "idle" | "walk" | "chase" | "attack" | "hurt" | "dead";
+  attackAt: number;
+  attackUntil: number;
+  biteAt: number;
+  nextAttackAt: number;
+  hurtUntil: number;
+  respawnAt: number;
+  roamUntil: number;
+  targetId?: string;
+  goalX: number;
+  goalY: number;
+  returning?: boolean;
+}
+export type DogView = Pick<
+  StrayDog,
+  | "id"
+  | "x"
+  | "y"
+  | "health"
+  | "facing"
+  | "facingY"
+  | "state"
+  | "attackAt"
+  | "attackUntil"
+  | "hurtUntil"
+  | "respawnAt"
+>;
+export interface ShotVisual {
+  id: string;
+  shooterId: string;
+  from: Point;
+  to: Point;
+  at: number;
+}
 export interface WorldState {
+  dogs?: Record<string, StrayDog>;
+  shots?: Record<string, ShotVisual>;
+  wildlifeVersion?: number;
   players: Record<string, Player>;
   structures: Record<string, Structure>;
   bags: Record<string, Bag>;

@@ -14,12 +14,15 @@ import {
   placementReason,
   type Action,
   type Player,
+  type DogView,
+  type ShotVisual,
   type Structure,
   type Bag,
   type Kind,
   type Item,
   type Point,
 } from "../../../packages/shared/src/index";
+import { DOG_RULES } from "../../../packages/game-data/wildlife";
 import { lootCrateAt } from "../../../packages/game-data/loot-crates";
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
@@ -57,6 +60,8 @@ let snapshot: {
   players: Player[];
   structures: Structure[];
   bags: Bag[];
+  dogs?: DogView[];
+  shots?: ShotVisual[];
   clock: number;
 } = { players: [], structures: [], bags: [], clock: 0 };
 let manifest: Record<string, any> = {},
@@ -106,7 +111,7 @@ const btn = (label: string, action: Action, disabled = false) =>
   `<button class="action" data-action='${esc(JSON.stringify(action))}' ${disabled ? "disabled" : ""}>${label}</button>`;
 const nice = (s: string) =>
   s === "foundation" ? "Floor" : s.replace(/\b\w/g, (c) => c.toUpperCase());
-function facing(p: Player) {
+function facing(p: Pick<Player, "facing" | "facingY">) {
   return Math.abs(p.facingY) > Math.abs(p.facing)
     ? p.facingY < 0
       ? "north"
@@ -197,6 +202,8 @@ class City extends Phaser.Scene {
   labels = new Map<string, Phaser.GameObjects.Text>();
   loading = new Set<string>();
   attackSeen = new Map<string, number>();
+  attackAnimationSeen = new Map<string, number>();
+  shotSeen = new Map<string, number>();
   lastHealth = new Map<string, number>();
   hurtUntil = new Map<string, number>();
   staticBuilt = false;
@@ -507,7 +514,7 @@ class City extends Phaser.Scene {
     this.previewText = this.text(0, 0, "", 12).setDepth(9002).setVisible(false);
     this.buildGuides = this.add.graphics().setDepth(9000);
     for (const key of Object.keys(manifest))
-      if (key.startsWith("player-") && this.textures.exists(key))
+      if (manifest[key].animations && this.textures.exists(key))
         this.makeAnimations(key);
     this.cameras.main.setZoom(this.scale.width < 700 ? 0.84 : 1.03);
     this.cameras.main.centerOn(680, 640);
@@ -525,7 +532,9 @@ class City extends Phaser.Scene {
             end: a.end,
           }),
           frameRate: a.fps,
-          repeat: name === "death" ? 0 : -1,
+          repeat: ["death", "attack", "melee", "firearm"].includes(name)
+            ? 0
+            : -1,
         });
   }
   ensureAppearance(key: string) {
@@ -539,6 +548,50 @@ class City extends Phaser.Scene {
       this.makeAnimations(key),
     );
     if (!this.load.isLoading()) this.load.start();
+  }
+  combatEffect(key: string, x: number, y: number, size: number, rotation = 0) {
+    const effect = this.add
+      .image(x, y, key)
+      .setDisplaySize(size, size)
+      .setRotation(rotation)
+      .setDepth(8502);
+    this.tweens.add({
+      targets: effect,
+      alpha: 0,
+      duration: 180,
+      onComplete: () => effect.destroy(),
+    });
+  }
+  drawShots() {
+    const now = Date.now() + serverOffset;
+    for (const [id, at] of this.shotSeen)
+      if (now - at > 5000) this.shotSeen.delete(id);
+    for (const shot of snapshot.shots || []) {
+      if (this.shotSeen.has(shot.id) || now - shot.at > 800) continue;
+      this.shotSeen.set(shot.id, shot.at);
+      const length = distance(shot.from, shot.to) || 1,
+        dx = (shot.to.x - shot.from.x) / length,
+        dy = (shot.to.y - shot.from.y) / length;
+      const start = { x: shot.from.x + dx * 26, y: shot.from.y - 24 + dy * 8 },
+        end = { x: shot.to.x, y: shot.to.y - 24 };
+      const angle = Math.atan2(end.y - start.y, end.x - start.x);
+      this.combatEffect("fx-muzzle", start.x, start.y, 24, angle);
+      const bullet = this.add
+        .image(start.x, start.y, "projectile-bullet")
+        .setDisplaySize(32, 32)
+        .setRotation(angle)
+        .setDepth(8502);
+      this.tweens.add({
+        targets: bullet,
+        x: end.x,
+        y: end.y,
+        duration: Math.max(35, Math.min(260, (length / 2200) * 1000)),
+        onComplete: () => {
+          bullet.destroy();
+          this.combatEffect("fx-bullet-impact", end.x, end.y, 26);
+        },
+      });
+    }
   }
   drawLootHints() {
     const graphics = this.lootGuides.clear(),
@@ -579,6 +632,18 @@ class City extends Phaser.Scene {
             p.x + 4,
             p.y - visual.height / 2 - 10,
           );
+    }
+    for (const dog of snapshot.dogs || []) {
+      if (dog.health <= 0 || !self || distance(self, dog) > 500) continue;
+      graphics.fillStyle(0x3b2926, 0.9).fillRect(dog.x - 18, dog.y - 57, 36, 4);
+      graphics
+        .fillStyle(0xd88168, 1)
+        .fillRect(
+          dog.x - 18,
+          dog.y - 57,
+          (36 * Math.max(0, dog.health)) / DOG_RULES.health,
+          4,
+        );
     }
     for (const bag of snapshot.bags) {
       graphics.lineStyle(2, 0xf1d68c, 0.9).strokeCircle(bag.x, bag.y, 27);
@@ -657,6 +722,11 @@ class City extends Phaser.Scene {
         asset: characterAtlas(p.weapon, facing(p)),
         entity: "player",
       })),
+      ...(snapshot.dogs || []).map((d) => ({
+        ...d,
+        asset: `dog-stray-${facing(d)}`,
+        entity: "dog",
+      })),
       ...snapshot.structures
         .filter((s) => s.kind !== "roof")
         .map((s) => ({
@@ -678,6 +748,8 @@ class City extends Phaser.Scene {
       if (!ids.has(id)) {
         s.destroy();
         this.sprites.delete(id);
+        this.attackAnimationSeen.delete(id);
+        this.attackSeen.delete(id);
         this.labels.get(id)?.destroy();
         this.labels.delete(id);
       }
@@ -699,7 +771,50 @@ class City extends Phaser.Scene {
       s.setDepth(
         e.kind === "foundation" ? -6000 : e.kind === "roof" ? e.y + 140 : s.y,
       );
-      if (e.entity === "player") {
+      if (e.entity === "dog") {
+        const now = Date.now() + serverOffset;
+        const state =
+          e.health <= 0
+            ? "death"
+            : e.hurtUntil > now
+              ? "hurt"
+              : e.attackUntil > now
+                ? "attack"
+                : e.state === "chase"
+                  ? "run"
+                  : e.state === "walk"
+                    ? "walk"
+                    : "idle";
+        const animation = e.asset + "-" + state;
+        s.setOrigin(0.5, 0.82)
+          .setScale(0.55)
+          .setAlpha(e.health <= 0 ? 0.55 : 1);
+        if (
+          s.anims.currentAnim?.key !== animation ||
+          (state !== "attack" && state !== "death")
+        )
+          s.play(animation, true);
+        if (
+          e.attackAt > (this.attackSeen.get(e.id) || 0) &&
+          now - e.attackAt < 800
+        ) {
+          this.attackSeen.set(e.id, e.attackAt);
+          const attackAt = e.attackAt;
+          this.time.delayedCall(
+            Math.max(0, attackAt + DOG_RULES.windupMs - now),
+            () => {
+              const dog = snapshot.dogs?.find((d) => d.id === e.id);
+              if (dog && dog.health > 0 && dog.attackAt === attackAt)
+                this.combatEffect(
+                  "fx-bite",
+                  dog.x + dog.facing * 18,
+                  dog.y - 18 + dog.facingY * 8,
+                  24,
+                );
+            },
+          );
+        }
+      } else if (e.entity === "player") {
         const previousHealth = this.lastHealth.get(e.id);
         if (previousHealth !== undefined && e.health < previousHealth) {
           this.hurtUntil.set(e.id, Date.now() + 350);
@@ -716,9 +831,18 @@ class City extends Phaser.Scene {
           sprinting:
             e.id === self?.id && (this.keys.SHIFT.isDown || hold.sprint),
         });
-        s.setOrigin(0.5, 0.82)
-          .setScale(0.64)
-          .play(e.asset + "-" + state, true);
+        const animation = e.asset + "-" + state,
+          attacking = state === "melee" || state === "firearm";
+        const newAttack =
+          attacking && this.attackAnimationSeen.get(e.id) !== e.attackAt;
+        if (newAttack) this.attackAnimationSeen.set(e.id, e.attackAt);
+        s.setOrigin(0.5, 0.82).setScale(0.64);
+        if (
+          newAttack ||
+          s.anims.currentAnim?.key !== animation ||
+          (!attacking && state !== "death")
+        )
+          s.play(animation, !newAttack);
         s.setAlpha(e.protected ? 0.82 : 1);
       } else {
         s.setTexture(e.asset).setOrigin(0.5, 0.65);
@@ -749,27 +873,41 @@ class City extends Phaser.Scene {
       label
         .setPosition(
           s.x,
-          s.y - (e.entity === "player" ? 74 : e.entity === "bag" ? 36 : 65),
+          s.y -
+            (e.entity === "player"
+              ? 74
+              : e.entity === "bag"
+                ? 36
+                : e.entity === "dog"
+                  ? 62
+                  : 65),
         )
         .setDepth(s.depth + 1)
+        .setColor(e.entity === "dog" ? "#e6a38d" : "#d6dbc7")
         .setText(
           e.entity === "player"
             ? e.name + (e.id === self?.id ? " · YOU" : "")
-            : e.entity === "bag"
-              ? "LOOT BAG"
-              : e.id === near?.id
-                ? nice(e.kind) +
-                  " · " +
-                  (e.kind === "foundation" ? "RAID PROOF" : e.hp + " HP")
-                : "",
+            : e.entity === "dog"
+              ? e.health > 0
+                ? "STRAY DOG"
+                : "DOWN"
+              : e.entity === "bag"
+                ? "LOOT BAG"
+                : e.id === near?.id
+                  ? nice(e.kind) +
+                    " · " +
+                    (e.kind === "foundation" ? "RAID PROOF" : e.hp + " HP")
+                  : "",
         )
         .setVisible(
           e.entity === "player" ||
             e.id === near?.id ||
-            (e.entity === "bag" && !!self && distance(self, e) < 650),
+            (e.entity === "bag" && !!self && distance(self, e) < 650) ||
+            (e.entity === "dog" && !!self && distance(self, e) < 450),
         );
       if (
         e.entity === "player" &&
+        e.weapon !== "pistol" &&
         e.attackAt > (this.attackSeen.get(e.id) || 0) &&
         e.attackAt > Date.now() - 800
       ) {
@@ -791,6 +929,7 @@ class City extends Phaser.Scene {
         });
       }
     }
+    this.drawShots();
     this.drawLootHints();
     const building = panel === "build" && !!self;
     this.buildGuides.clear();
@@ -892,8 +1031,13 @@ function attack(point?: Point) {
   const range = self.weapon === "pistol" ? 560 : 90;
   const targets = [
     ...snapshot.players.filter((p) => p.id !== self!.id && !p.dead),
+    ...(snapshot.dogs || []).filter((d) => d.health > 0),
     ...snapshot.structures.filter(
-      (s) => s.hp > 0 && s.kind !== "foundation" && s.kind !== "roof",
+      (s) =>
+        s.hp > 0 &&
+        s.kind !== "foundation" &&
+        s.kind !== "roof" &&
+        (!!point || s.owner !== self!.id),
     ),
   ].filter((t) => distance(t, self!) <= range);
   targets.sort(
@@ -958,6 +1102,19 @@ function drawMap(canvas: HTMLCanvasElement) {
     ctx.fillRect(p.x * sx - size / 2, p.y * sy - size / 2, size, size);
     ctx.strokeRect(p.x * sx - size / 2, p.y * sy - size / 2, size, size);
   }
+  for (const dog of snapshot.dogs || [])
+    if (dog.health > 0) {
+      ctx.fillStyle = "#de8065";
+      ctx.beginPath();
+      ctx.arc(
+        dog.x * sx,
+        dog.y * sy,
+        canvas.width > 300 ? 3 : 2,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+    }
   for (const p of snapshot.players) {
     ctx.fillStyle = p.id === self?.id ? "#f1dfaa" : "#90cbd2";
     ctx.beginPath();
@@ -1131,7 +1288,7 @@ function renderPanel() {
   } else if (panel === "map") {
     title = "The Block";
     subtitle = "DISTRICT 01 / SHARED CITY";
-    html = `<canvas id="district-map" width="760" height="380"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Buildable ground</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Vacant ground lies east of the north/south crossing. Roads and public buildings cannot be claimed.</p>`;
+    html = `<canvas id="district-map" width="760" height="380"></canvas><div class="map-legend"><span><i class="safe"></i> Shelter</span><span><i class="vacant"></i> Buildable ground</span><span><i class="you"></i> You</span><span><i class="players"></i> Nearby survivors</span><span><i class="loot"></i> Loot crates · T1–T5</span><span><i class="dogs"></i> Nearby strays</span></div><p class="panel-intro">Corner Mart (${WORLD.storePoint.x}, ${WORLD.storePoint.y}) · Scrap Exchange (${WORLD.traderPoint.x}, ${WORLD.traderPoint.y})<br>Vacant ground lies east of the north/south crossing. Roads and public buildings cannot be claimed.</p>`;
   } else if (panel === "chat") {
     title = "Neighborhood chat";
     subtitle = "THE BLOCK / LIVE";

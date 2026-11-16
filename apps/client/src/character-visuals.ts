@@ -22,11 +22,7 @@ export function characterState(
   if (player.dead) return "death";
   if (options.hurt) return "hurt";
   if (player.attackAt > options.now)
-    return player.weapon === "pistol"
-      ? "firearm"
-      : player.weapon === "bat"
-        ? "melee"
-        : "idle";
+    return player.weapon === "pistol" ? "firearm" : "melee";
   if (options.crouching) return "crouch";
   if (options.moving) return options.sprinting ? "run" : "walk";
   return "idle";

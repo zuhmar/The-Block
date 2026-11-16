@@ -31,3 +31,5 @@ The importer now packs three character sets: unarmed, pistol and bat, each in fo
 The renderer selects the equipped-weapon atlas independently of idle/walk/run/crouch/hurt state, for local and remote players. A ready pistol does not run a recoil animation unless the server reports an attack. Death follows the authoritative weapon drop and returns to the unarmed death sprite. Portraits reflect the equipped weapon as well.
 
 `armed-preview.png` is a technical composition of runtime idle/walk cells for both weapons and all four directions, not a browser screenshot.
+
+`stick-punch.png` adds eight unarmed punch source cells in each direction. The unarmed melee row now uses these frames rather than the older bat artwork, and attacks use one-shot playback.

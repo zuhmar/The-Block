@@ -37,7 +37,7 @@
           "row": 0
         },
         "melee": {
-          "file": "stick-combat.png",
+          "file": "stick-punch.png",
           "row": 0
         },
         "firearm": {
@@ -127,7 +127,7 @@
           "row": 1
         },
         "melee": {
-          "file": "stick-combat.png",
+          "file": "stick-punch.png",
           "row": 1
         },
         "firearm": {
@@ -217,7 +217,7 @@
           "row": 2
         },
         "melee": {
-          "file": "stick-combat.png",
+          "file": "stick-punch.png",
           "row": 2
         },
         "firearm": {
@@ -307,7 +307,7 @@
           "row": 3
         },
         "melee": {
-          "file": "stick-combat.png",
+          "file": "stick-punch.png",
           "row": 3
         },
         "firearm": {
@@ -2861,6 +2861,246 @@
         "width": 1451,
         "height": 599
       }
+    },
+    "dog-stray-south": {
+      "file": "dog-stray-south.png",
+      "width": 1024,
+      "height": 768,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 48,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "sourceGroup": "wildlife",
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 8
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "attack": {
+          "start": 24,
+          "end": 31,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 32,
+          "end": 32,
+          "fps": 8
+        },
+        "death": {
+          "start": 40,
+          "end": 40,
+          "fps": 8
+        }
+      }
+    },
+    "dog-stray-north": {
+      "file": "dog-stray-north.png",
+      "width": 1024,
+      "height": 768,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 48,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "sourceGroup": "wildlife",
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 8
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "attack": {
+          "start": 24,
+          "end": 31,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 32,
+          "end": 32,
+          "fps": 8
+        },
+        "death": {
+          "start": 40,
+          "end": 40,
+          "fps": 8
+        }
+      }
+    },
+    "dog-stray-east": {
+      "file": "dog-stray-east.png",
+      "width": 1024,
+      "height": 768,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 48,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "sourceGroup": "wildlife",
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 8
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "attack": {
+          "start": 24,
+          "end": 31,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 32,
+          "end": 32,
+          "fps": 8
+        },
+        "death": {
+          "start": 40,
+          "end": 40,
+          "fps": 8
+        }
+      }
+    },
+    "dog-stray-west": {
+      "file": "dog-stray-west.png",
+      "width": 1024,
+      "height": 768,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 48,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "sourceGroup": "wildlife",
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 8
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "attack": {
+          "start": 24,
+          "end": 31,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 32,
+          "end": 32,
+          "fps": 8
+        },
+        "death": {
+          "start": 40,
+          "end": 40,
+          "fps": 8
+        }
+      }
+    },
+    "projectile-bullet": {
+      "file": "projectile-bullet.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "combat-effects"
+    },
+    "fx-muzzle": {
+      "file": "fx-muzzle.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "combat-effects"
+    },
+    "fx-bullet-impact": {
+      "file": "fx-bullet-impact.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "combat-effects"
+    },
+    "fx-bite": {
+      "file": "fx-bite.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "combat-effects"
     }
   }
 }

@@ -130,6 +130,22 @@ for (const crate of LOOT_CRATES) {
     `${key} needs real transparent padding and visible artwork`,
   );
 }
+for (const direction of ["south", "north", "east", "west"]) {
+  const dog = assets[`dog-stray-${direction}`];
+  assert.equal(dog?.sourceGroup, "wildlife");
+  assert.equal(dog.frames, 48);
+  const dogAlpha = await sharp(new URL(dog.file, root).pathname).stats();
+  assert.equal(dogAlpha.channels[3].min, 0);
+  for (const state of ["idle", "walk", "run", "attack", "hurt", "death"])
+    assert(dog.animations[state], `Missing dog ${state}`);
+}
+for (const key of [
+  "projectile-bullet",
+  "fx-muzzle",
+  "fx-bullet-impact",
+  "fx-bite",
+])
+  assert.equal(assets[key]?.sourceGroup, "combat-effects", key);
 for (const [key, a] of Object.entries(assets) as [string, any][]) {
   const image = sharp(new URL(a.file, root).pathname);
   const m = await image.metadata();

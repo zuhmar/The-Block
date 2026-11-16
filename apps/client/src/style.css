@@ -2472,3 +2472,7 @@ canvas {
 .map-legend i.loot {
   background: #e4c875;
 }
+
+.map-legend i.dogs {
+  background: #de8065;
+}

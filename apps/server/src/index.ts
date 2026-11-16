@@ -134,6 +134,8 @@ app.get("/world", (_req, res) => {
     practiceWoodGrant: 1,
     buildBudget: BUILD_BUDGET,
     lootCrateTiers: LOOT_CRATES.length,
+    wildlife: "stray-dogs-v1",
+    visiblePistolShots: true,
   });
 });
 app.get("/health", async (_req, res) => {

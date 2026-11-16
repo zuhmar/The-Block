@@ -1,0 +1,28 @@
+export const DOG_RULES = {
+  health: 45,
+  damage: 8,
+  aggroRange: 260,
+  chaseRange: 520,
+  leashRange: 420,
+  biteRange: 50,
+  windupMs: 250,
+  attackMs: 600,
+  cooldownMs: 1200,
+  chaseSpeed: 175,
+  roamSpeed: 45,
+  respawnMs: 90000,
+} as const;
+export const DOG_HOMES = [
+  { x: 1360, y: 1170 },
+  { x: 1930, y: 790 },
+  { x: 2180, y: 1760 },
+  { x: 2720, y: 1350 },
+  { x: 3380, y: 755 },
+  { x: 4280, y: 1800 },
+  { x: 5300, y: 1300 },
+  { x: 5920, y: 1900 },
+  { x: 1000, y: 2200 },
+  { x: 3650, y: 2300 },
+  { x: 4700, y: 2300 },
+  { x: 5800, y: 720 },
+] as const;
