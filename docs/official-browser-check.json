@@ -5,7 +5,7 @@
   "peakLoadedChunks": 20,
   "chunksUnloadedOnTravel": true,
   "chunksLoadedOnTravel": true,
-  "currentChunkObjects": 204,
+  "currentChunkObjects": 207,
   "pageErrors": [],
   "mobilePlayerOnScreen": true,
   "scope": "Local Chromium with software WebGL and an isolated database; responsive mobile viewport and camera zoom, not physical-device performance."

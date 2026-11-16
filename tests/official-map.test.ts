@@ -20,6 +20,8 @@ import {
 } from "../packages/shared/src/index.js";
 import {
   groundKind,
+  isWater,
+  onRoad,
   blockSpaces,
   composedShopRows,
   roadOverlapsRect,
@@ -261,7 +263,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
   const keys = Object.keys(assets).filter(
     (k) => assets[k].sourceGroup === "official-map",
   );
-  assert.equal(keys.length, 74);
+  assert.equal(keys.length, 90);
   for (const key of keys) {
     assert.equal(assets[key].source, "ai-generated");
     const { data, info } = await sharp(root + assets[key].file)
@@ -274,9 +276,12 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
         key,
       );
       if (
-        ["city-buildings.png", "street-props.png"].includes(
-          assets[key].sourceAsset,
-        )
+        [
+          "city-buildings.png",
+          "street-props.png",
+          "nature-props.png",
+          "trees.png",
+        ].includes(assets[key].sourceAsset)
       ) {
         for (let x = 0; x < info.width; x++) {
           assert.equal(data[x * 4 + 3], 0, key + " top framing");
@@ -318,7 +323,7 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
 
 test("scenery polish reserves current bases without moving players or container contents", () => {
   const w = emptyWorld();
-  w.sceneryVersion = 3;
+  w.sceneryVersion = 4;
   const p = createPlayer("resident", "Resident", look);
   w.players[p.id] = p;
   w.structures.base = {
@@ -335,7 +340,7 @@ test("scenery polish reserves current bases without moving players or container 
   };
   const before = structuredClone(w);
   upgradeWorld(w);
-  assert.equal(w.sceneryVersion, 4);
+  assert.equal(w.sceneryVersion, 5);
   assert.deepEqual(w.players, before.players);
   assert.deepEqual(w.structures, before.structures);
   assert(!mapObjectEnabled({ x: 8200, y: 6200, width: 200, height: 200 }));
@@ -432,4 +437,43 @@ test("composed shop rows and shared courts leave road corridors and pedestrian s
         s.id + " walking clearance",
       );
   }
+});
+
+test("nature details stay sparse, dry and clear of road corridors with solid logs stopping movement", () => {
+  const objects = mapObjects(),
+    details = objects.filter((o) => o.id.startsWith("nature-detail-"));
+  assert(details.length > 150 && details.length < 500);
+  for (const name of [
+    "shrub",
+    "berries",
+    "wildflowers",
+    "grass",
+    "fern",
+    "stump",
+    "log",
+    "branches",
+    "reeds",
+    "cattails",
+    "pebbles",
+    "moss-boulder",
+  ])
+    assert(
+      objects.some((o) => o.asset === "map-nature-" + name),
+      name,
+    );
+  for (const name of ["oak", "pine", "birch", "dead"])
+    assert(
+      objects.some((o) => o.asset === "map-tree-" + name),
+      name,
+    );
+  for (const o of details) {
+    assert(!isWater(o), o.id);
+    assert(!onRoad(o, 150), o.id);
+    if (o.solid) assert(terrainBlocked(o), o.id);
+  }
+  const solid = details.filter((o) => o.solid);
+  assert(
+    solid.length > 0 && solid.length < 40,
+    "solid scenery leaves open building country",
+  );
 });

@@ -3762,6 +3762,246 @@
       "sourceGroup": "official-map",
       "sourceAsset": "street-props.png"
     },
+    "map-nature-shrub": {
+      "file": "map-nature-shrub.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-berries": {
+      "file": "map-nature-berries.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-wildflowers": {
+      "file": "map-nature-wildflowers.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-grass": {
+      "file": "map-nature-grass.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-fern": {
+      "file": "map-nature-fern.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-stump": {
+      "file": "map-nature-stump.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-log": {
+      "file": "map-nature-log.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-branches": {
+      "file": "map-nature-branches.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-reeds": {
+      "file": "map-nature-reeds.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-cattails": {
+      "file": "map-nature-cattails.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-pebbles": {
+      "file": "map-nature-pebbles.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-nature-moss-boulder": {
+      "file": "map-nature-moss-boulder.png",
+      "width": 256,
+      "height": 256,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "nature-props.png"
+    },
+    "map-tree-oak": {
+      "file": "map-tree-oak.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "trees.png"
+    },
+    "map-tree-pine": {
+      "file": "map-tree-pine.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "trees.png"
+    },
+    "map-tree-birch": {
+      "file": "map-tree-birch.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "trees.png"
+    },
+    "map-tree-dead": {
+      "file": "map-tree-dead.png",
+      "width": 384,
+      "height": 384,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "trees.png"
+    },
     "map-nature-0": {
       "file": "map-nature-0.png",
       "width": 384,

@@ -113,7 +113,13 @@ export class MapWorld {
           .image(o.x, o.y + oy, o.asset)
           .setDisplaySize(o.rotation ? h : w, o.rotation ? w : h)
           .setAngle(o.rotation || 0)
-          .setDepth(o.y + (tree ? 12 : o.height / 2)),
+          .setDepth(
+            o.kind === "decoration" &&
+              o.asset.startsWith("map-nature-") &&
+              !o.solid
+              ? -9000
+              : o.y + (tree ? 12 : o.height / 2),
+          ),
       );
     }
     for (const r of LEGACY_BUILDINGS.slice(0, 5))

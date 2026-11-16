@@ -1555,6 +1555,103 @@ export function mapObjects(): MapObject[] {
         kind: "decoration",
       });
     }
+  // Independent hash placement keeps the existing woodland seed and tree positions stable.
+  const woodland = out.filter((o) => o.kind === "tree");
+  for (let y = 224; y < MAP_SIZE - 224; y += 320)
+    for (let x = 224; x < MAP_SIZE - 224; x += 320) {
+      const hash = (Math.imul(x, 73856093) ^ Math.imul(y, 19349663)) >>> 0;
+      if (hash % 100 >= 42) continue;
+      const p = {
+        x: x + ((hash >>> 8) % 161) - 80,
+        y: y + ((hash >>> 16) % 161) - 80,
+      };
+      if (
+        insideCity(p) ||
+        naturalBlocked(p, 48) ||
+        onRoad(p, 170) ||
+        Math.hypot(p.x - 7104, p.y - 1344) < 650
+      )
+        continue;
+      const wet = [
+        [-160, 0],
+        [160, 0],
+        [0, -160],
+        [0, 160],
+      ].some(([dx, dy]) => isWater({ x: p.x + dx, y: p.y + dy }));
+      const woods = woodland.some(
+        (o) => Math.hypot(o.x - p.x, o.y - p.y) < 210,
+      );
+      const rocky = mountainBlend(p) > 0.2;
+      if (mountainRegion(p) && !wet && (hash >>> 24) % 4 !== 0) continue;
+      const choices = wet
+        ? ["reeds", "cattails"]
+        : rocky
+          ? ["pebbles", "moss-boulder"]
+          : woods
+            ? ["fern", "berries", "stump", "log", "branches", "shrub"]
+            : ["grass", "wildflowers", "shrub"];
+      const name = choices[(hash >>> 24) % choices.length];
+      const solid = ["stump", "log", "moss-boulder"].includes(name);
+      const width =
+        name === "log"
+          ? 96
+          : name === "moss-boulder"
+            ? 80
+            : name === "stump"
+              ? 48
+              : name === "branches"
+                ? 64
+                : 52;
+      const height =
+        name === "log"
+          ? 40
+          : name === "moss-boulder"
+            ? 56
+            : name === "stump"
+              ? 40
+              : ["reeds", "cattails"].includes(name)
+                ? 64
+                : 36;
+      if (
+        out.some(
+          (o) =>
+            o.solid &&
+            Math.abs(o.x - p.x) < (o.width + width) / 2 + 72 &&
+            Math.abs(o.y - p.y) < (o.height + height) / 2 + 72,
+        )
+      )
+        continue;
+      out.push({
+        id: "nature-detail-" + x + "-" + y,
+        ...p,
+        width,
+        height,
+        asset: "map-nature-" + name,
+        solid,
+        kind: solid ? "rock" : "decoration",
+      });
+    }
+  // Clean-cut artwork replaces legacy ground-backed props without shifting their footprints.
+  const replacements: Record<string, string> = {
+    "map-nature-2": "map-nature-wildflowers",
+    "map-nature-3": "map-nature-shrub",
+    "map-nature-4": "map-nature-moss-boulder",
+    "map-nature-5": "map-nature-pebbles",
+    "map-nature-6": "map-nature-log",
+    "map-nature-7": "map-nature-wildflowers",
+  };
+  for (const [i, o] of out.entries()) {
+    if (o.kind === "tree")
+      o.asset =
+        i % 19 === 0
+          ? "map-tree-dead"
+          : i % 7 === 0
+            ? "map-tree-birch"
+            : o.asset === "map-nature-0"
+              ? "map-tree-oak"
+              : "map-tree-pine";
+    else o.asset = replacements[o.asset] || o.asset;
+  }
   for (let i = out.length - 1; i >= 0; i--) {
     const o = out[i];
     if (o.solid && onRoad(o, Math.hypot(o.width, o.height) / 2 + 32))
@@ -1619,7 +1716,7 @@ export const forestTrees = () =>
     .map((o) => ({
       x: o.x,
       y: o.y,
-      variant: o.asset.endsWith("0") ? 0 : 1,
+      variant: o.asset === "map-tree-oak" || o.asset.endsWith("0") ? 0 : 1,
       scale: 0.8,
     }));
 export const treeOverlapsRect = (r: TerrainRect) =>

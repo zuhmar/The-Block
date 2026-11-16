@@ -80,6 +80,35 @@ export async function importOfficialMap(
       height: 256,
     },
     {
+      name: "nature-props",
+      columns: 4,
+      rows: 3,
+      keys: [
+        "shrub",
+        "berries",
+        "wildflowers",
+        "grass",
+        "fern",
+        "stump",
+        "log",
+        "branches",
+        "reeds",
+        "cattails",
+        "pebbles",
+        "moss-boulder",
+      ].map((n) => "map-nature-" + n),
+      width: 256,
+      height: 256,
+    },
+    {
+      name: "trees",
+      columns: 2,
+      rows: 2,
+      keys: ["oak", "pine", "birch", "dead"].map((n) => "map-tree-" + n),
+      width: 384,
+      height: 384,
+    },
+    {
       name: "nature",
       columns: 4,
       rows: 4,
@@ -122,7 +151,12 @@ export async function importOfficialMap(
       const row = Math.floor(i / group.columns);
       const rowEdges =
         group.name === "street-props" ? [0, 362, 690, meta.height!] : undefined;
-      const inset = ["city-buildings", "street-props"].includes(group.name)
+      const inset = [
+        "city-buildings",
+        "street-props",
+        "nature-props",
+        "trees",
+      ].includes(group.name)
         ? 4
         : 0;
       let crop = await sharp(input)
@@ -136,9 +170,14 @@ export async function importOfficialMap(
         .toBuffer();
       const file = key + ".png";
       if (
-        ["buildings", "storefronts", "city-buildings", "street-props"].includes(
-          group.name,
-        )
+        [
+          "buildings",
+          "storefronts",
+          "city-buildings",
+          "street-props",
+          "nature-props",
+          "trees",
+        ].includes(group.name)
       ) {
         const raw = await sharp(crop)
             .ensureAlpha()
