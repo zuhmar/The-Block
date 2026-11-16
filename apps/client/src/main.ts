@@ -327,11 +327,6 @@ class City extends Phaser.Scene {
           .setPadding(5, 3)
           .setDepth(WORLD.height + 1001),
       );
-      this.add
-        .image(p.x + 62, p.y - 10, "td-pallet")
-        .setOrigin(0.5, 0.8)
-        .setScale(0.55)
-        .setDepth(p.y - 10);
     }
     for (const n of npcs) {
       this.add
