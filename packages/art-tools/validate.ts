@@ -9,11 +9,19 @@ const { assets, version, view } = JSON.parse(
 );
 assert.equal(version, 2);
 assert.equal(view, "top-down");
-for (const direction of ["south", "north", "east", "west"])
-  assert(
-    assets[`player-stick-${direction}`]?.source === "ai-generated",
-    "AI stick figures required in all four directions",
-  );
+for (const weapon of ["fists", "pistol", "bat"])
+  for (const direction of ["south", "north", "east", "west"]) {
+    const key = `player-stick-${weapon === "fists" ? "" : weapon + "-"}${direction}`;
+    assert.equal(assets[key]?.source, "ai-generated", key);
+    assert.equal(assets[key]?.equipment, weapon, key);
+    if (weapon !== "fists")
+      for (const state of ["idle", "walk", "run", "crouch", "hurt"])
+        assert(
+          assets[key].stateSources[state].file.includes(weapon) ||
+            assets[key].stateSources[state].file === "stick-armed-base.png",
+          `${key}/${state} must retain equipped-weapon artwork`,
+        );
+  }
 for (const key of [
   ...Object.keys(ITEMS),
   "td-grass",

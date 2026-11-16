@@ -18,6 +18,41 @@
         "y": 0.82
       },
       "source": "ai-generated",
+      "equipment": "fists",
+      "stateSources": {
+        "idle": {
+          "file": "stick-base.png",
+          "row": 0
+        },
+        "walk": {
+          "file": "stick-walk.png",
+          "row": 0
+        },
+        "run": {
+          "file": "stick-run.png",
+          "row": 0
+        },
+        "crouch": {
+          "file": "stick-base.png",
+          "row": 0
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 0
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 0
+        },
+        "hurt": {
+          "file": "stick-base.png",
+          "row": 0
+        },
+        "death": {
+          "file": "stick-base.png",
+          "row": 0
+        }
+      },
       "animations": {
         "idle": {
           "start": 0,
@@ -73,6 +108,41 @@
         "y": 0.82
       },
       "source": "ai-generated",
+      "equipment": "fists",
+      "stateSources": {
+        "idle": {
+          "file": "stick-base.png",
+          "row": 1
+        },
+        "walk": {
+          "file": "stick-walk.png",
+          "row": 1
+        },
+        "run": {
+          "file": "stick-run.png",
+          "row": 1
+        },
+        "crouch": {
+          "file": "stick-base.png",
+          "row": 1
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 1
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 1
+        },
+        "hurt": {
+          "file": "stick-base.png",
+          "row": 1
+        },
+        "death": {
+          "file": "stick-base.png",
+          "row": 1
+        }
+      },
       "animations": {
         "idle": {
           "start": 0,
@@ -128,6 +198,41 @@
         "y": 0.82
       },
       "source": "ai-generated",
+      "equipment": "fists",
+      "stateSources": {
+        "idle": {
+          "file": "stick-base.png",
+          "row": 2
+        },
+        "walk": {
+          "file": "stick-walk.png",
+          "row": 2
+        },
+        "run": {
+          "file": "stick-run.png",
+          "row": 2
+        },
+        "crouch": {
+          "file": "stick-base.png",
+          "row": 2
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 2
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 2
+        },
+        "hurt": {
+          "file": "stick-base.png",
+          "row": 2
+        },
+        "death": {
+          "file": "stick-base.png",
+          "row": 2
+        }
+      },
       "animations": {
         "idle": {
           "start": 0,
@@ -183,6 +288,761 @@
         "y": 0.82
       },
       "source": "ai-generated",
+      "equipment": "fists",
+      "stateSources": {
+        "idle": {
+          "file": "stick-base.png",
+          "row": 3
+        },
+        "walk": {
+          "file": "stick-walk.png",
+          "row": 3
+        },
+        "run": {
+          "file": "stick-run.png",
+          "row": 3
+        },
+        "crouch": {
+          "file": "stick-base.png",
+          "row": 3
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 3
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 3
+        },
+        "hurt": {
+          "file": "stick-base.png",
+          "row": 3
+        },
+        "death": {
+          "file": "stick-base.png",
+          "row": 3
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-pistol-south": {
+      "file": "player-stick-pistol-south.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "pistol",
+      "stateSources": {
+        "idle": {
+          "file": "stick-pistol-walk.png",
+          "row": 0
+        },
+        "walk": {
+          "file": "stick-pistol-walk.png",
+          "row": 0
+        },
+        "run": {
+          "file": "stick-pistol-run.png",
+          "row": 0
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "melee": {
+          "file": "stick-pistol-walk.png",
+          "row": 0
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 0
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-pistol-north": {
+      "file": "player-stick-pistol-north.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "pistol",
+      "stateSources": {
+        "idle": {
+          "file": "stick-pistol-walk.png",
+          "row": 1
+        },
+        "walk": {
+          "file": "stick-pistol-walk.png",
+          "row": 1
+        },
+        "run": {
+          "file": "stick-pistol-run.png",
+          "row": 1
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "melee": {
+          "file": "stick-pistol-walk.png",
+          "row": 1
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 1
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-pistol-east": {
+      "file": "player-stick-pistol-east.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "pistol",
+      "stateSources": {
+        "idle": {
+          "file": "stick-pistol-walk.png",
+          "row": 2
+        },
+        "walk": {
+          "file": "stick-pistol-walk.png",
+          "row": 2
+        },
+        "run": {
+          "file": "stick-pistol-run.png",
+          "row": 2
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "melee": {
+          "file": "stick-pistol-walk.png",
+          "row": 2
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 2
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-pistol-west": {
+      "file": "player-stick-pistol-west.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "pistol",
+      "stateSources": {
+        "idle": {
+          "file": "stick-pistol-walk.png",
+          "row": 3
+        },
+        "walk": {
+          "file": "stick-pistol-walk.png",
+          "row": 3
+        },
+        "run": {
+          "file": "stick-pistol-run.png",
+          "row": 3
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "melee": {
+          "file": "stick-pistol-walk.png",
+          "row": 3
+        },
+        "firearm": {
+          "file": "stick-combat.png",
+          "row": 3
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-bat-south": {
+      "file": "player-stick-bat-south.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "bat",
+      "stateSources": {
+        "idle": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "walk": {
+          "file": "stick-bat-walk.png",
+          "row": 0
+        },
+        "run": {
+          "file": "stick-bat-run.png",
+          "row": 0
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 0
+        },
+        "firearm": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 0
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-bat-north": {
+      "file": "player-stick-bat-north.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "bat",
+      "stateSources": {
+        "idle": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "walk": {
+          "file": "stick-bat-walk.png",
+          "row": 1
+        },
+        "run": {
+          "file": "stick-bat-run.png",
+          "row": 1
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 1
+        },
+        "firearm": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 1
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-bat-east": {
+      "file": "player-stick-bat-east.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "bat",
+      "stateSources": {
+        "idle": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "walk": {
+          "file": "stick-bat-walk.png",
+          "row": 2
+        },
+        "run": {
+          "file": "stick-bat-run.png",
+          "row": 2
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 2
+        },
+        "firearm": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 2
+        }
+      },
+      "animations": {
+        "idle": {
+          "start": 0,
+          "end": 0,
+          "fps": 16
+        },
+        "walk": {
+          "start": 8,
+          "end": 15,
+          "fps": 8
+        },
+        "run": {
+          "start": 16,
+          "end": 23,
+          "fps": 12
+        },
+        "crouch": {
+          "start": 24,
+          "end": 24,
+          "fps": 16
+        },
+        "melee": {
+          "start": 32,
+          "end": 39,
+          "fps": 16
+        },
+        "firearm": {
+          "start": 40,
+          "end": 47,
+          "fps": 16
+        },
+        "hurt": {
+          "start": 48,
+          "end": 48,
+          "fps": 16
+        },
+        "death": {
+          "start": 56,
+          "end": 56,
+          "fps": 16
+        }
+      }
+    },
+    "player-stick-bat-west": {
+      "file": "player-stick-bat-west.png",
+      "width": 1024,
+      "height": 1024,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 64,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "source": "ai-generated",
+      "equipment": "bat",
+      "stateSources": {
+        "idle": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "walk": {
+          "file": "stick-bat-walk.png",
+          "row": 3
+        },
+        "run": {
+          "file": "stick-bat-run.png",
+          "row": 3
+        },
+        "crouch": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "melee": {
+          "file": "stick-combat.png",
+          "row": 3
+        },
+        "firearm": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "hurt": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        },
+        "death": {
+          "file": "stick-armed-base.png",
+          "row": 3
+        }
+      },
       "animations": {
         "idle": {
           "start": 0,

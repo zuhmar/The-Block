@@ -17,3 +17,17 @@ Runtime atlases use 128 × 128 cells, eight columns and eight state rows. Walk/r
 The importer finds alpha bounds within each source cell, crops the faint outer halo, scales without stretching, and aligns feet at y=105. Each direction gets one `player-stick-*` atlas. NPC roles get four directional images; the current stationary NPCs display their south pose. Legacy appearance data remains stored, while every player renders as a black stick figure. Skin/hair selectors are removed.
 
 Original generated PNGs remain unchanged here. World props, inventory items and buildings now also use AI source artwork. Terrain, bed, effects and UI symbols still use the existing procedural pipeline. Animation smoothness and browser/mobile rendering still require visual playtesting.
+
+## Equipped weapons
+
+Five additional AI-generated sheets provide held-weapon artwork:
+
+- `stick-pistol-walk.png`, `stick-pistol-run.png`: eight source cells per direction with the pistol held throughout movement.
+- `stick-bat-walk.png`, `stick-bat-run.png`: the corresponding bat movement cycles.
+- `stick-armed-base.png`: pistol idle/crouch/hurt/death in columns 1–4 and bat idle/crouch/hurt/death in columns 5–8, with direction order south/north/east/west.
+
+The importer now packs three character sets: unarmed, pistol and bat, each in four directions. Pistol idle uses the neutral first pistol-walk pose so the weapon remains visible beside the north-facing torso. Armed crouch/hurt/death hold the corresponding source pose; attacks use the existing combat sheet. Each atlas has eight state rows and eight cells per row; held-pose states do not claim eight distinct drawings. The runtime manifest records equipment and each state's source sheet.
+
+The renderer selects the equipped-weapon atlas independently of idle/walk/run/crouch/hurt state, for local and remote players. A ready pistol does not run a recoil animation unless the server reports an attack. Death follows the authoritative weapon drop and returns to the unarmed death sprite. Portraits reflect the equipped weapon as well.
+
+`armed-preview.png` is a technical composition of runtime idle/walk cells for both weapons and all four directions, not a browser screenshot.

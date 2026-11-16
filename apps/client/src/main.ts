@@ -23,6 +23,11 @@ import {
 import { lootCrateAt } from "../../../packages/game-data/loot-crates";
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
+import {
+  characterAppearanceKey as appearanceKey,
+  characterAtlas,
+  characterState,
+} from "./character-visuals";
 import { constructionVisual } from "./construction-visuals";
 import { constructionPlan, pointerToWorld } from "./world-pointer";
 
@@ -59,7 +64,6 @@ let manifest: Record<string, any> = {},
   buildKind: Kind = "foundation",
   foundation = "",
   selectedItem: Item = "water",
-  aim = false,
   noticeTimer: number;
 const hold = {
   up: false,
@@ -78,7 +82,6 @@ const esc = (s: string) =>
         c
       ]!,
   );
-const appearanceKey = () => "player-stick";
 const send = (action: Action) =>
   room?.send("intent", {
     v: VERSION,
@@ -233,7 +236,6 @@ class City extends Phaser.Scene {
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
       if (!self || self.dead) return;
       if (p.rightButtonDown()) {
-        aim = true;
         send({ type: "aim", ...pointerToWorld(p, this.cameras.main) });
         return;
       }
@@ -257,7 +259,6 @@ class City extends Phaser.Scene {
       }
       attack(pointerToWorld(p, this.cameras.main));
     });
-    this.input.on("pointerup", () => (aim = false));
     this.input.on(
       "wheel",
       (_p: unknown, _o: unknown, _dx: number, dy: number) => {
@@ -653,7 +654,7 @@ class City extends Phaser.Scene {
     const entities: any[] = [
       ...snapshot.players.map((p) => ({
         ...p,
-        asset: appearanceKey() + "-" + facing(p),
+        asset: characterAtlas(p.weapon, facing(p)),
         entity: "player",
       })),
       ...snapshot.structures
@@ -706,25 +707,15 @@ class City extends Phaser.Scene {
         }
         this.lastHealth.set(e.id, e.health);
         const moving = distance(previous, e) > 1;
-        const state = e.dead
-          ? "death"
-          : (this.hurtUntil.get(e.id) || 0) > Date.now()
-            ? "hurt"
-            : e.attackAt > Date.now()
-              ? e.weapon === "pistol"
-                ? "firearm"
-                : e.weapon === "bat"
-                  ? "melee"
-                  : "idle"
-              : e.id === self?.id && (this.keys.CTRL.isDown || hold.crouch)
-                ? "crouch"
-                : moving
-                  ? e.id === self?.id && (this.keys.SHIFT.isDown || hold.sprint)
-                    ? "run"
-                    : "walk"
-                  : e.weapon === "pistol" && aim
-                    ? "firearm"
-                    : "idle";
+        const state = characterState(e, {
+          now: Date.now(),
+          moving,
+          hurt: (this.hurtUntil.get(e.id) || 0) > Date.now(),
+          crouching:
+            e.id === self?.id && (this.keys.CTRL.isDown || hold.crouch),
+          sprinting:
+            e.id === self?.id && (this.keys.SHIFT.isDown || hold.sprint),
+        });
         s.setOrigin(0.5, 0.82)
           .setScale(0.64)
           .play(e.asset + "-" + state, true);
@@ -1069,7 +1060,7 @@ function renderPanel() {
       (sum, [k, n]) => sum + ITEMS[k].weight * n,
       0,
     );
-    html = `<div class="inventory-layout"><aside class="character-card"><div class="portrait" style="background-image:url('/assets/${appearanceKey()}-south.png')"></div><h4>${esc(p.name)}</h4><span class="character-class">SURVIVOR · NO CLASS</span><div class="equipment-slot">${img("backpack")}<span>${p.equipped.backpack ? "Worn backpack" : "No backpack equipped"}<small>8 carrying slots</small></span></div><div class="equipment-slot">${img(p.weapon === "fists" ? "ui-fists" : p.weapon)}<span>${nice(p.weapon)}<small>${p.weapon === "pistol" ? p.ammo + "/6 loaded" : "Active weapon"}</small></span></div><div class="wallet"><span>Carried cash</span><b>$${p.cash}</b><small>Banked $${p.bank} · stays after death</small></div></aside><div class="bag-content"><div class="bag-meta"><b>BACKPACK</b><span>${entries.filter(([item]) => item !== "wood").length}/8 slots · ${weight.toFixed(1)}/65 kg</span></div><div class="inventory-grid">${Array.from(
+    html = `<div class="inventory-layout"><aside class="character-card"><div class="portrait" style="background-image:url('/assets/${appearanceKey(p.weapon)}-south.png')"></div><h4>${esc(p.name)}</h4><span class="character-class">SURVIVOR · NO CLASS</span><div class="equipment-slot">${img("backpack")}<span>${p.equipped.backpack ? "Worn backpack" : "No backpack equipped"}<small>8 carrying slots</small></span></div><div class="equipment-slot">${img(p.weapon === "fists" ? "ui-fists" : p.weapon)}<span>${nice(p.weapon)}<small>${p.weapon === "pistol" ? p.ammo + "/6 loaded" : "Active weapon"}</small></span></div><div class="wallet"><span>Carried cash</span><b>$${p.cash}</b><small>Banked $${p.bank} · stays after death</small></div></aside><div class="bag-content"><div class="bag-meta"><b>BACKPACK</b><span>${entries.filter(([item]) => item !== "wood").length}/8 slots · ${weight.toFixed(1)}/65 kg</span></div><div class="inventory-grid">${Array.from(
       { length: Math.max(8, entries.length) },
       (_, i) => {
         const e = entries[i];
@@ -1100,7 +1091,7 @@ function renderPanel() {
   } else if (panel === "skills") {
     title = "Character & skills";
     subtitle = "LEARN BY DOING";
-    html = `<div class="skill-header"><div class="portrait" style="background-image:url('/assets/${appearanceKey()}-south.png')"></div><div><h4>${esc(p.name)}</h4><p>Explore, craft, trade and survive to gain field experience.<br>Learned skills persist through death.</p></div></div><div class="skill-grid">${Object.entries(
+    html = `<div class="skill-header"><div class="portrait" style="background-image:url('/assets/${appearanceKey(p.weapon)}-south.png')"></div><div><h4>${esc(p.name)}</h4><p>Explore, craft, trade and survive to gain field experience.<br>Learned skills persist through death.</p></div></div><div class="skill-grid">${Object.entries(
       p.skills,
     )
       .map(

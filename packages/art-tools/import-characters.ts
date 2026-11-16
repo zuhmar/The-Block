@@ -22,7 +22,18 @@ export async function importCharacters(
     string,
     { data: Buffer; width: number; height: number }
   >();
-  for (const name of ["base", "walk", "run", "combat", "npcs"]) {
+  for (const name of [
+    "base",
+    "walk",
+    "run",
+    "combat",
+    "npcs",
+    "armed-base",
+    "pistol-walk",
+    "pistol-run",
+    "bat-walk",
+    "bat-run",
+  ]) {
     const { data, info } = await sharp(
       new URL(`stick-${name}.png`, source).pathname,
     )
@@ -75,70 +86,109 @@ export async function importCharacters(
       .toBuffer();
     return { input: buffer, left: Math.round((128 - w) / 2), top: 105 - h };
   }
-  for (const [directionRow, direction] of directions.entries()) {
-    const cells: sharp.OverlayOptions[] = [];
-    for (let stateRow = 0; stateRow < states.length; stateRow++) {
-      for (let column = 0; column < 8; column++) {
-        const state = states[stateRow];
-        const sheet =
-          state === "walk" || state === "run"
-            ? state
-            : state === "melee" || state === "firearm"
-              ? "combat"
-              : "base";
-        const sourceColumn =
-          sheet === "combat"
-            ? Math.floor(column / 2) + (state === "firearm" ? 4 : 0)
-            : sheet !== "base"
-              ? column
-              : state === "crouch"
-                ? 4
-                : state === "death"
-                  ? 7
-                  : 0;
-        const cell = await frame(sheet, directionRow, sourceColumn, 0.55);
-        cells.push({
-          ...cell,
-          left: cell.left + column * 128,
-          top: cell.top + stateRow * 128,
-        });
+  for (const weapon of ["fists", "pistol", "bat"])
+    for (const [directionRow, direction] of directions.entries()) {
+      const stateSources: Record<string, object> = {};
+      const cells: sharp.OverlayOptions[] = [];
+      for (let stateRow = 0; stateRow < states.length; stateRow++) {
+        for (let column = 0; column < 8; column++) {
+          const state = states[stateRow];
+          let sheet: string, sourceColumn: number;
+          if (weapon === "fists") {
+            sheet =
+              state === "walk" || state === "run"
+                ? state
+                : state === "melee" || state === "firearm"
+                  ? "combat"
+                  : "base";
+            sourceColumn =
+              sheet === "combat"
+                ? Math.floor(column / 2) + (state === "firearm" ? 4 : 0)
+                : sheet !== "base"
+                  ? column
+                  : state === "crouch"
+                    ? 4
+                    : state === "death"
+                      ? 7
+                      : 0;
+          } else if (state === "walk" || state === "run") {
+            sheet = `${weapon}-${state}`;
+            sourceColumn = column;
+          } else if (
+            (state === "melee" && weapon === "bat") ||
+            (state === "firearm" && weapon === "pistol")
+          ) {
+            sheet = "combat";
+            sourceColumn =
+              Math.floor(column / 2) + (weapon === "pistol" ? 4 : 0);
+          } else if (
+            weapon === "pistol" &&
+            (state === "idle" || state === "melee")
+          ) {
+            // The neutral walk pose keeps the north-facing pistol visible beside the torso.
+            sheet = "pistol-walk";
+            sourceColumn = 0;
+          } else {
+            sheet = "armed-base";
+            sourceColumn =
+              (weapon === "bat" ? 4 : 0) +
+              (state === "crouch"
+                ? 1
+                : state === "hurt"
+                  ? 2
+                  : state === "death"
+                    ? 3
+                    : 0);
+          }
+          stateSources[state] = {
+            file: `stick-${sheet}.png`,
+            row: directionRow,
+          };
+          const cell = await frame(sheet, directionRow, sourceColumn, 0.55);
+          cells.push({
+            ...cell,
+            left: cell.left + column * 128,
+            top: cell.top + stateRow * 128,
+          });
+        }
       }
-    }
-    const key = `player-stick-${direction}`;
-    await sharp({
-      create: {
+      const key = `player-stick-${weapon === "fists" ? "" : weapon + "-"}${direction}`;
+      await sharp({
+        create: {
+          width: 1024,
+          height: 1024,
+          channels: 4,
+          background: "#00000000",
+        },
+      })
+        .composite(cells)
+        .png()
+        .toFile(new URL(key + ".png", root).pathname);
+      manifest[key] = {
+        file: key + ".png",
         width: 1024,
         height: 1024,
-        channels: 4,
-        background: "#00000000",
-      },
-    })
-      .composite(cells)
-      .png()
-      .toFile(new URL(key + ".png", root).pathname);
-    manifest[key] = {
-      file: key + ".png",
-      width: 1024,
-      height: 1024,
-      frameWidth: 128,
-      frameHeight: 128,
-      frames: 64,
-      anchor: { x: 0.5, y: 0.82 },
-      source: "ai-generated",
-      animations: Object.fromEntries(
-        states.map((state, row) => [
-          state,
-          {
-            start: row * 8,
-            end:
-              row * 8 +
-              (["idle", "crouch", "hurt", "death"].includes(state) ? 0 : 7),
-            fps: state === "run" ? 12 : state === "walk" ? 8 : 16,
-          },
-        ]),
-      ),
-    };
-  }
+        frameWidth: 128,
+        frameHeight: 128,
+        frames: 64,
+        anchor: { x: 0.5, y: 0.82 },
+        source: "ai-generated",
+        equipment: weapon,
+        stateSources,
+        animations: Object.fromEntries(
+          states.map((state, row) => [
+            state,
+            {
+              start: row * 8,
+              end:
+                row * 8 +
+                (["idle", "crouch", "hurt", "death"].includes(state) ? 0 : 7),
+              fps: state === "run" ? 12 : state === "walk" ? 8 : 16,
+            },
+          ]),
+        ),
+      };
+    }
   for (const [row, role] of [
     "caretaker",
     "trader",
