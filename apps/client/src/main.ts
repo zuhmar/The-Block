@@ -4,7 +4,6 @@ import {
   WORLD,
   BUILD_KINDS,
   BUILDING,
-  snapBuildPoint,
   structureFootprint,
   VERSION,
   ITEMS,
@@ -23,6 +22,7 @@ import {
 import { npcs } from "../../../packages/game-data/content";
 import "./style.css";
 import { constructionVisual } from "./construction-visuals";
+import { constructionTarget, pointerToWorld } from "./world-pointer";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<main id="shell"><div id="game" aria-label="The Block top-down survival world"></div><header id="masthead"><a class="brand" href="#">STREET <strong>SURVIVAL</strong><small>THE BLOCK / URBAN FRONTIER</small></a><div id="connection"><i></i><span>CONNECT TO THE CITY</span></div></header><div id="game-ui" hidden><nav id="top-tools" aria-label="Game menus">${[
@@ -220,20 +220,26 @@ class City extends Phaser.Scene {
       if (!self || self.dead) return;
       if (p.rightButtonDown()) {
         aim = true;
-        send({ type: "aim", x: p.worldX, y: p.worldY });
+        send({ type: "aim", ...pointerToWorld(p, this.cameras.main) });
         return;
       }
       if (panel === "build") {
+        const target = constructionTarget(
+          p,
+          this.cameras.main,
+          buildKind,
+          snapshot.structures.find((s) => s.id === foundation),
+        );
         send({
           type: "build",
           kind: buildKind,
-          x: p.worldX,
-          y: p.worldY,
+          x: target.x,
+          y: target.y,
           foundation,
         });
         return;
       }
-      attack({ x: p.worldX, y: p.worldY });
+      attack(pointerToWorld(p, this.cameras.main));
     });
     this.input.on("pointerup", () => (aim = false));
     this.input.on(
@@ -563,12 +569,12 @@ class City extends Phaser.Scene {
       const cam = this.cameras.main;
       cam.scrollX = Phaser.Math.Linear(
         cam.scrollX,
-        self.x - this.scale.width / cam.zoom / 2,
+        self.x - cam.width / 2,
         0.09,
       );
       cam.scrollY = Phaser.Math.Linear(
         cam.scrollY,
-        self.y - this.scale.height / cam.zoom / 2,
+        self.y - cam.height / 2,
         0.09,
       );
     }
@@ -721,9 +727,10 @@ class City extends Phaser.Scene {
     this.previewText.setVisible(building);
     if (building) {
       const p = this.input.activePointer,
-        point = snapBuildPoint(
+        point = constructionTarget(
+          p,
+          this.cameras.main,
           buildKind,
-          { x: p.worldX, y: p.worldY },
           snapshot.structures.find((s) => s.id === foundation),
         ),
         reason = placementReason(
