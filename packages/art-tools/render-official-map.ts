@@ -43,14 +43,17 @@ const keys = new Set([
   "map-tile-asphalt",
   "map-tile-dirt",
   "map-tile-concrete",
+  "map-paving-slab",
+  "map-paving-pavers",
+  "map-paving-service",
 ]);
 let defs = "";
 for (const key of keys) {
   const a = assets[key],
     b64 = (await readFile(root + a.file)).toString("base64");
   defs += `<image id="${key}" width="${a.width}" height="${a.height}" href="data:image/png;base64,${b64}"/>`;
-  if (key.startsWith("map-tile"))
-    defs += `<pattern id="pattern-${key}" width="64" height="64" patternUnits="userSpaceOnUse"><use href="#${key}"/></pattern>`;
+  if (key.startsWith("map-tile") || key.startsWith("map-paving-"))
+    defs += `<pattern id="pattern-${key}" width="${a.width}" height="${a.height}" patternUnits="userSpaceOnUse"><use href="#${key}"/></pattern>`;
 }
 const start = `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 ${MAP_SIZE} ${MAP_SIZE}"><defs>${defs}<clipPath id="land"><path d="${path(COAST)}Z"/></clipPath></defs>`;
 let body = `<rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-water)"/><g clip-path="url(#land)"><rect width="${MAP_SIZE}" height="${MAP_SIZE}" fill="url(#pattern-map-tile-grass)"/>`;
@@ -69,16 +72,16 @@ for (const [r, w] of [
 for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
 for (const r of cityPaving())
-  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-tile-concrete)"/>`;
-body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-tile-concrete)"/>`;
+  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-paving-slab)"/>`;
+body += `<rect x="${CIVIC_PLAZA.x}" y="${CIVIC_PLAZA.y}" width="${CIVIC_PLAZA.width}" height="${CIVIC_PLAZA.height}" rx="28" fill="url(#pattern-map-paving-pavers)"/>`;
 for (const r of PLAZA_GARDENS)
   body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" rx="14" fill="url(#pattern-map-tile-grass)" stroke="#92967b" stroke-width="6"/>`;
 for (const surface of citySurfaces()) {
-  body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-map-tile-${surface.material})" stroke="#b9b9a3" stroke-width="5"/>`;
+  body += `<polygon points="${surface.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="url(#pattern-${surface.service ? "map-paving-service" : surface.court ? "map-paving-pavers" : surface.material === "concrete" ? "map-paving-slab" : "map-tile-gravel"})" stroke="#b9b9a3" stroke-width="5"/>`;
   if (surface.court) {
     const a = surface.points[0],
       b = surface.points[2];
-    body += `<rect x="${a.x + 8}" y="${a.y + 8}" width="${b.x - a.x - 16}" height="${b.y - a.y - 16}" fill="#b9ae94"/><rect x="${(a.x + b.x) / 2 - 36}" y="${(a.y + b.y) / 2 - 26}" width="72" height="52" rx="12" fill="url(#pattern-map-tile-grass)"/>`;
+    body += `<rect x="${a.x + 8}" y="${a.y + 8}" width="${b.x - a.x - 16}" height="${b.y - a.y - 16}" fill="url(#pattern-map-paving-pavers)"/><rect x="${(a.x + b.x) / 2 - 36}" y="${(a.y + b.y) / 2 - 26}" width="72" height="52" rx="12" fill="url(#pattern-map-tile-grass)"/>`;
   }
   if (surface.service) {
     const a = surface.points[0],
@@ -88,31 +91,34 @@ for (const surface of citySurfaces()) {
   if (surface.alley) {
     const a = surface.points[0],
       b = surface.points[2];
-    body += `<rect x="${(a.x + b.x) / 2 - 18}" y="${a.y}" width="36" height="${b.y - a.y}" fill="#727c77"/>`;
+    body += `<rect x="${(a.x + b.x) / 2 - 18}" y="${a.y}" width="36" height="${b.y - a.y}" fill="url(#pattern-map-paving-service)"/>`;
   }
 }
 for (const p of PARKS)
   body += `<ellipse cx="${p.x}" cy="${p.y}" rx="${p.width / 2}" ry="${p.height / 2}" fill="url(#pattern-map-tile-grass)"/>`;
 for (const c of streetConnections()) {
   const points = c.points.map((p) => `${p.x},${p.y}`).join(" ");
-  body += `<polyline points="${points}" fill="none" stroke="url(#pattern-map-tile-concrete)" stroke-width="${c.width + 10}" stroke-linejoin="round"/>`;
+  body += `<polyline points="${points}" fill="none" stroke="url(#pattern-map-paving-slab)" stroke-width="${c.width + 10}" stroke-linejoin="round"/>`;
 }
 for (const b of BUILDINGS) {
   const style = frontageStyle(b),
     pad = style.apron;
-  body += `<rect x="${b.x - b.width / 2 - pad}" y="${b.y - b.height / 2 - 12}" width="${b.width + pad * 2}" height="${b.height + pad + 32}" rx="8" fill="url(#pattern-map-tile-${style.material})"/>`;
+  body += `<rect x="${b.x - b.width / 2 - pad}" y="${b.y - b.height / 2 - 12}" width="${b.width + pad * 2}" height="${b.height + pad + 32}" rx="8" fill="url(#pattern-${style.material === "gravel" ? "map-paving-service" : "map-paving-slab"})"/>`;
 }
 for (const lot of [...PARKING_LOTS, ...INDUSTRIAL_YARDS])
   body += `<rect x="${lot.x - lot.width / 2}" y="${lot.y - lot.height / 2}" width="${lot.width}" height="${lot.height}" rx="32" fill="url(#pattern-map-tile-${INDUSTRIAL_YARDS.includes(lot) ? "gravel" : "concrete"})"/>`;
 for (const lot of PARKING_LOTS)
   for (let i = 0; i <= 4; i++)
     body += `<path d="M${lot.x - 288 + i * 144} ${lot.y - 75}V${lot.y + 130}" stroke="#eee9cc" stroke-width="4"/>`;
+for (const road of ROADS) {
+  body += `<path d="${path(road.points)}" fill="none" stroke="${road.width < 100 ? "#8e926c" : "#626e70"}" stroke-width="${road.width + (road.width < 100 ? 18 : 62)}"/>`;
+  if (road.width >= 100)
+    body += `<path d="${path(road.points)}" fill="none" stroke="url(#pattern-map-paving-slab)" stroke-width="${road.width + 54}"/>`;
+}
 for (const road of ROADS)
-  body +=
-    `<path d="${path(road.points)}" fill="none" stroke="${road.width < 100 ? "#8e926c" : "#c2c3ac"}" stroke-width="${road.width + 40}"/><path d="${path(road.points)}" fill="none" stroke="url(#pattern-map-tile-${road.width < 100 ? "dirt" : "asphalt"})" stroke-width="${road.width}"/>` +
-    (road.width < 100
-      ? ""
-      : `<path d="${path(road.points)}" fill="none" stroke="#e1d6a4" stroke-width="3" stroke-dasharray="32 90"/>`);
+  body += `<path d="${path(road.points)}" fill="none" stroke="url(#pattern-map-tile-${road.width < 100 ? "dirt" : "asphalt"})" stroke-width="${road.width}"/>`;
+for (const road of ROADS.filter((r) => r.width >= 100))
+  body += `<path d="${path(road.points)}" fill="none" stroke="#e1d6a4" stroke-width="3" stroke-dasharray="32 96"/>`;
 for (const o of objects) {
   const tree = o.kind === "tree",
     mountain = o.kind === "mountain",
@@ -127,7 +133,7 @@ for (const o of objects) {
   body += `<use href="#${o.asset}" transform="translate(${o.x} ${o.y + oy}) rotate(${o.rotation || 0}) scale(${(o.rotation ? h : w) / a.width} ${(o.rotation ? w : h) / a.height}) translate(${-a.width / 2} ${-a.height / 2})"/>`;
 }
 for (const r of LEGACY_BUILDINGS.slice(0, 5))
-  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-tile-concrete)"/>`;
+  body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-paving-slab)"/>`;
 body += "</g></svg>";
 await mkdir("work", { recursive: true });
 await writeFile("work/official-world-preview.svg", start + body);

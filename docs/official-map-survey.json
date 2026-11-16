@@ -25,7 +25,7 @@
   "sceneryRevision": 4,
   "pavedForecourts": 61,
   "serviceAlleys": 20,
-  "aiMapAssets": 71,
+  "aiMapAssets": 74,
   "civicPlaza": {
     "x": 7936,
     "y": 5504,
@@ -36,5 +36,6 @@
   "sharedCourtyards": 12,
   "serviceYards": 15,
   "composedShops": 20,
-  "plazaGardens": 1
+  "plazaGardens": 1,
+  "pavementMaterials": ["slab concrete", "plaza pavers", "worn service paving"]
 }

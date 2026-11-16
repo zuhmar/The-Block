@@ -4137,6 +4137,51 @@
       "sourceGroup": "official-map",
       "sourceAsset": "props.png"
     },
+    "map-paving-slab": {
+      "file": "map-paving-slab.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "pavement.png"
+    },
+    "map-paving-pavers": {
+      "file": "map-paving-pavers.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "pavement.png"
+    },
+    "map-paving-service": {
+      "file": "map-paving-service.png",
+      "width": 128,
+      "height": 128,
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "frames": 1,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "source": "ai-generated",
+      "sourceGroup": "official-map",
+      "sourceAsset": "pavement.png"
+    },
     "map-tile-grass": {
       "file": "map-tile-grass.png",
       "width": 64,

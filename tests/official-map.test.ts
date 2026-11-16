@@ -261,14 +261,14 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
   const keys = Object.keys(assets).filter(
     (k) => assets[k].sourceGroup === "official-map",
   );
-  assert.equal(keys.length, 71);
+  assert.equal(keys.length, 74);
   for (const key of keys) {
     assert.equal(assets[key].source, "ai-generated");
     const { data, info } = await sharp(root + assets[key].file)
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
-    if (!key.startsWith("map-tile")) {
+    if (!key.startsWith("map-tile") && !key.startsWith("map-paving-")) {
       assert(
         data.some((v, i) => i % 4 === 3 && v === 0),
         key,
@@ -297,12 +297,21 @@ test("official map assets retain transparency and AI terrain tile edges repeat e
       }
       continue;
     }
-    assert.equal(info.width, 64);
-    assert.equal(info.height, 64);
-    for (let i = 0; i < 64; i++)
+    const size = key.startsWith("map-paving-") ? 128 : 64;
+    assert.equal(info.width, size);
+    assert.equal(info.height, size);
+    for (let i = 0; i < size; i++)
       for (let c = 0; c < 4; c++) {
-        assert.equal(data[i * 64 * 4 + c], data[(i * 64 + 63) * 4 + c], key);
-        assert.equal(data[i * 4 + c], data[(63 * 64 + i) * 4 + c], key);
+        assert.equal(
+          data[i * size * 4 + c],
+          data[(i * size + size - 1) * 4 + c],
+          key + " horizontal repeat",
+        );
+        assert.equal(
+          data[i * 4 + c],
+          data[((size - 1) * size + i) * 4 + c],
+          key + " vertical repeat",
+        );
       }
   }
 });

@@ -96,6 +96,14 @@ export async function importOfficialMap(
       height: 256,
     },
     {
+      name: "pavement",
+      columns: 3,
+      rows: 1,
+      keys: ["slab", "pavers", "service"].map((n) => "map-paving-" + n),
+      width: 128,
+      height: 128,
+    },
+    {
       name: "tiles",
       columns: 3,
       rows: 2,
@@ -212,7 +220,39 @@ export async function importOfficialMap(
           .png()
           .toBuffer();
       }
-      if (group.name === "tiles") {
+      if (group.name === "pavement") {
+        const { data, info } = await sharp(crop)
+          .resize(128, 128)
+          .ensureAlpha()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        // Feather a narrow wrap margin; retain the AI's slab and brick layout.
+        for (let y = 0; y < 128; y++)
+          for (let k = 0; k < 4; k++)
+            for (let c = 0; c < 4; c++) {
+              const a = (y * 128 + k) * 4 + c,
+                b = (y * 128 + 127 - k) * 4 + c,
+                average = (data[a] + data[b]) / 2,
+                t = (4 - k) / 4;
+              data[a] = Math.round(data[a] * (1 - t) + average * t);
+              data[b] = Math.round(data[b] * (1 - t) + average * t);
+            }
+        for (let x = 0; x < 128; x++)
+          for (let k = 0; k < 4; k++)
+            for (let c = 0; c < 4; c++) {
+              const a = (k * 128 + x) * 4 + c,
+                b = ((127 - k) * 128 + x) * 4 + c,
+                average = (data[a] + data[b]) / 2,
+                t = (4 - k) / 4;
+              data[a] = Math.round(data[a] * (1 - t) + average * t);
+              data[b] = Math.round(data[b] * (1 - t) + average * t);
+            }
+        await sharp(data, {
+          raw: { width: info.width, height: info.height, channels: 4 },
+        })
+          .png()
+          .toFile(new URL(file, root).pathname);
+      } else if (group.name === "tiles") {
         // Mirroring one AI texture sample makes opposite edges identical, not a redrawing.
         const quadrant = await sharp(crop).resize(32, 32).png().toBuffer();
         const right = await sharp(quadrant).flop().toBuffer(),

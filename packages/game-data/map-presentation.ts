@@ -175,6 +175,8 @@ export function paintCityFrontage(
     gravel: CanvasPattern;
     dirt: CanvasPattern;
     grass: CanvasPattern;
+    pavers: CanvasPattern;
+    service: CanvasPattern;
   },
 ) {
   const near = (b: { x: number; y: number }) =>
@@ -202,7 +204,7 @@ export function paintCityFrontage(
       Array.from({ length: r.width / 64 }, (_, i) => `${r.x + i * 64},${r.y}`),
     ),
   );
-  ctx.strokeStyle = "#b9bca7";
+  ctx.strokeStyle = "#687578";
   ctx.lineWidth = 5;
   ctx.beginPath();
   for (const key of tiles) {
@@ -228,21 +230,12 @@ export function paintCityFrontage(
   ctx.stroke();
   const plaza = CIVIC_PLAZA;
   if (near({ x: plaza.x + plaza.width / 2, y: plaza.y + plaza.height / 2 })) {
-    ctx.fillStyle = materials.concrete;
+    ctx.fillStyle = materials.pavers;
     ctx.beginPath();
     ctx.roundRect(plaza.x, plaza.y, plaza.width, plaza.height, 28);
     ctx.fill();
-    ctx.strokeStyle = "#aeb3a4";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let x = plaza.x + 48; x < plaza.x + plaza.width; x += 96) {
-      ctx.moveTo(x, plaza.y + 12);
-      ctx.lineTo(x, plaza.y + plaza.height - 12);
-    }
-    for (let y = plaza.y + 48; y < plaza.y + plaza.height; y += 96) {
-      ctx.moveTo(plaza.x + 12, y);
-      ctx.lineTo(plaza.x + plaza.width - 12, y);
-    }
+    ctx.strokeStyle = "#727d7d";
+    ctx.lineWidth = 7;
     ctx.stroke();
     for (const x of [plaza.x + 44, plaza.x + plaza.width - 172]) {
       ctx.fillStyle = "#868e74";
@@ -273,24 +266,20 @@ export function paintCityFrontage(
       i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
     );
     ctx.closePath();
-    ctx.fillStyle = materials[surface.material];
+    ctx.fillStyle = surface.service
+      ? materials.service
+      : surface.court
+        ? materials.pavers
+        : materials[surface.material];
     ctx.fill();
     ctx.lineWidth = 5;
-    ctx.strokeStyle = "#b9b9a3";
+    ctx.strokeStyle = "#718082";
     ctx.stroke();
     if (surface.court) {
       const a = surface.points[0],
         b = surface.points[2];
-      ctx.fillStyle = "#b9ae94";
+      ctx.fillStyle = materials.pavers;
       ctx.fillRect(a.x + 8, a.y + 8, b.x - a.x - 16, b.y - a.y - 16);
-      ctx.strokeStyle = "#cfc7b0";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (let y = a.y + 32; y < b.y - 8; y += 48) {
-        ctx.moveTo(a.x + 8, y);
-        ctx.lineTo(b.x - 8, y);
-      }
-      ctx.stroke();
       // Planted center keeps a generous route down both sides of the shared court.
       ctx.fillStyle = materials.grass;
       ctx.beginPath();
@@ -311,7 +300,7 @@ export function paintCityFrontage(
       const a = surface.points[0],
         b = surface.points[2],
         center = (a.x + b.x) / 2;
-      ctx.fillStyle = "#727c77";
+      ctx.fillStyle = materials.service;
       ctx.fillRect(center - 18, a.y, 36, b.y - a.y);
       ctx.strokeStyle = "#535f5b";
       ctx.lineWidth = 2;
@@ -333,7 +322,7 @@ export function paintCityFrontage(
       y = car.y - car.height / 2 - 12,
       w = car.width + 28,
       h = car.height + 24;
-    ctx.fillStyle = "#7e8580";
+    ctx.fillStyle = materials.service;
     ctx.fillRect(x, y, w, h);
     ctx.strokeStyle = "#e3dfbd";
     ctx.lineWidth = 3;
@@ -358,12 +347,9 @@ export function paintCityFrontage(
       i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
     );
     ctx.strokeStyle = materials.concrete;
-    ctx.lineWidth = c.width + 10;
+    ctx.lineWidth = c.width + 8;
     ctx.stroke();
-    ctx.strokeStyle =
-      frontageStyle(c.building).district === "the-block"
-        ? materials.dirt
-        : materials.concrete;
+    ctx.strokeStyle = materials.concrete;
     ctx.lineWidth = c.width;
     ctx.stroke();
   }
@@ -376,7 +362,7 @@ export function paintCityFrontage(
       w = b.width + pad * 2,
       h = b.height + pad + 32;
     ctx.fillStyle =
-      s.material === "gravel" ? materials.gravel : materials.concrete;
+      s.material === "gravel" ? materials.service : materials.concrete;
     ctx.beginPath();
     ctx.roundRect(
       x,
@@ -407,22 +393,20 @@ export function paintCityFrontage(
       ctx.strokeRect(x + 12, b.y + b.height / 2 + 12, w - 24, 32);
       ctx.setLineDash([]);
     } else {
-      ctx.strokeStyle = s.district === "uptown" ? "#788c60" : "#c7c8b3";
+      ctx.strokeStyle = s.district === "uptown" ? "#788c60" : "#718082";
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(x + 8, y + h - 4);
       ctx.lineTo(x + w - 8, y + h - 4);
       ctx.stroke();
     }
-    if (s.district === "downtown") {
-      ctx.strokeStyle = "#929d92";
-      ctx.lineWidth = 2;
-      for (let n = 1; n < Math.floor(w / 48); n++) {
-        ctx.beginPath();
-        ctx.moveTo(x + n * 48, b.y + b.height / 2 + 8);
-        ctx.lineTo(x + n * 48, y + h - 8);
-        ctx.stroke();
-      }
+    if (Math.floor(b.x + b.y) % 4 === 0) {
+      const gx = x + 14,
+        gy = y + h - 16;
+      ctx.fillStyle = "#536064";
+      ctx.fillRect(gx, gy, 22, 10);
+      ctx.fillStyle = "#909b99";
+      for (let d = 3; d < 20; d += 4) ctx.fillRect(gx + d, gy + 2, 1, 6);
     }
   }
   ctx.restore();

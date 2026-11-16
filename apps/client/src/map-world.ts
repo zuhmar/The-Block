@@ -186,7 +186,9 @@ export class MapWorld {
     const water = pattern("map-tile-water"),
       grass = pattern("map-tile-grass"),
       gravel = pattern("map-tile-gravel"),
-      concrete = pattern("map-tile-concrete"),
+      concrete = pattern("map-paving-slab"),
+      pavers = pattern("map-paving-pavers"),
+      service = pattern("map-paving-service"),
       asphalt = pattern("map-tile-asphalt"),
       dirt = pattern("map-tile-dirt");
     ctx.fillStyle = water;
@@ -218,7 +220,7 @@ export class MapWorld {
     paintCityFrontage(
       ctx,
       { x, y, width: 1024, height: 1024 },
-      { concrete, gravel, dirt, grass },
+      { concrete, gravel, dirt, grass, pavers, service },
     );
     stroke(COAST, 46, "#b9bb8a", true);
     stroke(COAST, 10, "#a5d0be", true);
@@ -269,15 +271,46 @@ export class MapWorld {
       const trail = road.width < 100;
       stroke(
         road.points,
-        road.width + (trail ? 18 : 56),
-        trail ? "#8e926c" : "#c2c3ac",
+        road.width + (trail ? 18 : 62),
+        trail ? "#8e926c" : "#626e70",
       );
-      stroke(road.points, road.width, trail ? dirt : asphalt);
+      if (!trail) stroke(road.points, road.width + 54, concrete);
+    }
+    // Paint all road beds after all shoulders so sidewalks cannot cut across junctions.
+    for (const road of ROADS)
+      stroke(road.points, road.width, road.width < 100 ? dirt : asphalt);
+    for (const road of ROADS) {
+      const trail = road.width < 100;
       if (!trail) {
         ctx.setLineDash([32, 96]);
         stroke(road.points, 3, "#e1d6a4");
         ctx.setLineDash([]);
       }
+      if (!trail)
+        for (let i = 12; i < road.points.length; i += 28) {
+          const p = road.points[i],
+            a = road.points[i - 1];
+          if (
+            p.x < x - 200 ||
+            p.x > x + 1224 ||
+            p.y < y - 200 ||
+            p.y > y + 1224 ||
+            onBridge(p)
+          )
+            continue;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Math.atan2(p.y - a.y, p.x - a.x));
+          const gy = road.width / 2 + 6;
+          ctx.fillStyle = "#4f5a5c";
+          ctx.fillRect(-12, gy, 24, 12);
+          ctx.strokeStyle = "#9aa19a";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(-12, gy, 24, 12);
+          ctx.fillStyle = "#89918c";
+          for (let d = -8; d <= 8; d += 4) ctx.fillRect(d, gy + 2, 1, 8);
+          ctx.restore();
+        }
       for (let i = 1; i < road.points.length; i++) {
         const p = road.points[i];
         if (
