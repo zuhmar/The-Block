@@ -3919,10 +3919,10 @@
       "sourceGroup": "official-map",
       "sourceAsset": "street-props.png",
       "contentBounds": {
-        "x": 4,
-        "y": 6,
-        "width": 248,
-        "height": 243
+        "x": 36,
+        "y": 4,
+        "width": 184,
+        "height": 248
       }
     },
     "map-street-bus-stop": {
@@ -3941,9 +3941,9 @@
       "sourceAsset": "street-props.png",
       "contentBounds": {
         "x": 4,
-        "y": 32,
+        "y": 37,
         "width": 248,
-        "height": 191
+        "height": 182
       }
     },
     "map-street-sedan": {
@@ -4003,9 +4003,9 @@
       "sourceGroup": "official-map",
       "sourceAsset": "street-props.png",
       "contentBounds": {
-        "x": 11,
+        "x": 66,
         "y": 4,
-        "width": 233,
+        "width": 124,
         "height": 247
       }
     },
@@ -4025,9 +4025,9 @@
       "sourceAsset": "street-props.png",
       "contentBounds": {
         "x": 4,
-        "y": 43,
+        "y": 48,
         "width": 248,
-        "height": 170
+        "height": 160
       }
     },
     "map-nature-shrub": {

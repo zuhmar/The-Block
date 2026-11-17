@@ -12,6 +12,11 @@ test("scenery preserves proportions inside existing placement envelopes and keep
   const { assets } = JSON.parse(
     await readFile("apps/client/public/assets/manifest.json", "utf8"),
   );
+  const bicycle = assets["map-street-bicycle"].contentBounds;
+  assert.ok(
+    bicycle.width / bicycle.height < 0.85,
+    "upright bicycle excludes neighboring bus-stop fragments",
+  );
   for (const raw of mapObjects()) {
     const o = propVisual(raw);
     if (!o || !usesSceneryVisual(o)) continue;

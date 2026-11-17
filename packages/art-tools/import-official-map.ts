@@ -148,7 +148,12 @@ export async function importOfficialMap(
       cw = Math.floor(meta.width! / group.columns),
       ch = Math.floor(meta.height! / group.rows);
     for (const [i, key] of group.keys.entries()) {
-      const row = Math.floor(i / group.columns);
+      const row = Math.floor(i / group.columns),
+        column = i % group.columns;
+      const columnEdges =
+        group.name === "street-props"
+          ? [0, 356, 716, 1064, meta.width!]
+          : undefined;
       const rowEdges =
         group.name === "street-props" ? [0, 362, 690, meta.height!] : undefined;
       const inset = [
@@ -161,9 +166,11 @@ export async function importOfficialMap(
         : 0;
       let crop = await sharp(input)
         .extract({
-          left: (i % group.columns) * cw,
+          left: columnEdges ? columnEdges[column] : column * cw,
           top: rowEdges ? rowEdges[row] : row * ch,
-          width: cw,
+          width: columnEdges
+            ? columnEdges[column + 1] - columnEdges[column]
+            : cw,
           height: rowEdges ? rowEdges[row + 1] - rowEdges[row] : ch,
         })
         .png()
