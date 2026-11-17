@@ -1,0 +1,37 @@
+[
+  {
+    "district": "the-block",
+    "before": 29,
+    "shown": 10,
+    "assets": ["map-street-planter", "map-street-bench"]
+  },
+  {
+    "district": "downtown",
+    "before": 9,
+    "shown": 5,
+    "assets": [
+      "map-street-bicycle",
+      "map-street-bench",
+      "map-street-cafe-table",
+      "map-street-planter"
+    ]
+  },
+  {
+    "district": "industrial",
+    "before": 47,
+    "shown": 25,
+    "assets": ["map-street-recycling", "map-prop-8", "map-street-cones"]
+  },
+  {
+    "district": "projects",
+    "before": 56,
+    "shown": 22,
+    "assets": ["map-street-planter", "map-street-bicycle", "map-street-bench"]
+  },
+  {
+    "district": "uptown",
+    "before": 36,
+    "shown": 20,
+    "assets": ["map-street-planter", "map-street-bench"]
+  }
+]

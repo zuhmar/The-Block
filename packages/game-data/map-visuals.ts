@@ -1,3 +1,4 @@
+import { districtFrontage } from "./district-frontage.js";
 import { isPublicPlanter } from "../shared/src/map-placement.js";
 import type { MapObject } from "../shared/src/official-map.js";
 export interface SpriteFrame {
@@ -27,6 +28,9 @@ export function buildingVisual(object: MapObject, frame: SpriteFrame) {
 // Paved public spaces use contained planters, not painted grass backings.
 export function propVisual(object: MapObject): MapObject | null {
   if (object.id.startsWith("market-flowers-")) return null;
+  const frontage = districtFrontage(object);
+  if (frontage === null) return null;
+  if (frontage) object = frontage;
   if (isPublicPlanter(object)) {
     return { ...object, asset: "map-street-planter", width: 64, height: 32 };
   }
@@ -66,7 +70,8 @@ export function sceneryVisual(object: MapObject, frame: SpriteFrame) {
 }
 export const usesSceneryVisual = (o: MapObject) =>
   o.kind === "tree" ||
-  ((o.asset.startsWith("map-street-") ||
+  (((o.asset === "map-prop-8" && o.kind === "decoration") ||
+    o.asset.startsWith("map-street-") ||
     o.asset.startsWith("map-nature-") ||
     ["map-prop-3", "map-prop-4", "map-prop-5", "map-prop-6"].includes(
       o.asset,
