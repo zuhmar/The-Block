@@ -1,6 +1,8 @@
 import {
   buildingVisual,
   propVisual,
+  sceneryVisual,
+  usesSceneryVisual,
 } from "../../../packages/game-data/map-visuals";
 import { paintCityFrontage } from "../../../packages/game-data/map-presentation";
 import Phaser from "phaser";
@@ -133,6 +135,25 @@ export class MapWorld {
             .setOrigin(v.originX, v.originY)
             .setDisplaySize(v.width, v.height)
             .setDepth(o.y + o.height / 2),
+        );
+        continue;
+      }
+      if (usesSceneryVisual(o)) {
+        const frame = scene.cache.json.get("manifest").assets[o.asset],
+          v = sceneryVisual(o, frame);
+        objects.push(
+          scene.add
+            .image(v.x, v.y, o.asset)
+            .setOrigin(v.originX, v.originY)
+            .setDisplaySize(v.width, v.height)
+            .setAngle(o.rotation || 0)
+            .setDepth(
+              o.kind === "decoration" &&
+                o.asset.startsWith("map-nature-") &&
+                !o.solid
+                ? -9000
+                : o.y + (o.kind === "tree" ? 12 : o.height / 2),
+            ),
         );
         continue;
       }

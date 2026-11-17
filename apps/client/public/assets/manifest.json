@@ -3791,7 +3791,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 5,
+        "width": 248,
+        "height": 245
+      }
     },
     "map-street-recycling": {
       "file": "map-street-recycling.png",
@@ -3806,7 +3812,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 45,
+        "y": 4,
+        "width": 165,
+        "height": 248
+      }
     },
     "map-street-bollards": {
       "file": "map-street-bollards.png",
@@ -3821,7 +3833,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 15,
+        "width": 248,
+        "height": 225
+      }
     },
     "map-street-hydrant": {
       "file": "map-street-hydrant.png",
@@ -3836,7 +3854,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 40,
+        "y": 4,
+        "width": 175,
+        "height": 248
+      }
     },
     "map-street-planter": {
       "file": "map-street-planter.png",
@@ -3851,7 +3875,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 53,
+        "width": 248,
+        "height": 150
+      }
     },
     "map-street-cafe-table": {
       "file": "map-street-cafe-table.png",
@@ -3866,7 +3896,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 37,
+        "width": 248,
+        "height": 182
+      }
     },
     "map-street-bicycle": {
       "file": "map-street-bicycle.png",
@@ -3881,7 +3917,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 6,
+        "width": 248,
+        "height": 243
+      }
     },
     "map-street-bus-stop": {
       "file": "map-street-bus-stop.png",
@@ -3896,7 +3938,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 32,
+        "width": 248,
+        "height": 191
+      }
     },
     "map-street-sedan": {
       "file": "map-street-sedan.png",
@@ -3911,7 +3959,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 43,
+        "y": 4,
+        "width": 170,
+        "height": 248
+      }
     },
     "map-street-van": {
       "file": "map-street-van.png",
@@ -3926,7 +3980,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 42,
+        "y": 4,
+        "width": 171,
+        "height": 248
+      }
     },
     "map-street-cones": {
       "file": "map-street-cones.png",
@@ -3941,7 +4001,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 11,
+        "y": 4,
+        "width": 233,
+        "height": 247
+      }
     },
     "map-street-bench": {
       "file": "map-street-bench.png",
@@ -3956,7 +4022,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "street-props.png"
+      "sourceAsset": "street-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 43,
+        "width": 248,
+        "height": 170
+      }
     },
     "map-nature-shrub": {
       "file": "map-nature-shrub.png",
@@ -3971,7 +4043,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 32,
+        "width": 248,
+        "height": 192
+      }
     },
     "map-nature-berries": {
       "file": "map-nature-berries.png",
@@ -3986,7 +4064,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 29,
+        "width": 248,
+        "height": 198
+      }
     },
     "map-nature-wildflowers": {
       "file": "map-nature-wildflowers.png",
@@ -4001,7 +4085,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 35,
+        "width": 248,
+        "height": 185
+      }
     },
     "map-nature-grass": {
       "file": "map-nature-grass.png",
@@ -4016,7 +4106,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 34,
+        "width": 248,
+        "height": 187
+      }
     },
     "map-nature-fern": {
       "file": "map-nature-fern.png",
@@ -4031,7 +4127,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 41,
+        "width": 248,
+        "height": 173
+      }
     },
     "map-nature-stump": {
       "file": "map-nature-stump.png",
@@ -4046,7 +4148,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 32,
+        "width": 248,
+        "height": 191
+      }
     },
     "map-nature-log": {
       "file": "map-nature-log.png",
@@ -4061,7 +4169,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 55,
+        "width": 248,
+        "height": 146
+      }
     },
     "map-nature-branches": {
       "file": "map-nature-branches.png",
@@ -4076,7 +4190,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 62,
+        "width": 248,
+        "height": 132
+      }
     },
     "map-nature-reeds": {
       "file": "map-nature-reeds.png",
@@ -4091,7 +4211,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 24,
+        "width": 248,
+        "height": 207
+      }
     },
     "map-nature-cattails": {
       "file": "map-nature-cattails.png",
@@ -4106,7 +4232,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 5,
+        "y": 4,
+        "width": 246,
+        "height": 248
+      }
     },
     "map-nature-pebbles": {
       "file": "map-nature-pebbles.png",
@@ -4121,7 +4253,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 58,
+        "width": 248,
+        "height": 139
+      }
     },
     "map-nature-moss-boulder": {
       "file": "map-nature-moss-boulder.png",
@@ -4136,7 +4274,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature-props.png"
+      "sourceAsset": "nature-props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 27,
+        "width": 248,
+        "height": 202
+      }
     },
     "map-tree-oak": {
       "file": "map-tree-oak.png",
@@ -4151,7 +4295,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "trees.png"
+      "sourceAsset": "trees.png",
+      "contentBounds": {
+        "x": 11,
+        "y": 4,
+        "width": 361,
+        "height": 376
+      }
     },
     "map-tree-pine": {
       "file": "map-tree-pine.png",
@@ -4166,7 +4316,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "trees.png"
+      "sourceAsset": "trees.png",
+      "contentBounds": {
+        "x": 61,
+        "y": 4,
+        "width": 262,
+        "height": 376
+      }
     },
     "map-tree-birch": {
       "file": "map-tree-birch.png",
@@ -4181,7 +4337,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "trees.png"
+      "sourceAsset": "trees.png",
+      "contentBounds": {
+        "x": 47,
+        "y": 4,
+        "width": 289,
+        "height": 376
+      }
     },
     "map-tree-dead": {
       "file": "map-tree-dead.png",
@@ -4196,7 +4358,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "trees.png"
+      "sourceAsset": "trees.png",
+      "contentBounds": {
+        "x": 15,
+        "y": 4,
+        "width": 353,
+        "height": 376
+      }
     },
     "map-nature-0": {
       "file": "map-nature-0.png",
@@ -4211,7 +4379,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 6,
+        "y": 0,
+        "width": 372,
+        "height": 384
+      }
     },
     "map-nature-1": {
       "file": "map-nature-1.png",
@@ -4226,7 +4400,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 53,
+        "y": 0,
+        "width": 278,
+        "height": 384
+      }
     },
     "map-nature-2": {
       "file": "map-nature-2.png",
@@ -4241,7 +4421,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 34,
+        "width": 384,
+        "height": 315
+      }
     },
     "map-nature-3": {
       "file": "map-nature-3.png",
@@ -4256,7 +4442,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 2,
+        "y": 34,
+        "width": 382,
+        "height": 315
+      }
     },
     "map-nature-4": {
       "file": "map-nature-4.png",
@@ -4271,7 +4463,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 33,
+        "width": 384,
+        "height": 318
+      }
     },
     "map-nature-5": {
       "file": "map-nature-5.png",
@@ -4286,7 +4484,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 74,
+        "width": 384,
+        "height": 234
+      }
     },
     "map-nature-6": {
       "file": "map-nature-6.png",
@@ -4301,7 +4505,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 1,
+        "y": 81,
+        "width": 383,
+        "height": 222
+      }
     },
     "map-nature-7": {
       "file": "map-nature-7.png",
@@ -4316,7 +4526,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 1,
+        "y": 62,
+        "width": 382,
+        "height": 261
+      }
     },
     "map-nature-8": {
       "file": "map-nature-8.png",
@@ -4331,7 +4547,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 39,
+        "width": 384,
+        "height": 306
+      }
     },
     "map-nature-9": {
       "file": "map-nature-9.png",
@@ -4346,7 +4568,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 1,
+        "y": 33,
+        "width": 383,
+        "height": 317
+      }
     },
     "map-nature-10": {
       "file": "map-nature-10.png",
@@ -4361,7 +4589,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 1,
+        "y": 50,
+        "width": 383,
+        "height": 283
+      }
     },
     "map-nature-11": {
       "file": "map-nature-11.png",
@@ -4376,7 +4610,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 43,
+        "width": 384,
+        "height": 297
+      }
     },
     "map-nature-12": {
       "file": "map-nature-12.png",
@@ -4391,7 +4631,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 1,
+        "y": 74,
+        "width": 383,
+        "height": 237
+      }
     },
     "map-nature-13": {
       "file": "map-nature-13.png",
@@ -4406,7 +4652,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 2,
+        "y": 1,
+        "width": 380,
+        "height": 383
+      }
     },
     "map-nature-14": {
       "file": "map-nature-14.png",
@@ -4421,7 +4673,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 17,
+        "width": 384,
+        "height": 349
+      }
     },
     "map-nature-15": {
       "file": "map-nature-15.png",
@@ -4436,7 +4694,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "nature.png"
+      "sourceAsset": "nature.png",
+      "contentBounds": {
+        "x": 22,
+        "y": 1,
+        "width": 339,
+        "height": 383
+      }
     },
     "map-prop-0": {
       "file": "map-prop-0.png",
@@ -4451,7 +4715,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 64,
+        "y": 0,
+        "width": 127,
+        "height": 256
+      }
     },
     "map-prop-1": {
       "file": "map-prop-1.png",
@@ -4466,7 +4736,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 38,
+        "y": 0,
+        "width": 180,
+        "height": 256
+      }
     },
     "map-prop-2": {
       "file": "map-prop-2.png",
@@ -4481,7 +4757,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 4,
+        "y": 0,
+        "width": 248,
+        "height": 256
+      }
     },
     "map-prop-3": {
       "file": "map-prop-3.png",
@@ -4496,7 +4778,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 13,
+        "y": 0,
+        "width": 230,
+        "height": 256
+      }
     },
     "map-prop-4": {
       "file": "map-prop-4.png",
@@ -4511,7 +4799,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 66,
+        "y": 0,
+        "width": 123,
+        "height": 256
+      }
     },
     "map-prop-5": {
       "file": "map-prop-5.png",
@@ -4526,7 +4820,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 44,
+        "width": 256,
+        "height": 167
+      }
     },
     "map-prop-6": {
       "file": "map-prop-6.png",
@@ -4541,7 +4841,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 23,
+        "y": 0,
+        "width": 210,
+        "height": 256
+      }
     },
     "map-prop-7": {
       "file": "map-prop-7.png",
@@ -4556,7 +4862,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 28,
+        "y": 0,
+        "width": 199,
+        "height": 256
+      }
     },
     "map-prop-8": {
       "file": "map-prop-8.png",
@@ -4571,7 +4883,13 @@
       },
       "source": "ai-generated",
       "sourceGroup": "official-map",
-      "sourceAsset": "props.png"
+      "sourceAsset": "props.png",
+      "contentBounds": {
+        "x": 0,
+        "y": 11,
+        "width": 256,
+        "height": 234
+      }
     },
     "map-paving-slab": {
       "file": "map-paving-slab.png",

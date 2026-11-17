@@ -1,5 +1,10 @@
 import { MARKET_QUARTER } from "../shared/src/market-quarter.js";
-import { buildingVisual, propVisual } from "../game-data/map-visuals.js";
+import {
+  buildingVisual,
+  propVisual,
+  sceneryVisual,
+  usesSceneryVisual,
+} from "../game-data/map-visuals.js";
 import {
   frontageStyle,
   citySurfaces,
@@ -142,6 +147,12 @@ for (const o of objects) {
     continue;
   }
 
+  if (usesSceneryVisual(o)) {
+    const a = assets[o.asset],
+      v = sceneryVisual(o, a);
+    body += `<use href="#${o.asset}" transform="translate(${v.x} ${v.y}) rotate(${o.rotation || 0}) scale(${v.width / a.width} ${v.height / a.height}) translate(${-a.width * v.originX} ${-a.height * v.originY})"/>`;
+    continue;
+  }
   const tree = o.kind === "tree",
     mountain = o.kind === "mountain",
     w = tree ? 128 : o.width,

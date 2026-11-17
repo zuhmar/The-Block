@@ -257,7 +257,9 @@ export async function importOfficialMap(
           Math.max(...sizes) *
             (["buildings", "storefronts", "city-buildings"].includes(group.name)
               ? 0.015
-              : 0.002),
+              : ["street-props", "props"].includes(group.name)
+                ? 0.01
+                : 0.002),
         );
         for (let n = 0; n < labels.length; n++)
           if (labels[n] && sizes[labels[n]] < minimum) clean[n * 4 + 3] = 0;
@@ -340,7 +342,7 @@ export async function importOfficialMap(
       let contentBounds:
         | { x: number; y: number; width: number; height: number }
         | undefined;
-      if (key.startsWith("map-building-")) {
+      if (!["tiles", "pavement"].includes(group.name)) {
         const { data, info } = await sharp(new URL(file, root).pathname)
           .ensureAlpha()
           .raw()
@@ -375,7 +377,8 @@ export async function importOfficialMap(
         source: "ai-generated",
         sourceGroup: "official-map",
         sourceAsset: group.name + ".png",
-        ...(contentBounds ? { contentBounds, perspective: "overhead" } : {}),
+        ...(contentBounds ? { contentBounds } : {}),
+        ...(key.startsWith("map-building-") ? { perspective: "overhead" } : {}),
       };
     }
   }
