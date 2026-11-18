@@ -432,13 +432,6 @@ export function paintCityFrontage(
       ctx.setLineDash([18, 14]);
       ctx.strokeRect(x + 12, b.y + b.height / 2 + 12, w - 24, 32);
       ctx.setLineDash([]);
-    } else if (!inMarketQuarter(b)) {
-      ctx.strokeStyle = s.district === "uptown" ? "#788c60" : "#718082";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(x + 8, y + h - 4);
-      ctx.lineTo(x + w - 8, y + h - 4);
-      ctx.stroke();
     }
     if (Math.floor(b.x + b.y) % 4 === 0) {
       const gx = x + 14,
