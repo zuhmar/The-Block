@@ -86,6 +86,7 @@ const hold = {
   sprint: false,
   crouch: false,
 };
+let flushMovement = () => {};
 const chat: { name: string; text: string; at: number }[] = [];
 const esc = (s: string) =>
   s.replace(
@@ -237,6 +238,7 @@ class City extends Phaser.Scene {
     this.load.json("manifest", "/assets/manifest.json");
   }
   create() {
+    flushMovement = () => this.sendMovement();
     manifest = this.cache.json.get("manifest").assets;
     for (const [key, a] of Object.entries(manifest)) {
       if (a.animations) {
@@ -484,6 +486,26 @@ class City extends Phaser.Scene {
       graphics.lineStyle(2, 0xf1d68c, 0.9).strokeCircle(bag.x, bag.y, 27);
     }
   }
+  sendMovement() {
+    if (!self || !room) return;
+    const typing = ["INPUT", "SELECT", "TEXTAREA"].includes(
+        document.activeElement?.tagName || "",
+      ),
+      k = this.keys;
+    send({
+      type: "move",
+      dir: typing
+        ? 0
+        : Number(k.D.isDown || k.RIGHT.isDown || hold.right) -
+          Number(k.A.isDown || k.LEFT.isDown || hold.left),
+      dirY: typing
+        ? 0
+        : Number(k.S.isDown || k.DOWN.isDown || hold.down) -
+          Number(k.W.isDown || k.UP.isDown || hold.up),
+      sprint: !typing && (k.SHIFT.isDown || hold.sprint),
+      crouch: !typing && (k.CTRL.isDown || hold.crouch),
+    });
+  }
   update(time: number, delta: number) {
     if (!this.staticBuilt) return;
     this.mapWorld?.setReservations(snapshot.mapReservations || []);
@@ -525,20 +547,7 @@ class City extends Phaser.Scene {
           if (Phaser.Input.Keyboard.JustDown(this.keys[key])) quick(i);
       }
       if (time - this.lastSend > 80) {
-        const k = this.keys;
-        send({
-          type: "move",
-          dir: typing
-            ? 0
-            : Number(k.D.isDown || k.RIGHT.isDown || hold.right) -
-              Number(k.A.isDown || k.LEFT.isDown || hold.left),
-          dirY: typing
-            ? 0
-            : Number(k.S.isDown || k.DOWN.isDown || hold.down) -
-              Number(k.W.isDown || k.UP.isDown || hold.up),
-          sprint: !typing && (k.SHIFT.isDown || hold.sprint),
-          crouch: !typing && (k.CTRL.isDown || hold.crouch),
-        });
+        this.sendMovement();
         this.lastSend = time;
       }
       const cam = this.cameras.main;
@@ -864,17 +873,15 @@ new Phaser.Game({
             window.devicePixelRatio,
           ),
           oldRatio = renderRatio;
-        const cameras = game.scene
-          .getScenes(true)
-          .flatMap((scene) =>
-            scene.cameras.cameras.map((camera) => ({
-              scene,
-              camera,
-              zoom: camera.zoom / oldRatio,
-              x: camera.scrollX + camera.width / 2,
-              y: camera.scrollY + camera.height / 2,
-            })),
-          );
+        const cameras = game.scene.getScenes(true).flatMap((scene) =>
+          scene.cameras.cameras.map((camera) => ({
+            scene,
+            camera,
+            zoom: camera.zoom / oldRatio,
+            x: camera.scrollX + camera.width / 2,
+            y: camera.scrollY + camera.height / 2,
+          })),
+        );
         renderRatio = profile.ratio;
         game.scale.setZoom(1 / renderRatio);
         game.scale.resize(profile.width, profile.height);
@@ -1406,16 +1413,28 @@ $("#respawn").onclick = () => send({ type: "respawn" });
 for (const el of document.querySelectorAll<HTMLElement>("[data-hold]")) {
   const key = el.dataset.hold as keyof typeof hold;
   el.onpointerdown = (e) => {
+    e.preventDefault();
     hold[key] = true;
     el.setPointerCapture(e.pointerId);
+    flushMovement();
   };
-  el.onpointerup = () => (hold[key] = false);
-  el.onpointercancel = () => (hold[key] = false);
+  const release = () => {
+    if (!hold[key]) return;
+    hold[key] = false;
+    flushMovement();
+  };
+  el.onpointerup = release;
+  el.onpointercancel = release;
+  el.onlostpointercapture = release;
 }
-window.addEventListener("blur", () => {
+const releaseMovement = () => {
   for (const key of Object.keys(hold) as (keyof typeof hold)[])
     hold[key] = false;
   send({ type: "move", dir: 0, dirY: 0, sprint: false, crouch: false });
+};
+window.addEventListener("blur", releaseMovement);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) releaseMovement();
 });
 document.addEventListener("keydown", (event) => {
   if (

@@ -1,0 +1,17 @@
+{
+  "moves": [
+    1,
+    0,
+    1,
+    0,
+    1,
+    0
+  ],
+  "framesWhileTesting": 0,
+  "loopStopped": true,
+  "authoritativeMovementObserved": true,
+  "viewport": "390x844",
+  "deviceScaleFactor": 2,
+  "pageErrors": [],
+  "scope": "Real Chromium touch transitions without rendered frames, followed by resumed authoritative movement against an isolated local server; not a mobile-network or hardware speed measurement."
+}

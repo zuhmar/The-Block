@@ -1,3 +1,4 @@
+import { WorldQueue } from "./world-queue.js";
 import { Server, Room, matchMaker, type Client } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 import express from "express";
@@ -177,7 +178,13 @@ export class Block extends Room {
   >();
   seq = new Map<string, number>();
   rates = new Map<string, { n: number; time: number }>();
-  queue: Promise<unknown> = Promise.resolve();
+  queue = new WorldQueue((e) => {
+    console.error(
+      "World operation failed",
+      e instanceof Error ? e.message : String(e),
+    );
+    this.broadcast("notice", "Database unavailable; action was not committed.");
+  });
   stateCache!: WorldState;
   lastTick = Date.now();
   async onCreate(options: { bootstrap?: string }) {
@@ -230,11 +237,11 @@ export class Block extends Room {
       this.enqueue(async () => {
         try {
           let message = "";
-          await transaction((w) => {
+          this.stateCache = await transaction((w) => {
             message = commitAction(w, id, requestId, at, action);
+            return w;
           });
           client.send("notice", message);
-          this.stateCache = await load();
           this.sync();
         } catch (e) {
           client.send(
@@ -245,17 +252,11 @@ export class Block extends Room {
       });
     });
     this.setSimulationInterval(() => {
-      this.enqueue(() => this.step());
+      void this.queue.tick(() => this.step());
     }, 100);
   }
   enqueue(fn: () => Promise<void>) {
-    this.queue = this.queue.then(fn).catch((e) => {
-      console.error("World operation failed", e.message);
-      this.broadcast(
-        "notice",
-        "Database unavailable; action was not committed.",
-      );
-    });
+    return this.queue.run(fn);
   }
   async onAuth(_client: Client, options: { token?: string }) {
     if (!options.token) throw Error("Sign in first");
@@ -280,8 +281,10 @@ export class Block extends Room {
       serverTime: Date.now(),
       version: VERSION,
     });
-    this.stateCache = await load();
-    this.sync();
+    await this.enqueue(async () => {
+      this.stateCache = await load();
+      this.sync();
+    });
   }
   onLeave(client: Client) {
     const id = this.online.get(client.sessionId);
@@ -299,15 +302,15 @@ export class Block extends Room {
       !Object.values(this.stateCache.players).some((p) => p.combatUntil > now)
     )
       return;
-    await transaction((w) => {
+    this.stateCache = await transaction((w) => {
       for (const [id, input] of this.inputs) {
         const p = w.players[id];
         if (p && now - input.time < 400)
           move(w, p, input.dir, input.sprint, input.crouch, dt, input.dirY);
       }
       tick(w, dt, new Set(this.online.values()), now);
+      return w;
     });
-    this.stateCache = await load();
     this.sync();
   }
   sync() {
