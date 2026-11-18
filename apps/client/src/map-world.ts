@@ -78,7 +78,7 @@ export class MapWorld {
           Math.hypot(bx + 0.5 - cx, by + 0.5 - cy)
         );
       });
-    for (const key of pending.slice(0, 2)) this.load(key);
+    for (const key of pending.slice(0, 1)) this.load(key);
   }
   destroy() {
     for (const key of this.chunks.keys()) this.unload(key);

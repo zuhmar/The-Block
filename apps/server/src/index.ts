@@ -174,8 +174,11 @@ export class Block extends Room {
       sprint: boolean;
       crouch: boolean;
       time: number;
+      seq: number;
+      sessionId: string;
     }
   >();
+  movementAcks = new Map<string, number>();
   seq = new Map<string, number>();
   rates = new Map<string, { n: number; time: number }>();
   queue = new WorldQueue((e) => {
@@ -224,7 +227,12 @@ export class Block extends Room {
       const id = this.online.get(client.sessionId);
       if (!id) return;
       if (action.type === "move") {
-        this.inputs.set(id, { ...action, time: Date.now() });
+        this.inputs.set(id, {
+          ...action,
+          time: Date.now(),
+          seq,
+          sessionId: client.sessionId,
+        });
         return;
       }
       if (action.type === "chat") {
@@ -291,7 +299,10 @@ export class Block extends Room {
     this.online.delete(client.sessionId);
     this.seq.delete(client.sessionId);
     this.rates.delete(client.sessionId);
-    if (id) this.inputs.delete(id);
+    if (id) {
+      this.inputs.delete(id);
+      this.movementAcks.delete(client.sessionId);
+    }
   }
   async step() {
     const now = Date.now(),
@@ -302,15 +313,20 @@ export class Block extends Room {
       !Object.values(this.stateCache.players).some((p) => p.combatUntil > now)
     )
       return;
+    const applied = new Map<string, number>();
     this.stateCache = await transaction((w) => {
       for (const [id, input] of this.inputs) {
         const p = w.players[id];
-        if (p && now - input.time < 400)
+        if (p && now - input.time < 400) {
           move(w, p, input.dir, input.sprint, input.crouch, dt, input.dirY);
+          applied.set(input.sessionId, input.seq);
+        }
       }
       tick(w, dt, new Set(this.online.values()), now);
       return w;
     });
+    for (const [sessionId, seq] of applied)
+      if (this.online.has(sessionId)) this.movementAcks.set(sessionId, seq);
     this.sync();
   }
   sync() {
@@ -323,7 +339,10 @@ export class Block extends Room {
     for (const client of this.clients) {
       const id = this.online.get(client.sessionId);
       if (id && this.stateCache.players[id])
-        client.send("snapshot", visible(this.stateCache, id, online));
+        client.send("snapshot", {
+          ...visible(this.stateCache, id, online),
+          moveAck: this.movementAcks.get(client.sessionId) || 0,
+        });
     }
   }
 }

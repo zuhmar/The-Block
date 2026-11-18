@@ -49,7 +49,8 @@
     "pavementRepeatWorldPixels": 128,
     "buildingPerspective": "roof-dominant overhead",
     "buildingDesigns": 28,
-    "consistentBuildingFit": 177
+    "consistentBuildingFit": 177,
+    "chunksConstructedPerFrame": 1
   },
   "authoredMarketBuildings": 6,
   "placement": {

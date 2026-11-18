@@ -1,3 +1,8 @@
+import { MovementPrediction } from "./movement-prediction";
+import {
+  movementBlocked,
+  type MovementInput,
+} from "../../../packages/shared/src/movement";
 import { renderProfile, defaultViewZoom, viewZoom } from "./render-quality";
 import { DISTRICTS } from "../../../packages/shared/src/official-map";
 import { setMapReservations } from "../../../packages/shared/src/terrain";
@@ -70,6 +75,7 @@ let snapshot: {
   dogs?: DogView[];
   shots?: ShotVisual[];
   clock: number;
+  moveAck?: number;
   mapReservations?: { x: number; y: number; width: number; height: number }[];
 } = { players: [], structures: [], bags: [], clock: 0 };
 let manifest: Record<string, any> = {},
@@ -87,6 +93,7 @@ const hold = {
   crouch: false,
 };
 let flushMovement = () => {};
+let resetMovement = () => {};
 const chat: { name: string; text: string; at: number }[] = [];
 const esc = (s: string) =>
   s.replace(
@@ -96,14 +103,18 @@ const esc = (s: string) =>
         c
       ]!,
   );
-const send = (action: Action) =>
-  room?.send("intent", {
+const send = (action: Action) => {
+  if (!room) return 0;
+  const next = ++seq;
+  room.send("intent", {
     v: VERSION,
-    seq: ++seq,
+    seq: next,
     requestId: crypto.randomUUID(),
     at: Date.now() + serverOffset,
     action,
   });
+  return next;
+};
 function notice(text: string) {
   if (!text) return;
   $("#notice").textContent = text;
@@ -224,6 +235,17 @@ class City extends Phaser.Scene {
   mapWorld?: MapWorld;
   private cameraPlayer?: string;
   lastSend = 0;
+  prediction = new MovementPrediction();
+  movementSeq = 0;
+  movementFacing?: { facing: number; facingY: number };
+  movementInput: MovementInput = {
+    dir: 0,
+    dirY: 0,
+    sprint: false,
+    crouch: false,
+  };
+  predictionSnapshot: unknown;
+  predictionFrameAt = 0;
   preview!: Phaser.GameObjects.Image;
   previewText!: Phaser.GameObjects.Text;
   buildGuides!: Phaser.GameObjects.Graphics;
@@ -239,6 +261,17 @@ class City extends Phaser.Scene {
   }
   create() {
     flushMovement = () => this.sendMovement();
+    resetMovement = () => {
+      this.prediction = new MovementPrediction();
+      this.movementSeq = 0;
+      this.movementFacing = undefined;
+      this.predictionSnapshot = undefined;
+      this.predictionFrameAt = 0;
+      this.movementInput = { dir: 0, dirY: 0, sprint: false, crouch: false };
+      this.cameraPlayer = "";
+      for (const key of Object.keys(hold) as (keyof typeof hold)[])
+        hold[key] = false;
+    };
     manifest = this.cache.json.get("manifest").assets;
     for (const [key, a] of Object.entries(manifest)) {
       if (a.animations) {
@@ -486,14 +519,12 @@ class City extends Phaser.Scene {
       graphics.lineStyle(2, 0xf1d68c, 0.9).strokeCircle(bag.x, bag.y, 27);
     }
   }
-  sendMovement() {
-    if (!self || !room) return;
+  readMovement(): MovementInput {
     const typing = ["INPUT", "SELECT", "TEXTAREA"].includes(
         document.activeElement?.tagName || "",
       ),
       k = this.keys;
-    send({
-      type: "move",
+    return {
       dir: typing
         ? 0
         : Number(k.D.isDown || k.RIGHT.isDown || hold.right) -
@@ -504,7 +535,17 @@ class City extends Phaser.Scene {
           Number(k.W.isDown || k.UP.isDown || hold.up),
       sprint: !typing && (k.SHIFT.isDown || hold.sprint),
       crouch: !typing && (k.CTRL.isDown || hold.crouch),
-    });
+    };
+  }
+  sendMovement() {
+    if (!self || !room) return;
+    this.movementInput = this.readMovement();
+    if (this.movementInput.dir || this.movementInput.dirY)
+      this.movementFacing = {
+        facing: this.movementInput.dir,
+        facingY: this.movementInput.dirY,
+      };
+    this.movementSeq = send({ type: "move", ...this.movementInput });
   }
   update(time: number, delta: number) {
     if (!this.staticBuilt) return;
@@ -546,32 +587,64 @@ class City extends Phaser.Scene {
         ].entries())
           if (Phaser.Input.Keyboard.JustDown(this.keys[key])) quick(i);
       }
-      if (time - this.lastSend > 80) {
+      const input = this.readMovement();
+      if (
+        time - this.lastSend > 80 ||
+        JSON.stringify(input) !== JSON.stringify(this.movementInput)
+      ) {
         this.sendMovement();
         this.lastSend = time;
       }
+      const movementNow = performance.now();
+      const movementDt = this.predictionFrameAt
+        ? (movementNow - this.predictionFrameAt) / 1000
+        : delta / 1000;
+      this.predictionFrameAt = movementNow;
+      const blocked = (p: Point) => movementBlocked(snapshot.structures, p);
+      if (this.predictionSnapshot !== snapshot) {
+        this.prediction.reconcile(self, snapshot.moveAck, movementNow, blocked);
+        this.predictionSnapshot = snapshot;
+      }
+      const displayed = this.prediction.update(
+        input,
+        this.movementSeq,
+        movementDt,
+        movementNow,
+        blocked,
+      );
       const cam = this.cameras.main;
+      const follow = 1 - Math.exp(-Math.min(0.1, Math.max(0, movementDt)) * 6);
       if (this.cameraPlayer !== self.id) {
-        cam.centerOn(self.x, self.y);
+        cam.centerOn(displayed.x, displayed.y);
         this.cameraPlayer = self.id;
       }
       cam.scrollX = Phaser.Math.Linear(
         cam.scrollX,
-        self.x - cam.width / 2,
-        0.09,
+        displayed.x - cam.width / 2,
+        follow,
       );
       cam.scrollY = Phaser.Math.Linear(
         cam.scrollY,
-        self.y - cam.height / 2,
-        0.09,
+        displayed.y - cam.height / 2,
+        follow,
       );
     }
+    const localFacing =
+      this.movementSeq > (snapshot.moveAck || 0)
+        ? this.movementFacing
+        : undefined;
     const entities: any[] = [
-      ...snapshot.players.map((p) => ({
-        ...p,
-        asset: characterAtlas(p.weapon, facing(p)),
-        entity: "player",
-      })),
+      ...snapshot.players.map((p) => {
+        const visual =
+          p.id === self?.id && snapshot.moveAck !== undefined
+            ? { ...p, ...this.prediction.position(), ...localFacing }
+            : p;
+        return {
+          ...visual,
+          asset: characterAtlas(p.weapon, facing(visual)),
+          entity: "player",
+        };
+      }),
       ...(snapshot.dogs || []).map((d) => ({
         ...d,
         asset: `dog-stray-${facing(d)}`,
@@ -616,8 +689,16 @@ class City extends Phaser.Scene {
         this.labels.set(e.id, this.text(e.x, e.y - 65, "", 11));
       }
       const previous = { x: s.x, y: s.y };
-      s.x = Phaser.Math.Linear(s.x, e.x, Math.min(1, delta / 70));
-      s.y = Phaser.Math.Linear(s.y, e.y, Math.min(1, delta / 70));
+      const ownPredicted =
+        e.entity === "player" &&
+        e.id === self?.id &&
+        snapshot.moveAck !== undefined;
+      s.x = ownPredicted
+        ? e.x
+        : Phaser.Math.Linear(s.x, e.x, Math.min(1, delta / 70));
+      s.y = ownPredicted
+        ? e.y
+        : Phaser.Math.Linear(s.y, e.y, Math.min(1, delta / 70));
       s.setDepth(
         e.kind === "foundation" ? -6000 : e.kind === "roof" ? e.y + 140 : s.y,
       );
@@ -1274,6 +1355,7 @@ async function connect(token: string) {
     { token },
   );
   seq = 0;
+  resetMovement();
   room.onMessage("welcome", (data) => {
     serverOffset = data.serverTime - Date.now();
     if (data.version && data.version !== VERSION)
@@ -1311,6 +1393,7 @@ async function connect(token: string) {
     }
   });
   room.onLeave(() => {
+    resetMovement();
     $("#auth").hidden = false;
     $("#game-ui").hidden = true;
     $("#death").hidden = true;

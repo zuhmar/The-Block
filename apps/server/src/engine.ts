@@ -1,6 +1,9 @@
+import {
+  advanceMovement,
+  movementBlocked,
+} from "../../../packages/shared/src/movement.js";
 import { MAP_VERSION } from "../../../packages/shared/src/official-map.js";
 import {
-  terrainBlocked,
   terrainObstruction,
   setMapReservations,
   mapObstacleEnabled,
@@ -13,7 +16,6 @@ import {
   safe,
   canCarry,
   distance,
-  inRect,
   segmentRect,
   placementReason,
   snapBuildPoint,
@@ -119,16 +121,7 @@ function access(w: WorldState, p: Player, s: Structure) {
     fail("Access blocked by a wall or closed door");
 }
 export function blocked(w: WorldState, p: Point) {
-  return (
-    terrainBlocked(p) ||
-    WORLD.obstacles.some((r) => mapObstacleEnabled(r) && inRect(p, r, 12)) ||
-    Object.values(w.structures).some(
-      (s) =>
-        s.hp > 0 &&
-        (s.kind === "wall" || (s.kind === "door" && !s.open)) &&
-        inRect(p, structureFootprint(s), 12),
-    )
-  );
+  return movementBlocked(() => Object.values(w.structures), p);
 }
 export function upgradeWorld(w: WorldState) {
   if ((w.mapVersion || 0) < MAP_VERSION) {
@@ -302,20 +295,12 @@ export function move(
   if (p.dead) return;
   const magnitude = Math.hypot(dir, dirY);
   if (!magnitude) return;
-  const speed =
-      (crouch ? 60 : sprint && p.energy > 8 ? 235 : 145) *
-      (p.hunger < 15 || p.thirst < 15 ? 0.7 : 1),
-    step = speed * Math.min(0.25, Math.max(0, dt));
-  const dx = (dir / magnitude) * step,
-    dy = (dirY / magnitude) * step;
-  // Substeps prevent tunnelling through corners at sprint speed; separate axes allow wall sliding.
-  const count = Math.max(1, Math.ceil(step / 8));
-  for (let i = 0; i < count; i++) {
-    const x = Math.max(24, Math.min(WORLD.width - 24, p.x + dx / count));
-    if (!blocked(w, { x, y: p.y })) p.x = x;
-    const y = Math.max(24, Math.min(WORLD.height - 24, p.y + dy / count));
-    if (!blocked(w, { x: p.x, y })) p.y = y;
-  }
+  Object.assign(
+    p,
+    advanceMovement(p, { dir, dirY, sprint, crouch }, dt, (point) =>
+      blocked(w, point),
+    ),
+  );
   p.facing = dir;
   p.facingY = dirY;
   if (sprint && p.energy > 8) {
