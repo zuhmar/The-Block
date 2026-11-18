@@ -1,8 +1,9 @@
 {
   "visibleMovementBeforeServerReply": true,
   "snapshotsAppliedDuringPress": 0,
-  "firstVisibleMovementMs": 109,
-  "predictedDistance": 43.5,
+  "firstVisibleMovementMs": 108,
+  "predictedDistance": 29,
+  "shortTapsRegistered": 4,
   "viewport": "390x844",
   "pageErrors": [],
   "scope": "Local Chromium with server snapshots deliberately buffered; this proves visible local response before authoritative replies, not physical-device or cellular latency."

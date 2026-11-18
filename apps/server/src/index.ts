@@ -1,3 +1,4 @@
+import { MovementInputs } from "./movement-inputs.js";
 import { WorldQueue } from "./world-queue.js";
 import { Server, Room, matchMaker, type Client } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport";
@@ -166,18 +167,7 @@ export class Block extends Room {
   maxClients = 20;
   autoDispose = false;
   online = new Map<string, string>();
-  inputs = new Map<
-    string,
-    {
-      dir: number;
-      dirY: number;
-      sprint: boolean;
-      crouch: boolean;
-      time: number;
-      seq: number;
-      sessionId: string;
-    }
-  >();
+  inputs = new Map<string, MovementInputs>();
   movementAcks = new Map<string, number>();
   seq = new Map<string, number>();
   rates = new Map<string, { n: number; time: number }>();
@@ -227,7 +217,12 @@ export class Block extends Room {
       const id = this.online.get(client.sessionId);
       if (!id) return;
       if (action.type === "move") {
-        this.inputs.set(id, {
+        let inputs = this.inputs.get(id);
+        if (!inputs) {
+          inputs = new MovementInputs();
+          this.inputs.set(id, inputs);
+        }
+        inputs.push({
           ...action,
           time: Date.now(),
           seq,
@@ -313,20 +308,35 @@ export class Block extends Room {
       !Object.values(this.stateCache.players).some((p) => p.combatUntil > now)
     )
       return;
-    const applied = new Map<string, number>();
+    const applied: {
+      inputs: MovementInputs;
+      plan: ReturnType<MovementInputs["plan"]>;
+    }[] = [];
     this.stateCache = await transaction((w) => {
-      for (const [id, input] of this.inputs) {
+      for (const [id, inputs] of this.inputs) {
         const p = w.players[id];
-        if (p && now - input.time < 400) {
-          move(w, p, input.dir, input.sprint, input.crouch, dt, input.dirY);
-          applied.set(input.sessionId, input.seq);
-        }
+        if (!p) continue;
+        const plan = inputs.plan(now, dt);
+        for (const { input, dt: duration } of plan.segments)
+          move(
+            w,
+            p,
+            input.dir,
+            input.sprint,
+            input.crouch,
+            duration,
+            input.dirY,
+          );
+        applied.push({ inputs, plan });
       }
       tick(w, dt, new Set(this.online.values()), now);
       return w;
     });
-    for (const [sessionId, seq] of applied)
-      if (this.online.has(sessionId)) this.movementAcks.set(sessionId, seq);
+    for (const { inputs, plan } of applied) {
+      inputs.commit(plan);
+      if (plan.last && this.online.has(plan.last.sessionId))
+        this.movementAcks.set(plan.last.sessionId, plan.last.seq);
+    }
     this.sync();
   }
   sync() {

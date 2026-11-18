@@ -80,6 +80,16 @@ with sync_playwright() as runner:
     assert abs(page.evaluate('window.__mapSmoke.instance.scene.sprites.get(window.__predictionProbe.id).x')-stopped)<0.01
     page.evaluate("window.__holdSnapshots=false;for(const apply of window.__snapshotQueue.splice(0))apply()")
     page.wait_for_timeout(600)
+    registered=0
+    for i in range(4):
+        before=page.evaluate('window.__lastSnapshot.self.x')
+        cdp.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[point]})
+        page.wait_for_timeout(40)
+        cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]})
+        page.wait_for_function('(x)=>window.__lastSnapshot.self.x>x+1',arg=before,timeout=3000)
+        page.wait_for_timeout(180)
+        registered+=1
+    result['shortTapsRegistered']=registered
     assert not errors,errors
     result.update({'viewport':'390x844','pageErrors':errors,'scope':'Local Chromium with server snapshots deliberately buffered; this proves visible local response before authoritative replies, not physical-device or cellular latency.'})
     (out/'movement-prediction-browser.json').write_text(json.dumps(result,indent=2)+'\n')
