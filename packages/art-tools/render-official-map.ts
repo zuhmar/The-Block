@@ -1,3 +1,7 @@
+import {
+  neighborhoodPaths,
+  neighborhoodPathEnabled,
+} from "../game-data/neighborhood-paths.js";
 import { MARKET_QUARTER } from "../shared/src/market-quarter.js";
 import {
   buildingVisual,
@@ -84,6 +88,8 @@ for (const [r, w] of [
   body += `<path d="${path(r)}" fill="none" stroke="#b2b28b" stroke-width="${w + 34}"/><path d="${path(r)}" fill="none" stroke="#397c91" stroke-width="${w}"/>`;
 for (const l of LAKES)
   body += `<path d="${path(l)}Z" fill="#397c91" stroke="#b9bb8a" stroke-width="22"/>`;
+for (const lane of neighborhoodPaths().filter(neighborhoodPathEnabled))
+  body += `<polyline points="${lane.points.map((p) => `${p.x},${p.y}`).join(" ")}" fill="none" stroke="url(#pattern-${lane.material === "dirt" ? "map-tile-dirt" : lane.material === "service" ? "map-paving-service" : "map-paving-slab"})" stroke-width="${lane.width}" stroke-linecap="round" stroke-linejoin="round"/>`;
 for (const r of cityPaving())
   body += `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="url(#pattern-map-paving-slab)"/>`;
 for (const [width, color] of [

@@ -1,4 +1,8 @@
 import {
+  neighborhoodPaths,
+  neighborhoodPathEnabled,
+} from "./neighborhood-paths.js";
+import {
   groundFootprint,
   isPublicPlanter,
   gridEnvelope,
@@ -213,6 +217,19 @@ export function paintCityFrontage(
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
+  for (const lane of neighborhoodPaths()) {
+    if (!lane.points.some(near) || !neighborhoodPathEnabled(lane)) continue;
+    ctx.beginPath();
+    lane.points.forEach((p, i) =>
+      i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
+    );
+    ctx.strokeStyle = lane.material === "dirt" ? "#a5a58b" : "#8f948a";
+    ctx.lineWidth = lane.width + 6;
+    ctx.stroke();
+    ctx.strokeStyle = materials[lane.material];
+    ctx.lineWidth = lane.width;
+    ctx.stroke();
+  }
   // Joined rows form a continuous commercial surface instead of overlapping pads.
   ctx.fillStyle = materials.concrete;
   for (const r of cityPaving()) {

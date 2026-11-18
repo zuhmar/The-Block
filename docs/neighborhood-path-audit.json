@@ -1,0 +1,13 @@
+{
+  "count": 43,
+  "byDistrict": {
+    "the-block": 7,
+    "industrial": 8,
+    "projects": 19,
+    "uptown": 9
+  },
+  "detailGrid": 16,
+  "maxConnectionsPerBuilding": 2,
+  "materials": ["concrete", "service", "dirt"],
+  "worldGeometryChanged": false
+}
