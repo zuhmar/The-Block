@@ -31,8 +31,8 @@
         "engine": "three.js r187",
         "model": "reinforced",
         "hiddenSlots": "",
-        "drawCalls": "32",
-        "triangles": "8310",
+        "drawCalls": "37",
+        "triangles": "18828",
         "rotation": "3.492"
       }
     },
@@ -43,8 +43,8 @@
         "engine": "three.js r187",
         "model": "armored",
         "hiddenSlots": "",
-        "drawCalls": "36",
-        "triangles": "10408",
+        "drawCalls": "44",
+        "triangles": "22352",
         "rotation": "3.492"
       }
     },
@@ -79,8 +79,8 @@
         "engine": "three.js r187",
         "model": "reinforced",
         "hiddenSlots": "",
-        "drawCalls": "32",
-        "triangles": "8310",
+        "drawCalls": "37",
+        "triangles": "18828",
         "rotation": "3.492"
       }
     },
@@ -91,8 +91,8 @@
         "engine": "three.js r187",
         "model": "armored",
         "hiddenSlots": "",
-        "drawCalls": "36",
-        "triangles": "10408",
+        "drawCalls": "44",
+        "triangles": "22352",
         "rotation": "3.492"
       }
     }

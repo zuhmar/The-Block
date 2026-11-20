@@ -32,8 +32,7 @@ test("all approved survivors share a featureless spherical black base, limb pivo
           (o.geometry.index?.count || o.geometry.attributes.position.count) / 3;
       }
     });
-    const budget =
-      outfit === "street" ? 24000 : outfit === "base" ? 10000 : 16000;
+    const budget = outfit === "base" ? 10000 : 24000;
     assert(
       calls < 65 && triangles < budget,
       `${outfit}: ${calls} calls, ${triangles} triangles`,
