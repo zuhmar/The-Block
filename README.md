@@ -59,7 +59,7 @@ The black stick-figure character now has rounded 3D limbs, a visible first-perso
 
 The model viewer also includes the approved bare survivor and three clothing sets: burgundy Street, black military Reinforced with an open-face helmet, and amber Armored with a fully enclosed helmet. Toggle headwear, torso, legs and footwear independently to inspect the underlying black base. These are model previews; gameplay armor stats and equipping are not implemented.
 
-A separate **STREET V2** button previews the new [Blender benchmark](art/characters/street-v2/README.md), with weighted joints, baked shading, distinct materials and idle/walk/hand-grip demos. Compare it with **STREET** before applying the new model workflow to the other characters.
+The **IMAGE BASE**, **IMAGE STREET**, **IMAGE MILITARY** and **IMAGE ARMOR** buttons load [fresh image-led Blender rebuilds](art/characters/image-rebuild/README.md). The recreated four-character reference is saved with the project and linked directly from the viewer. These assets use new geometry and rigs built from image measurements; the existing models remain available for comparison.
 
 Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate the player/weapons or `pnpm assets:buildings` for the five furnished buildings.
 

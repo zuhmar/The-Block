@@ -1,0 +1,31 @@
+{
+  "referenceSha256": "3c46d049469c23e4423d5af5cd45ca39670842edcc45d1e27a19124aab27fbc1",
+  "source": "Fresh Blender scene; reference.png and landmarks.json only",
+  "metersPerPixel": 0.00258732212160414,
+  "models": [
+    {
+      "kind": "base",
+      "triangles": 9248,
+      "bones": 28,
+      "bytes": 606120
+    },
+    {
+      "kind": "street",
+      "triangles": 40196,
+      "bones": 28,
+      "bytes": 1913100
+    },
+    {
+      "kind": "reinforced",
+      "triangles": 44480,
+      "bones": 28,
+      "bytes": 2134548
+    },
+    {
+      "kind": "armored",
+      "triangles": 46704,
+      "bones": 28,
+      "bytes": 2245608
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "reference": "reference.png",
+  "imageSize": [
+    1536,
+    1024
+  ],
+  "groundPixel": 939,
+  "baseTopPixel": 166,
+  "heightMeters": 2,
+  "columnCenters": {
+    "base": 260,
+    "street": 594,
+    "reinforced": 928,
+    "armored": 1276
+  },
+  "head": {
+    "centerY": 265,
+    "radiusPixels": 100
+  },
+  "bodyRows": [
+    [
+      392,
+      52,
+      42
+    ],
+    [
+      416,
+      59,
+      47
+    ],
+    [
+      468,
+      56,
+      48
+    ],
+    [
+      525,
+      64,
+      49
+    ],
+    [
+      563,
+      65,
+      45
+    ],
+    [
+      579,
+      58,
+      43
+    ]
+  ],
+  "sleeveRows": [
+    [
+      382,
+      58,
+      14
+    ],
+    [
+      391,
+      66,
+      23
+    ],
+    [
+      410,
+      78,
+      22
+    ],
+    [
+      455,
+      91,
+      21
+    ],
+    [
+      500,
+      104,
+      23
+    ],
+    [
+      535,
+      116,
+      26
+    ],
+    [
+      560,
+      115,
+      20
+    ]
+  ],
+  "cuffPixel": 578,
+  "handCenterPixel": 613,
+  "handRadiusPixels": [
+    22,
+    34
+  ],
+  "pantsWaistPixel": 590,
+  "crotchPixel": 650,
+  "kneePixel": 730,
+  "anklePixel": 837,
+  "shoeTopPixel": 846,
+  "notes": "Manually traced landmark targets from the recreated four-character reference. Front-view widths come from this image; depth and unseen surfaces are authored interpretations. No existing model is imported."
+}

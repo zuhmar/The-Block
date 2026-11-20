@@ -1,8 +1,8 @@
-# Street V2 — Blender benchmark
+# Street V2 — archived Blender benchmark
 
 A review model for the approved glossy black stick-figure Street outfit: burgundy hoodie and cap, charcoal cargo joggers, ivory sneakers and a gold chain. A reproducible Blender modeling script builds the geometry, rig and shading bake. The concept illustrations guide the proportions and materials.
 
-Open **View Player & Weapons → STREET V2** in the game. **STREET** remains available for comparison. The new asset downloads only when requested. **STILL**, **IDLE**, **WALK** and **HAND GRIP** demonstrate the rig; clothing checkboxes independently hide headwear, torso, legs and footwear. Drag to rotate. The viewer uses neutral studio lighting for judging materials.
+This earlier benchmark is retained as an archived iteration. The active viewer image buttons now load the [fresh four-character image-led library](../image-rebuild/README.md).
 
 This is the Street quality benchmark for review. Gameplay players, NPCs, armor stats and their current movement/combat rigs retain their existing implementations. The new rig and lower-detail model are ready for a subsequent gameplay integration step after visual review.
 

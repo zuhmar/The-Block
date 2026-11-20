@@ -1,4 +1,9 @@
-import { loadStreetReview, disposeReview } from "./street-review";
+import {
+  loadStreetReview,
+  disposeReview,
+  IMAGE_REFERENCE_URL,
+  type ImageModelKind,
+} from "./street-review";
 import { createNpc } from "./npc-models";
 import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
@@ -36,8 +41,10 @@ export function openActorPreview() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-street-v2">STREET V2</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options image-options"><button id="show-image-base">IMAGE BASE</button><button id="show-street-v2">IMAGE STREET</button><button id="show-image-reinforced">IMAGE MILITARY</button><button id="show-image-armored">IMAGE ARMOR</button></div><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><a id="image-reference" target="_blank" rel="noopener">FOUR-CHARACTER REFERENCE IMAGE</a><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
+  overlay.querySelector<HTMLAnchorElement>("#image-reference")!.href =
+    IMAGE_REFERENCE_URL;
   const canvas = overlay.querySelector<HTMLCanvasElement>("canvas")!;
   let renderer: THREE.WebGLRenderer;
   try {
@@ -114,8 +121,17 @@ export function openActorPreview() {
     closed = false,
     dirty = true;
   let review: Awaited<ReturnType<typeof loadStreetReview>> | undefined;
-  let loadingReview = false,
-    motion = "still",
+  let reviewGeneration = 0;
+  const reviewButtons = {
+    base: "show-image-base",
+    street: "show-street-v2",
+    reinforced: "show-image-reinforced",
+    armored: "show-image-armored",
+  };
+  const reviewMode = (kind: ImageModelKind) =>
+    kind === "street" ? "street-v2" : "image-" + kind;
+  let activeReviewKind: ImageModelKind | undefined;
+  let motion = "still",
     lastAnimationFrame = performance.now();
   function setMotion(next: string) {
     motion = next;
@@ -139,18 +155,24 @@ export function openActorPreview() {
       if (o.userData.clothingSlot === slot) o.visible = visible;
     });
   }
-  async function selectReview() {
+  async function selectReview(kind: ImageModelKind = "street") {
     select("street");
-    mode = "street-v2";
+    const ticket = ++reviewGeneration;
+    mode = reviewMode(kind);
+    activeReviewKind = kind;
     overlay.classList.add("reviewing");
     for (const c of Object.values(characters)) c.root.visible = false;
     overlay.querySelector("#show-street")!.classList.remove("selected");
-    overlay.querySelector("#show-street-v2")!.classList.add("selected");
+    overlay.querySelector("#" + reviewButtons[kind])!.classList.add("selected");
     overlay.querySelector<HTMLElement>("#review-motion")!.hidden = false;
-    overlay.querySelector("#actor-description")!.textContent = review
-      ? "Street V2 · Blender benchmark · Compare with STREET"
-      : "Loading Street V2…";
-    if (review) {
+    overlay.querySelector<HTMLElement>("#clothing-slots")!.hidden =
+      kind === "base";
+    camera.position.set(0, 1.45, 3.5);
+    camera.lookAt(0, 1.0, 0);
+    const caption =
+      "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
+    overlay.querySelector("#actor-description")!.textContent = caption;
+    if (review?.kind === kind) {
       review.root.visible = true;
       for (const input of overlay.querySelectorAll<HTMLInputElement>(
         "[data-slot]",
@@ -159,45 +181,48 @@ export function openActorPreview() {
       dirty = true;
       return;
     }
-    if (loadingReview) return;
-    loadingReview = true;
+    if (review) {
+      review.mixer.stopAllAction();
+      review.mixer.uncacheRoot(review.root);
+      review.root.removeFromParent();
+      disposeReview(review.root);
+      review = undefined;
+    }
+    overlay.querySelector("#actor-description")!.textContent =
+      "Loading image rebuild…";
     try {
-      const loaded = await loadStreetReview();
-      if (closed) {
+      const loaded = await loadStreetReview(kind);
+      if (closed || ticket !== reviewGeneration) {
         disposeReview(loaded.root);
         return;
       }
       review = loaded;
-      if (mode === "street-v2") {
-        setMotion(motion);
-        for (const input of overlay.querySelectorAll<HTMLInputElement>(
-          "[data-slot]",
-        ))
-          setReviewSlot(input.dataset.slot!, input.checked);
-      }
       scene.add(review.root);
-      review.root.visible = mode === "street-v2";
-      if (mode === "street-v2")
-        overlay.querySelector("#actor-description")!.textContent =
-          "Street V2 · Blender benchmark · Compare with STREET";
+      setMotion(motion);
+      for (const input of overlay.querySelectorAll<HTMLInputElement>(
+        "[data-slot]",
+      ))
+        setReviewSlot(input.dataset.slot!, input.checked);
+      overlay.querySelector("#actor-description")!.textContent = caption;
       dirty = true;
     } catch {
-      if (!closed) {
+      if (!closed && ticket === reviewGeneration) {
         overlay.querySelector("#actor-description")!.textContent =
-          "Couldn’t load Street V2. Tap STREET V2 to retry.";
+          "Couldn’t load the model. Tap its image button to retry.";
         dirty = true;
       }
-    } finally {
-      loadingReview = false;
     }
   }
   function select(kind: keyof typeof characters | WeaponKind) {
     mode = kind;
+    activeReviewKind = undefined;
+    ++reviewGeneration;
     overlay.classList.remove("reviewing");
     if (review) review.root.visible = false;
     setMotion("still");
     overlay.querySelector<HTMLElement>("#review-motion")!.hidden = true;
-    overlay.querySelector("#show-street-v2")!.classList.remove("selected");
+    for (const id of Object.values(reviewButtons))
+      overlay.querySelector("#" + id)!.classList.remove("selected");
     const isPlayer = kind in characters;
     base.visible = isPlayer;
     for (const [key, c] of Object.entries(characters))
@@ -256,9 +281,10 @@ export function openActorPreview() {
     dirty = true;
   }
   select("player");
-  overlay
-    .querySelector("#show-street-v2")!
-    .addEventListener("click", () => void selectReview());
+  for (const kind of Object.keys(reviewButtons) as ImageModelKind[])
+    overlay
+      .querySelector("#" + reviewButtons[kind])!
+      .addEventListener("click", () => void selectReview(kind));
   for (const button of overlay.querySelectorAll<HTMLButtonElement>(
     "[data-motion]",
   ))
@@ -362,7 +388,7 @@ export function openActorPreview() {
     if (closed) return;
     requestAnimationFrame(draw);
     const now = performance.now();
-    if (mode === "street-v2" && review && motion !== "still") {
+    if (activeReviewKind && review && motion !== "still") {
       review.mixer.update(Math.min((now - lastAnimationFrame) / 1000, 0.05));
       dirty = true;
     }
@@ -374,7 +400,10 @@ export function openActorPreview() {
     for (const w of Object.values(weapons)) w.root.rotation.y = yaw;
     renderer.render(scene, camera);
     canvas.dataset.model = mode;
-    canvas.dataset.reviewLoaded = String(!!review);
+    canvas.dataset.reviewLoaded = String(
+      !!review && review.kind === activeReviewKind,
+    );
+    canvas.dataset.reviewKind = activeReviewKind || "";
     canvas.dataset.motion = motion;
     canvas.dataset.handPose =
       review?.root.getObjectByName("finger0R")?.quaternion.x.toFixed(4) || "";

@@ -1,14 +1,23 @@
 import * as THREE from "three";
 
-export const STREET_REVIEW_URL = new URL(
-  "./models/street-v2.glb",
+export const IMAGE_MODEL_URLS = {
+  base: new URL("./models/image-rebuild/base.glb", import.meta.url).href,
+  street: new URL("./models/image-rebuild/street.glb", import.meta.url).href,
+  reinforced: new URL("./models/image-rebuild/reinforced.glb", import.meta.url)
+    .href,
+  armored: new URL("./models/image-rebuild/armored.glb", import.meta.url).href,
+};
+export type ImageModelKind = keyof typeof IMAGE_MODEL_URLS;
+export const IMAGE_REFERENCE_URL = new URL(
+  "./models/image-rebuild/reference.png",
   import.meta.url,
 ).href;
 /** Loaded only when the player requests the review model, never during normal gameplay. */
-export async function loadStreetReview() {
+export async function loadStreetReview(kind: ImageModelKind = "street") {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
-  const gltf = await new GLTFLoader().loadAsync(STREET_REVIEW_URL);
+  const gltf = await new GLTFLoader().loadAsync(IMAGE_MODEL_URLS[kind]);
   return {
+    kind,
     root: gltf.scene,
     clips: gltf.animations,
     mixer: new THREE.AnimationMixer(gltf.scene),
