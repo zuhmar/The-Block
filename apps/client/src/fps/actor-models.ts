@@ -610,6 +610,17 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
         0.009,
       );
     batch(hand);
+    // Swing the complete forearm about its elbow instead of sliding the fist.
+    const elbow = new THREE.Vector3(side * 0.29, -0.43, -0.22);
+    const swing = new THREE.Group();
+    swing.name = hand.name + "-swing";
+    swing.position.copy(elbow);
+    for (const mesh of [...hand.children]) {
+      if (mesh instanceof THREE.Mesh)
+        mesh.geometry.translate(-elbow.x, -elbow.y, -elbow.z);
+      swing.add(mesh);
+    }
+    hand.add(swing);
   }
   const armed = new THREE.Group();
   armed.name = "pistol-hands";
@@ -670,6 +681,13 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     gun.root.visible = armed.visible = pistol;
     hands.visible = !pistol;
   }
+  const poses = [
+    [0, 0, 0, 0, 0],
+    [0.15, -0.25, -0.12, 0.08, 0.015],
+    [0.3, 0.8, 0.1, -0.13, -0.015],
+    [0.5, 1.05, 0.08, -0.2, -0.025],
+    [1, 0, 0, 0, 0],
+  ];
   function animate(
     time: number,
     moving: boolean,
@@ -700,11 +718,24 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
         0.09;
     }
     for (const hand of hands.children) {
-      const p = hand.userData.side === action.side ? (action.punch ?? 0) : 0;
-      const extension = p < 0.3 ? p / 0.3 : (1 - p) / 0.7;
-      hand.position.z = -Math.max(0, extension) * 0.2;
-      hand.position.y = Math.max(0, extension) * 0.035;
-      hand.rotation.x = -Math.max(0, extension) * 0.25;
+      const side = hand.userData.side as number;
+      const p =
+        side === action.side ? Math.max(0, Math.min(1, action.punch ?? 0)) : 0;
+      // Wind up, accelerate through contact at 30%, follow through, recover.
+
+      const i = Math.max(
+        1,
+        poses.findIndex((v) => v[0] >= p),
+      );
+      const a = poses[i - 1],
+        b = poses[i];
+      let t = (p - a[0]) / (b[0] - a[0]);
+      t = t * t * (3 - 2 * t);
+      const blend = (n: number) => THREE.MathUtils.lerp(a[n], b[n], t);
+      hand.children[0].rotation.set(blend(2), side * blend(1), side * blend(3));
+      hand.position.z = blend(4);
+      hand.position.y = 0;
+      hand.rotation.set(0, 0, 0);
     }
   }
   function setAspect(aspect: number) {

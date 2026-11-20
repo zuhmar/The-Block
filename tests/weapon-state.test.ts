@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -45,14 +46,19 @@ test("cancelled reloads preserve partial magazines and cannot refill another wea
   assert.equal(s.rounds.pistol, 12);
   assert.equal(s.rounds.rifle, 29);
 });
-test("punch reaches forward with one hand and reload tilts the gun, then both return to rest", () => {
+test("punch swings the forearm through a hook with one hand and reload tilts the gun, then both return to rest", () => {
   const r = createFirstPersonRig();
   r.setAspect(390 / 844);
   r.equip(false);
   r.animate(0, false, 0, { punch: 0.3, side: -1 });
   const left = r.root.getObjectByName("unarmed-left")!,
     right = r.root.getObjectByName("unarmed-right")!;
-  assert(left.position.z < -0.19);
+  assert(left.children[0].rotation.y < -0.7);
+  r.animate(0, false, 0, { punch: 0.15, side: -1 });
+  assert(left.children[0].rotation.y > 0.2);
+  r.animate(0, false, 0, { punch: 0.5, side: -1 });
+  assert(left.children[0].rotation.y < -1);
+  assert(Math.abs(right.children[0].rotation.y) < 1e-6);
   assert(Math.abs(right.position.z) < 1e-6);
   r.animate(0, false, 0);
   assert(Math.abs(left.position.z) < 1e-6);
@@ -64,4 +70,32 @@ test("punch reaches forward with one hand and reload tilts the gun, then both re
   assert.equal(r.gun.root.position.y, -0.19);
   assert(Math.abs(r.gun.root.rotation.z) < 1e-6);
   assert(MELEE.impactAt < MELEE.duration && MELEE.duration < MELEE.interval);
+});
+
+test("each hook sweeps sideways across the view rather than translating straight forward", () => {
+  const r = createFirstPersonRig();
+  r.setAspect(390 / 844);
+  r.equip(false);
+  for (const side of [-1, 1]) {
+    const swing = r.root.getObjectByName(
+      side < 0 ? "unarmed-left-swing" : "unarmed-right-swing",
+    )!;
+    const fist = () =>
+      swing.localToWorld(new THREE.Vector3(-side * 0.07, 0.14, -0.29));
+    r.animate(0, false, 0, { punch: 0.15, side });
+    const wind = fist();
+    r.animate(0, false, 0, { punch: 0.5, side });
+    const through = fist();
+    assert(
+      (wind.x - through.x) * side > 0.25,
+      JSON.stringify({ side, wind, through }),
+    );
+    r.animate(0, false, 0);
+    assert(
+      swing.rotation
+        .toArray()
+        .slice(0, 3)
+        .every((v) => Math.abs(Number(v)) < 1e-6),
+    );
+  }
 });
