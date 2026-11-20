@@ -1,0 +1,40 @@
+{
+  "purpose": "AI-generated exterior/interior/prop concept sheets for later Blender modeling; not integrated game assets",
+  "images": [
+    {
+      "building": "general-store",
+      "file": "general-store.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "d5467148b3b59eef896926b864a92402288ea7c7d6f6a78f822d69915af4c2b9"
+    },
+    {
+      "building": "the-haven",
+      "file": "the-haven.png",
+      "width": 1752,
+      "height": 897,
+      "sha256": "099b9c96965b5b8a6315781f62a0dcfa30a81455e6193921ffed1a4c443c662b"
+    },
+    {
+      "building": "workshop",
+      "file": "workshop.png",
+      "width": 1752,
+      "height": 897,
+      "sha256": "dff598493b48fb33a2f5f0a51342f418705c0a7cc2e57afbdd33447455da1315"
+    },
+    {
+      "building": "old-residence",
+      "file": "old-residence.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "2c5c58998765ea5327bf73aae2e58c86056404818b9a3d2bbf1d84d414f6ce9a"
+    },
+    {
+      "building": "warehouse",
+      "file": "warehouse.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "b841809becae3cf520cc603c600ff033610a4c369ed88eacb6b8966bea88ba23"
+    }
+  ]
+}
