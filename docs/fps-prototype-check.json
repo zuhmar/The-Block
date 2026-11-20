@@ -1,0 +1,46 @@
+{
+  "desktopMovement": true,
+  "floorAndWallPlacement": true,
+  "wallRemovalRefund": true,
+  "localSaveReload": true,
+  "mobileSimultaneousMoveAndLook": true,
+  "mobileCancelStopsMovement": true,
+  "pause": true,
+  "desktop": {
+    "engine": "three.js r187",
+    "position": "0.000,35.224",
+    "yaw": "0.000",
+    "pitch": "-0.078",
+    "drawCalls": "55",
+    "triangles": "7510",
+    "mapSize": "128",
+    "movement": "0.00,0.00"
+  },
+  "full100PieceBase": {
+    "engine": "three.js r187",
+    "position": "0.000,14.000",
+    "yaw": "0.000",
+    "pitch": "-0.030",
+    "drawCalls": "41",
+    "triangles": "11912",
+    "mapSize": "128",
+    "movement": "0.00,0.00"
+  },
+  "mobile": {
+    "width": 487,
+    "height": 1055,
+    "cssWidth": 390,
+    "cssHeight": 844,
+    "engine": "three.js r187",
+    "position": "-1.038,34.745",
+    "yaw": "-0.050",
+    "pitch": "-0.630",
+    "drawCalls": "40",
+    "triangles": "7156",
+    "mapSize": "128",
+    "movement": "0.00,0.00"
+  },
+  "pageErrors": [],
+  "backendRequests": [],
+  "scope": "Chromium software WebGL; real input and responsive viewport, not physical-phone FPS."
+}

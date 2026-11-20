@@ -1,100 +1,40 @@
-# Street Survival
+# Street Survival — First-person 3D prototype
 
-A browser-based **top-down urban survival sandbox** inspired by CryoFall's world composition and HUD organization, with original flat cartoon artwork. Built with Phaser 3, Vite, TypeScript, Colyseus and PostgreSQL.
+Street Survival now opens a small **128 × 128 meter first-person 3D world** built with Three.js and TypeScript. This replaces the playable 2D frontend with a fresh, single-player prototype. The old source and online database are preserved; the prototype does not connect to, reset, or migrate that database.
 
-Live frontend: **https://the-block-tau-eight.vercel.app**. The authoritative server and PostgreSQL run on Railway. See `deployment/verification.json` for the last hosted verification and `docs/DESIGN.md` for the approved redesign.
+Live: https://the-block-tau-eight.vercel.app
 
-## Start locally
-
-Install Node.js 24+, pnpm 11 and Docker with Compose, then run:
+## Run
 
 ```sh
-pnpm setup && pnpm dev
+pnpm install
+pnpm dev
 ```
 
-Open **http://localhost:5173** in two browser profiles and create different accounts. Names must be unique and passwords at least 10 characters. No API keys, paid services or manual sprite uploads are needed locally.
+Open http://localhost:5173. No database, account, API key, or external art download is required for the new game.
 
-Setup installs locked dependencies, waits for PostgreSQL, applies the idempotent SQL migration and generates art. The initial city is seeded without shared demo credentials. Copy `.env.example` to `.env` at the repository root to customize `DATABASE_URL`, `PORT`, `CLIENT_ORIGIN` and `VITE_SERVER_URL`. The server and Vite both read the root configuration; only `VITE_` variables are public.
+## Explore and build
 
-PostgreSQL data survives `docker compose down`. Do not use `down -v` if you want to keep the city. Only one server authority may run per database.
+- Desktop: WASD / arrows move, mouse looks, Shift runs, Space jumps, Escape pauses. Click **Enter the Block** to capture the mouse.
+- Phone: left joystick moves, drag the world to look, and use the Run, Jump, Use and Fire buttons. Movement and look support simultaneous touches.
+- E / Use searches five distinct supply-crate tiers around the town. The starter inventory has **10,000 wood**.
+- 1 / Hands and 2 / Pistol select a visible first-person tool. The pistol has free practice shots; the little range south of town has targets. This is target practice, not a multiplayer combat implementation.
+- B / Build opens floor, wall, open doorway and storage choices. Aim down at nearby ground and click / Place. R / Rotate changes the edge direction. Floors snap to a two-meter grid; walls and doorways snap along floor edges. Build in open meadows, keeping town, roads, water and trees clear. No roofs or designated plots are needed.
+- Aim at your construction and use **Dismantle** to return its wood. Attached walls and storage must be removed before their floor. The budget is **100 pieces**.
 
-## Play
+Buildings, trees, water and constructed walls block walking. The eastern road crosses a bridge. Scenery includes a compact five-building settlement, sidewalks, street furniture, sparse woodland, river and rocky outer boundary. Buildings are exterior scenery in this first prototype.
 
-- **WASD / arrow keys** move freely on both axes. **Shift** sprints, **Ctrl** crouches. Diagonal movement has the same speed as straight movement; there is no jumping.
-- **E** interacts with the nearest merchant, container, base piece or bag.
-- **Tab** backpack; **C** crafting; **K** character and skills; **B** building; **J** journal; **M** district map; **Enter** chat; **Escape** closes a panel.
-- **1–0** activate the ten hotbar actions. **R** reloads. **Right click** aims; **left click** attacks a nearby target at the cursor. Wheel zooms.
-- Mobile has a D-pad, run/crouch buttons, interaction and attack controls. Desktop is the primary target; visual mobile QA remains pending.
+Construction, wood and searched crates save locally under `street-survival:3d-prototype:v1`. The menu’s reset clears only that local prototype. Your location resets to the town spawn on reload. This is not yet online multiplayer, shared-world persistence, inventory, or survival simulation; those legacy systems are not silently represented as working 3D features.
 
-Start in **The Haven**, a walkable protected shelter. Its southern doorway leads toward the main street. Visit Mara at (1090, 650) for supplies and Otis at (1510, 650) to sell recyclables. Scavenging containers appear on the map and have per-character 60-second cooldowns. Craft a bat for three wood; buy a pistol and ammunition at the store and reload before firing.
+## Performance and verification
 
-The full in-game day lasts 60 real minutes. Hunger and thirst drain gradually, low values slow movement, and empty values cause health loss. Running and attacks use energy. The shelter restores health and energy. Temperature is displayed but exposure consequences are still pending.
-
-The HUD puts navigation across the top, a minimap at upper right, health/energy at lower left, food/water at lower right, and ten quick actions below the world. All displayed survivor counts, inventory and status values come from the shared server.
-
-### Build and raid
-
-Vacant grounds lie east of the main north/south crossing and below the east/west road. Follow the minimap. Stand within 210px, press B and place floors, then hover an owned floor to snap walls/doors along its outer or interior grid lines, or storage inside. Costs: floor eight wood, wall five, door four, crate five. Maximum **100 pieces per player**; dismantling frees slots. Roofs are not required.
-
-The preview checks roads, shelter, static footprints, reach, materials, collision, ownership and footprint bounds. The server validates placement again. Roads and public buildings cannot be claimed. Foundations are raid immune. Existing legacy structures are retained during the world migration.
-
-Walk normally into your base through an open door. Closed walls and doors block movement and storage access in both dimensions. Owners can open doors, repair for two wood, and dismantle empty modules outside combat. Remove attached modules before their foundation. There is no automatic foundation deletion.
-
-Other players can breach barriers and take physically accessible storage while you are offline. Death produces one public bag with all carried items, equipped gear, loaded ammo and carried cash. Learned skills, bank balance, owned structures and stored contents remain. Respawn gives no free replacement inventory; spawn protection expires on leaving the shelter. The bank balance persists, but banking services are not yet exposed in the UI.
-
-## Verify
-
-With local PostgreSQL running:
+Static box geometry is instanced by material. Trees and boundary rocks also use instancing. The renderer limits phone pixel density to 1.25, uses distance fog and no real-time shadow maps, and loads no legacy sprite sheets. The small map is rendered as one bounded scene; there is no giant streamed 2D terrain.
 
 ```sh
 pnpm verify
+python tests/browser/fps-prototype.py
 ```
 
-Verification runs lint, 19 tests, TypeScript checks, asset validation and a Vite production build. Tests create uniquely named temporary databases, so the database user needs `CREATEDB`; the Compose user has this permission. Tests never reset the developer's shared city. Ports 2568 and 2569 must be free.
+The full automated suite retains legacy backend checks, which require local PostgreSQL (`docker compose up -d --wait db`). The new pure 3D world tests and browser check do not require a database. Browser measurements use software WebGL and do not establish physical-phone frame rate. A small FPS readout is visible in game for device checks.
 
-The suite checks two-axis multiplayer movement, reconnect and real server restart, normalized diagonals, 2D safe zones and interaction ranges, placement/collision, public death loot, atomic concurrent claims, durable request IDs, offline-owner raids, foundation immunity, persisted breach/theft, and legacy world backup/migration. A five-second 20-client network smoke test records snapshot gaps in `docs/load-smoke.json`; it is not a sustained capacity benchmark.
-
-```sh
-pnpm assets:generate
-pnpm assets:validate
-pnpm typecheck
-pnpm lint
-pnpm test
-pnpm build
-```
-
-The asset build produces **193 manifest entries**. Characters use original AI-generated black stick-figure PNGs: four directions, eight state rows, NPC roles and matching portraits. `art/ai/characters/README.md` documents the source poses and held-frame states. The importer crops, scales and packs existing artwork reproducibly; local setup needs no image API. World-pack icons, props and city buildings are integrated. Floor, wall, door and storage art now comes from a coordinated AI construction atlas with distinct intact, damaged and breached states. Floors join edge to edge; walls and doors snap to outer or interior floor grid lines, and storage sits inside. The owned floor under the cursor is chosen automatically. The coordinated art uses thin cream/slate walls, plain timber floors and matching doorways, with automatic wall rotation and matching collision. Roofs are no longer buildable or displayed. Legacy bed, effects and UI art is retained; official map materials and props use saved AI sources. Validation checks required keys, dimensions, alpha and nonempty character cells. All four character atlases load together; saved legacy appearance data remains intact.
-
-Browser automation was unavailable in the build environment. Asset sheets were inspected and network/rules checks run, but visual browser/mobile acceptance is not claimed. Follow `docs/BROWSER-QA.md` locally.
-
-## Repository and persistence
-
-| Path                 | Purpose                                                                     |
-| -------------------- | --------------------------------------------------------------------------- |
-| `apps/client`        | Phaser top-down world, interpolation, responsive game HUD and intent client |
-| `apps/server`        | Colyseus authority, HTTP auth, rules, migrations and SQL repository         |
-| `packages/shared`    | Protocol v2, geometry, items, balance, map and placement checks             |
-| `packages/game-data` | District, NPC and loot definitions                                          |
-| `packages/art-tools` | Original SVG generation, Sharp rasterization and atlas validation           |
-| `prisma`             | PostgreSQL model reference and executable SQL migration                     |
-| `tests`              | Rules, PostgreSQL, real-WebSocket and load-smoke checks                     |
-| `deployment`         | Non-secret hosting targets and live verification reports                    |
-| `docs`               | Design, review, QA, milestones and deployment guidance                      |
-
-The `pg` repository and SQL migration are authoritative; Prisma is a model reference rather than the runtime ORM. A transactionally locked JSONB row holds the city. Accounts and hashed sessions are separate tables. `world_layout_backups` retains the pre-top-down world before its first upgrade; progress, inventory, ownership, storage and damage are preserved. This serialized first-district design needs profiling and normalization before larger scale.
-
-See `docs/REVIEW.md` for remaining product gaps and `docs/DEPLOYMENT.md` for operations.
-
-New characters start with 10,000 wood for building practice, alongside water, a snack and $10. Wood stacks to 10,000 and uses no carry weight or carrying slot. Existing characters receive a one-time top-up to at least 10,000 wood; their other items are preserved. A persisted grant flag prevents repeat grants after spending, reconnecting or restarting.
-
-Lootable world caches have five AI sprite tiers: small, supply, reinforced, long skinny military, and long thick advanced. Higher tiers offer more/better loot rolls. Tier-colored outlines, search labels, minimap markers and EMPTY countdowns distinguish loot from scenery. Craftable storage is unchanged. See `art/ai/loot-crates/README.md`.
-
-Equipped pistols and bats have dedicated AI character atlases in all four directions, including idle, walking, running, crouching and hurt states. The renderer and portraits select the equipped set for local and remote players.
-
-Twelve server-controlled stray dogs roam outside the Haven. They spot and chase exposed players, wind up before biting, respect walls/closed doors, and respawn after defeat. Fists, bats and pistols can fight them. New AI dog/punch animations and bullet, muzzle, impact and bite sprites are included. Pistol damage remains authoritative hitscan; visible bullet tracers show confirmed shots without changing ammunition, range or line-of-sight rules.
-
-The official world is **16,384 × 16,384 pixels**, with a **256 × 256 grid of 64-pixel tiles** and **16 × 16-tile streaming chunks**. Five central districts—The Block, Downtown, Industrial District, The Projects and Uptown—connect through avenues, local streets, sidewalks and bridges. The surrounding wilderness provides open, unmarked land for housing, sparse woodland, mountain ranges, cliffs, lakes, a large eastern river and northwest waterfalls. New city façades are map locations; they do not introduce new banking, hospital or police gameplay.
-
-The authoritative map data lives in `packages/shared/src/official-map.ts` and `terrain.ts`; `apps/client/src/map-world.ts` streams only nearby scenery. Character, inventory, survival, combat, housing and multiplayer action systems are reused. The one-time map migration translates existing world coordinates by 4096 pixels on both axes, retains IDs and house layouts, and reserves existing foundations against new scenery. A database copy of the pre-migration world is retained in `world_layout_backups` under layout 3.
-
-Run `pnpm map:preview` for whole-world and city-detail PNGs generated from the actual map data and AI sprites. These are map-model previews, not browser screenshots. `docs/OFFICIAL-MAP.md` records measurements, migration and verification scope.
+For the preserved 2D system, see [the archived README](docs/LEGACY_2D_README.md). `pnpm dev:legacy` starts the preserved backend and asset pipeline, but the frontend entry now points to the 3D prototype.
