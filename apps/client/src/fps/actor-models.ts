@@ -581,16 +581,21 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
   const hands = new THREE.Group();
   hands.name = "relaxed-hands";
   root.add(hands);
+  hands.position.y = 0.075;
   for (const side of [-1, 1]) {
+    const hand = new THREE.Group();
+    hand.name = side < 0 ? "unarmed-left" : "unarmed-right";
+    hand.userData.side = side;
+    hands.add(hand);
     limb(
-      hands,
+      hand,
       "rounded-forearm",
       [side * 0.29, -0.43, -0.22],
       [side * 0.22, -0.31, -0.48],
       0.038,
     );
     ball(
-      hands,
+      hand,
       "closed-hand",
       [side * 0.22, -0.29, -0.51],
       0.045,
@@ -598,14 +603,14 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     );
     for (let i = 0; i < 3; i++)
       limb(
-        hands,
+        hand,
         "curled-finger",
         [side * 0.22 + (i - 1) * 0.014, -0.275, -0.528],
         [side * 0.22 + (i - 1) * 0.014, -0.3, -0.55],
         0.009,
       );
+    batch(hand);
   }
-  batch(hands);
   const armed = new THREE.Group();
   armed.name = "pistol-hands";
   root.add(armed);
@@ -676,6 +681,9 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     const offset = aspect < 0.8 ? -0.085 : 0;
     gun.root.position.x = 0.18 + offset;
     armed.position.x = offset;
+    hands.position.y = aspect < 0.8 ? 0.23 : 0.075;
+    for (const hand of hands.children)
+      hand.position.x = aspect < 0.8 ? -hand.userData.side * 0.09 : 0;
   }
   equip(false);
   return { root, gun, flash, equip, animate, setAspect };

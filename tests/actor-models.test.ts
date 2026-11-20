@@ -112,3 +112,31 @@ test("portrait view keeps the pistol muzzle inside the camera frustum without br
   const offset = rig.root.getObjectByName("pistol-hands")!.position.x;
   assert.equal(rig.gun.root.position.x - 0.18, offset);
 });
+
+test("both unarmed fists stay within the clear view on portrait and landscape screens", () => {
+  for (const aspect of [390 / 844, 844 / 390, 1280 / 800]) {
+    const rig = createFirstPersonRig();
+    const camera = new THREE.PerspectiveCamera(72, aspect, 0.07, 100);
+    camera.add(rig.root);
+    rig.setAspect(aspect);
+    for (const equipped of [true, false]) rig.equip(equipped);
+    camera.updateMatrixWorld(true);
+    const hands = rig.root.getObjectByName("relaxed-hands")!;
+    assert(hands.visible);
+    assert(!rig.gun.root.visible);
+    for (const side of [-1, 1]) {
+      const hand = rig.root.getObjectByName(
+        side < 0 ? "unarmed-left" : "unarmed-right",
+      )!;
+      const fist = hand
+        .localToWorld(new THREE.Vector3(side * 0.22, -0.29, -0.51))
+        .project(camera);
+      if (aspect < 0.8)
+        assert(fist.y > -0.25, "Fists must clear phone controls");
+      assert(
+        Math.abs(fist.x) < 0.8 && fist.y > -0.7 && fist.y < -0.05,
+        JSON.stringify({ aspect, fist }),
+      );
+    }
+  }
+});
