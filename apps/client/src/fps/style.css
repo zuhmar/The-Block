@@ -843,3 +843,12 @@ h1 em {
   letter-spacing: 0.3px;
   overflow-wrap: anywhere;
 }
+
+.menu-card {
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+.menu-card .encounter-guide {
+  font-size: 11px;
+  line-height: 1.5;
+}

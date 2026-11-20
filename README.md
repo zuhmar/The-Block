@@ -30,7 +30,15 @@ Construction, wood and searched crates save locally under `street-survival:3d-pr
 
 On phones, hold the movement joystick with one thumb and **hold FIRE** with the other. Firing starts on press and repeats while held; drag the firing thumb to aim. A separate touch can also look around. Releasing or canceling the firing touch, pausing, switching tabs, or losing focus stops held fire. Desktop supports holding the mouse button while moving with WASD.
 
-An armed stick-figure enemy guards the southwestern meadow near the practice range. It approaches when it sees you, shows an aiming warning, and locks its aim before firing visible bullets. Keep moving to dodge or use buildings, rocks, crates and your walls as cover. Your pistol deals 25 damage; the enemy has 75 health and its bullets deal 12 damage. A defeated enemy returns after 30 seconds. Being shot down offers a respawn at the starting point with your wood and construction preserved. Combat health resets on reload; this remains a local single-player prototype.
+Three white stick-figure enemies are spread across the wilderness for testing. Their HUD warnings identify who is nearby or aiming. All three use the existing visible-projectile, locked-aim and cover systems. The Lookout and Police carry pistols; SWAT carries an assault rifle.
+
+| Enemy           | Test location (HUD coordinates) | Health | Bullet damage |
+| --------------- | ------------------------------- | ------ | ------------- |
+| Easy · Lookout  | Southwest · 14 W, 33 S          | 75     | 12            |
+| Medium · Police | Northwest · 32 W, 30 N          | 125    | 15            |
+| Hard · SWAT     | Northeast · 32 E, 32 N          | 225    | 18            |
+
+Police and SWAT aim faster, recover between shots sooner and move faster than the Lookout. The initial encounter centers are over 55 meters apart, outside the starting detection range, on clear terrain. Enemies avoid player-built walls when spawning, and each defeated enemy returns to its own area after 30 seconds of active game time. Reopening the game resets these test enemies. Being shot down respawns you at the starting point with your wood and construction preserved. This remains a local single-player prototype. Inspect the three models in **View Player & Weapons**, using the **LOOKOUT**, **POLICE** and **SWAT** buttons.
 
 ## Weapon loadout
 

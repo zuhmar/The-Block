@@ -1,3 +1,4 @@
+import { createNpc, NPC_KINDS } from "./npc-models";
 import { createSurvivor } from "./survivor-models";
 import { createBuildingModel } from "./building-models";
 import {
@@ -10,12 +11,14 @@ import {
   resetDoors,
 } from "./building-layout";
 import { WEAPONS, canShoot, type WeaponKind, type Tool } from "./weapons";
-import { newEnemy, updateEnemy, damageEnemy, segmentHitsPlayer } from "./enemy";
 import {
-  createFirstPersonRig,
-  createStickPlayer,
-  createPistol,
-} from "./actor-models";
+  newEnemy,
+  updateEnemy,
+  damageEnemy,
+  segmentHitsPlayer,
+  ENEMY_TYPES,
+} from "./enemy";
+import { createFirstPersonRig, createWeapon } from "./actor-models";
 import { openActorPreview } from "./actor-preview";
 import * as THREE from "three";
 import {
@@ -51,7 +54,7 @@ $("#app").innerHTML = `
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -574,43 +577,49 @@ body.arms.forEach((arm) => (arm.visible = false));
 scene.add(body.root);
 let muzzle = viewModel.flash;
 const muzzlePosition = new THREE.Vector3();
-const enemy = newEnemy(),
-  enemyActor = createStickPlayer(),
-  enemyWeapon = createPistol();
-scene.add(enemyActor.root);
-enemyActor.arms[1].rotation.x = 1;
-enemyWeapon.root.position.set(0.24, 1.07, -0.44);
-enemyActor.root.add(enemyWeapon.root);
-box(enemyActor.root, 0, 1.29, -0.13, 0.3, 0.12, 0.035, 0xb7483e);
-const enemyFlash = new THREE.Mesh(
-  new THREE.ConeGeometry(0.04, 0.13, 5),
-  new THREE.MeshBasicMaterial({ color: 0xffa45d }),
-);
-enemyFlash.rotation.x = -Math.PI / 2;
-enemyWeapon.muzzle.add(enemyFlash);
-enemyFlash.visible = false;
-const enemyAim = new THREE.Line(
-  new THREE.BufferGeometry(),
-  new THREE.LineBasicMaterial({
-    color: 0xe8866a,
-    transparent: true,
-    opacity: 0.5,
-  }),
-);
-scene.add(enemyAim);
-enemyAim.frustumCulled = false;
-enemyAim.visible = false;
+const enemies = NPC_KINDS.map((kind) => {
+  const enemy = newEnemy(kind, save.pieces),
+    actor = createNpc(kind, (text, w, h) =>
+      sign(text, w, h, "#ffffff", "#202735"),
+    ),
+    weapon = createWeapon(kind === "swat" ? "rifle" : "pistol");
+  actor.arms[1].rotation.x = 1;
+  weapon.root.position.set(0.24, 1.07, -0.44);
+  actor.root.add(weapon.root);
+  scene.add(actor.root);
+  actor.root.position.set(enemy.x, 0, enemy.z);
+  const flash = new THREE.Mesh(
+    new THREE.ConeGeometry(0.04, 0.13, 5),
+    new THREE.MeshBasicMaterial({ color: 0xffa45d }),
+  );
+  flash.rotation.x = -Math.PI / 2;
+  weapon.muzzle.add(flash);
+  flash.visible = false;
+  const aim = new THREE.Line(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({
+      color: 0xe8866a,
+      transparent: true,
+      opacity: 0.5,
+    }),
+  );
+  scene.add(aim);
+  aim.frustumCulled = false;
+  aim.visible = false;
+  return { enemy, actor, weapon, flash, aim, flashTime: 0 };
+});
+const enemy = enemies[0].enemy; // Retain the original easy-enemy read-only diagnostic.
 const bulletGeometry = new THREE.SphereGeometry(0.045, 5, 3),
   bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffc176 });
 const enemyBullets: {
   mesh: THREE.Mesh;
   velocity: THREE.Vector3;
   life: number;
+  damage: number;
 }[] = [];
 const coverRay = new THREE.Raycaster();
 let health = 100,
   damageFlash = 0,
-  enemyFlashTime = 0,
   firePointer: number | undefined;
 function coverDistance(from: THREE.Vector3, to: THREE.Vector3) {
   const direction = to.clone().sub(from),
@@ -632,7 +641,8 @@ function respawn() {
   health = 100;
   player = { ...START };
   vertical = verticalSpeed = 0;
-  Object.assign(enemy, newEnemy());
+  for (const unit of enemies)
+    Object.assign(unit.enemy, newEnemy(unit.enemy.kind, save.pieces));
   clearBullets();
   $("#defeated").hidden = true;
   updateHud();
@@ -640,42 +650,58 @@ function respawn() {
 }
 $("#respawn").addEventListener("click", respawn);
 function enemyFrame(dt: number) {
-  const from = new THREE.Vector3(enemy.x, 1.4, enemy.z),
-    to = new THREE.Vector3(player.x, 1.1 + vertical, player.z);
-  const visible = coverDistance(from, to) >= from.distanceTo(to) - 0.05;
-  const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
-  enemyActor.root.visible = enemy.health > 0;
-  enemyActor.root.position.set(enemy.x, 0, enemy.z);
-  enemyActor.root.rotation.y = enemy.yaw;
-  const moving =
-    enemy.state === "chase" &&
-    Math.hypot(enemy.x - player.x, enemy.z - player.z) > 11;
-  enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
-  enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
-  enemyActor.root.updateMatrixWorld(true);
-  const muzzlePoint = enemyWeapon.muzzle.getWorldPosition(new THREE.Vector3());
-  enemyAim.visible = enemy.state === "aim";
-  if (enemyAim.visible)
-    enemyAim.geometry.setFromPoints([
-      muzzlePoint,
-      new THREE.Vector3(enemy.target.x, 1.05 + vertical, enemy.target.z),
-    ]);
-  if (shot) {
-    const direction = new THREE.Vector3(shot.x, 1.1 + vertical, shot.z)
-      .sub(muzzlePoint)
-      .normalize();
-    const mesh = new THREE.Mesh(bulletGeometry, bulletMaterial);
-    mesh.position.copy(muzzlePoint);
-    scene.add(mesh);
-    enemyBullets.push({
-      mesh,
-      velocity: direction.multiplyScalar(18),
-      life: 2,
-    });
-    enemyFlashTime = 0.07;
+  for (const unit of enemies) {
+    const {
+      enemy,
+      actor: enemyActor,
+      weapon: enemyWeapon,
+      flash: enemyFlash,
+      aim: enemyAim,
+    } = unit;
+    const from = new THREE.Vector3(enemy.x, 1.4, enemy.z),
+      to = new THREE.Vector3(player.x, 1.1 + vertical, player.z);
+    const visible =
+      Math.hypot(enemy.x - player.x, enemy.z - player.z) < 24 &&
+      coverDistance(from, to) >= from.distanceTo(to) - 0.05;
+    const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
+    enemyActor.root.visible =
+      enemy.health > 0 &&
+      Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
+    enemyActor.root.position.set(enemy.x, 0, enemy.z);
+    enemyActor.root.rotation.y = enemy.yaw;
+    const moving =
+      enemy.state === "chase" &&
+      Math.hypot(enemy.x - player.x, enemy.z - player.z) > 11;
+    enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
+    enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
+    enemyActor.root.updateMatrixWorld(true);
+    const muzzlePoint = enemyWeapon.muzzle.getWorldPosition(
+      new THREE.Vector3(),
+    );
+    enemyAim.visible = enemy.state === "aim";
+    if (enemyAim.visible)
+      enemyAim.geometry.setFromPoints([
+        muzzlePoint,
+        new THREE.Vector3(enemy.target.x, 1.05 + vertical, enemy.target.z),
+      ]);
+    if (shot) {
+      const direction = new THREE.Vector3(shot.x, 1.1 + vertical, shot.z)
+        .sub(muzzlePoint)
+        .normalize();
+      const mesh = new THREE.Mesh(bulletGeometry, bulletMaterial);
+      mesh.position.copy(muzzlePoint);
+      scene.add(mesh);
+      enemyBullets.push({
+        mesh,
+        velocity: direction.multiplyScalar(18),
+        life: 2,
+        damage: ENEMY_TYPES[enemy.kind].damage,
+      });
+      unit.flashTime = 0.07;
+    }
+    enemyFlash.visible = unit.flashTime > 0;
+    unit.flashTime = Math.max(0, unit.flashTime - dt);
   }
-  enemyFlash.visible = enemyFlashTime > 0;
-  enemyFlashTime = Math.max(0, enemyFlashTime - dt);
   for (let i = enemyBullets.length - 1; i >= 0; i--) {
     const b = enemyBullets[i],
       a = b.mesh.position.clone(),
@@ -683,7 +709,7 @@ function enemyFrame(dt: number) {
     b.life -= dt;
     const blocked = coverDistance(a, end) <= a.distanceTo(end);
     if (!blocked && segmentHitsPlayer(a, end, player, vertical)) {
-      health = Math.max(0, health - 12);
+      health = Math.max(0, health - b.damage);
       damageFlash = 0.25;
       toast("Enemy hit you · find cover or keep moving");
       b.life = 0;
@@ -698,14 +724,21 @@ function enemyFrame(dt: number) {
   const opacity = String(damageFlash > 0 ? 0.6 : 0);
   if ($("#damage-flash").style.opacity !== opacity)
     $("#damage-flash").style.opacity = opacity;
-  const status =
-    enemy.state === "aim"
-      ? "ENEMY AIMING · MOVE OR FIND COVER"
-      : enemy.health <= 0
-        ? "ENEMY DOWN"
-        : visible && Math.hypot(player.x - enemy.x, player.z - enemy.z) < 23
-          ? "ARMED ENEMY NEARBY"
-          : "";
+  const nearby = enemies
+    .filter(
+      (u) =>
+        u.enemy.health > 0 &&
+        Math.hypot(u.enemy.x - player.x, u.enemy.z - player.z) < 23,
+    )
+    .sort(
+      (a, b) =>
+        Number(b.enemy.state === "aim") - Number(a.enemy.state === "aim"),
+    );
+  const warning = nearby[0]?.enemy;
+  const status = warning
+    ? ENEMY_TYPES[warning.kind].name.toUpperCase() +
+      (warning.state === "aim" ? " AIMING · MOVE OR FIND COVER" : " NEARBY")
+    : "";
   if ($("#enemy-status").textContent !== status)
     $("#enemy-status").textContent = status;
   if (health <= 0) {
@@ -830,7 +863,8 @@ $("#reset").addEventListener("click", () => {
   save = readSave(null);
   health = 100;
   resetDoors();
-  Object.assign(enemy, newEnemy());
+  for (const unit of enemies)
+    Object.assign(unit.enemy, newEnemy(unit.enemy.kind, save.pieces));
   clearBullets();
   rebuildConstruction();
   player = { ...START };
@@ -995,7 +1029,7 @@ function fire() {
         ...construction.children,
         ...lootMeshes,
         ...shotObstacles,
-        ...(enemy.health > 0 ? [enemyActor.root] : []),
+        ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.actor.root),
       ],
       true,
     )
@@ -1007,7 +1041,14 @@ function fire() {
   const start = viewModel.gun.muzzle.getWorldPosition(muzzlePosition);
   tracer.geometry.setFromPoints([start, end]);
   tracer.visible = true;
-  if (hits[0] && enemyActor.root.getObjectById(hits[0].object.id)) {
+  const hitEnemy =
+    hits[0] &&
+    enemies.find(
+      (u) =>
+        u.enemy.health > 0 && u.actor.root.getObjectById(hits[0].object.id),
+    );
+  if (hitEnemy) {
+    const enemy = hitEnemy.enemy;
     damageEnemy(enemy, weapon.damage);
     toast(
       enemy.health <= 0
@@ -1287,7 +1328,10 @@ function frame(now: number) {
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
-    animateDoors(dt, [player, ...(enemy.health > 0 ? [enemy] : [])]);
+    animateDoors(dt, [
+      player,
+      ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
+    ]);
     buildingModels.forEach((model, i) => {
       model.door.rotation.y = doorAngles[i];
       model.door.updateMatrixWorld(true);
@@ -1384,6 +1428,17 @@ function frame(now: number) {
   canvas.dataset.mapSize = String(MAP_SIZE);
   canvas.dataset.shots = String(shotSerial);
   canvas.dataset.health = String(health);
+  canvas.dataset.enemies = JSON.stringify(
+    enemies.map((u) => ({
+      kind: u.enemy.kind,
+      x: u.enemy.x,
+      z: u.enemy.z,
+      health: u.enemy.health,
+      state: u.enemy.state,
+      shots: u.enemy.shots,
+      visible: u.actor.root.visible,
+    })),
+  );
   canvas.dataset.enemy = JSON.stringify({
     x: enemy.x,
     z: enemy.z,

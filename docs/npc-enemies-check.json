@@ -1,0 +1,160 @@
+{
+  "desktopEncounters": {
+    "encounters": [
+      {
+        "kind": "lookout",
+        "initialHealth": 75,
+        "defeated": true,
+        "playerHealth": "100",
+        "others": [
+          {
+            "kind": "lookout",
+            "x": -10.80969641748913,
+            "z": 31.165591068135704,
+            "health": 0,
+            "state": "down",
+            "shots": 1,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "x": -32,
+            "z": -30,
+            "health": 125,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "x": 32,
+            "z": -32,
+            "health": 225,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "kind": "police",
+        "initialHealth": 125,
+        "defeated": true,
+        "playerHealth": "85",
+        "others": [
+          {
+            "kind": "lookout",
+            "x": -13.097290606474022,
+            "z": 27.265537537626606,
+            "health": 75,
+            "state": "patrol",
+            "shots": 1,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "x": -31.890271668516515,
+            "z": -28.905979249862597,
+            "health": 0,
+            "state": "down",
+            "shots": 2,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "x": 32,
+            "z": -32,
+            "health": 225,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "kind": "swat",
+        "initialHealth": 225,
+        "defeated": true,
+        "playerHealth": "100",
+        "others": [
+          {
+            "kind": "lookout",
+            "x": -14,
+            "z": 33,
+            "health": 75,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "x": -32,
+            "z": -30,
+            "health": 125,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "x": 29.62668599058427,
+            "z": -30.960891800620406,
+            "health": 0,
+            "state": "down",
+            "shots": 3,
+            "visible": false
+          }
+        ]
+      }
+    ],
+    "pageErrors": [],
+    "scope": "Actual compiled game, keyboard walking and firing; no teleportation or writable game hooks."
+  },
+  "phoneModels": [
+    {
+      "kind": "lookout",
+      "render": {
+        "engine": "three.js r187",
+        "model": "lookout",
+        "hiddenSlots": "",
+        "drawCalls": "26",
+        "triangles": "11856",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "kind": "police",
+      "render": {
+        "engine": "three.js r187",
+        "model": "police",
+        "hiddenSlots": "",
+        "drawCalls": "29",
+        "triangles": "12158",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "kind": "swat",
+      "render": {
+        "engine": "three.js r187",
+        "model": "swat",
+        "hiddenSlots": "",
+        "drawCalls": "45",
+        "triangles": "21746",
+        "rotation": "3.492"
+      }
+    }
+  ],
+  "phonePageErrors": [],
+  "phoneCombat": {
+    "simultaneousMovementAndHeldFire": true,
+    "dragFireToAim": true,
+    "cancelStopsFireAndMovement": true,
+    "enemyShotPlayer": true,
+    "playerDefeatedEnemy": true,
+    "deathAndRespawnPreserveWood": true,
+    "pageErrors": []
+  },
+  "verification": "TypeScript, lint, model/AI tests, GLB roundtrips, actual keyboard encounters and mobile touch controls; software WebGL, not physical-phone FPS.",
+  "unitTestsPassed": 16
+}

@@ -6,10 +6,10 @@ import {
   resetDoors,
 } from "../../apps/client/src/fps/building-layout";
 resetDoors();
-const minX = -28,
-  maxX = 32,
-  minZ = -24,
-  maxZ = 30,
+const minX = process.env.NPC_NAV ? -42 : -28,
+  maxX = process.env.NPC_NAV ? 42 : 32,
+  minZ = process.env.NPC_NAV ? -42 : -24,
+  maxZ = process.env.NPC_NAV ? 42 : 30,
   step = 0.5,
   width = Math.round((maxX - minX) / step) + 1,
   height = Math.round((maxZ - minZ) / step) + 1,

@@ -1,3 +1,4 @@
+import { createNpc, NPC_KINDS } from "../../apps/client/src/fps/npc-models";
 import { mkdir, writeFile } from "node:fs/promises";
 import * as THREE from "three";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
@@ -52,6 +53,9 @@ for (const [name, root, animations] of [
   ...OUTFITS.map(
     (outfit) =>
       ["survivor-" + outfit, createSurvivor(outfit).root, [walk]] as const,
+  ),
+  ...NPC_KINDS.map(
+    (kind) => ["npc-" + kind, createNpc(kind).root, [walk]] as const,
   ),
   ["street-pistol", pistol.root, []],
   ["street-smg", createWeapon("smg").root, []],

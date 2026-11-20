@@ -45,3 +45,15 @@ The menu’s **View Player & Weapons** button opens a touch-rotatable inspector.
 `tests/actor-models.test.ts` checks geometry bounds/budgets, exported GLB structure, walk animation, equipping, recoil and portrait muzzle visibility. `tests/browser/actor-models.py` checks the actual rendered inspector, touch rotation, reopening, weapon switching, slide recovery and first-person rendering. Browser checks use software WebGL and do not establish physical-phone FPS.
 
 `tests/weapons.test.ts` checks distinctive model proportions, geometry budgets, portrait muzzle placement, recoil, fire cadence, and GLB roundtrips. `tests/browser/weapon-loadout.py` verifies real mobile held firing for each weapon, scope switching, a scoped NPC hit, and simultaneous desktop movement, right-button aim and left-button firing.
+
+## White enemy NPC models
+
+- `npc-lookout.glb`: Easy enemy with olive open vest, gray short-sleeve shirt, backward cap, sling pouch, knee-length shorts, exposed white shins and ivory sneakers.
+- `npc-police.glb`: Medium enemy with navy short-sleeve uniform, protective vest, peaked cap and generic shield badge, radio, utility pouches and dark duty shoes.
+- `npc-swat.glb`: Hard enemy with graphite/slate tactical armor, rounded guards, combat boots and tactical helmet with a transparent face shield revealing the white featureless head.
+
+All three reuse the smooth stick-figure base with glossy white body materials. They retain independently removable headwear/torso/legs/footwear and articulated walk animations. Their source factory is `apps/client/src/fps/npc-models.ts`. Police/SWAT identification lettering is attached in the game and inspector via canvas-texture labels; GLB exports require no external textures. White body material is separate from the SWAT shield material and dark gear.
+
+Run `pnpm assets:models` to regenerate all NPC, survivor and weapon exports. There is one of each enemy in the game; see the root README for territories and test tuning. Nearby NPC rendering is limited to 38 meters, while AI detection remains 23 meters; far enemies do not perform cover raycasts. Render only the selected model in the inspector. NPCs use the same existing combat and projectile systems, with independent health, targeting, firing timers and respawn state.
+
+`tests/npc-enemies.test.ts` verifies separation, clear spawn terrain, avoiding saved walls, independent damage and tier-preserving respawn, increasing difficulty, white body materials, transparent SWAT shield, geometry budgets and all three GLB roundtrips. `tests/browser/npc-encounters.py` walks to and defeats each enemy using real keyboard/mouse controls. `npc-phone.py` inspects each on a phone viewport; the existing mobile combat check verifies simultaneous movement/firing, incoming damage, killing the Lookout and respawning without losing wood.

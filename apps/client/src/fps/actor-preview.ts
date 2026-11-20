@@ -1,3 +1,4 @@
+import { createNpc } from "./npc-models";
 import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
 import { createPistol, createWeapon } from "./actor-models";
@@ -6,6 +7,25 @@ import {
   OUTFIT_NAMES,
   type ClothingSlot,
 } from "./survivor-models";
+function npcLabel(text: string, w: number, h: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#202735";
+  ctx.fillRect(0, 0, 256, 64);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 40px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 128, 34, 240);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(
+    new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({ map: texture }),
+  );
+}
 export function openActorPreview() {
   if (document.querySelector("#actor-preview")) return;
   const overlay = document.createElement("div");
@@ -15,7 +35,7 @@ export function openActorPreview() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
   const canvas = overlay.querySelector<HTMLCanvasElement>("canvas")!;
   let renderer: THREE.WebGLRenderer;
@@ -50,6 +70,9 @@ export function openActorPreview() {
     street: createSurvivor("street"),
     reinforced: createSurvivor("reinforced"),
     armored: createSurvivor("armored"),
+    lookout: createNpc("lookout", npcLabel),
+    police: createNpc("police", npcLabel),
+    swat: createNpc("swat", npcLabel),
   };
   const weapon = createPistol();
   const weapons = {
@@ -109,6 +132,9 @@ export function openActorPreview() {
       "street",
       "reinforced",
       "armored",
+      "lookout",
+      "police",
+      "swat",
       "pistol",
       "smg",
       "rifle",
@@ -118,7 +144,11 @@ export function openActorPreview() {
         .querySelector("#show-" + key)!
         .classList.toggle("selected", key === kind);
     overlay.querySelector("#actor-description")!.textContent = isPlayer
-      ? OUTFIT_NAMES[characters[kind as keyof typeof characters].outfit]
+      ? characters[kind as keyof typeof characters].root.userData.description ||
+        OUTFIT_NAMES[
+          characters[kind as keyof typeof characters]
+            .outfit as keyof typeof OUTFIT_NAMES
+        ]
       : WEAPONS[kind as WeaponKind].name +
         " · Original 3D model · Drag to inspect";
     if (isPlayer) {
@@ -162,6 +192,9 @@ export function openActorPreview() {
     "street",
     "reinforced",
     "armored",
+    "lookout",
+    "police",
+    "swat",
     "smg",
     "rifle",
     "sniper",
@@ -185,7 +218,10 @@ export function openActorPreview() {
       if (o instanceof THREE.Mesh) o.geometry.dispose();
     });
     (base.material as THREE.Material).dispose();
-    for (const mat of previewMaterials.values()) mat.dispose();
+    for (const mat of previewMaterials.values()) {
+      if (mat instanceof THREE.MeshBasicMaterial) mat.map?.dispose();
+      mat.dispose();
+    }
     renderer.dispose();
     renderer.forceContextLoss();
     overlay.remove();
