@@ -812,3 +812,34 @@ h1 em {
     gap: 5px;
   }
 }
+
+/* Keep outfit inspection reachable on short phone screens. */
+#actor-preview .actor-card {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+}
+#clothing-slots {
+  font-size: 11px;
+  color: #e1d5b2;
+  gap: 12px;
+}
+#clothing-slots label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+}
+#clothing-slots input {
+  accent-color: #dcb66e;
+}
+#actor-preview .actor-options:not(#clothing-slots) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+#actor-preview .actor-options button {
+  min-width: 0;
+  padding: 10px 3px;
+  font-size: 9px;
+  letter-spacing: 0.3px;
+  overflow-wrap: anywhere;
+}

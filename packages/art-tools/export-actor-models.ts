@@ -6,6 +6,10 @@ import {
   createPistol,
   createWeapon,
 } from "../../apps/client/src/fps/actor-models";
+import {
+  createSurvivor,
+  OUTFITS,
+} from "../../apps/client/src/fps/survivor-models";
 // The exporter uses FileReader only to package geometry buffers; no browser or textures are needed.
 class BufferReader {
   result: ArrayBuffer | null = null;
@@ -45,6 +49,10 @@ const walk = new THREE.AnimationClip("walk", 1, tracks);
 await mkdir("art/models", { recursive: true });
 for (const [name, root, animations] of [
   ["black-stick-player", player.root, [walk]],
+  ...OUTFITS.map(
+    (outfit) =>
+      ["survivor-" + outfit, createSurvivor(outfit).root, [walk]] as const,
+  ),
   ["street-pistol", pistol.root, []],
   ["street-smg", createWeapon("smg").root, []],
   ["street-assault-rifle", createWeapon("rifle").root, []],

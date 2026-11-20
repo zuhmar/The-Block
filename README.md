@@ -49,6 +49,8 @@ Hold **FIRE** or the left mouse button for repeated shots. Tap **AIM** on a phon
 
 The black stick-figure character now has rounded 3D limbs, a visible first-person lower body and a detailed gripping pose. The pistol has a separate recoiling slide and an animated muzzle socket. Open **View Player & Weapons** in the pause/start menu to rotate and inspect every model.
 
+The model viewer also includes the approved bare survivor and three clothing sets: burgundy Street, black military Reinforced with an open-face helmet, and amber Armored with a fully enclosed helmet. Toggle headwear, torso, legs and footwear independently to inspect the underlying black base. These are model previews; gameplay armor stats and equipping are not implemented.
+
 Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate the player/weapons or `pnpm assets:buildings` for the five furnished buildings.
 
 ## Performance and verification

@@ -1,0 +1,104 @@
+{
+  "outfits": [
+    {
+      "phone": false,
+      "outfit": "player",
+      "render": {
+        "engine": "three.js r187",
+        "model": "player",
+        "hiddenSlots": "",
+        "drawCalls": "11",
+        "triangles": "2704",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": false,
+      "outfit": "street",
+      "render": {
+        "engine": "three.js r187",
+        "model": "street",
+        "hiddenSlots": "",
+        "drawCalls": "29",
+        "triangles": "7094",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": false,
+      "outfit": "reinforced",
+      "render": {
+        "engine": "three.js r187",
+        "model": "reinforced",
+        "hiddenSlots": "",
+        "drawCalls": "32",
+        "triangles": "8310",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": false,
+      "outfit": "armored",
+      "render": {
+        "engine": "three.js r187",
+        "model": "armored",
+        "hiddenSlots": "",
+        "drawCalls": "36",
+        "triangles": "10408",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": true,
+      "outfit": "player",
+      "render": {
+        "engine": "three.js r187",
+        "model": "player",
+        "hiddenSlots": "",
+        "drawCalls": "11",
+        "triangles": "2704",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": true,
+      "outfit": "street",
+      "render": {
+        "engine": "three.js r187",
+        "model": "street",
+        "hiddenSlots": "",
+        "drawCalls": "29",
+        "triangles": "7094",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": true,
+      "outfit": "reinforced",
+      "render": {
+        "engine": "three.js r187",
+        "model": "reinforced",
+        "hiddenSlots": "",
+        "drawCalls": "32",
+        "triangles": "8310",
+        "rotation": "3.492"
+      }
+    },
+    {
+      "phone": true,
+      "outfit": "armored",
+      "render": {
+        "engine": "three.js r187",
+        "model": "armored",
+        "hiddenSlots": "",
+        "drawCalls": "36",
+        "triangles": "10408",
+        "rotation": "3.492"
+      }
+    }
+  ],
+  "independentSlots": true,
+  "reopenAndClose": true,
+  "pageErrors": [],
+  "scope": "Compiled production bundle in software-WebGL Chromium, desktop and phone viewport; not physical-device FPS."
+}

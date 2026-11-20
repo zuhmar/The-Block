@@ -1,6 +1,11 @@
 import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
-import { createStickPlayer, createPistol, createWeapon } from "./actor-models";
+import { createPistol, createWeapon } from "./actor-models";
+import {
+  createSurvivor,
+  OUTFIT_NAMES,
+  type ClothingSlot,
+} from "./survivor-models";
 export function openActorPreview() {
   if (document.querySelector("#actor-preview")) return;
   const overlay = document.createElement("div");
@@ -10,7 +15,7 @@ export function openActorPreview() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">PLAYER</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
   const canvas = overlay.querySelector<HTMLCanvasElement>("canvas")!;
   let renderer: THREE.WebGLRenderer;
@@ -40,21 +45,27 @@ export function openActorPreview() {
     0.01,
     20,
   );
-  const character = createStickPlayer(),
-    carried = createPistol(),
-    weapon = createPistol();
+  const characters = {
+    player: createSurvivor("base"),
+    street: createSurvivor("street"),
+    reinforced: createSurvivor("reinforced"),
+    armored: createSurvivor("armored"),
+  };
+  const weapon = createPistol();
   const weapons = {
     pistol: weapon,
     smg: createWeapon("smg"),
     rifle: createWeapon("rifle"),
     sniper: createWeapon("sniper"),
   };
-  character.handSocket.add(carried.root);
-  scene.add(character.root, ...Object.values(weapons).map((w) => w.root));
+  scene.add(
+    ...Object.values(characters).map((c) => c.root),
+    ...Object.values(weapons).map((w) => w.root),
+  );
   // Preview materials have their own lifecycle; closing the viewer cannot dispose live-game materials.
   const previewMaterials = new Map<THREE.Material, THREE.Material>();
   for (const root of [
-    character.root,
+    ...Object.values(characters).map((c) => c.root),
     ...Object.values(weapons).map((w) => w.root),
   ])
     root.traverse((o) => {
@@ -75,25 +86,48 @@ export function openActorPreview() {
     lastX = 0,
     closed = false,
     dirty = true;
-  function select(kind: "player" | WeaponKind) {
+  function select(kind: keyof typeof characters | WeaponKind) {
     mode = kind;
-    const isPlayer = kind === "player";
-    character.root.visible = base.visible = isPlayer;
+    const isPlayer = kind in characters;
+    base.visible = isPlayer;
+    for (const [key, c] of Object.entries(characters))
+      c.root.visible = key === kind;
+    overlay.querySelector<HTMLElement>("#clothing-slots")!.hidden =
+      !isPlayer || kind === "player";
+    for (const input of overlay.querySelectorAll<HTMLInputElement>(
+      "[data-slot]",
+    )) {
+      input.checked = true;
+      for (const c of Object.values(characters))
+        c.setSlot(input.dataset.slot as ClothingSlot, true);
+    }
     for (const [key, w] of Object.entries(weapons))
       w.root.visible = key === kind;
-    yaw = isPlayer ? 0.35 : -0.7;
-    for (const key of ["player", "pistol", "smg", "rifle", "sniper"])
+    yaw = isPlayer ? Math.PI + 0.35 : -0.7;
+    for (const key of [
+      "player",
+      "street",
+      "reinforced",
+      "armored",
+      "pistol",
+      "smg",
+      "rifle",
+      "sniper",
+    ])
       overlay
         .querySelector("#show-" + key)!
         .classList.toggle("selected", key === kind);
     overlay.querySelector("#actor-description")!.textContent = isPlayer
-      ? "Black stick figure · Rounded limbs · Low-ready pistol"
-      : WEAPONS[kind].name + " · Original 3D model · Drag to inspect";
+      ? OUTFIT_NAMES[characters[kind as keyof typeof characters].outfit]
+      : WEAPONS[kind as WeaponKind].name +
+        " · Original 3D model · Drag to inspect";
     if (isPlayer) {
       camera.position.set(0, 1.05, 3.4);
       camera.lookAt(0, 0.9, 0);
     } else {
-      const bounds = new THREE.Box3().setFromObject(weapons[kind].root),
+      const bounds = new THREE.Box3().setFromObject(
+          weapons[kind as WeaponKind].root,
+        ),
         center = bounds.getCenter(new THREE.Vector3()),
         size = bounds.getSize(new THREE.Vector3());
       const scale = Math.max(...size.toArray()) / 0.23;
@@ -124,10 +158,23 @@ export function openActorPreview() {
   overlay
     .querySelector("#show-pistol")!
     .addEventListener("click", () => select("pistol"));
-  for (const kind of ["smg", "rifle", "sniper"] as WeaponKind[])
+  for (const kind of [
+    "street",
+    "reinforced",
+    "armored",
+    "smg",
+    "rifle",
+    "sniper",
+  ] as const)
     overlay
       .querySelector("#show-" + kind)!
       .addEventListener("click", () => select(kind));
+  for (const input of overlay.querySelectorAll<HTMLInputElement>("[data-slot]"))
+    input.addEventListener("change", () => {
+      for (const c of Object.values(characters))
+        c.setSlot(input.dataset.slot as ClothingSlot, input.checked);
+      dirty = true;
+    });
   const previous = document.activeElement as HTMLElement | null;
   function close() {
     if (closed) return;
@@ -151,11 +198,11 @@ export function openActorPreview() {
     }
     if (e.key === "Tab") {
       const buttons = [
-        ...overlay.querySelectorAll<HTMLButtonElement>("button"),
-      ];
-      const index = buttons.indexOf(
-          document.activeElement as HTMLButtonElement,
+        ...overlay.querySelectorAll<HTMLElement>(
+          "button, input:not([disabled])",
         ),
+      ];
+      const index = buttons.indexOf(document.activeElement as HTMLElement),
         next =
           (index + (e.shiftKey ? -1 : 1) + buttons.length) % buttons.length;
       buttons[next].focus();
@@ -179,10 +226,16 @@ export function openActorPreview() {
     requestAnimationFrame(draw);
     if (!dirty) return;
     dirty = false;
-    character.root.rotation.y = yaw;
+    for (const c of Object.values(characters)) c.root.rotation.y = yaw;
     for (const w of Object.values(weapons)) w.root.rotation.y = yaw;
     renderer.render(scene, camera);
     canvas.dataset.model = mode;
+    canvas.dataset.hiddenSlots = [
+      ...overlay.querySelectorAll<HTMLInputElement>("[data-slot]"),
+    ]
+      .filter((i) => !i.checked)
+      .map((i) => i.dataset.slot)
+      .join(",");
     canvas.dataset.drawCalls = String(renderer.info.render.calls);
     canvas.dataset.triangles = String(renderer.info.render.triangles);
     canvas.dataset.rotation = yaw.toFixed(3);

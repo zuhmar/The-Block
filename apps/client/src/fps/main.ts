@@ -1,3 +1,4 @@
+import { createSurvivor } from "./survivor-models";
 import { createBuildingModel } from "./building-models";
 import {
   doorAngles,
@@ -567,7 +568,7 @@ const weaponRigs = new Map<WeaponKind, ReturnType<typeof createFirstPersonRig>>(
 let aiming = false;
 viewModel.setAspect(camera.aspect);
 camera.add(viewModel.root);
-const body = createStickPlayer();
+const body = createSurvivor("base");
 body.head.visible = false;
 body.arms.forEach((arm) => (arm.visible = false));
 scene.add(body.root);
