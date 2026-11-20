@@ -1,0 +1,21 @@
+{
+  "source": "Blender 4.3",
+  "triangles": 37504,
+  "lodTriangles": 16873,
+  "bones": 28,
+  "slots": [
+    "StreetV2_base",
+    "StreetV2_footwear",
+    "StreetV2_headwear",
+    "StreetV2_legs",
+    "StreetV2_torso"
+  ],
+  "materials": 10,
+  "aoResolution": 512,
+  "clips": [
+    "walk",
+    "idle",
+    "grip"
+  ],
+  "glbBytes": 1957920
+}

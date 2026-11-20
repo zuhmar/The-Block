@@ -1,0 +1,144 @@
+{
+  "model": {
+    "source": "Blender 4.3",
+    "triangles": 37504,
+    "lodTriangles": 16873,
+    "bones": 28,
+    "slots": [
+      "StreetV2_base",
+      "StreetV2_footwear",
+      "StreetV2_headwear",
+      "StreetV2_legs",
+      "StreetV2_torso"
+    ],
+    "materials": 10,
+    "aoResolution": 512,
+    "clips": [
+      "walk",
+      "idle",
+      "grip"
+    ],
+    "glbBytes": 1957920
+  },
+  "viewer": {
+    "checks": [
+      {
+        "phone": false,
+        "render": {
+          "engine": "three.js r187",
+          "model": "street-v2",
+          "reviewLoaded": "true",
+          "motion": "still",
+          "handPose": "0.0672",
+          "bonePose": "-0.0305",
+          "hiddenSlots": "",
+          "drawCalls": "17",
+          "triangles": "37632",
+          "rotation": "3.492"
+        },
+        "lazyModelLoading": true,
+        "walkDeformsKnee": true,
+        "gripDeformsFingers": true,
+        "independentSlots": true,
+        "rotation": true,
+        "closeDuringLoadAndReopen": true
+      },
+      {
+        "phone": true,
+        "render": {
+          "engine": "three.js r187",
+          "model": "street-v2",
+          "reviewLoaded": "true",
+          "motion": "still",
+          "handPose": "0.0672",
+          "bonePose": "-0.0305",
+          "hiddenSlots": "",
+          "drawCalls": "17",
+          "triangles": "37632",
+          "rotation": "3.492"
+        },
+        "lazyModelLoading": true,
+        "walkDeformsKnee": true,
+        "gripDeformsFingers": true,
+        "independentSlots": true,
+        "rotation": true,
+        "closeDuringLoadAndReopen": true
+      }
+    ],
+    "pageErrors": [],
+    "scope": "Actual GLB and baked texture in compiled production viewer, desktop and phone viewport; software WebGL, not physical-phone FPS."
+  },
+  "delayedClose": {
+    "closeWithPendingRequest": true,
+    "lateLoadDoesNotReopenViewer": true,
+    "reopenWorks": true,
+    "pageErrors": []
+  },
+  "existingActorRegression": {
+    "playerPreview": {
+      "engine": "three.js r187",
+      "model": "player",
+      "reviewLoaded": "false",
+      "motion": "still",
+      "handPose": "",
+      "bonePose": "",
+      "hiddenSlots": "",
+      "drawCalls": "13",
+      "triangles": "5976",
+      "rotation": "3.492"
+    },
+    "pistolPreview": {
+      "engine": "three.js r187",
+      "model": "pistol",
+      "reviewLoaded": "false",
+      "motion": "still",
+      "handPose": "",
+      "bonePose": "",
+      "hiddenSlots": "",
+      "drawCalls": "8",
+      "triangles": "3012",
+      "rotation": "-0.700"
+    },
+    "game": {
+      "engine": "three.js r187",
+      "position": "0.000,14.000",
+      "yaw": "0.000",
+      "pitch": "-1.130",
+      "drawCalls": "34",
+      "triangles": "14452",
+      "mapSize": "128",
+      "shots": "1",
+      "health": "100",
+      "enemies": "[{\"kind\":\"lookout\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+      "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+      "firing": "false",
+      "inside": "-1",
+      "visibleInteriors": "[]",
+      "doors": "[0,0,0,0,0]",
+      "lastHitDoor": "-1",
+      "nearestDoor": "-1",
+      "equipped": "hands",
+      "aiming": "false",
+      "fov": "72",
+      "actorModels": "rounded-stick-player,detailed-pistol",
+      "recoil": "0.0000",
+      "movement": "0.00,0.00",
+      "recoilRendered": "1"
+    },
+    "touchPreviewRotation": true,
+    "previewCloseAndReopen": true,
+    "equippedPistol": true,
+    "slideRecoilAndRecovery": true,
+    "pageErrors": [],
+    "scope": "Local Chromium software WebGL; appearance and functional checks, not physical-phone FPS."
+  },
+  "unitTestsPassed": 17,
+  "checks": [
+    "TypeScript",
+    "ESLint",
+    "Production build",
+    "Skin weights / bone hierarchy / embedded texture",
+    "Lower-detail geometry budget",
+    "GPU resource disposal and ImageBitmap cleanup"
+  ]
+}
