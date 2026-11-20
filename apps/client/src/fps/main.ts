@@ -1,3 +1,13 @@
+import { createBuildingModel } from "./building-models";
+import {
+  doorAngles,
+  doorTargets,
+  doorPosition,
+  animateDoors,
+  toggleDoor,
+  containingBuilding,
+  resetDoors,
+} from "./building-layout";
 import { WEAPONS, canShoot, type WeaponKind, type Tool } from "./weapons";
 import { newEnemy, updateEnemy, damageEnemy, segmentHitsPlayer } from "./enemy";
 import {
@@ -268,67 +278,12 @@ for (const z of [3.8, 10.2]) {
   for (let x = 41; x <= 53; x += 2)
     box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
 }
-for (const b of BUILDINGS) {
-  const group = new THREE.Group();
-  group.position.set(b.x, 0, b.z);
-  scene.add(group);
-  box(group, 0, 0.08, 0, b.width + 0.9, 0.16, b.depth + 0.9, 0xb9b59f);
-  box(group, 0, b.height / 2, 0, b.width, b.height, b.depth, b.color);
-  box(group, 0, 0.32, 0, b.width + 0.12, 0.44, b.depth + 0.12, 0x76817b);
-  box(
-    group,
-    0,
-    b.height + 0.08,
-    0,
-    b.width + 0.55,
-    0.22,
-    b.depth + 0.55,
-    0x4a5c5c,
-  );
-  const front = b.z < 0 ? 1 : -1;
-  for (const x of [-b.width * 0.3, b.width * 0.3]) {
-    box(group, x, 2.1, front * (b.depth / 2 + 0.018), 2, 1.6, 0.08, 0x405d65);
-    box(
-      group,
-      x,
-      2.1,
-      front * (b.depth / 2 + 0.07),
-      0.075,
-      1.6,
-      0.04,
-      0xe5ddc0,
-    );
-    box(group, x, 2.1, front * (b.depth / 2 + 0.07), 2, 0.075, 0.04, 0xe5ddc0);
-  }
-  box(group, 0, 1.2, front * (b.depth / 2 + 0.025), 1.35, 2.4, 0.1, 0x58655d);
-  box(
-    group,
-    0.45,
-    1.2,
-    front * (b.depth / 2 + 0.09),
-    0.08,
-    0.2,
-    0.08,
-    0xe6c982,
-  );
-  const label = sign(b.name, Math.min(b.width - 1, 7), 0.8);
-  label.position.set(0, b.height - 0.65, front * (b.depth / 2 + 0.09));
-  if (front < 0) label.rotation.y = Math.PI;
-  group.add(label);
-  box(group, 0, b.height + 0.45, -b.depth * 0.2, 1.3, 0.7, 1, 0x87928c);
-  if (b.type === "store") {
-    box(
-      group,
-      0,
-      2.9,
-      front * (b.depth / 2 + 0.7),
-      b.width * 0.8,
-      0.15,
-      1.5,
-      0xa76547,
-    );
-  }
-}
+const buildingModels = BUILDINGS.map((b, index) => {
+  const model = createBuildingModel(index, boxGeo, sign);
+  model.root.position.set(b.x, 0, b.z);
+  scene.add(model.root);
+  return model;
+});
 // Soft painted contact shadows, batched with all tree trunks and crowns.
 const contactCanvas = document.createElement("canvas");
 contactCanvas.width = contactCanvas.height = 64;
@@ -467,7 +422,12 @@ heading.position.set(0, 3.2, 26);
 heading.rotation.y = Math.PI;
 scene.add(heading);
 for (const x of [-3, 3]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
-const shotObstacles: THREE.Object3D[] = [trunks, crowns, rocks];
+const shotObstacles: THREE.Object3D[] = [
+  trunks,
+  crowns,
+  rocks,
+  ...buildingModels.map((m) => m.root),
+];
 // A simple target range supports testing the visible pistol and shot feedback.
 const targets: THREE.Object3D[] = [];
 for (const x of [-7, -3, 1]) {
@@ -481,15 +441,25 @@ for (const x of [-7, -3, 1]) {
 }
 // Batch static box geometry by material to keep phone draw calls low.
 scene.updateMatrixWorld(true);
-const batches = new Map<THREE.Material, THREE.Mesh[]>();
+const batches = new Map<
+  string,
+  { mat: THREE.Material; meshes: THREE.Mesh[]; building?: number }
+>();
+const interiorBatches: { building: number; mesh: THREE.InstancedMesh }[] = [];
 scene.traverse((o) => {
-  if (o instanceof THREE.Mesh && o.geometry === boxGeo) {
-    const m = o.material as THREE.Material;
-    if (!batches.has(m)) batches.set(m, []);
-    batches.get(m)!.push(o);
-  }
+  if (
+    !(o instanceof THREE.Mesh) ||
+    o.geometry !== boxGeo ||
+    o.userData.dynamicDoor
+  )
+    return;
+  const mat = o.material as THREE.Material,
+    building = o.userData.interiorBuilding as number | undefined,
+    key = mat.uuid + ":" + (building ?? "world");
+  if (!batches.has(key)) batches.set(key, { mat, meshes: [], building });
+  batches.get(key)!.meshes.push(o);
 });
-for (const [mat, meshes] of batches) {
+for (const { mat, meshes, building } of batches.values()) {
   const batch = new THREE.InstancedMesh(boxGeo, mat, meshes.length);
   meshes.forEach((mesh, i) => {
     batch.setMatrixAt(i, mesh.matrixWorld);
@@ -497,6 +467,10 @@ for (const [mat, meshes] of batches) {
   });
   scene.add(batch);
   shotObstacles.push(batch);
+  if (building !== undefined) {
+    batch.computeBoundingBox();
+    interiorBatches.push({ building, mesh: batch });
+  }
 }
 const construction = new THREE.Group();
 scene.add(construction);
@@ -760,6 +734,7 @@ let needsRender = true;
 let recoilRemaining = 0,
   flashRemaining = 0,
   shotSerial = 0;
+let lastHitDoor = -1;
 let lastShot = 0,
   clock = 0,
   lastHud = 0,
@@ -853,6 +828,7 @@ $("#reset").addEventListener("click", () => {
     return;
   save = readSave(null);
   health = 100;
+  resetDoors();
   Object.assign(enemy, newEnemy());
   clearBullets();
   rebuildConstruction();
@@ -945,8 +921,44 @@ function nearestLoot() {
   });
   return index;
 }
+function nearestDoor() {
+  let nearest = -1,
+    distance = 2.4;
+  for (let i = 0; i < BUILDINGS.length; i++) {
+    const p = doorPosition(i),
+      d = Math.hypot(player.x - p.x, player.z - p.z);
+    if (d >= distance) continue;
+    const target = new THREE.Vector3(p.x, 1.3, p.z),
+      from = new THREE.Vector3(player.x, 1.65 + vertical, player.z);
+    coverRay.set(from, target.clone().sub(from).normalize());
+    coverRay.far = from.distanceTo(target) + 0.15;
+    const hit = coverRay.intersectObjects(
+      [...shotObstacles, ...construction.children],
+      true,
+    )[0];
+    if (
+      hit &&
+      hit.object.userData.doorIndex !== i &&
+      hit.distance < from.distanceTo(target) - 0.1
+    )
+      continue;
+    nearest = i;
+    distance = d;
+  }
+  return nearest;
+}
 function interact() {
   if (!playing) return;
+  const door = nearestDoor();
+  if (door >= 0) {
+    toggleDoor(door);
+    updateHud();
+    return toast(
+      (doorTargets[door] ? "Opening " : "Closing ") +
+        BUILDINGS[door].name +
+        " door",
+    );
+  }
   const i = nearestLoot();
   if (i < 0) return toast("Move closer to a marked supply crate");
   if (save.opened.includes(i))
@@ -987,6 +999,7 @@ function fire() {
       true,
     )
     .filter((hit) => hit.distance <= weapon.range);
+  lastHitDoor = hits[0]?.object.userData.doorIndex ?? -1;
   const end =
     hits[0]?.point || raycaster.ray.at(weapon.range, new THREE.Vector3());
   viewModel.root.updateMatrixWorld(true);
@@ -1002,7 +1015,13 @@ function fire() {
     );
   } else if (hits[0]?.object.userData.target) toast("Target hit");
 }
-$("#interact").addEventListener("click", interact);
+$("#interact").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  interact();
+});
+$("#interact").addEventListener("click", (e) => {
+  if (e.detail === 0) interact();
+});
 $("#jump").addEventListener("click", jump);
 const fireButton = $("#fire");
 let fireLook = { x: 0, y: 0 };
@@ -1191,34 +1210,43 @@ function updateHud() {
   $("#health").textContent = "HEALTH " + health;
   $("#wood").textContent = `WOOD ${save.wood.toLocaleString()}`;
   $("#budget").textContent = `${save.pieces.length} / ${BUILD_LIMIT}`;
-  $("#zone").textContent = inTown(player)
-    ? "THE BLOCK"
-    : roadDistance(player) < 5
-      ? "OUTBOUND ROAD"
-      : "OPEN MEADOW";
+  const inside = containingBuilding(player);
+  $("#zone").textContent =
+    inside >= 0
+      ? BUILDINGS[inside].name
+      : inTown(player)
+        ? "THE BLOCK"
+        : roadDistance(player) < 5
+          ? "OUTBOUND ROAD"
+          : "OPEN MEADOW";
   $("#coordinates").textContent =
     `${Math.round(player.x)} E · ${Math.round(player.z)} S`;
   $("#fps").textContent = `${fps} FPS`;
   for (const b of document.querySelectorAll<HTMLButtonElement>("[data-piece]"))
     b.classList.toggle("selected", b.dataset.piece === selected);
   const near = nearestLoot(),
+    door = nearestDoor(),
     p = aimedPiece();
   $("#hint-title").textContent = build
     ? "BUILD MODE"
-    : near >= 0
-      ? LOOT[near].name
-      : p
-        ? "YOUR " + p.kind.toUpperCase()
-        : "";
+    : door >= 0
+      ? BUILDINGS[door].name + " DOOR"
+      : near >= 0
+        ? LOOT[near].name
+        : p
+          ? "YOUR " + p.kind.toUpperCase()
+          : "";
   $("#hint-text").textContent = build
     ? "Aim down · 1–4 select · R rotate · Click / PLACE to build"
-    : near >= 0
-      ? save.opened.includes(near)
-        ? "SEARCHED"
-        : "E / USE · Search supplies"
-      : p
-        ? "Build mode → Dismantle to remove"
-        : "";
+    : door >= 0
+      ? "E / USE · " + (doorTargets[door] ? "Close door" : "Open door")
+      : near >= 0
+        ? save.opened.includes(near)
+          ? "SEARCHED"
+          : "E / USE · Search supplies"
+        : p
+          ? "Build mode → Dismantle to remove"
+          : "";
 }
 function updatePreview() {
   if (!build || !playing) {
@@ -1248,6 +1276,8 @@ function updatePreview() {
     `${selected.toUpperCase()} · ${COST[selected]} wood · Ready to place`;
   $<HTMLButtonElement>("#place").disabled = !!reason;
 }
+const interiorFrustum = new THREE.Frustum(),
+  interiorView = new THREE.Matrix4();
 function frame(now: number) {
   requestAnimationFrame(frame);
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
@@ -1256,6 +1286,11 @@ function frame(now: number) {
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
+    animateDoors(dt, [player, ...(enemy.health > 0 ? [enemy] : [])]);
+    buildingModels.forEach((model, i) => {
+      model.door.rotation.y = doorAngles[i];
+      model.door.updateMatrixWorld(true);
+    });
     let forward =
       Number(keys.has("KeyW") || keys.has("ArrowUp")) -
       Number(keys.has("KeyS") || keys.has("ArrowDown")) -
@@ -1309,6 +1344,19 @@ function frame(now: number) {
     camera.position.set(player.x, 1.65 + vertical, player.z);
     camera.rotation.set(pitch, yaw, 0);
   }
+  camera.updateMatrixWorld(true);
+  interiorView.multiplyMatrices(
+    camera.projectionMatrix,
+    camera.matrixWorldInverse,
+  );
+  interiorFrustum.setFromProjectionMatrix(interiorView);
+  for (const entry of interiorBatches) {
+    const b = BUILDINGS[entry.building];
+    entry.mesh.visible =
+      Math.abs(player.x - b.x) < b.width / 2 + 8 &&
+      Math.abs(player.z - b.z) < b.depth / 2 + 8 &&
+      interiorFrustum.intersectsBox(entry.mesh.boundingBox!);
+  }
   muzzle.visible = tracer.visible = flashRemaining > 0;
   if (playing) flashRemaining = Math.max(0, flashRemaining - dt);
   if (now - fpsAt >= 1000) {
@@ -1343,6 +1391,17 @@ function frame(now: number) {
     shots: enemy.shots,
   });
   canvas.dataset.firing = String(firePointer !== undefined);
+  canvas.dataset.inside = String(containingBuilding(player));
+  canvas.dataset.visibleInteriors = JSON.stringify([
+    ...new Set(
+      interiorBatches
+        .filter((entry) => entry.mesh.visible)
+        .map((entry) => entry.building),
+    ),
+  ]);
+  canvas.dataset.doors = JSON.stringify(doorAngles);
+  canvas.dataset.lastHitDoor = String(lastHitDoor);
+  canvas.dataset.nearestDoor = String(nearestDoor());
   canvas.dataset.equipped = tool;
   canvas.dataset.aiming = String(aiming);
   canvas.dataset.fov = String(camera.fov);

@@ -18,7 +18,8 @@
     "format:check": "prettier --check .",
     "map:preview": "tsx packages/art-tools/render-official-map.ts",
     "dev:legacy": "pnpm assets:generate && concurrently -k -n server,client 'pnpm --filter @street/server dev' 'pnpm --filter @street/client dev'",
-    "assets:models": "tsx packages/art-tools/export-actor-models.ts"
+    "assets:models": "tsx packages/art-tools/export-actor-models.ts",
+    "assets:buildings": "tsx packages/art-tools/export-building-models.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -15,9 +15,10 @@ import {
   riverX,
   type Piece,
 } from "../apps/client/src/fps/world.js";
-test("small 3D world has a clear spawn, blocked buildings, trees and water, and a passable bridge", () => {
+test("small 3D world has a clear spawn, blocked building walls, trees and water, and a passable bridge", () => {
   assert(!blocked(START, []));
-  for (const b of BUILDINGS) assert(blocked(b, []));
+  for (const b of BUILDINGS)
+    assert(blocked({ x: b.x + b.width / 2, z: b.z }, []));
   for (const t of TREES) assert(blocked(t, []));
   assert(blockedTerrain({ x: riverX(30), z: 30 }));
   assert(!blockedTerrain({ x: 47, z: 7 }));

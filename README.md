@@ -22,7 +22,7 @@ Open http://localhost:5173. No database, account, API key, or external art downl
 - B / Build opens floor, wall, open doorway and storage choices. Aim down at nearby ground and click / Place. R / Rotate changes the edge direction. Floors snap to a two-meter grid; walls and doorways snap along floor edges. Build in open meadows, keeping town, roads, water and trees clear. No roofs or designated plots are needed.
 - Aim at your construction and use **Dismantle** to return its wood. Attached walls and storage must be removed before their floor. The budget is **100 pieces**.
 
-Buildings, trees, water and constructed walls block walking. The eastern road crosses a bridge. Scenery includes a compact five-building settlement, sidewalks, street furniture, sparse woodland, river and rocky outer boundary. Buildings are exterior scenery in this first prototype.
+Buildings, trees, water and constructed walls block walking. The eastern road crosses a bridge. Scenery includes a compact five-building settlement, sidewalks, street furniture, sparse woodland, river and rocky outer boundary. All five buildings are enterable and furnished. Approach a door and press **E** or tap **USE** to open or close it from either side. Doors stop their swing if a player or NPC is in the way. Walls, furniture and door panels have collision; closing a door also blocks shots. The HUD shows the building name while inside. See [building models and interiors](art/models/buildings/README.md) for details and reusable GLB exports.
 
 Construction, wood and searched crates save locally under `street-survival:3d-prototype:v1`. The menu’s reset clears only that local prototype. Your location resets to the town spawn on reload. This is not yet online multiplayer, shared-world persistence, inventory, or survival simulation; those legacy systems are not silently represented as working 3D features.
 
@@ -49,7 +49,7 @@ Hold **FIRE** or the left mouse button for repeated shots. Tap **AIM** on a phon
 
 The black stick-figure character now has rounded 3D limbs, a visible first-person lower body and a detailed gripping pose. The pistol has a separate recoiling slide and an animated muzzle socket. Open **View Player & Weapons** in the pause/start menu to rotate and inspect every model.
 
-Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate them from the game's model factories.
+Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate the player/weapons or `pnpm assets:buildings` for the five furnished buildings.
 
 ## Performance and verification
 

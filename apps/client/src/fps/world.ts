@@ -1,3 +1,4 @@
+import { buildingBlocked } from "./building-layout";
 export type Point = { x: number; z: number };
 export type PieceKind = "floor" | "wall" | "doorway" | "storage";
 export type Piece = Point & { id: string; kind: PieceKind; rotation: number };
@@ -19,58 +20,8 @@ export const ROAD = [
   { x: 28, z: 7 },
   { x: 61, z: 7 },
 ];
-export const BUILDINGS = [
-  {
-    x: -13,
-    z: -10,
-    width: 10,
-    depth: 10,
-    height: 4.4,
-    color: 0xe6cba4,
-    name: "GENERAL STORE",
-    type: "store",
-  },
-  {
-    x: 3,
-    z: -12,
-    width: 12,
-    depth: 12,
-    height: 5.2,
-    color: 0xc4d5c4,
-    name: "THE HAVEN",
-    type: "shelter",
-  },
-  {
-    x: 19,
-    z: -8,
-    width: 9,
-    depth: 8,
-    height: 4.2,
-    color: 0xdcae8d,
-    name: "WORKSHOP",
-    type: "workshop",
-  },
-  {
-    x: -19,
-    z: 14,
-    width: 9,
-    depth: 9,
-    height: 4.6,
-    color: 0xc6c9d2,
-    name: "OLD RESIDENCE",
-    type: "home",
-  },
-  {
-    x: 18,
-    z: 19,
-    width: 12,
-    depth: 9,
-    height: 5.3,
-    color: 0xb5c2b2,
-    name: "WAREHOUSE",
-    type: "warehouse",
-  },
-];
+export { BUILDINGS } from "./building-layout";
+
 export const LOOT = [
   {
     x: -6,
@@ -199,7 +150,7 @@ export function pieceBox(p: Piece): Box {
 export function blocked(p: Point, pieces: Piece[]) {
   return (
     blockedTerrain(p) ||
-    BUILDINGS.some((b) => inBox(p, b, 0.32)) ||
+    buildingBlocked(p, 0.32) ||
     LOOT.some((b) => inBox(p, b, 0.32)) ||
     TREES.some((t) => inBox(p, t, 0.32)) ||
     pieces.some((s) => {
