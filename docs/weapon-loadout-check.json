@@ -1,0 +1,100 @@
+{
+  "smg": {
+    "preview": {
+      "engine": "three.js r187",
+      "model": "smg",
+      "drawCalls": "7",
+      "triangles": "2712",
+      "rotation": "-0.700"
+    },
+    "heldShots": 13,
+    "aimFov": 50.0,
+    "game": {
+      "engine": "three.js r187",
+      "position": "0.000,14.000",
+      "yaw": "0.000",
+      "pitch": "-0.030",
+      "drawCalls": "37",
+      "triangles": "10996",
+      "mapSize": "128",
+      "shots": "13",
+      "health": "100",
+      "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+      "firing": "false",
+      "equipped": "smg",
+      "aiming": "false",
+      "fov": "72",
+      "actorModels": "rounded-stick-player,detailed-pistol",
+      "recoil": "0.0000",
+      "movement": "0.00,0.00",
+      "recoilRendered": "13"
+    }
+  },
+  "rifle": {
+    "preview": {
+      "engine": "three.js r187",
+      "model": "rifle",
+      "drawCalls": "7",
+      "triangles": "4008",
+      "rotation": "-0.700"
+    },
+    "heldShots": 9,
+    "aimFov": 42.0,
+    "game": {
+      "engine": "three.js r187",
+      "position": "0.000,14.000",
+      "yaw": "0.000",
+      "pitch": "-0.030",
+      "drawCalls": "37",
+      "triangles": "12292",
+      "mapSize": "128",
+      "shots": "22",
+      "health": "100",
+      "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+      "firing": "false",
+      "equipped": "rifle",
+      "aiming": "false",
+      "fov": "72",
+      "actorModels": "rounded-stick-player,detailed-pistol",
+      "recoil": "0.0000",
+      "movement": "0.00,0.00",
+      "recoilRendered": "22"
+    }
+  },
+  "sniper": {
+    "preview": {
+      "engine": "three.js r187",
+      "model": "sniper",
+      "drawCalls": "8",
+      "triangles": "4692",
+      "rotation": "-0.700"
+    },
+    "heldShots": 2,
+    "aimFov": 20.0,
+    "game": {
+      "engine": "three.js r187",
+      "position": "0.000,14.000",
+      "yaw": "0.000",
+      "pitch": "-0.030",
+      "drawCalls": "38",
+      "triangles": "12976",
+      "mapSize": "128",
+      "shots": "24",
+      "health": "100",
+      "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+      "firing": "false",
+      "equipped": "sniper",
+      "aiming": "false",
+      "fov": "72",
+      "actorModels": "rounded-stick-player,detailed-pistol",
+      "recoil": "0.0000",
+      "movement": "0.00,0.00",
+      "recoilRendered": "24"
+    }
+  },
+  "weaponSelectionExitsBuildMode": true,
+  "sniperScopedEnemyOneShot": true,
+  "pageErrors": [],
+  "scope": "Local software-WebGL Chromium with real touch input; not a physical-phone benchmark.",
+  "desktopMoveAimAndFire": true
+}

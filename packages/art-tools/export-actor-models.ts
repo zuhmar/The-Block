@@ -4,6 +4,7 @@ import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import {
   createStickPlayer,
   createPistol,
+  createWeapon,
 } from "../../apps/client/src/fps/actor-models";
 // The exporter uses FileReader only to package geometry buffers; no browser or textures are needed.
 class BufferReader {
@@ -45,6 +46,9 @@ await mkdir("art/models", { recursive: true });
 for (const [name, root, animations] of [
   ["black-stick-player", player.root, [walk]],
   ["street-pistol", pistol.root, []],
+  ["street-smg", createWeapon("smg").root, []],
+  ["street-assault-rifle", createWeapon("rifle").root, []],
+  ["street-sniper", createWeapon("sniper").root, []],
 ] as const) {
   const data = await new GLTFExporter().parseAsync(root, {
     binary: true,

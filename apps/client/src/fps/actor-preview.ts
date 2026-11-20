@@ -1,5 +1,6 @@
+import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
-import { createStickPlayer, createPistol } from "./actor-models";
+import { createStickPlayer, createPistol, createWeapon } from "./actor-models";
 export function openActorPreview() {
   if (document.querySelector("#actor-preview")) return;
   const overlay = document.createElement("div");
@@ -7,9 +8,9 @@ export function openActorPreview() {
   overlay.className = "overlay";
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", "Player and pistol 3D models");
+  overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable black stick-figure player and pistol"></canvas><div class="actor-options"><button id="show-player" class="selected">PLAYER</button><button id="show-pistol">PISTOL</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options"><button id="show-player" class="selected">PLAYER</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
   const canvas = overlay.querySelector<HTMLCanvasElement>("canvas")!;
   let renderer: THREE.WebGLRenderer;
@@ -42,11 +43,20 @@ export function openActorPreview() {
   const character = createStickPlayer(),
     carried = createPistol(),
     weapon = createPistol();
+  const weapons = {
+    pistol: weapon,
+    smg: createWeapon("smg"),
+    rifle: createWeapon("rifle"),
+    sniper: createWeapon("sniper"),
+  };
   character.handSocket.add(carried.root);
-  scene.add(character.root, weapon.root);
+  scene.add(character.root, ...Object.values(weapons).map((w) => w.root));
   // Preview materials have their own lifecycle; closing the viewer cannot dispose live-game materials.
   const previewMaterials = new Map<THREE.Material, THREE.Material>();
-  for (const root of [character.root, weapon.root])
+  for (const root of [
+    character.root,
+    ...Object.values(weapons).map((w) => w.root),
+  ])
     root.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
       const mat = o.material as THREE.Material;
@@ -65,28 +75,36 @@ export function openActorPreview() {
     lastX = 0,
     closed = false,
     dirty = true;
-  function select(pistol: boolean) {
-    mode = pistol ? "pistol" : "player";
-    character.root.visible = base.visible = !pistol;
-    weapon.root.visible = pistol;
-    yaw = pistol ? -0.7 : 0.35;
-    overlay
-      .querySelector("#show-player")!
-      .classList.toggle("selected", !pistol);
-    overlay.querySelector("#show-pistol")!.classList.toggle("selected", pistol);
-    overlay.querySelector("#actor-description")!.textContent = pistol
-      ? "Detailed slide, barrel, open trigger guard, grip and sights"
-      : "Black stick figure · Rounded limbs · Low-ready pistol";
-    if (pistol) {
-      camera.position.set(0.34, 0.18, 0.55);
-      camera.lookAt(0, -0.035, -0.04);
-    } else {
+  function select(kind: "player" | WeaponKind) {
+    mode = kind;
+    const isPlayer = kind === "player";
+    character.root.visible = base.visible = isPlayer;
+    for (const [key, w] of Object.entries(weapons))
+      w.root.visible = key === kind;
+    yaw = isPlayer ? 0.35 : -0.7;
+    for (const key of ["player", "pistol", "smg", "rifle", "sniper"])
+      overlay
+        .querySelector("#show-" + key)!
+        .classList.toggle("selected", key === kind);
+    overlay.querySelector("#actor-description")!.textContent = isPlayer
+      ? "Black stick figure · Rounded limbs · Low-ready pistol"
+      : WEAPONS[kind].name + " · Original 3D model · Drag to inspect";
+    if (isPlayer) {
       camera.position.set(0, 1.05, 3.4);
       camera.lookAt(0, 0.9, 0);
+    } else {
+      const bounds = new THREE.Box3().setFromObject(weapons[kind].root),
+        center = bounds.getCenter(new THREE.Vector3()),
+        size = bounds.getSize(new THREE.Vector3());
+      const scale = Math.max(...size.toArray()) / 0.23;
+      camera.position
+        .copy(center)
+        .add(new THREE.Vector3(0.34, 0.18, 0.55).multiplyScalar(scale));
+      camera.lookAt(center);
     }
     dirty = true;
   }
-  select(false);
+  select("player");
   canvas.addEventListener("pointerdown", (e) => {
     drag = e.pointerId;
     lastX = e.clientX;
@@ -102,10 +120,14 @@ export function openActorPreview() {
     canvas.addEventListener(type, () => (drag = undefined));
   overlay
     .querySelector("#show-player")!
-    .addEventListener("click", () => select(false));
+    .addEventListener("click", () => select("player"));
   overlay
     .querySelector("#show-pistol")!
-    .addEventListener("click", () => select(true));
+    .addEventListener("click", () => select("pistol"));
+  for (const kind of ["smg", "rifle", "sniper"] as WeaponKind[])
+    overlay
+      .querySelector("#show-" + kind)!
+      .addEventListener("click", () => select(kind));
   const previous = document.activeElement as HTMLElement | null;
   function close() {
     if (closed) return;
@@ -158,7 +180,7 @@ export function openActorPreview() {
     if (!dirty) return;
     dirty = false;
     character.root.rotation.y = yaw;
-    weapon.root.rotation.y = yaw;
+    for (const w of Object.values(weapons)) w.root.rotation.y = yaw;
     renderer.render(scene, camera);
     canvas.dataset.model = mode;
     canvas.dataset.drawCalls = String(renderer.info.render.calls);

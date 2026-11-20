@@ -18,7 +18,7 @@ Open http://localhost:5173. No database, account, API key, or external art downl
 - Desktop: WASD / arrows move, mouse looks, Shift runs, Space jumps, Escape pauses. Click **Enter the Block** to capture the mouse.
 - Phone: left joystick moves, drag the world to look, and use the Run, Jump, Use and Fire buttons. Movement and look support simultaneous touches.
 - E / Use searches five distinct supply-crate tiers around the town. The starter inventory has **10,000 wood**.
-- 1 / Hands and 2 / Pistol select a visible first-person tool. The pistol has free practice shots. Targets and an armed enemy south of town let you test aiming and local combat.
+- 1 / Hands, 2 / Pistol, 3 / SMG, 4 / Rifle and 5 / Sniper select a visible first-person tool. The pistol has free practice shots. Targets and an armed enemy south of town let you test aiming and local combat.
 - B / Build opens floor, wall, open doorway and storage choices. Aim down at nearby ground and click / Place. R / Rotate changes the edge direction. Floors snap to a two-meter grid; walls and doorways snap along floor edges. Build in open meadows, keeping town, roads, water and trees clear. No roofs or designated plots are needed.
 - Aim at your construction and use **Dismantle** to return its wood. Attached walls and storage must be removed before their floor. The budget is **100 pieces**.
 
@@ -32,9 +32,22 @@ On phones, hold the movement joystick with one thumb and **hold FIRE** with the 
 
 An armed stick-figure enemy guards the southwestern meadow near the practice range. It approaches when it sees you, shows an aiming warning, and locks its aim before firing visible bullets. Keep moving to dodge or use buildings, rocks, crates and your walls as cover. Your pistol deals 25 damage; the enemy has 75 health and its bullets deal 12 damage. A defeated enemy returns after 30 seconds. Being shot down offers a respawn at the starting point with your wood and construction preserved. Combat health resets on reload; this remains a local single-player prototype.
 
-## Player and pistol models
+## Weapon loadout
 
-The black stick-figure character now has rounded 3D limbs, a visible first-person lower body and a detailed gripping pose. The pistol has a separate recoiling slide and an animated muzzle socket. Open **View Player & Pistol** in the pause/start menu to rotate and inspect both models.
+The three new weapons are immediately available for practice; ammunition remains unlimited in this prototype. Use the weapon buttons on phones or keys **3 / 4 / 5** on desktop. Build mode continues to use 1–4 for construction choices.
+
+| Weapon        | Fire interval | Damage | Range | Aim view                            |
+| ------------- | ------------- | ------ | ----- | ----------------------------------- |
+| Pistol        | 200 ms        | 25     | 45 m  | Light zoom                          |
+| SMG           | 85 ms         | 15     | 35 m  | Light zoom                          |
+| Assault rifle | 135 ms        | 30     | 70 m  | Medium zoom                         |
+| Sniper rifle  | 1,100 ms      | 90     | 120 m | Scope overlay and 20° field of view |
+
+Hold **FIRE** or the left mouse button for repeated shots. Tap **AIM** on a phone, hold the right mouse button, or toggle **Q** on desktop to aim. Aiming reduces look sensitivity for precision. Moving, aiming and firing work together. Selecting a weapon exits build mode and clears held fire. Equipping another weapon, building, pausing, or losing focus exits aiming. The sniper can defeat the practice NPC with one hit.
+
+## Player and weapon models
+
+The black stick-figure character now has rounded 3D limbs, a visible first-person lower body and a detailed gripping pose. The pistol has a separate recoiling slide and an animated muzzle socket. Open **View Player & Weapons** in the pause/start menu to rotate and inspect every model.
 
 Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate them from the game's model factories.
 

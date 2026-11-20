@@ -1,3 +1,4 @@
+import { WEAPONS, canShoot, type WeaponKind, type Tool } from "./weapons";
 import { newEnemy, updateEnemy, damageEnemy, segmentHitsPlayer } from "./enemy";
 import {
   createFirstPersonRig,
@@ -33,13 +34,13 @@ $("#app").innerHTML = `
 <canvas id="world" aria-label="Street Survival first-person 3D world"></canvas>
 <div id="hud" hidden>
   <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · SMALL WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
-  <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
+  <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
   <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
-  <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
-  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
+  <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
+  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & PISTOL</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -567,7 +568,7 @@ let preview: THREE.Group | undefined,
   selected: PieceKind = "floor",
   rotation = 0,
   build = false,
-  tool: "hands" | "pistol" = "hands";
+  tool: Tool = "hands";
 let candidate: Omit<Piece, "id"> | undefined,
   reason = "";
 let player = { ...START },
@@ -585,14 +586,18 @@ let movePointer: number | undefined,
 const raycaster = new THREE.Raycaster(),
   ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
   hitPoint = new THREE.Vector3();
-const viewModel = createFirstPersonRig();
+let viewModel = createFirstPersonRig();
+const weaponRigs = new Map<WeaponKind, ReturnType<typeof createFirstPersonRig>>(
+  [["pistol", viewModel]],
+);
+let aiming = false;
 viewModel.setAspect(camera.aspect);
 camera.add(viewModel.root);
 const body = createStickPlayer();
 body.head.visible = false;
 body.arms.forEach((arm) => (arm.visible = false));
 scene.add(body.root);
-const muzzle = viewModel.flash;
+let muzzle = viewModel.flash;
 const muzzlePosition = new THREE.Vector3();
 const enemy = newEnemy(),
   enemyActor = createStickPlayer(),
@@ -764,6 +769,7 @@ let lastShot = 0,
   fps = 0;
 function toggleBuild() {
   build = !build;
+  setAim(false);
   $("#build-panel").hidden = !build;
   $("#build-tool").classList.toggle("selected", build);
   if (preview) {
@@ -772,13 +778,42 @@ function toggleBuild() {
   }
   updateHud();
 }
-function equip(next: "hands" | "pistol") {
+function setAim(value: boolean) {
+  aiming = value && tool !== "hands" && !build;
+  camera.fov = aiming && tool !== "hands" ? WEAPONS[tool].zoom : 72;
+  camera.updateProjectionMatrix();
+  $("#scope-overlay").hidden = !(aiming && tool === "sniper");
+  $("#aim").classList.toggle("selected", aiming);
+}
+function equip(next: Tool) {
+  if (build) toggleBuild();
+  setAim(false);
+  firePointer = undefined;
+  $("#fire").classList.remove("held");
+  viewModel.root.visible = false;
+  if (next !== "hands") {
+    let rig = weaponRigs.get(next);
+    if (!rig) {
+      rig = createFirstPersonRig(next);
+      weaponRigs.set(next, rig);
+      camera.add(rig.root);
+    }
+    viewModel = rig;
+  }
+  viewModel.root.visible = true;
+  viewModel.setAspect(camera.aspect);
+  viewModel.equip(next !== "hands");
+  muzzle = viewModel.flash;
+  recoilRemaining = flashRemaining = 0;
   tool = next;
-  viewModel.equip(next === "pistol");
-  $("#hand-tool").classList.toggle("selected", next === "hands");
-  $("#pistol-tool").classList.toggle("selected", next === "pistol");
+  for (const name of ["hands", "pistol", "smg", "rifle", "sniper"])
+    $("#" + (name === "hands" ? "hand" : name) + "-tool").classList.toggle(
+      "selected",
+      next === name,
+    );
 }
 function resetInput() {
+  setAim(false);
   keys.clear();
   firePointer = undefined;
   $("#fire").classList.remove("held");
@@ -831,6 +866,9 @@ $("#reset").addEventListener("click", () => {
 $("#build-tool").addEventListener("click", toggleBuild);
 $("#hand-tool").addEventListener("click", () => equip("hands"));
 $("#pistol-tool").addEventListener("click", () => equip("pistol"));
+for (const kind of ["smg", "rifle", "sniper"] as WeaponKind[])
+  $("#" + kind + "-tool").addEventListener("click", () => equip(kind));
+$("#aim").addEventListener("click", () => setAim(!aiming));
 for (const button of document.querySelectorAll<HTMLButtonElement>(
   "[data-piece]",
 ))
@@ -926,33 +964,37 @@ function jump() {
 function fire() {
   if (!playing || health <= 0) return;
   if (build) return place();
-  if (tool !== "pistol")
-    return toast("Equip the pistol with 2 or the PISTOL button");
+  if (tool === "hands")
+    return toast("Equip a weapon with 2–5 or the weapon buttons");
+  const weapon = WEAPONS[tool];
   const now = performance.now();
-  if (now - lastShot < 200) return;
+  if (!canShoot(tool, now, lastShot)) return;
   lastShot = now;
   recoilRemaining = 1;
   flashRemaining = 0.055;
   shotSerial++;
   muzzle.visible = true;
   aimRay();
-  const hits = raycaster.intersectObjects(
-    [
-      ...targets,
-      ...construction.children,
-      ...lootMeshes,
-      ...shotObstacles,
-      ...(enemy.health > 0 ? [enemyActor.root] : []),
-    ],
-    true,
-  );
-  const end = hits[0]?.point || raycaster.ray.at(40, new THREE.Vector3());
+  const hits = raycaster
+    .intersectObjects(
+      [
+        ...targets,
+        ...construction.children,
+        ...lootMeshes,
+        ...shotObstacles,
+        ...(enemy.health > 0 ? [enemyActor.root] : []),
+      ],
+      true,
+    )
+    .filter((hit) => hit.distance <= weapon.range);
+  const end =
+    hits[0]?.point || raycaster.ray.at(weapon.range, new THREE.Vector3());
   viewModel.root.updateMatrixWorld(true);
   const start = viewModel.gun.muzzle.getWorldPosition(muzzlePosition);
   tracer.geometry.setFromPoints([start, end]);
   tracer.visible = true;
   if (hits[0] && enemyActor.root.getObjectById(hits[0].object.id)) {
-    damageEnemy(enemy, 25);
+    damageEnemy(enemy, weapon.damage);
     toast(
       enemy.health <= 0
         ? "Enemy down"
@@ -975,9 +1017,9 @@ fireButton.addEventListener("pointerdown", (e) => {
 });
 fireButton.addEventListener("pointermove", (e) => {
   if (!touch || firePointer !== e.pointerId || !playing) return;
-  yaw -= (e.clientX - fireLook.x) * 0.005;
+  yaw -= (e.clientX - fireLook.x) * 0.005 * (camera.fov / 72);
   pitch = THREE.MathUtils.clamp(
-    pitch - (e.clientY - fireLook.y) * 0.005,
+    pitch - (e.clientY - fireLook.y) * 0.005 * (camera.fov / 72),
     -1.35,
     1.35,
   );
@@ -993,7 +1035,11 @@ function releaseFire(e: PointerEvent) {
 }
 for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
   fireButton.addEventListener(event, (e) => releaseFire(e as PointerEvent));
-window.addEventListener("pointerup", releaseFire);
+window.addEventListener("pointerup", (e) => {
+  releaseFire(e);
+  if (!touch && e.button === 2) setAim(false);
+});
+canvas.addEventListener("contextmenu", (e) => e.preventDefault());
 window.addEventListener("pointercancel", releaseFire);
 $("#run").addEventListener("click", () => {
   run = !run;
@@ -1028,7 +1074,11 @@ window.addEventListener("keydown", (e) => {
   } else {
     if (e.code === "Digit1") equip("hands");
     if (e.code === "Digit2") equip("pistol");
+    if (e.code === "Digit3") equip("smg");
+    if (e.code === "Digit4") equip("rifle");
+    if (e.code === "Digit5") equip("sniper");
   }
+  if (e.code === "KeyQ") setAim(!aiming);
   if (e.code === "Space") jump();
   if (e.code === "Delete") remove();
   if (e.code === "Escape") pause();
@@ -1043,18 +1093,35 @@ document.addEventListener("pointerlockchange", () => {
 });
 document.addEventListener("mousemove", (e) => {
   if (document.pointerLockElement === canvas && playing) {
-    yaw -= e.movementX * 0.0024;
-    pitch = THREE.MathUtils.clamp(pitch - e.movementY * 0.0024, -1.35, 1.35);
+    yaw -= e.movementX * 0.0024 * (camera.fov / 72);
+    pitch = THREE.MathUtils.clamp(
+      pitch - e.movementY * 0.0024 * (camera.fov / 72),
+      -1.35,
+      1.35,
+    );
   }
 });
-canvas.addEventListener("pointerdown", (e) => {
-  if (touch || !playing || e.button !== 0) return;
+canvas.addEventListener("mousedown", (e) => {
+  if (touch || !playing) return;
+  if (e.button === 2) {
+    setAim(true);
+    return;
+  }
+  if (e.button !== 0) return;
   if (document.pointerLockElement !== canvas) {
     canvas.requestPointerLock?.();
     return;
   }
-  firePointer = e.pointerId;
+  firePointer = -1;
   fire();
+});
+window.addEventListener("mouseup", (e) => {
+  if (touch) return;
+  if (e.button === 2) setAim(false);
+  if (e.button === 0 && firePointer === -1) {
+    firePointer = undefined;
+    fireButton.classList.remove("held");
+  }
 });
 const joystickElement = $("#joystick");
 function moveStick(e: PointerEvent) {
@@ -1094,9 +1161,9 @@ canvas.addEventListener("pointerdown", (e) => {
 });
 canvas.addEventListener("pointermove", (e) => {
   if (lookPointer !== e.pointerId || !playing) return;
-  yaw -= (e.clientX - lastLook.x) * 0.005;
+  yaw -= (e.clientX - lastLook.x) * 0.005 * (camera.fov / 72);
   pitch = THREE.MathUtils.clamp(
-    pitch - (e.clientY - lastLook.y) * 0.005,
+    pitch - (e.clientY - lastLook.y) * 0.005 * (camera.fov / 72),
     -1.35,
     1.35,
   );
@@ -1222,8 +1289,9 @@ function frame(now: number) {
       player.z,
     );
     camera.rotation.set(pitch, yaw, 0);
-    if (firePointer !== undefined && tool === "pistol" && !build) fire();
-    const recoil = tool === "pistol" ? recoilRemaining : 0;
+    if (firePointer !== undefined && tool !== "hands" && !build) fire();
+    const recoil =
+      tool !== "hands" ? recoilRemaining * WEAPONS[tool].recoil : 0;
     viewModel.animate(clock, length > 0.1, recoil);
     recoilRemaining = Math.max(0, recoilRemaining - dt / 0.15);
     body.root.position.set(player.x, vertical, player.z);
@@ -1251,7 +1319,7 @@ function frame(now: number) {
   frameCount++;
   renderer.render(scene, camera);
   if (
-    tool === "pistol" &&
+    tool !== "hands" &&
     viewModel.gun.slide.position.z > 0 &&
     canvas.dataset.recoilRendered !== String(shotSerial)
   )
@@ -1276,6 +1344,8 @@ function frame(now: number) {
   });
   canvas.dataset.firing = String(firePointer !== undefined);
   canvas.dataset.equipped = tool;
+  canvas.dataset.aiming = String(aiming);
+  canvas.dataset.fov = String(camera.fov);
   canvas.dataset.actorModels = "rounded-stick-player,detailed-pistol";
   canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;

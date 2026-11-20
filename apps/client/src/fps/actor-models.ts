@@ -1,3 +1,4 @@
+import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -327,10 +328,251 @@ export function createStickPlayer() {
   root.add(handSocket);
   return { root, head, torso, legs, arms, handSocket };
 }
-export function createFirstPersonRig() {
+export function createWeapon(kind: WeaponKind) {
+  if (kind === "pistol") return createPistol();
+  const root = new THREE.Group();
+  root.name = "street-" + kind;
+  const frame = new THREE.Group();
+  frame.name = kind + "-frame";
+  root.add(frame);
+  const slide = new THREE.Group();
+  slide.name = kind + "-bolt";
+  root.add(slide);
+  const isSmg = kind === "smg",
+    isSniper = kind === "sniper";
+  const barrelEnd = isSmg ? -0.31 : isSniper ? -0.82 : -0.59;
+  cube(
+    frame,
+    "receiver",
+    [0, 0, -0.06],
+    [0.055, 0.075, isSmg ? 0.23 : 0.32],
+    isSniper ? darkSteel : steel,
+    0.007,
+  );
+  const handle = cube(
+    frame,
+    "pistol-grip",
+    [0, -0.09, 0.025],
+    [0.04, 0.12, 0.065],
+    grip,
+    0.006,
+  );
+  handle.rotation.x = -0.22;
+  cube(
+    frame,
+    "trigger-guard-front",
+    [0, -0.065, -0.062],
+    [0.04, 0.05, 0.008],
+    darkSteel,
+  );
+  cube(
+    frame,
+    "trigger-guard-base",
+    [0, -0.09, -0.025],
+    [0.04, 0.008, 0.08],
+    darkSteel,
+  );
+  cube(frame, "trigger", [0, -0.059, -0.027], [0.01, 0.03, 0.009], detail);
+  cube(
+    frame,
+    "handguard",
+    [0, 0.008, isSmg ? -0.19 : isSniper ? -0.3 : -0.28],
+    [isSmg ? 0.061 : 0.065, 0.065, isSmg ? 0.12 : isSniper ? 0.28 : 0.24],
+    grip,
+    0.007,
+  );
+  const stockZ = isSmg ? 0.17 : 0.24;
+  if (isSmg) {
+    for (const x of [-0.02, 0.02])
+      cube(
+        frame,
+        "folding-stock-strut",
+        [x, 0.008, 0.14],
+        [0.008, 0.015, 0.19],
+        darkSteel,
+      );
+  } else
+    cube(
+      frame,
+      "stock",
+      [0, -0.012, 0.19],
+      [0.055, 0.08, 0.23],
+      isSniper ? grip : darkSteel,
+      0.01,
+    );
+  cube(
+    frame,
+    "stock-pad",
+    [0, -0.018, stockZ + 0.065],
+    [0.061, 0.12, 0.025],
+    grip,
+    0.008,
+  );
+  const mag = cube(
+    frame,
+    "magazine",
+    [0, isSniper ? -0.075 : -0.12, -0.1],
+    [0.043, isSmg ? 0.18 : isSniper ? 0.075 : 0.16, 0.065],
+    darkSteel,
+    0.005,
+  );
+  mag.rotation.x = isSmg ? 0 : -0.15;
+  if (!isSmg && !isSniper) {
+    const lower = cube(
+      frame,
+      "magazine-lower",
+      [0, -0.215, -0.079],
+      [0.043, 0.055, 0.065],
+      darkSteel,
+      0.004,
+    );
+    lower.rotation.x = -0.32;
+  }
+  const barrelStart = isSmg ? -0.25 : isSniper ? -0.44 : -0.4;
+  const barrel = new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      isSniper ? 0.013 : 0.012,
+      isSniper ? 0.013 : 0.012,
+      Math.abs(barrelEnd - barrelStart),
+      10,
+    ),
+    darkSteel,
+  );
+  barrel.rotation.x = Math.PI / 2;
+  barrel.position.set(0, 0.008, (barrelStart + barrelEnd) / 2);
+  frame.add(barrel);
+  const tip = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.019, 0.019, 0.035, 10),
+    steel,
+  );
+  tip.rotation.x = Math.PI / 2;
+  tip.position.set(0, 0.008, barrelEnd);
+  frame.add(tip);
+  const bore = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.008, 0.008, 0.002, 10),
+    black,
+  );
+  bore.rotation.x = Math.PI / 2;
+  bore.position.set(0, 0.008, barrelEnd - 0.019);
+  frame.add(bore);
+  cube(
+    slide,
+    "charging-handle",
+    [0.035, 0.02, 0.025],
+    [0.025, 0.015, 0.018],
+    detail,
+    0.002,
+  );
+  cube(
+    frame,
+    "ejection-port",
+    [0.028, 0.008, -0.02],
+    [0.002, 0.025, 0.055],
+    black,
+    0.001,
+  );
+  for (let z = -0.13; z > barrelStart + 0.02; z -= 0.04) {
+    cube(
+      frame,
+      "top-rail",
+      [0, 0.043, z],
+      [0.065, 0.008, 0.018],
+      darkSteel,
+      0.001,
+    );
+    for (const x of [-0.034, 0.034])
+      cube(frame, "vent", [x, 0, z], [0.003, 0.027, 0.014], darkSteel, 0.001);
+  }
+  if (isSniper) {
+    for (const z of [-0.02, -0.19])
+      cube(
+        frame,
+        "scope-mount",
+        [0, 0.055, z],
+        [0.045, 0.04, 0.024],
+        darkSteel,
+      );
+    const scope = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.044, 0.31, 12),
+      darkSteel,
+    );
+    scope.rotation.x = Math.PI / 2;
+    scope.position.set(0, 0.105, -0.1);
+    frame.add(scope);
+    for (const z of [0.057, -0.257]) {
+      const lens = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.03, 0.03, 0.003, 12),
+        new THREE.MeshStandardMaterial({
+          color: 0x507f89,
+          metalness: 0.5,
+          roughness: 0.16,
+        }),
+      );
+      lens.rotation.x = Math.PI / 2;
+      lens.position.set(0, 0.105, z);
+      frame.add(lens);
+    }
+    cube(
+      frame,
+      "scope-turret",
+      [0, 0.15, -0.08],
+      [0.035, 0.035, 0.035],
+      darkSteel,
+    );
+    cube(
+      frame,
+      "bipod-mount",
+      [0, -0.035, -0.39],
+      [0.09, 0.03, 0.025],
+      darkSteel,
+    );
+    for (const x of [-0.045, 0.045]) {
+      const bipod = cube(
+        frame,
+        "folded-bipod",
+        [x, -0.055, -0.39],
+        [0.008, 0.012, 0.16],
+        darkSteel,
+        0.002,
+      );
+      bipod.rotation.y = x > 0 ? 0.08 : -0.08;
+    }
+  } else {
+    cube(
+      frame,
+      "rear-sight",
+      [0, 0.049, 0.035],
+      [0.04, 0.025, 0.018],
+      darkSteel,
+    );
+    cube(
+      frame,
+      "front-sight",
+      [0, 0.045, barrelStart],
+      [0.012, 0.035, 0.018],
+      darkSteel,
+    );
+    cube(
+      frame,
+      "sight-dot",
+      [0, 0.062, barrelStart],
+      [0.004, 0.004, 0.005],
+      sight,
+      0.001,
+    );
+  }
+  batch(frame);
+  batch(slide);
+  const muzzle = new THREE.Object3D();
+  muzzle.name = "muzzle";
+  muzzle.position.set(0, 0.008, barrelEnd - 0.022);
+  root.add(muzzle);
+  return { root, slide, muzzle };
+}
+export function createFirstPersonRig(kind: WeaponKind = "pistol") {
   const root = new THREE.Group();
   root.name = "first-person-rig";
-  const gun = createPistol();
+  const gun = createWeapon(kind);
   gun.root.position.set(0.18, -0.19, -0.48);
   root.add(gun.root);
   const hands = new THREE.Group();
@@ -385,15 +627,21 @@ export function createFirstPersonRig() {
     armed,
     "left-forearm",
     [-0.26, -0.43, -0.2],
-    [0.12, -0.29, -0.43],
+    [0.12, -0.29, WEAPONS[kind].supportZ + 0.025],
     0.036,
   );
-  ball(armed, "support-palm", [0.135, -0.27, -0.458], 0.038, [0.8, 0.85, 0.8]);
+  ball(
+    armed,
+    "support-palm",
+    [0.135, -0.27, WEAPONS[kind].supportZ],
+    0.038,
+    [0.8, 0.85, 0.8],
+  );
   limb(
     armed,
     "support-thumb",
-    [0.132, -0.245, -0.459],
-    [0.15, -0.226, -0.47],
+    [0.132, -0.245, WEAPONS[kind].supportZ - 0.001],
+    [0.15, -0.226, WEAPONS[kind].supportZ - 0.012],
     0.011,
   );
   batch(armed);
