@@ -26,6 +26,12 @@ Buildings, trees, water and constructed walls block walking. The eastern road cr
 
 Construction, wood and searched crates save locally under `street-survival:3d-prototype:v1`. The menu’s reset clears only that local prototype. Your location resets to the town spawn on reload. This is not yet online multiplayer, shared-world persistence, inventory, or survival simulation; those legacy systems are not silently represented as working 3D features.
 
+## Player and pistol models
+
+The black stick-figure character now has rounded 3D limbs, a visible first-person lower body and a detailed gripping pose. The pistol has a separate recoiling slide and an animated muzzle socket. Open **View Player & Pistol** in the pause/start menu to rotate and inspect both models.
+
+Reusable GLB exports, including the player walk animation, are in [art/models](art/models/README.md). Run `pnpm assets:models` to regenerate them from the game's model factories.
+
 ## Performance and verification
 
 Static box geometry is instanced by material. Trees and boundary rocks also use instancing. The renderer limits phone pixel density to 1.25, uses distance fog and no real-time shadow maps, and loads no legacy sprite sheets. The small map is rendered as one bounded scene; there is no giant streamed 2D terrain.

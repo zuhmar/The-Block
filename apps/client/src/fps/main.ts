@@ -1,3 +1,5 @@
+import { createFirstPersonRig, createStickPlayer } from "./actor-models";
+import { openActorPreview } from "./actor-preview";
 import * as THREE from "three";
 import {
   BUILDINGS,
@@ -32,7 +34,7 @@ $("#app").innerHTML = `
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <footer><div class="status"><span class="dot"></span><b>HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & PISTOL</button><button id="reset">Reset local prototype</button></div></div>
 <div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -578,28 +580,15 @@ let movePointer: number | undefined,
 const raycaster = new THREE.Raycaster(),
   ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
   hitPoint = new THREE.Vector3();
-const hand = new THREE.Group();
-camera.add(hand);
-// Black stick-figure arms are modeled in 3D and the equipped pistol is visible.
-const leftArm = box(hand, -0.22, -0.32, -0.55, 0.075, 0.09, 0.36, 0x222728),
-  rightArm = box(hand, 0.22, -0.32, -0.55, 0.075, 0.09, 0.36, 0x222728);
-leftArm.rotation.y = -0.25;
-rightArm.rotation.y = 0.25;
-const pistol = new THREE.Group();
-pistol.position.set(0.25, -0.22, -0.8);
-hand.add(pistol);
-box(pistol, 0, 0, 0, 0.12, 0.12, 0.36, 0x495355);
-box(pistol, 0, -0.11, 0.09, 0.09, 0.2, 0.12, 0x252e30);
-box(pistol, 0, 0.07, -0.13, 0.045, 0.035, 0.04, 0xb5bbaa);
-const muzzle = new THREE.Mesh(
-  new THREE.ConeGeometry(0.09, 0.22, 5),
-  new THREE.MeshBasicMaterial({ color: 0xffd077 }),
-);
-muzzle.rotation.x = -Math.PI / 2;
-muzzle.position.set(0.25, -0.22, -1.12);
-camera.add(muzzle);
-muzzle.visible = false;
-pistol.visible = false;
+const viewModel = createFirstPersonRig();
+viewModel.setAspect(camera.aspect);
+camera.add(viewModel.root);
+const body = createStickPlayer();
+body.head.visible = false;
+body.arms.forEach((arm) => (arm.visible = false));
+scene.add(body.root);
+const muzzle = viewModel.flash;
+const muzzlePosition = new THREE.Vector3();
 const tracerGeometry = new THREE.BufferGeometry().setFromPoints([
   new THREE.Vector3(),
   new THREE.Vector3(),
@@ -616,8 +605,10 @@ scene.add(tracer);
 tracer.visible = false;
 let lastDiagnostics = -1000;
 let needsRender = true;
-let shotUntil = 0,
-  lastShot = 0,
+let recoilRemaining = 0,
+  flashRemaining = 0,
+  shotSerial = 0;
+let lastShot = 0,
   clock = 0,
   lastHud = 0,
   lastFrame = performance.now(),
@@ -636,7 +627,7 @@ function toggleBuild() {
 }
 function equip(next: "hands" | "pistol") {
   tool = next;
-  pistol.visible = next === "pistol";
+  viewModel.equip(next === "pistol");
   $("#hand-tool").classList.toggle("selected", next === "hands");
   $("#pistol-tool").classList.toggle("selected", next === "pistol");
 }
@@ -664,6 +655,10 @@ function start() {
   else toast("Explore the town. Build beyond the streets.");
 }
 $("#start").addEventListener("click", start);
+$("#view-models").addEventListener("click", () => {
+  pause();
+  openActorPreview();
+});
 $("#pause-button").addEventListener("click", pause);
 $("#reset").addEventListener("click", () => {
   if (
@@ -784,7 +779,9 @@ function fire() {
   const now = performance.now();
   if (now - lastShot < 200) return;
   lastShot = now;
-  shotUntil = now + 65;
+  recoilRemaining = 1;
+  flashRemaining = 0.055;
+  shotSerial++;
   muzzle.visible = true;
   aimRay();
   const hits = raycaster.intersectObjects(
@@ -792,8 +789,8 @@ function fire() {
     true,
   );
   const end = hits[0]?.point || raycaster.ray.at(40, new THREE.Vector3());
-  const start = new THREE.Vector3(0.25, -0.22, -1.12);
-  camera.localToWorld(start);
+  viewModel.root.updateMatrixWorld(true);
+  const start = viewModel.gun.muzzle.getWorldPosition(muzzlePosition);
   tracer.geometry.setFromPoints([start, end]);
   tracer.visible = true;
   if (hits[0]?.object.userData.target) toast("Target hit");
@@ -913,6 +910,7 @@ for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
 window.addEventListener("resize", () => {
   needsRender = true;
   camera.aspect = innerWidth / innerHeight;
+  viewModel.setAspect(camera.aspect);
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(devicePixelRatio, touch ? 1.25 : 1.5));
   renderer.setSize(innerWidth, innerHeight);
@@ -1023,18 +1021,26 @@ function frame(now: number) {
       player.z,
     );
     camera.rotation.set(pitch, yaw, 0);
-    hand.position.y = length > 0.1 ? Math.sin(clock * 9) * 0.012 : 0;
-    hand.position.z = now < shotUntil ? 0.07 : 0;
+    const recoil = tool === "pistol" ? recoilRemaining : 0;
+    viewModel.animate(clock, length > 0.1, recoil);
+    recoilRemaining = Math.max(0, recoilRemaining - dt / 0.15);
+    body.root.position.set(player.x, vertical, player.z);
+    body.root.rotation.y = yaw;
+    body.legs[0].rotation.x = length > 0.1 ? Math.sin(clock * 9) * 0.3 : 0;
+    body.legs[1].rotation.x = -body.legs[0].rotation.x;
     updatePreview();
     if (now - lastHud > 160) {
       updateHud();
       lastHud = now;
     }
   } else {
+    body.root.position.set(player.x, vertical, player.z);
+    body.root.rotation.y = yaw;
     camera.position.set(player.x, 1.65 + vertical, player.z);
     camera.rotation.set(pitch, yaw, 0);
   }
-  muzzle.visible = tracer.visible = now < shotUntil;
+  muzzle.visible = tracer.visible = flashRemaining > 0;
+  if (playing) flashRemaining = Math.max(0, flashRemaining - dt);
   if (now - fpsAt >= 1000) {
     fps = Math.round((frameCount * 1000) / (now - fpsAt));
     frameCount = 0;
@@ -1042,6 +1048,12 @@ function frame(now: number) {
   }
   frameCount++;
   renderer.render(scene, camera);
+  if (
+    tool === "pistol" &&
+    viewModel.gun.slide.position.z > 0 &&
+    canvas.dataset.recoilRendered !== String(shotSerial)
+  )
+    canvas.dataset.recoilRendered = String(shotSerial);
   // Read-only diagnostics update at a bounded rate, without per-frame HUD mutations.
   if (now - lastDiagnostics < 120) return;
   lastDiagnostics = now;
@@ -1051,6 +1063,9 @@ function frame(now: number) {
   canvas.dataset.drawCalls = String(renderer.info.render.calls);
   canvas.dataset.triangles = String(renderer.info.render.triangles);
   canvas.dataset.mapSize = String(MAP_SIZE);
+  canvas.dataset.equipped = tool;
+  canvas.dataset.actorModels = "rounded-stick-player,detailed-pistol";
+  canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;
 }
 updateHud();

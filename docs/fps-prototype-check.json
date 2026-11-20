@@ -8,13 +8,17 @@
   "pause": true,
   "desktop": {
     "engine": "three.js r187",
-    "position": "0.000,35.224",
+    "position": "0.000,35.375",
     "yaw": "0.000",
     "pitch": "-0.078",
-    "drawCalls": "55",
-    "triangles": "7510",
+    "drawCalls": "61",
+    "triangles": "11786",
     "mapSize": "128",
-    "movement": "0.00,0.00"
+    "equipped": "pistol",
+    "actorModels": "rounded-stick-player,detailed-pistol",
+    "recoil": "0.0000",
+    "movement": "0.00,0.00",
+    "recoilRendered": "1"
   },
   "full100PieceBase": {
     "engine": "three.js r187",
@@ -22,8 +26,11 @@
     "yaw": "0.000",
     "pitch": "-0.030",
     "drawCalls": "41",
-    "triangles": "11912",
+    "triangles": "13408",
     "mapSize": "128",
+    "equipped": "hands",
+    "actorModels": "rounded-stick-player,detailed-pistol",
+    "recoil": "0.0000",
     "movement": "0.00,0.00"
   },
   "mobile": {
@@ -32,13 +39,17 @@
     "cssWidth": 390,
     "cssHeight": 844,
     "engine": "three.js r187",
-    "position": "-1.038,34.745",
+    "position": "-1.031,34.598",
     "yaw": "-0.050",
     "pitch": "-0.630",
-    "drawCalls": "40",
-    "triangles": "7156",
+    "drawCalls": "47",
+    "triangles": "11852",
     "mapSize": "128",
-    "movement": "0.00,0.00"
+    "equipped": "pistol",
+    "actorModels": "rounded-stick-player,detailed-pistol",
+    "recoil": "0.0000",
+    "movement": "0.00,0.00",
+    "recoilRendered": "1"
   },
   "pageErrors": [],
   "backendRequests": [],

@@ -1,0 +1,36 @@
+{
+  "playerPreview": {
+    "engine": "three.js r187",
+    "model": "player",
+    "drawCalls": "17",
+    "triangles": "4960",
+    "rotation": "0.350"
+  },
+  "pistolPreview": {
+    "engine": "three.js r187",
+    "model": "pistol",
+    "drawCalls": "8",
+    "triangles": "3012",
+    "rotation": "-0.700"
+  },
+  "game": {
+    "engine": "three.js r187",
+    "position": "0.000,14.000",
+    "yaw": "0.000",
+    "pitch": "-1.130",
+    "drawCalls": "28",
+    "triangles": "9104",
+    "mapSize": "128",
+    "equipped": "hands",
+    "actorModels": "rounded-stick-player,detailed-pistol",
+    "recoil": "0.0000",
+    "movement": "0.00,0.00",
+    "recoilRendered": "1"
+  },
+  "touchPreviewRotation": true,
+  "previewCloseAndReopen": true,
+  "equippedPistol": true,
+  "slideRecoilAndRecovery": true,
+  "pageErrors": [],
+  "scope": "Local Chromium software WebGL; appearance and functional checks, not physical-phone FPS."
+}
