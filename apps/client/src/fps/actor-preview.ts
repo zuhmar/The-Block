@@ -2,6 +2,7 @@ import {
   loadStreetReview,
   disposeReview,
   IMAGE_REFERENCE_URL,
+  NPC_REFERENCE_URL,
   type ImageModelKind,
 } from "./street-review";
 import { createNpc } from "./npc-models";
@@ -127,6 +128,9 @@ export function openActorPreview() {
     street: "show-street-v2",
     reinforced: "show-image-reinforced",
     armored: "show-image-armored",
+    lookout: "show-lookout",
+    police: "show-police",
+    swat: "show-swat",
   };
   const reviewMode = (kind: ImageModelKind) =>
     kind === "street" ? "street-v2" : "image-" + kind;
@@ -159,6 +163,13 @@ export function openActorPreview() {
     select("street");
     const ticket = ++reviewGeneration;
     mode = reviewMode(kind);
+    const isNpc = kind === "lookout" || kind === "police" || kind === "swat";
+    const referenceLink =
+      overlay.querySelector<HTMLAnchorElement>("#image-reference")!;
+    referenceLink.href = isNpc ? NPC_REFERENCE_URL : IMAGE_REFERENCE_URL;
+    referenceLink.textContent = isNpc
+      ? "SAVED NPC REFERENCE IMAGE"
+      : "FOUR-CHARACTER REFERENCE IMAGE";
     activeReviewKind = kind;
     overlay.classList.add("reviewing");
     for (const c of Object.values(characters)) c.root.visible = false;
@@ -312,9 +323,6 @@ export function openActorPreview() {
     "street",
     "reinforced",
     "armored",
-    "lookout",
-    "police",
-    "swat",
     "smg",
     "rifle",
     "sniper",

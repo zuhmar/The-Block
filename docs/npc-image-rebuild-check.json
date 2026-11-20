@@ -1,0 +1,324 @@
+{
+  "reference": "art/characters/npc-image-rebuild/reference.png",
+  "referenceStatus": "Recreated final white Lookout / navy Police / black SWAT sheet; saved with source",
+  "build": {
+    "referenceSha256": "17c664919ef092c11d7503c9d749d783d553721a6f8f5024b8f44b46fbc1e6cc",
+    "source": "Fresh Blender scene; reference.png and landmarks.json only",
+    "metersPerPixel": 0.0025284450063211127,
+    "models": [
+      {
+        "kind": "lookout",
+        "triangles": 31766,
+        "bones": 28,
+        "bytes": 1607944
+      },
+      {
+        "kind": "police",
+        "triangles": 37160,
+        "bones": 28,
+        "bytes": 1831368
+      },
+      {
+        "kind": "swat",
+        "triangles": 50130,
+        "bones": 28,
+        "bytes": 2418072
+      }
+    ]
+  },
+  "verification": {
+    "repository": "pnpm verify: 129 tests passed, lint/typecheck/assets validation/production build passed",
+    "newAssetAndHitboxTests": "2 passed",
+    "phone": {
+      "models": [
+        {
+          "kind": "lookout",
+          "render": {
+            "engine": "three.js r187",
+            "model": "image-lookout",
+            "reviewLoaded": "true",
+            "reviewKind": "lookout",
+            "motion": "still",
+            "handPose": "0.1146",
+            "bonePose": "-0.0007",
+            "hiddenSlots": "",
+            "drawCalls": "10",
+            "triangles": "31894",
+            "rotation": "3.492"
+          }
+        },
+        {
+          "kind": "police",
+          "render": {
+            "engine": "three.js r187",
+            "model": "image-police",
+            "reviewLoaded": "true",
+            "reviewKind": "police",
+            "motion": "still",
+            "handPose": "0.1146",
+            "bonePose": "-0.0007",
+            "hiddenSlots": "",
+            "drawCalls": "14",
+            "triangles": "37288",
+            "rotation": "3.492"
+          }
+        },
+        {
+          "kind": "swat",
+          "render": {
+            "engine": "three.js r187",
+            "model": "image-swat",
+            "reviewLoaded": "true",
+            "reviewKind": "swat",
+            "motion": "still",
+            "handPose": "0.1146",
+            "bonePose": "-0.0007",
+            "hiddenSlots": "",
+            "drawCalls": "17",
+            "triangles": "50738",
+            "rotation": "3.492"
+          }
+        }
+      ],
+      "game": {
+        "engine": "three.js r187",
+        "position": "0.000,14.000",
+        "yaw": "0.000",
+        "pitch": "-0.030",
+        "drawCalls": "42",
+        "triangles": "12538",
+        "mapSize": "128",
+        "shots": "0",
+        "health": "100",
+        "enemies": "[{\"kind\":\"lookout\",\"visual\":\"loading\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+        "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+        "firing": "false",
+        "inside": "-1",
+        "visibleInteriors": "[]",
+        "doors": "[0,0,0,0,0]",
+        "lastHitDoor": "-1",
+        "nearestDoor": "-1",
+        "equipped": "hands",
+        "aiming": "false",
+        "fov": "72",
+        "actorModels": "rounded-stick-player,detailed-pistol",
+        "recoil": "0.0000",
+        "movement": "0.00,0.00"
+      },
+      "pageErrors": [],
+      "scope": "Compiled production game in phone viewport with software WebGL; not a physical-phone FPS benchmark."
+    },
+    "encounters": {
+      "encounters": [
+        {
+          "kind": "lookout",
+          "initialHealth": 75,
+          "defeated": true,
+          "playerHealth": "100",
+          "others": [
+            {
+              "kind": "lookout",
+              "visual": "blender",
+              "x": -10.78891359973756,
+              "z": 31.04243202295541,
+              "health": 0,
+              "state": "down",
+              "shots": 1,
+              "visible": false
+            },
+            {
+              "kind": "police",
+              "visual": "fallback",
+              "x": -32,
+              "z": -30,
+              "health": 125,
+              "state": "patrol",
+              "shots": 0,
+              "visible": false
+            },
+            {
+              "kind": "swat",
+              "visual": "fallback",
+              "x": 32,
+              "z": -32,
+              "health": 225,
+              "state": "patrol",
+              "shots": 0,
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "police",
+          "initialHealth": 125,
+          "defeated": true,
+          "playerHealth": "85",
+          "others": [
+            {
+              "kind": "lookout",
+              "visual": "blender",
+              "x": -13.005431299209011,
+              "z": 27.25966477684477,
+              "health": 75,
+              "state": "patrol",
+              "shots": 1,
+              "visible": false
+            },
+            {
+              "kind": "police",
+              "visual": "blender",
+              "x": -31.891442264068196,
+              "z": -28.9794660494058,
+              "health": 0,
+              "state": "down",
+              "shots": 2,
+              "visible": false
+            },
+            {
+              "kind": "swat",
+              "visual": "fallback",
+              "x": 32,
+              "z": -32,
+              "health": 225,
+              "state": "patrol",
+              "shots": 0,
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "swat",
+          "initialHealth": 225,
+          "defeated": true,
+          "playerHealth": "82",
+          "others": [
+            {
+              "kind": "lookout",
+              "visual": "blender",
+              "x": -14,
+              "z": 33,
+              "health": 75,
+              "state": "patrol",
+              "shots": 0,
+              "visible": false
+            },
+            {
+              "kind": "police",
+              "visual": "fallback",
+              "x": -32,
+              "z": -30,
+              "health": 125,
+              "state": "patrol",
+              "shots": 0,
+              "visible": false
+            },
+            {
+              "kind": "swat",
+              "visual": "blender",
+              "x": 29.392551280833448,
+              "z": -30.852487836826707,
+              "health": 0,
+              "state": "down",
+              "shots": 3,
+              "visible": false
+            }
+          ]
+        }
+      ],
+      "pageErrors": [],
+      "scope": "Actual compiled game, keyboard walking and firing; no teleportation or writable game hooks."
+    },
+    "mobileControls": {
+      "simultaneousMovementAndHeldFire": true,
+      "dragFireToAim": true,
+      "cancelStopsFireAndMovement": true,
+      "enemyShotPlayer": true,
+      "playerDefeatedEnemy": true,
+      "deathAndRespawnPreserveWood": true,
+      "moving": {
+        "engine": "three.js r187",
+        "position": "-0.871,30.304",
+        "yaw": "-0.060",
+        "pitch": "-0.030",
+        "drawCalls": "64",
+        "triangles": "15856",
+        "mapSize": "128",
+        "shots": "23",
+        "health": "100",
+        "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-12.182868683210842,\"z\":31.339115268710817,\"health\":75,\"state\":\"chase\",\"shots\":2,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+        "enemy": "{\"x\":-12.182868683210842,\"z\":31.339115268710817,\"health\":75,\"state\":\"chase\",\"shots\":2}",
+        "firing": "true",
+        "inside": "-1",
+        "visibleInteriors": "[]",
+        "doors": "[0,0,0,0,0]",
+        "lastHitDoor": "-1",
+        "nearestDoor": "-1",
+        "equipped": "pistol",
+        "aiming": "false",
+        "fov": "72",
+        "actorModels": "rounded-stick-player,detailed-pistol",
+        "recoil": "0.0154",
+        "movement": "0.00,0.96",
+        "recoilRendered": "23"
+      },
+      "afterEnemyHit": {
+        "engine": "three.js r187",
+        "position": "-0.897,30.737",
+        "yaw": "-0.060",
+        "pitch": "-0.030",
+        "drawCalls": "64",
+        "triangles": "15860",
+        "mapSize": "128",
+        "shots": "23",
+        "health": "88",
+        "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-11.783753564750354,\"z\":31.315959861016676,\"health\":75,\"state\":\"chase\",\"shots\":3,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+        "enemy": "{\"x\":-11.783753564750354,\"z\":31.315959861016676,\"health\":75,\"state\":\"chase\",\"shots\":3}",
+        "firing": "false",
+        "inside": "-1",
+        "visibleInteriors": "[]",
+        "doors": "[0,0,0,0,0]",
+        "lastHitDoor": "-1",
+        "nearestDoor": "-1",
+        "equipped": "pistol",
+        "aiming": "false",
+        "fov": "72",
+        "actorModels": "rounded-stick-player,detailed-pistol",
+        "recoil": "0.0000",
+        "movement": "0.00,0.00",
+        "recoilRendered": "23"
+      },
+      "final": {
+        "engine": "three.js r187",
+        "position": "-0.897,30.737",
+        "yaw": "1.624",
+        "pitch": "-0.040",
+        "drawCalls": "27",
+        "triangles": "13292",
+        "mapSize": "128",
+        "shots": "26",
+        "health": "88",
+        "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-11.783753564750354,\"z\":31.315959861016676,\"health\":0,\"state\":\"down\",\"shots\":3,\"visible\":false},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+        "enemy": "{\"x\":-11.783753564750354,\"z\":31.315959861016676,\"health\":0,\"state\":\"down\",\"shots\":3}",
+        "firing": "false",
+        "inside": "-1",
+        "visibleInteriors": "[]",
+        "doors": "[0,0,0,0,0]",
+        "lastHitDoor": "-1",
+        "nearestDoor": "-1",
+        "equipped": "pistol",
+        "aiming": "false",
+        "fov": "72",
+        "actorModels": "rounded-stick-player,detailed-pistol",
+        "recoil": "0.0000",
+        "movement": "0.00,0.00",
+        "recoilRendered": "26"
+      },
+      "pageErrors": [],
+      "scope": "Real mobile multitouch in local software-WebGL Chromium; not physical-device FPS."
+    }
+  },
+  "limitations": [
+    "Software WebGL browser checks are not physical phone performance measurements.",
+    "Front reference depth and rear surfaces are modeled interpretations."
+  ]
+}

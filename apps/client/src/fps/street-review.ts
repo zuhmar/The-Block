@@ -1,6 +1,11 @@
 import * as THREE from "three";
 
 export const IMAGE_MODEL_URLS = {
+  lookout: new URL("./models/npc-image-rebuild/lookout.glb", import.meta.url)
+    .href,
+  police: new URL("./models/npc-image-rebuild/police.glb", import.meta.url)
+    .href,
+  swat: new URL("./models/npc-image-rebuild/swat.glb", import.meta.url).href,
   base: new URL("./models/image-rebuild/base.glb", import.meta.url).href,
   street: new URL("./models/image-rebuild/street.glb", import.meta.url).href,
   reinforced: new URL("./models/image-rebuild/reinforced.glb", import.meta.url)
@@ -12,7 +17,11 @@ export const IMAGE_REFERENCE_URL = new URL(
   "./models/image-rebuild/reference.png",
   import.meta.url,
 ).href;
-/** Loaded only when the player requests the review model, never during normal gameplay. */
+export const NPC_REFERENCE_URL = new URL(
+  "./models/npc-image-rebuild/reference.png",
+  import.meta.url,
+).href;
+/** Loaded on demand for model review or a nearby live NPC. */
 export async function loadStreetReview(kind: ImageModelKind = "street") {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const gltf = await new GLTFLoader().loadAsync(IMAGE_MODEL_URLS[kind]);

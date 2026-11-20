@@ -1,0 +1,25 @@
+{
+  "referenceSha256": "17c664919ef092c11d7503c9d749d783d553721a6f8f5024b8f44b46fbc1e6cc",
+  "source": "Fresh Blender scene; reference.png and landmarks.json only",
+  "metersPerPixel": 0.0025284450063211127,
+  "models": [
+    {
+      "kind": "lookout",
+      "triangles": 31766,
+      "bones": 28,
+      "bytes": 1607944
+    },
+    {
+      "kind": "police",
+      "triangles": 37160,
+      "bones": 28,
+      "bytes": 1831368
+    },
+    {
+      "kind": "swat",
+      "triangles": 50130,
+      "bones": 28,
+      "bytes": 2418072
+    }
+  ]
+}

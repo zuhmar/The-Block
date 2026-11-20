@@ -28,7 +28,7 @@ with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
  for kind,goal in [('lookout',(0,30)),('police',(-32,-23)),('swat',(32,-25))]:
   context=browser.new_context(viewport={'width':960,'height':700});page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:4173'),wait_until='networkidle')
-  page.locator('#view-models').click();page.locator('#show-'+kind).click();page.wait_for_function('(k)=>document.querySelector("#actor-canvas").dataset.model===k',arg=kind);page.screenshot(path='work/npc-'+kind+'-preview.png');page.locator('#close-actors').click()
+  page.locator('#view-models').click();page.locator('#show-'+kind).click();page.wait_for_function('(k)=>document.querySelector("#actor-canvas").dataset.reviewKind===k && document.querySelector("#actor-canvas").dataset.reviewLoaded==="true"',arg=kind);page.screenshot(path='work/npc-'+kind+'-preview.png');page.locator('#close-actors').click()
   page.locator('#start').click();page.wait_for_function('document.pointerLockElement===document.querySelector("#world")')
   def state():return page.locator('#world').evaluate('(c)=>({...c.dataset})')
   def position():return tuple(float(v) for v in state()['position'].split(','))
@@ -51,6 +51,7 @@ with sync_playwright() as p:
   page.keyboard.press('5')
   for waypoint in route(position(),goal):go(waypoint)
   def target():return next(e for e in json.loads(state()['enemies']) if e['kind']==kind)
+  page.wait_for_function('(kind)=>JSON.parse(document.querySelector("#world").dataset.enemies).find(e=>e.kind===kind).visual==="blender"',arg=kind)
   e=target();assert e['visible'],(kind,state());before=e['health']
   for attempt in range(12):
    e=target()

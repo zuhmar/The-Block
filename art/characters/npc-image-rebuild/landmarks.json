@@ -1,0 +1,95 @@
+{
+  "reference": "reference.png",
+  "imageSize": [
+    1536,
+    1024
+  ],
+  "groundPixel": 933,
+  "baseTopPixel": 142,
+  "heightMeters": 2,
+  "columnCenters": {
+    "lookout": 275,
+    "police": 730,
+    "swat": 1230
+  },
+  "head": {
+    "centerY": 264,
+    "radiusPixels": 90
+  },
+  "bodyRows": [
+    [
+      365,
+      55,
+      42
+    ],
+    [
+      405,
+      64,
+      46
+    ],
+    [
+      470,
+      60,
+      47
+    ],
+    [
+      535,
+      62,
+      47
+    ],
+    [
+      578,
+      60,
+      43
+    ]
+  ],
+  "sleeveRows": [
+    [
+      382,
+      58,
+      14
+    ],
+    [
+      391,
+      66,
+      23
+    ],
+    [
+      410,
+      78,
+      22
+    ],
+    [
+      455,
+      91,
+      21
+    ],
+    [
+      500,
+      104,
+      23
+    ],
+    [
+      535,
+      116,
+      26
+    ],
+    [
+      560,
+      115,
+      20
+    ]
+  ],
+  "cuffPixel": 578,
+  "handCenterPixel": 615,
+  "handRadiusPixels": [
+    22,
+    34
+  ],
+  "pantsWaistPixel": 590,
+  "crotchPixel": 650,
+  "kneePixel": 730,
+  "anklePixel": 837,
+  "shoeTopPixel": 846,
+  "notes": "Traced from the recreated final white Lookout / navy Police / black SWAT sheet. Unseen depth is interpreted. No existing mesh is imported."
+}

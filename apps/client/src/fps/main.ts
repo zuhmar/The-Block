@@ -1,3 +1,4 @@
+import { createNpcHitbox, loadNpcImage } from "./npc-image";
 import { createNpc, NPC_KINDS } from "./npc-models";
 import { createSurvivor } from "./survivor-models";
 import { createBuildingModel } from "./building-models";
@@ -606,7 +607,20 @@ const enemies = NPC_KINDS.map((kind) => {
   scene.add(aim);
   aim.frustumCulled = false;
   aim.visible = false;
-  return { enemy, actor, weapon, flash, aim, flashTime: 0 };
+  const hitbox = createNpcHitbox();
+  scene.add(hitbox);
+  return {
+    enemy,
+    actor,
+    weapon,
+    flash,
+    aim,
+    hitbox,
+    flashTime: 0,
+    imageRig: undefined as Awaited<ReturnType<typeof loadNpcImage>> | undefined,
+    imageLoading: false,
+    retryImageAfter: 0,
+  };
 });
 const enemy = enemies[0].enemy; // Retain the original easy-enemy read-only diagnostic.
 const bulletGeometry = new THREE.SphereGeometry(0.045, 5, 3),
@@ -663,6 +677,35 @@ function enemyFrame(dt: number) {
     const visible =
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 24 &&
       coverDistance(from, to) >= from.distanceTo(to) - 0.05;
+    if (
+      !unit.imageRig &&
+      !unit.imageLoading &&
+      clock > unit.retryImageAfter &&
+      Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38
+    ) {
+      unit.imageLoading = true;
+      void loadNpcImage(enemy.kind)
+        .then((model) => {
+          enemyWeapon.root.removeFromParent();
+          const oldMeshes: THREE.Mesh[] = [];
+          enemyActor.root.traverse((o) => {
+            if (o instanceof THREE.Mesh) oldMeshes.push(o);
+          });
+          for (const mesh of oldMeshes) {
+            mesh.geometry.dispose();
+            mesh.removeFromParent();
+          }
+          enemyActor.root.clear();
+          enemyActor.root.add(model.root, enemyWeapon.root);
+          unit.imageRig = model;
+        })
+        .catch(() => {
+          unit.retryImageAfter = clock + 10;
+        })
+        .finally(() => {
+          unit.imageLoading = false;
+        });
+    }
     const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
     enemyActor.root.visible =
       enemy.health > 0 &&
@@ -672,8 +715,14 @@ function enemyFrame(dt: number) {
     const moving =
       enemy.state === "chase" &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) > 11;
-    enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
-    enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
+    if (unit.imageRig) unit.imageRig.animate(moving, dt);
+    else {
+      enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
+      enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
+    }
+    unit.hitbox.position.set(enemy.x, 0, enemy.z);
+    unit.hitbox.rotation.y = enemy.yaw;
+    unit.hitbox.updateMatrixWorld(true);
     enemyActor.root.updateMatrixWorld(true);
     const muzzlePoint = enemyWeapon.muzzle.getWorldPosition(
       new THREE.Vector3(),
@@ -1029,7 +1078,7 @@ function fire() {
         ...construction.children,
         ...lootMeshes,
         ...shotObstacles,
-        ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.actor.root),
+        ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.hitbox),
       ],
       true,
     )
@@ -1044,8 +1093,7 @@ function fire() {
   const hitEnemy =
     hits[0] &&
     enemies.find(
-      (u) =>
-        u.enemy.health > 0 && u.actor.root.getObjectById(hits[0].object.id),
+      (u) => u.enemy.health > 0 && u.hitbox.getObjectById(hits[0].object.id),
     );
   if (hitEnemy) {
     const enemy = hitEnemy.enemy;
@@ -1431,6 +1479,7 @@ function frame(now: number) {
   canvas.dataset.enemies = JSON.stringify(
     enemies.map((u) => ({
       kind: u.enemy.kind,
+      visual: u.imageRig ? "blender" : u.imageLoading ? "loading" : "fallback",
       x: u.enemy.x,
       z: u.enemy.z,
       health: u.enemy.health,
