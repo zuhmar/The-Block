@@ -91,7 +91,7 @@ with sync_playwright() as runner:
     density=phone.evaluate("""()=>{const s=window.__phoneMap.scene,c=s.game.canvas,b=c.getBoundingClientRect();return {width:c.width,height:c.height,cssWidth:b.width,cssHeight:b.height,zoom:s.cameras.main.zoom,smoothing:s.game.config.antialias,chunkWidth:s.textures.get([...window.__phoneMap.chunks.values()][0].texture).getSourceImage().width};}""")
     assert density['width']==780 and density['height']==1688,density
     assert abs(density['cssWidth']-390)<1 and abs(density['cssHeight']-844)<1,density
-    assert density['chunkWidth']==2052,density
+    assert density['chunkWidth'] in (516,2052),density
     assert density['smoothing'], 'Glossy art must retain smooth edges'
     phone.screenshot(path=str(out/'official-mobile-world.png'))
     print('Mobile world captured')

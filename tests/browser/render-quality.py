@@ -52,7 +52,7 @@ with sync_playwright() as runner:
         assert abs(density['zoom']-1)<.001,density
         assert density['cameraWidth']==density['width'] and density['cameraHeight']==density['height'],density
         assert abs(density['actorX']-width/2)<3 and abs(density['actorY']-height/2)<3,density
-        assert density['chunkWidth']==2052 and density['chunks']<=12,density
+        assert density['chunkWidth'] in (516,2052) and density['chunks']<=12,density
         target=page.evaluate("""()=>{const s=window.__mapSmoke.instance.scene,c=s.cameras.main;const point={x:Math.round((c.scrollX+c.width/2)/64)*64+64,y:Math.round((c.scrollY+c.height/2)/64)*64+64};c.preRender();const p=c.matrix.transformPoint(point.x-c.scrollX,point.y-c.scrollY),b=s.game.canvas.getBoundingClientRect();return {...point,screenX:p.x*b.width/s.game.canvas.width,screenY:p.y*b.height/s.game.canvas.height};}""")
         page.mouse.move(target['screenX'],target['screenY'])
         page.wait_for_timeout(250)

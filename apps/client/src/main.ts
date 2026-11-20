@@ -1,3 +1,4 @@
+import { setHudHTML, setLabelColor, meterWidth } from "./render-updates";
 import { MovementPrediction } from "./movement-prediction";
 import {
   movementBlocked,
@@ -475,13 +476,14 @@ class City extends Phaser.Scene {
       const visual = lootVisualSize(index);
       const color = depleted ? 0x90958a : parseInt(crate.color.slice(1), 16);
       this.lootProps.get(index)?.setAlpha(depleted ? 0.42 : 1);
-      this.lootLabels
-        .get(index)
-        ?.setVisible(nearby)
-        .setColor(depleted ? "#b5b8ac" : crate.color)
-        .setText(
+      const label = this.lootLabels.get(index);
+      if (label) {
+        label.setVisible(nearby);
+        setLabelColor(label, depleted ? "#b5b8ac" : crate.color);
+        label.setText(
           `T${crate.tier} · ${depleted ? "EMPTY " + Math.ceil(remaining / 1000) + "s" : close ? "E SEARCH" : "LOOT"}`,
         );
+      }
       graphics
         .lineStyle(2, color, depleted ? 0.35 : 0.9)
         .strokeRoundedRect(
@@ -801,6 +803,7 @@ class City extends Phaser.Scene {
             : 0xffffff,
       );
       const label = this.labels.get(e.id)!;
+      setLabelColor(label, e.entity === "dog" ? "#e6a38d" : "#d6dbc7");
       label
         .setPosition(
           s.x,
@@ -814,7 +817,6 @@ class City extends Phaser.Scene {
                   : 65),
         )
         .setDepth(s.depth + 1)
-        .setColor(e.entity === "dog" ? "#e6a38d" : "#d6dbc7")
         .setText(
           e.entity === "player"
             ? e.name + (e.id === self?.id ? " · YOU" : "")
@@ -1110,7 +1112,7 @@ function drawMap(canvas: HTMLCanvasElement) {
   }
 }
 function meter(name: string, value: number, color: string) {
-  return `<div class="meter"><div><span>${name}</span><b>${Math.ceil(value)}<small> / 100</small></b></div><div class="track"><i style="width:${Math.max(0, Math.min(100, value))}%;--meter:${color}"></i></div></div>`;
+  return `<div class="meter"><div><span>${name}</span><b>${Math.ceil(value)}<small> / 100</small></b></div><div class="track"><i style="width:${meterWidth(value)}%;--meter:${color}"></i></div></div>`;
 }
 let lastPanelKey = "";
 function renderHud() {
@@ -1124,14 +1126,22 @@ function renderHud() {
       .toString()
       .padStart(2, "0"),
     minutes = (time % 60).toString().padStart(2, "0");
-  $("#connection").innerHTML =
-    `<i class="live"></i><span>CONNECTED · ${snapshot.players.length} NEARBY</span><button data-ui="logout" title="Sign out">EXIT</button>`;
-  $("#world-status").innerHTML =
-    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : inRect(p, WORLD.townRect) ? `${DISTRICTS.find((d) => inRect(p, d))?.name.toUpperCase() || "CITY OUTSKIRTS"} <b class="danger">TOWN · NO BUILDING</b>` : 'WOODLAND <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`;
-  $("#vitals").innerHTML =
-    `<div class="player-name"><b>${esc(p.name)}</b><span>${p.weapon === "fists" ? "UNARMED" : nice(p.weapon)}${p.weapon === "pistol" ? " · " + p.ammo + "/6" : ""}</span></div>${meter("HEALTH", p.health, "#b95b4d")}${meter("ENERGY", p.energy, "#c6a858")}`;
-  $("#needs").innerHTML =
-    meter("FOOD", p.hunger, "#8fa269") + meter("WATER", p.thirst, "#6f9da9");
+  setHudHTML(
+    $("#connection"),
+    `<i class="live"></i><span>CONNECTED · ${snapshot.players.length} NEARBY</span><button data-ui="logout" title="Sign out">EXIT</button>`,
+  );
+  setHudHTML(
+    $("#world-status"),
+    `<span class="zone-label">${safe(p.x, p.y) ? "THE HAVEN <b>SAFE ZONE</b>" : inRect(p, WORLD.townRect) ? `${DISTRICTS.find((d) => inRect(p, d))?.name.toUpperCase() || "CITY OUTSKIRTS"} <b class="danger">TOWN · NO BUILDING</b>` : 'WOODLAND <b class="danger">OPEN PVP</b>'}</span><span>${hours}:${minutes} <i>·</i> ${p.temperature.toFixed(0)}°C <i>·</i> $${p.cash}</span>`,
+  );
+  setHudHTML(
+    $("#vitals"),
+    `<div class="player-name"><b>${esc(p.name)}</b><span>${p.weapon === "fists" ? "UNARMED" : nice(p.weapon)}${p.weapon === "pistol" ? " · " + p.ammo + "/6" : ""}</span></div>${meter("HEALTH", p.health, "#b95b4d")}${meter("ENERGY", p.energy, "#c6a858")}`,
+  );
+  setHudHTML(
+    $("#needs"),
+    meter("FOOD", p.hunger, "#8fa269") + meter("WATER", p.thirst, "#6f9da9"),
+  );
   const slots = [
     ["water", "Water", "1"],
     ["snack", "Snack", "2"],
@@ -1144,25 +1154,34 @@ function renderHud() {
     ["ui-build", "Build", "9"],
     ["ui-inventory", "Backpack", "0"],
   ];
-  $("#hotbar").innerHTML = slots
-    .map(
-      ([key, name, num], i) =>
-        `<button data-quick="${i}" class="${p.weapon === ["", "", "", "fists", "bat", "pistol"][i] ? "active" : ""}" title="${name} · ${num}">${img(key)}<kbd>${num}</kbd><b>${i < 3 || i === 4 || i === 5 ? p.inventory[key as Item] || "" : i === 6 ? p.ammo : ""}</b></button>`,
-    )
-    .join("");
-  $("#coordinates").textContent =
-    `${Math.round(p.x)} E / ${Math.round(p.y)} S · M MAP`;
+  setHudHTML(
+    $("#hotbar"),
+    slots
+      .map(
+        ([key, name, num], i) =>
+          `<button data-quick="${i}" class="${p.weapon === ["", "", "", "fists", "bat", "pistol"][i] ? "active" : ""}" title="${name} · ${num}">${img(key)}<kbd>${num}</kbd><b>${i < 3 || i === 4 || i === 5 ? p.inventory[key as Item] || "" : i === 6 ? p.ammo : ""}</b></button>`,
+      )
+      .join(""),
+  );
+  const coordinates = $("#coordinates"),
+    position = `${Math.round(p.x)} E / ${Math.round(p.y)} S · M MAP`;
+  if (coordinates.textContent !== position) coordinates.textContent = position;
   drawMap($("#minimap") as HTMLCanvasElement);
   const built = snapshot.structures.some(
     (s) => s.kind === "foundation" && s.owner === p.id,
   );
   const wood = (p.inventory.wood || 0) > 0;
-  $("#objective").innerHTML =
-    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow a road beyond city limits. Find open ground for your home." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`;
+  setHudHTML(
+    $("#objective"),
+    `<span class="eyebrow">A HOME OUTSIDE TOWN</span><b>${built ? "Make it your home" : wood ? "Lay your first floor" : "Scavenge the neighborhood"}</b><p>${built ? "Build walls and a door on your floors, then add storage." : wood ? "Follow a road beyond city limits. Find open ground for your home." : "Search alley containers or buy wood at the store."}</p><button data-ui="journal">J <span>SURVIVAL JOURNAL</span> ↗</button>`,
+  );
   const near = nearest();
-  $("#context").innerHTML = near
-    ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
-    : "";
+  setHudHTML(
+    $("#context"),
+    near
+      ? `<button data-ui="interact"><kbd>E</kbd><span><b>${esc(near.title)}</b><small>${esc(near.hint)}</small></span></button>`
+      : "",
+  );
   const key = JSON.stringify([
     panel,
     p.inventory,
@@ -1402,7 +1421,7 @@ async function connect(token: string) {
     panel = "";
     $("#panel").hidden = true;
     snapshot = { players: [], structures: [], bags: [], clock: 0 };
-    $("#connection").innerHTML = "<i></i><span>DISCONNECTED</span>";
+    setHudHTML($("#connection"), "<i></i><span>DISCONNECTED</span>");
     notice("Disconnected. Sign in to return to your character.");
   });
 }

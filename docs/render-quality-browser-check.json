@@ -14,7 +14,7 @@
       "cssHeight": 700,
       "zoom": 1,
       "chunks": 2,
-      "chunkWidth": 2052
+      "chunkWidth": 516
     },
     {
       "viewport": "1920x1080",
@@ -30,7 +30,7 @@
       "cssHeight": 1080,
       "zoom": 1,
       "chunks": 6,
-      "chunkWidth": 2052
+      "chunkWidth": 516
     },
     {
       "viewport": "390x844",
@@ -46,7 +46,7 @@
       "cssHeight": 844,
       "zoom": 1,
       "chunks": 1,
-      "chunkWidth": 2052
+      "chunkWidth": 516
     }
   ],
   "pageErrors": []

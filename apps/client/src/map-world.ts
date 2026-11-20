@@ -4,54 +4,173 @@ import {
   sceneryVisual,
   usesSceneryVisual,
 } from "../../../packages/game-data/map-visuals";
-import { paintCityFrontage } from "../../../packages/game-data/map-presentation";
+import { TerrainPainter, TERRAIN_TEXTURES } from "./terrain-painter";
 import Phaser from "phaser";
-import { WORLD } from "../../../packages/shared/src/index";
 import {
   CHUNK_SIZE,
   visibleChunkKeys,
   LEGACY_BUILDINGS,
-  PARKING_LOTS,
-  INDUSTRIAL_YARDS,
 } from "../../../packages/shared/src/official-map";
 import {
-  COAST,
-  RIVER,
-  STREAM,
-  LAKES,
-  ROADS,
   terrainChunkObjects,
-  groundKind,
-  mountainBlend,
-  onBridge,
-  roadJunctions,
   mapObjectEnabled,
   mapReservations,
   setMapReservations,
 } from "../../../packages/shared/src/terrain";
-const junctions = roadJunctions();
+type TerrainTile = { bitmap: ImageBitmap; x: number; y: number; size: number };
+type PreparedTerrain = {
+  key: string;
+  tiles: TerrainTile[];
+  objects: Phaser.GameObjects.GameObject[];
+  textures: string[];
+  bitmaps: ImageBitmap[];
+};
 // Only static presentation is streamed. Actors, controls and housing stay in City.
 export class MapWorld {
   private chunks = new Map<
     string,
-    { objects: Phaser.GameObjects.GameObject[]; texture: string }
+    {
+      objects: Phaser.GameObjects.GameObject[];
+      texture: string;
+      textures: string[];
+      bitmaps: ImageBitmap[];
+    }
   >();
   private reservationKey = "";
   private pixelRatio: number;
-  private gravelBrush?: HTMLCanvasElement;
-  private tonedSurfaces = new Map<string, HTMLCanvasElement>();
+  private painter?: TerrainPainter;
+  private worker?: Worker;
+  private pending?: string;
+  private prepared?: PreparedTerrain;
+  private generation = 0;
+  private wanted = new Set<string>();
   constructor(
     private scene: Phaser.Scene,
     ratio = 1,
   ) {
     this.pixelRatio = Math.ceil(ratio);
+    if (
+      typeof Worker !== "undefined" &&
+      typeof OffscreenCanvas !== "undefined"
+    ) {
+      try {
+        this.worker = new Worker(
+          new URL("./terrain-worker.ts", import.meta.url),
+          { type: "module" },
+        );
+        this.worker.onmessage = ({ data }) => {
+          if (
+            data.generation !== this.generation ||
+            data.key !== this.pending
+          ) {
+            for (const tile of data.tiles || []) tile.bitmap.close();
+            return;
+          }
+          if (data.error) {
+            this.stopWorker();
+            return;
+          }
+          if (!this.wanted.has(data.key)) {
+            for (const tile of data.tiles) tile.bitmap.close();
+            this.pending = undefined;
+            return;
+          }
+          const view = this.scene.cameras.main.worldView,
+            [cx, cy] = data.key.split(",").map(Number),
+            x = view.centerX - cx * CHUNK_SIZE,
+            y = view.centerY - cy * CHUNK_SIZE;
+          data.tiles.sort(
+            (a: TerrainTile, b: TerrainTile) =>
+              Math.hypot(a.x + a.size / 2 - x, a.y + a.size / 2 - y) -
+              Math.hypot(b.x + b.size / 2 - x, b.y + b.size / 2 - y),
+          );
+          this.prepared = {
+            key: data.key,
+            tiles: data.tiles,
+            objects: [],
+            textures: [],
+            bitmaps: [],
+          };
+        };
+        this.worker.onerror = () => this.stopWorker();
+        const assets = scene.cache.json.get("manifest").assets;
+        this.worker.postMessage({
+          type: "init",
+          files: Object.fromEntries(
+            TERRAIN_TEXTURES.map((key) => [key, "/assets/" + assets[key].file]),
+          ),
+        });
+      } catch {
+        this.stopWorker();
+      }
+    }
+  }
+  private stopWorker() {
+    this.worker?.terminate();
+    this.worker = undefined;
+    this.discardPrepared();
+    this.pending = undefined;
+  }
+  private discardPrepared() {
+    const p = this.prepared;
+    if (!p) return;
+    for (const object of p.objects) object.destroy();
+    for (const texture of p.textures) this.scene.textures.remove(texture);
+    for (const bitmap of p.bitmaps) bitmap.close();
+    for (const tile of p.tiles) tile.bitmap.close();
+    this.prepared = undefined;
+  }
+  private uploadPrepared() {
+    const p = this.prepared;
+    if (!p) return;
+    if (!this.wanted.has(p.key)) {
+      this.discardPrepared();
+      this.pending = undefined;
+      return;
+    }
+    const started = performance.now();
+    // A bounded upload replaces the former 16 MB upload in a single frame.
+    for (let count = 0; count < 2 && p.tiles.length; count++) {
+      const tile = p.tiles.shift()!,
+        texture = "map-chunk-" + p.key + "-" + p.textures.length,
+        [cx, cy] = p.key.split(",").map(Number);
+      this.scene.textures.addImage(
+        texture,
+        tile.bitmap as unknown as HTMLImageElement,
+      );
+      p.objects.push(
+        this.scene.add
+          .image(
+            cx * CHUNK_SIZE + tile.x - 1,
+            cy * CHUNK_SIZE + tile.y - 1,
+            texture,
+          )
+          .setOrigin(0, 0)
+          .setDisplaySize(tile.size + 2, tile.size + 2)
+          .setDepth(-10000),
+      );
+      p.textures.push(texture);
+      p.bitmaps.push(tile.bitmap);
+      if (performance.now() - started >= 4) break;
+    }
+    if (!p.tiles.length) {
+      this.install(p.key, p.textures[0], p);
+      this.prepared = undefined;
+      this.pending = undefined;
+    }
+  }
+  private invalidate() {
+    this.discardPrepared();
+    this.generation++;
+    this.pending = undefined;
+    this.painter = undefined;
+    for (const key of this.chunks.keys()) this.unload(key);
   }
   setPixelRatio(ratio: number) {
     const next = Math.ceil(ratio);
     if (next === this.pixelRatio) return;
     this.pixelRatio = next;
-    this.gravelBrush = undefined;
-    for (const key of this.chunks.keys()) this.unload(key);
+    this.invalidate();
   }
   setReservations(
     rects: { x: number; y: number; width: number; height: number }[],
@@ -60,12 +179,14 @@ export class MapWorld {
     if (key === this.reservationKey) return;
     this.reservationKey = key;
     setMapReservations(rects);
-    for (const key of this.chunks.keys()) this.unload(key);
+    this.invalidate();
   }
   update(view: Phaser.Geom.Rectangle) {
     const wanted = new Set(visibleChunkKeys(view, this.pixelRatio > 1 ? 0 : 1));
+    this.wanted = wanted;
     for (const key of this.chunks.keys())
       if (!wanted.has(key)) this.unload(key);
+    this.uploadPrepared();
     const cx = (view.x + view.width / 2) / 1024,
       cy = (view.y + view.height / 2) / 1024;
     const pending = [...wanted]
@@ -78,16 +199,18 @@ export class MapWorld {
           Math.hypot(bx + 0.5 - cx, by + 0.5 - cy)
         );
       });
-    for (const key of pending.slice(0, 1)) this.load(key);
+    if (!this.pending) for (const key of pending.slice(0, 1)) this.load(key);
   }
   destroy() {
+    this.stopWorker();
     for (const key of this.chunks.keys()) this.unload(key);
   }
   private unload(key: string) {
     const c = this.chunks.get(key);
     if (!c) return;
     for (const o of c.objects) o.destroy();
-    this.scene.textures.remove(c.texture);
+    for (const texture of c.textures) this.scene.textures.remove(texture);
+    for (const bitmap of c.bitmaps) bitmap.close();
     this.chunks.delete(key);
   }
   private load(key: string) {
@@ -96,6 +219,25 @@ export class MapWorld {
       x = cx * 1024,
       y = cy * 1024,
       texture = "map-chunk-" + key;
+    if (this.worker) {
+      this.pending = key;
+      this.worker.postMessage({
+        type: "paint",
+        key,
+        x,
+        y,
+        ratio: this.pixelRatio,
+        generation: this.generation,
+        reservations: mapReservations(),
+      });
+      return;
+    }
+    this.painter ||= new TerrainPainter(
+      this.pixelRatio,
+      (name) =>
+        this.scene.textures.get(name).getSourceImage() as HTMLImageElement,
+      () => document.createElement("canvas"),
+    );
     const canvas = scene.textures.createCanvas(
       texture,
       (CHUNK_SIZE + 2) * this.pixelRatio,
@@ -105,7 +247,7 @@ export class MapWorld {
     ctx.save();
     ctx.scale(this.pixelRatio, this.pixelRatio);
     ctx.translate(1, 1);
-    this.paint(ctx, x, y);
+    this.painter.paint(ctx, x, y);
     ctx.restore();
     const source = canvas.getSourceImage() as HTMLCanvasElement;
     const p = this.pixelRatio,
@@ -116,7 +258,14 @@ export class MapWorld {
     ctx.drawImage(source, p, 0, p, full, 0, 0, p, full);
     ctx.drawImage(source, size, 0, p, full, size + p, 0, p, full);
     canvas.refresh();
-    const objects: Phaser.GameObjects.GameObject[] = [
+    this.install(key, texture);
+  }
+  private install(key: string, texture: string, terrain?: PreparedTerrain) {
+    const scene = this.scene,
+      [cx, cy] = key.split(",").map(Number),
+      x = cx * CHUNK_SIZE,
+      y = cy * CHUNK_SIZE;
+    const objects: Phaser.GameObjects.GameObject[] = terrain?.objects || [
       scene.add
         .image(x - 1, y - 1, texture)
         .setOrigin(0, 0)
@@ -189,309 +338,11 @@ export class MapWorld {
             )
             .setDepth(r.y + r.height),
         );
-    this.chunks.set(key, { objects, texture });
-  }
-  private paint(ctx: CanvasRenderingContext2D, x: number, y: number) {
-    const pattern = (name: string) => {
-      const source = this.scene.textures
-        .get(name)
-        .getSourceImage() as HTMLImageElement;
-      const wash =
-        name === "map-paving-slab"
-          ? "rgba(181,183,176,0.22)"
-          : name === "map-tile-grass"
-            ? "rgba(113,128,76,0.24)"
-            : undefined;
-      if (wash && !this.tonedSurfaces.has(name)) {
-        const surface = document.createElement("canvas");
-        surface.width = source.width;
-        surface.height = source.height;
-        const painter = surface.getContext("2d")!;
-        painter.drawImage(source, 0, 0);
-        painter.fillStyle = wash;
-        painter.fillRect(0, 0, surface.width, surface.height);
-        this.tonedSurfaces.set(name, surface);
-      }
-      const fill = ctx.createPattern(
-        this.tonedSurfaces.get(name) || source,
-        "repeat",
-      )!;
-      if (name.startsWith("map-paving-"))
-        fill.setTransform(new DOMMatrix().scale(128 / source.width));
-      return fill;
-    };
-    const path = (
-      points: readonly { x: number; y: number }[],
-      closed = false,
-    ) => {
-      ctx.beginPath();
-      points.forEach((p, i) =>
-        i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
-      );
-      if (closed) ctx.closePath();
-    };
-    const stroke = (
-      points: readonly { x: number; y: number }[],
-      width: number,
-      color: string | CanvasPattern,
-      closed = false,
-    ) => {
-      ctx.beginPath();
-      let pen = false,
-        any = false;
-      const padding = width + 48;
-      for (let i = 0; i < points.length - (closed ? 0 : 1); i++) {
-        const a = points[i],
-          b = points[(i + 1) % points.length];
-        if (
-          Math.max(a.x, b.x) < x - padding ||
-          Math.min(a.x, b.x) > x + 1024 + padding ||
-          Math.max(a.y, b.y) < y - padding ||
-          Math.min(a.y, b.y) > y + 1024 + padding
-        ) {
-          pen = false;
-          continue;
-        }
-        if (!pen) ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        pen = true;
-        any = true;
-      }
-      if (!any) return;
-      ctx.lineWidth = width;
-      ctx.strokeStyle = color;
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.stroke();
-    };
-    ctx.save();
-    ctx.translate(-x, -y);
-    const water = pattern("map-tile-water"),
-      grass = pattern("map-tile-grass"),
-      gravel = pattern("map-tile-gravel"),
-      concrete = pattern("map-paving-slab"),
-      pavers = pattern("map-paving-pavers"),
-      service = pattern("map-paving-service"),
-      asphalt = pattern("map-tile-asphalt"),
-      dirt = pattern("map-tile-dirt");
-    if (!this.gravelBrush) {
-      const brush = document.createElement("canvas");
-      brush.width = brush.height = 96 * this.pixelRatio;
-      const painter = brush.getContext("2d")!;
-      painter.scale(this.pixelRatio, this.pixelRatio);
-      painter.fillStyle = painter.createPattern(
-        this.scene.textures
-          .get("map-tile-gravel")
-          .getSourceImage() as HTMLImageElement,
-        "repeat",
-      )!;
-      painter.fillRect(0, 0, 96, 96);
-      const fade = painter.createRadialGradient(48, 48, 4, 48, 48, 48);
-      fade.addColorStop(0, "#000");
-      fade.addColorStop(0.45, "#0009");
-      fade.addColorStop(1, "#0000");
-      painter.globalCompositeOperation = "destination-in";
-      painter.fillStyle = fade;
-      painter.fillRect(0, 0, 96, 96);
-      this.gravelBrush = brush;
-    }
-    ctx.fillStyle = water;
-    ctx.fillRect(x, y, 1024, 1024);
-    ctx.globalAlpha = 0.16;
-    stroke(COAST, 180, "#89b8ad", true);
-    ctx.globalAlpha = 0.22;
-    stroke(COAST, 94, "#b1cdb5", true);
-    ctx.globalAlpha = 1;
-    ctx.save();
-    path(COAST, true);
-    ctx.clip();
-    ctx.fillStyle = grass;
-    ctx.fillRect(x, y, 1024, 1024);
-    for (let ty = -1; ty <= 16; ty++)
-      for (let tx = -1; tx <= 16; tx++) {
-        const p = { x: x + tx * 64 + 32, y: y + ty * 64 + 32 },
-          k = groundKind(p);
-        if (k === "mountain" || k === "rocky") {
-          ctx.globalAlpha = k === "mountain" ? mountainBlend(p) * 0.6 : 0.14;
-          const radius = k === "mountain" ? 48 : 40;
-          const dx = Math.sin(p.x * 0.013 + p.y * 0.021) * 12,
-            dy = Math.cos(p.x * 0.017 - p.y * 0.019) * 12;
-          ctx.drawImage(
-            this.gravelBrush!,
-            p.x + dx - radius,
-            p.y + dy - radius,
-            radius * 2,
-            radius * 2,
-          );
-        }
-      }
-    ctx.globalAlpha = 1;
-    paintCityFrontage(
-      ctx,
-      { x, y, width: 1024, height: 1024 },
-      { concrete, gravel, dirt, grass, pavers, service },
-    );
-    stroke(COAST, 46, "#b9bb8a", true);
-    stroke(COAST, 10, "#a5d0be", true);
-    for (const lake of LAKES) {
-      path(lake, true);
-      if (!this.gravelBrush) {
-        const brush = document.createElement("canvas");
-        brush.width = brush.height = 96 * this.pixelRatio;
-        const painter = brush.getContext("2d")!;
-        painter.scale(this.pixelRatio, this.pixelRatio);
-        painter.fillStyle = painter.createPattern(
-          this.scene.textures
-            .get("map-tile-gravel")
-            .getSourceImage() as HTMLImageElement,
-          "repeat",
-        )!;
-        painter.fillRect(0, 0, 96, 96);
-        const fade = painter.createRadialGradient(48, 48, 4, 48, 48, 48);
-        fade.addColorStop(0, "#000");
-        fade.addColorStop(0.45, "#0009");
-        fade.addColorStop(1, "#0000");
-        painter.globalCompositeOperation = "destination-in";
-        painter.fillStyle = fade;
-        painter.fillRect(0, 0, 96, 96);
-        this.gravelBrush = brush;
-      }
-      ctx.fillStyle = water;
-      ctx.fill();
-      ctx.lineWidth = 22;
-      ctx.strokeStyle = "#b9bb8a";
-      ctx.stroke();
-    }
-    for (const [river, w] of [
-      [RIVER, 448],
-      [STREAM, 84],
-    ] as const) {
-      stroke(river, w + 34, "#b2b28b");
-      stroke(river, w, water);
-    }
-    ctx.restore();
-    for (const r of mapReservations()) {
-      ctx.fillStyle = grass;
-      ctx.fillRect(r.x, r.y, r.width, r.height);
-    }
-    for (const lot of [...PARKING_LOTS, ...INDUSTRIAL_YARDS]) {
-      ctx.fillStyle = INDUSTRIAL_YARDS.includes(lot) ? gravel : concrete;
-      ctx.beginPath();
-      ctx.roundRect(
-        lot.x - lot.width / 2,
-        lot.y - lot.height / 2,
-        lot.width,
-        lot.height,
-        32,
-      );
-      ctx.fill();
-    }
-    for (const lot of PARKING_LOTS) {
-      ctx.strokeStyle = "#eee9cc";
-      ctx.lineWidth = 4;
-      for (let i = 0; i <= 4; i++) {
-        const px = lot.x - 288 + i * 144;
-        ctx.beginPath();
-        ctx.moveTo(px, lot.y - 75);
-        ctx.lineTo(px, lot.y + 130);
-        ctx.stroke();
-      }
-    }
-    for (const road of ROADS) {
-      const trail = road.width < 100;
-      stroke(
-        road.points,
-        road.width + (trail ? 18 : 62),
-        trail ? "#8e926c" : "#626e70",
-      );
-      if (!trail) stroke(road.points, road.width + 54, concrete);
-    }
-    // Paint all road beds after all shoulders so sidewalks cannot cut across junctions.
-    for (const road of ROADS)
-      stroke(road.points, road.width, road.width < 100 ? dirt : asphalt);
-    for (const road of ROADS) {
-      const trail = road.width < 100;
-      if (!trail) {
-        ctx.setLineDash([32, 96]);
-        stroke(road.points, 3, "#e1d6a4");
-        ctx.setLineDash([]);
-      }
-      if (!trail)
-        for (let i = 12; i < road.points.length; i += 28) {
-          const p = road.points[i],
-            a = road.points[i - 1];
-          if (
-            p.x < x - 200 ||
-            p.x > x + 1224 ||
-            p.y < y - 200 ||
-            p.y > y + 1224 ||
-            onBridge(p)
-          )
-            continue;
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(Math.atan2(p.y - a.y, p.x - a.x));
-          const gy = road.width / 2 + 6;
-          ctx.fillStyle = "#4f5a5c";
-          ctx.fillRect(-12, gy, 24, 12);
-          ctx.strokeStyle = "#9aa19a";
-          ctx.lineWidth = 2;
-          ctx.strokeRect(-12, gy, 24, 12);
-          ctx.fillStyle = "#89918c";
-          for (let d = -8; d <= 8; d += 4) ctx.fillRect(d, gy + 2, 1, 8);
-          ctx.restore();
-        }
-      for (let i = 1; i < road.points.length; i++) {
-        const p = road.points[i];
-        if (
-          p.x < x - 200 ||
-          p.x > x + 1224 ||
-          p.y < y - 200 ||
-          p.y > y + 1224 ||
-          !onBridge(p)
-        )
-          continue;
-        const a = road.points[i - 1],
-          angle = Math.atan2(p.y - a.y, p.x - a.x),
-          dx = Math.cos(angle + Math.PI / 2) * (road.width / 2 - 6),
-          dy = Math.sin(angle + Math.PI / 2) * (road.width / 2 - 6);
-        ctx.beginPath();
-        ctx.moveTo(p.x - dx, p.y - dy);
-        ctx.lineTo(p.x + dx, p.y + dy);
-        ctx.lineWidth = 12;
-        ctx.strokeStyle = "#baa077";
-        ctx.stroke();
-      }
-    }
-    for (const j of junctions) {
-      if (j.x < x - 200 || j.x > x + 1224 || j.y < y - 200 || j.y > y + 1224)
-        continue;
-      ctx.fillStyle = asphalt;
-      ctx.beginPath();
-      ctx.arc(j.x, j.y, 52, 0, Math.PI * 2);
-      ctx.fill();
-      for (const angle of [
-        j.angleA,
-        j.angleA + Math.PI,
-        j.angleB,
-        j.angleB + Math.PI,
-      ])
-        for (let d = 110; d < 172; d += 14) {
-          const px = j.x + Math.cos(angle) * d,
-            py = j.y + Math.sin(angle) * d,
-            dx = -Math.sin(angle) * 42,
-            dy = Math.cos(angle) * 42;
-          ctx.beginPath();
-          ctx.moveTo(px - dx, py - dy);
-          ctx.lineTo(px + dx, py + dy);
-          ctx.lineWidth = 7;
-          ctx.strokeStyle = "#e2e0ca";
-          ctx.stroke();
-        }
-    }
-    const s = WORLD.safeRect;
-    ctx.fillStyle = pattern("td-floor");
-    ctx.fillRect(s.x, s.y, s.width, s.height);
-    ctx.restore();
+    this.chunks.set(key, {
+      objects,
+      texture,
+      textures: terrain?.textures || [texture],
+      bitmaps: terrain?.bitmaps || [],
+    });
   }
 }

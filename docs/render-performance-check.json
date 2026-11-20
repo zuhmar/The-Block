@@ -1,0 +1,87 @@
+{
+  "scope": "Local Chromium, 390x844 CSS pixels, DPR 2, software WebGL, isolated local database. These measurements identify avoidable work; they do not establish physical-phone FPS or mobile-network latency.",
+  "stationaryBefore": {
+    "textUpdates": 368,
+    "textMs": 80.29999999975553,
+    "domMutations": 354,
+    "frames": 45,
+    "p50": 116.70000000000073,
+    "p95": 166.70000000000073,
+    "pageErrors": []
+  },
+  "stationaryAfterLabelAndHudGuards": {
+    "textUpdates": 0,
+    "textMs": 0,
+    "domMutations": 66,
+    "frames": 53,
+    "p50": 100,
+    "p95": 216.6999999999989,
+    "pageErrors": []
+  },
+  "walkingBeforeWorker": {
+    "renderMs": 106.20000000001164,
+    "loads": [197.5, 186.39999999996508],
+    "textUpdates": 15,
+    "textMs": 1.4999999999417923,
+    "domMutations": 98,
+    "frames": 81,
+    "p50": 100,
+    "p95": 183.29999999999927,
+    "pageErrors": []
+  },
+  "walkingWithWorkerAndBoundedUploads": {
+    "renderMs": 150.89999999979045,
+    "loads": [0.09999999997671694, 0.09999999997671694],
+    "installs": [0.7000000000698492, 2],
+    "workerCompletions": [0.10000000009313226, 0.09999999997671694],
+    "uploads": [
+      3.5, 1.2000000000698492, 1.599999999976717, 1.5, 1.400000000023283,
+      1.599999999976717, 1.400000000023283, 3.400000000023283,
+      1.2000000000698492, 1, 1.400000000023283, 1.8000000000465661,
+      1.599999999976717, 3.900000000023283, 1.3999999999068677,
+      3.599999999976717
+    ],
+    "worker": true,
+    "textUpdates": 15,
+    "textMs": 1.2999999999301508,
+    "domMutations": 97,
+    "frames": 86,
+    "p50": 100,
+    "p95": 200,
+    "pageErrors": []
+  },
+  "terrainWorkerRegression": {
+    "checks": [
+      {
+        "x": 6144,
+        "y": 6144,
+        "ratio": 2,
+        "identicalPixels": true
+      },
+      {
+        "x": 11264,
+        "y": 6144,
+        "ratio": 1,
+        "identicalPixels": true
+      },
+      {
+        "x": 3072,
+        "y": 2048,
+        "ratio": 1,
+        "identicalPixels": true
+      },
+      {
+        "x": 6144,
+        "y": 11264,
+        "ratio": 1,
+        "identicalPixels": true
+      }
+    ],
+    "fallbackRequested": true,
+    "staleResultReleased": true,
+    "unloadedBitmapsReleased": true,
+    "maxUploadsPerFrame": 2,
+    "fallbackLoaded": true,
+    "pageErrors": []
+  }
+}
