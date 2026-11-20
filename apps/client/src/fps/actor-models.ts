@@ -1,3 +1,4 @@
+import { hydrateBlenderWeapon } from "./blender-weapons";
 import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -262,6 +263,7 @@ export function createPistol() {
   muzzle.name = "muzzle";
   muzzle.position.set(0, 0.004, -0.176);
   root.add(muzzle);
+  hydrateBlenderWeapon("pistol", root, slide, muzzle);
   return { root, slide, muzzle };
 }
 export function createStickPlayer() {
@@ -567,6 +569,7 @@ export function createWeapon(kind: WeaponKind) {
   muzzle.name = "muzzle";
   muzzle.position.set(0, 0.008, barrelEnd - 0.022);
   root.add(muzzle);
+  hydrateBlenderWeapon(kind, root, slide, muzzle);
   return { root, slide, muzzle };
 }
 export function createFirstPersonRig(kind: WeaponKind = "pistol") {

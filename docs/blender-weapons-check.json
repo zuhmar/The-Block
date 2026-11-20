@@ -1,0 +1,225 @@
+{
+  "models": [
+    {
+      "kind": "pistol",
+      "triangles": 4760,
+      "drawCalls": 5
+    },
+    {
+      "kind": "smg",
+      "triangles": 9220,
+      "drawCalls": 4
+    },
+    {
+      "kind": "rifle",
+      "triangles": 9220,
+      "drawCalls": 5
+    },
+    {
+      "kind": "sniper",
+      "triangles": 11640,
+      "drawCalls": 6
+    }
+  ],
+  "source": "art/weapons/blender/weapon-library.blend",
+  "reference": "Visual interpretation of the glossy cartoon reference generated in chat; original raster unavailable locally",
+  "verification": {
+    "repository": "pnpm verify passed: 132 tests, lint, typecheck, asset validation and production build",
+    "finalExportTest": "\u2714 Blender weapon exports keep forward muzzle, separate recoil parts, distinct silhouettes and bounded geometry (45.437294ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 461.822251\n",
+    "browser": {
+      "pistol": {
+        "preview": {
+          "engine": "three.js r187",
+          "weaponSources": "blender,blender,blender,blender",
+          "model": "pistol",
+          "reviewLoaded": "false",
+          "reviewKind": "",
+          "motion": "still",
+          "handPose": "",
+          "bonePose": "",
+          "hiddenSlots": "",
+          "drawCalls": "5",
+          "triangles": "4760",
+          "rotation": "-0.700"
+        },
+        "heldShots": 8,
+        "aimFov": 52.0,
+        "game": {
+          "engine": "three.js r187",
+          "position": "0.000,14.000",
+          "yaw": "0.000",
+          "pitch": "-0.030",
+          "drawCalls": "47",
+          "triangles": "17074",
+          "mapSize": "128",
+          "shots": "8",
+          "health": "100",
+          "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+          "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+          "firing": "false",
+          "inside": "-1",
+          "visibleInteriors": "[]",
+          "doors": "[0,0,0,0,0]",
+          "lastHitDoor": "-1",
+          "nearestDoor": "-1",
+          "equipped": "pistol",
+          "aiming": "false",
+          "fov": "72",
+          "actorModels": "rounded-stick-player,detailed-pistol",
+          "weaponSource": "blender",
+          "recoil": "0.0000",
+          "movement": "0.00,0.00",
+          "recoilRendered": "8"
+        }
+      },
+      "smg": {
+        "preview": {
+          "engine": "three.js r187",
+          "weaponSources": "blender,blender,blender,blender",
+          "model": "smg",
+          "reviewLoaded": "false",
+          "reviewKind": "",
+          "motion": "still",
+          "handPose": "",
+          "bonePose": "",
+          "hiddenSlots": "",
+          "drawCalls": "4",
+          "triangles": "9220",
+          "rotation": "-0.700"
+        },
+        "heldShots": 13,
+        "aimFov": 50.0,
+        "game": {
+          "engine": "three.js r187",
+          "position": "0.000,14.000",
+          "yaw": "0.000",
+          "pitch": "-0.030",
+          "drawCalls": "46",
+          "triangles": "21534",
+          "mapSize": "128",
+          "shots": "21",
+          "health": "100",
+          "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+          "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+          "firing": "false",
+          "inside": "-1",
+          "visibleInteriors": "[]",
+          "doors": "[0,0,0,0,0]",
+          "lastHitDoor": "-1",
+          "nearestDoor": "-1",
+          "equipped": "smg",
+          "aiming": "false",
+          "fov": "72",
+          "actorModels": "rounded-stick-player,detailed-pistol",
+          "weaponSource": "blender",
+          "recoil": "0.0000",
+          "movement": "0.00,0.00",
+          "recoilRendered": "21"
+        }
+      },
+      "rifle": {
+        "preview": {
+          "engine": "three.js r187",
+          "weaponSources": "blender,blender,blender,blender",
+          "model": "rifle",
+          "reviewLoaded": "false",
+          "reviewKind": "",
+          "motion": "still",
+          "handPose": "",
+          "bonePose": "",
+          "hiddenSlots": "",
+          "drawCalls": "5",
+          "triangles": "9220",
+          "rotation": "-0.700"
+        },
+        "heldShots": 9,
+        "aimFov": 42.0,
+        "game": {
+          "engine": "three.js r187",
+          "position": "0.000,14.000",
+          "yaw": "0.000",
+          "pitch": "-0.030",
+          "drawCalls": "47",
+          "triangles": "21534",
+          "mapSize": "128",
+          "shots": "30",
+          "health": "100",
+          "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+          "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+          "firing": "false",
+          "inside": "-1",
+          "visibleInteriors": "[]",
+          "doors": "[0,0,0,0,0]",
+          "lastHitDoor": "-1",
+          "nearestDoor": "-1",
+          "equipped": "rifle",
+          "aiming": "false",
+          "fov": "72",
+          "actorModels": "rounded-stick-player,detailed-pistol",
+          "weaponSource": "blender",
+          "recoil": "0.0000",
+          "movement": "0.00,0.00",
+          "recoilRendered": "30"
+        }
+      },
+      "sniper": {
+        "preview": {
+          "engine": "three.js r187",
+          "weaponSources": "blender,blender,blender,blender",
+          "model": "sniper",
+          "reviewLoaded": "false",
+          "reviewKind": "",
+          "motion": "still",
+          "handPose": "",
+          "bonePose": "",
+          "hiddenSlots": "",
+          "drawCalls": "6",
+          "triangles": "11640",
+          "rotation": "-0.700"
+        },
+        "heldShots": 2,
+        "aimFov": 20.0,
+        "game": {
+          "engine": "three.js r187",
+          "position": "0.000,14.000",
+          "yaw": "0.000",
+          "pitch": "-0.030",
+          "drawCalls": "48",
+          "triangles": "23954",
+          "mapSize": "128",
+          "shots": "32",
+          "health": "100",
+          "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"fallback\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+          "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+          "firing": "false",
+          "inside": "-1",
+          "visibleInteriors": "[]",
+          "doors": "[0,0,0,0,0]",
+          "lastHitDoor": "-1",
+          "nearestDoor": "-1",
+          "equipped": "sniper",
+          "aiming": "false",
+          "fov": "72",
+          "actorModels": "rounded-stick-player,detailed-pistol",
+          "weaponSource": "blender",
+          "recoil": "0.0000",
+          "movement": "0.00,0.00",
+          "recoilRendered": "32"
+        }
+      },
+      "weaponSelectionExitsBuildMode": true,
+      "sniperScopedEnemyOneShot": true,
+      "pageErrors": [],
+      "scope": "Local software-WebGL Chromium with real touch input; not a physical-phone benchmark.",
+      "desktopMoveAimAndFire": true
+    },
+    "lateLoadCleanup": {
+      "lateLoadsAfterClose": true,
+      "liveWeaponLoads": true,
+      "pageErrors": []
+    }
+  },
+  "limitations": [
+    "Software WebGL checks are not physical-phone FPS measurements."
+  ]
+}

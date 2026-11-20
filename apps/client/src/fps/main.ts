@@ -1511,6 +1511,8 @@ function frame(now: number) {
   canvas.dataset.aiming = String(aiming);
   canvas.dataset.fov = String(camera.fov);
   canvas.dataset.actorModels = "rounded-stick-player,detailed-pistol";
+  canvas.dataset.weaponSource =
+    viewModel.gun.root.userData.weaponSource || "fallback";
   canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;
 }

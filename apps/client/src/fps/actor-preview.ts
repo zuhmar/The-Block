@@ -1,3 +1,4 @@
+import { WEAPON_RENDER_URL } from "./blender-weapons";
 import {
   loadStreetReview,
   disposeReview,
@@ -235,6 +236,12 @@ export function openActorPreview() {
     for (const id of Object.values(reviewButtons))
       overlay.querySelector("#" + id)!.classList.remove("selected");
     const isPlayer = kind in characters;
+    const referenceLink =
+      overlay.querySelector<HTMLAnchorElement>("#image-reference")!;
+    referenceLink.href = isPlayer ? IMAGE_REFERENCE_URL : WEAPON_RENDER_URL;
+    referenceLink.textContent = isPlayer
+      ? "FOUR-CHARACTER REFERENCE IMAGE"
+      : "OPEN BLENDER WEAPON RENDER";
     base.visible = isPlayer;
     for (const [key, c] of Object.entries(characters))
       c.root.visible = key === kind;
@@ -341,6 +348,10 @@ export function openActorPreview() {
   function close() {
     if (closed) return;
     closed = true;
+    for (const w of Object.values(weapons)) {
+      w.root.userData.weaponDisposed = true;
+      disposeReview(w.root);
+    }
     observer.disconnect();
     window.removeEventListener("keydown", keydown, true);
     if (review) {
@@ -401,6 +412,13 @@ export function openActorPreview() {
       dirty = true;
     }
     lastAnimationFrame = now;
+    const weaponState = Object.values(weapons)
+      .map((w) => w.root.userData.weaponSource)
+      .join(",");
+    if (canvas.dataset.weaponSources !== weaponState) {
+      canvas.dataset.weaponSources = weaponState;
+      dirty = true;
+    }
     if (!dirty) return;
     dirty = false;
     for (const c of Object.values(characters)) c.root.rotation.y = yaw;

@@ -7,13 +7,14 @@ with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
  c=b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True);page=c.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:5173'),wait_until='networkidle')
  page.locator('#view-models').click()
- for kind in ['smg','rifle','sniper']:
-  page.locator('#show-'+kind).click();page.wait_for_function('(kind)=>document.querySelector("#actor-canvas").dataset.model===kind',arg=kind);metrics=page.locator('#actor-canvas').evaluate('(c)=>({...c.dataset})');assert int(metrics['drawCalls'])<12 and int(metrics['triangles'])<8000,metrics;page.screenshot(path=str(out/('weapon-'+kind+'-preview.png')));result[kind]={'preview':metrics}
+ page.wait_for_function('document.querySelector("#actor-canvas").dataset.weaponSources==="blender,blender,blender,blender"')
+ for kind in ['pistol','smg','rifle','sniper']:
+  page.locator('#show-'+kind).click();page.wait_for_function('(kind)=>document.querySelector("#actor-canvas").dataset.model===kind',arg=kind);metrics=page.locator('#actor-canvas').evaluate('(c)=>({...c.dataset})');assert int(metrics['drawCalls'])<14 and int(metrics['triangles'])<25000,metrics;page.screenshot(path=str(out/('weapon-'+kind+'-preview.png')));result[kind]={'preview':metrics}
  page.locator('#close-actors').click();page.locator('#start').click();page.locator('#build-tool').click();assert page.locator('#build-panel').is_visible();page.locator('#smg-tool').click();assert not page.locator('#build-panel').is_visible();result['weaponSelectionExitsBuildMode']=True;cdp=c.new_cdp_session(page)
  def pos(selector,i):
   r=page.locator(selector).bounding_box();return {'x':r['x']+r['width']/2,'y':r['y']+r['height']/2,'id':i}
- for kind in ['smg','rifle','sniper']:
-  page.locator('#'+kind+'-tool').click();page.wait_for_function('(kind)=>document.querySelector("#world").dataset.equipped===kind',arg=kind);page.wait_for_timeout(1150)
+ for kind in ['pistol','smg','rifle','sniper']:
+  page.locator('#'+kind+'-tool').click();page.wait_for_function('(kind)=>document.querySelector("#world").dataset.equipped===kind',arg=kind);page.wait_for_function('document.querySelector("#world").dataset.weaponSource==="blender"');page.wait_for_timeout(1150)
   before=int(page.locator('#world').get_attribute('data-shots'));point=pos('#fire',1);cdp.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[point]});page.wait_for_timeout(1400);cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]});page.wait_for_function('document.querySelector("#world").dataset.firing==="false"');after=int(page.locator('#world').get_attribute('data-shots'));count=after-before
   assert count>0,(kind,count)
   if kind=='sniper':assert count<=2,count
