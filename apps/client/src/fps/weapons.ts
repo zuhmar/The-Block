@@ -1,6 +1,8 @@
 export const WEAPONS = {
   pistol: {
     name: "Pistol",
+    magazineSize: 12,
+    reloadSeconds: 1.4,
     interval: 200,
     damage: 25,
     range: 45,
@@ -10,6 +12,8 @@ export const WEAPONS = {
   },
   smg: {
     name: "SMG",
+    magazineSize: 30,
+    reloadSeconds: 1.8,
     interval: 85,
     damage: 15,
     range: 35,
@@ -19,6 +23,8 @@ export const WEAPONS = {
   },
   rifle: {
     name: "Assault rifle",
+    magazineSize: 30,
+    reloadSeconds: 2.1,
     interval: 135,
     damage: 30,
     range: 70,
@@ -28,6 +34,8 @@ export const WEAPONS = {
   },
   sniper: {
     name: "Sniper rifle",
+    magazineSize: 5,
+    reloadSeconds: 2.6,
     interval: 1100,
     damage: 90,
     range: 120,

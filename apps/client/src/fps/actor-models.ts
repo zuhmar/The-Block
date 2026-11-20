@@ -630,28 +630,32 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
       [0.202, -0.24 - i * 0.015, -0.464],
       0.009,
     );
+  const support = new THREE.Group();
+  support.name = "reload-support-hand";
+  armed.add(support);
   // The support hand cups the gripping hand, clear of the trigger and barrel.
   limb(
-    armed,
+    support,
     "left-forearm",
     [-0.26, -0.43, -0.2],
     [0.12, -0.29, WEAPONS[kind].supportZ + 0.025],
     0.036,
   );
   ball(
-    armed,
+    support,
     "support-palm",
     [0.135, -0.27, WEAPONS[kind].supportZ],
     0.038,
     [0.8, 0.85, 0.8],
   );
   limb(
-    armed,
+    support,
     "support-thumb",
     [0.132, -0.245, WEAPONS[kind].supportZ - 0.001],
     [0.15, -0.226, WEAPONS[kind].supportZ - 0.012],
     0.011,
   );
+  batch(support);
   batch(armed);
   const flash = new THREE.Mesh(
     new THREE.ConeGeometry(0.035, 0.12, 5),
@@ -666,7 +670,12 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     gun.root.visible = armed.visible = pistol;
     hands.visible = !pistol;
   }
-  function animate(time: number, moving: boolean, recoil: number) {
+  function animate(
+    time: number,
+    moving: boolean,
+    recoil: number,
+    action: { punch?: number; side?: number; reload?: number } = {},
+  ) {
     root.position.y = moving
       ? Math.sin(time * 9) * 0.008
       : Math.sin(time * 1.7) * 0.002;
@@ -676,6 +685,27 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     gun.slide.position.z = recoil * 0.022;
     armed.position.z = recoil * 0.018;
     armed.rotation.x = recoil * 0.035;
+    const reload = action.reload ?? 0;
+    const dip = Math.sin(reload * Math.PI);
+    gun.root.position.y = -0.19 + dip * 0.07;
+    gun.root.rotation.z = -dip * 0.38;
+    gun.root.rotation.x += dip * 0.15;
+    armed.position.y = dip * 0.05;
+    armed.rotation.z = -dip * 0.25;
+    support.position.set(-dip * 0.08, -dip * 0.06, dip * 0.08);
+    const magazine = gun.root.getObjectByName(kind + "-magazine-group");
+    if (magazine) {
+      magazine.position.y =
+        -Math.sin(Math.PI * Math.min(1, Math.max(0, (reload - 0.15) / 0.65))) *
+        0.09;
+    }
+    for (const hand of hands.children) {
+      const p = hand.userData.side === action.side ? (action.punch ?? 0) : 0;
+      const extension = p < 0.3 ? p / 0.3 : (1 - p) / 0.7;
+      hand.position.z = -Math.max(0, extension) * 0.2;
+      hand.position.y = Math.max(0, extension) * 0.035;
+      hand.rotation.x = -Math.max(0, extension) * 0.25;
+    }
   }
   function setAspect(aspect: number) {
     const offset = aspect < 0.8 ? -0.085 : 0;

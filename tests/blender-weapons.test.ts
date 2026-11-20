@@ -18,6 +18,7 @@ test("Blender weapon exports keep forward muzzle, separate recoil parts, distinc
     assert(
       muzzle.getWorldPosition(new THREE.Vector3()).z <= bounds.min.z + 0.02,
     );
+    let magazine = false;
     let tris = 0,
       parts = 0,
       moving = false;
@@ -27,9 +28,11 @@ test("Blender weapon exports keep forward muzzle, separate recoil parts, distinc
         tris +=
           (o.geometry.index?.count || o.geometry.attributes.position.count) / 3;
         moving ||= o.userData.weaponPart === "slide";
+        magazine ||= o.userData.weaponPart === "magazine";
       }
     });
     assert(moving);
+    assert(magazine, kind + " removable magazine");
     assert(parts <= 9);
     assert(tris < 25000, `${kind}: ${tris}`);
     lengths.push(bounds.max.z - bounds.min.z);

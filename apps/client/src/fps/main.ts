@@ -1,3 +1,11 @@
+import {
+  newWeaponState,
+  spendRound,
+  beginReload,
+  advanceReload,
+  cancelReload,
+  MELEE,
+} from "./weapon-state";
 import { createNpcHitbox, loadNpcImage } from "./npc-image";
 import { createNpc, NPC_KINDS } from "./npc-models";
 import { createSurvivor } from "./survivor-models";
@@ -53,9 +61,10 @@ $("#app").innerHTML = `
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
   <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
+  <div id="weapon-status"><span id="ammo"></span><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -653,6 +662,8 @@ function clearBullets() {
 }
 function respawn() {
   health = 100;
+  loadout = newWeaponState();
+  punchRemaining = punchCooldown = 0;
   player = { ...START };
   vertical = verticalSpeed = 0;
   for (const unit of enemies)
@@ -791,6 +802,8 @@ function enemyFrame(dt: number) {
   if ($("#enemy-status").textContent !== status)
     $("#enemy-status").textContent = status;
   if (health <= 0) {
+    cancelReload(loadout);
+    punchRemaining = 0;
     pause();
     $("#menu").hidden = true;
     $("#defeated").hidden = false;
@@ -818,6 +831,12 @@ let recoilRemaining = 0,
   flashRemaining = 0,
   shotSerial = 0;
 let lastHitDoor = -1;
+let lastEmptyNotice = -Infinity;
+let loadout = newWeaponState();
+let punchRemaining = 0,
+  punchCooldown = 0,
+  punchLanded = false,
+  punchSerial = 0;
 let lastShot = 0,
   clock = 0,
   lastHud = 0,
@@ -826,6 +845,8 @@ let lastShot = 0,
   fpsAt = performance.now(),
   fps = 0;
 function toggleBuild() {
+  cancelReload(loadout);
+  punchRemaining = 0;
   build = !build;
   setAim(false);
   $("#build-panel").hidden = !build;
@@ -837,13 +858,15 @@ function toggleBuild() {
   updateHud();
 }
 function setAim(value: boolean) {
-  aiming = value && tool !== "hands" && !build;
+  aiming = value && tool !== "hands" && !build && !loadout.reload;
   camera.fov = aiming && tool !== "hands" ? WEAPONS[tool].zoom : 72;
   camera.updateProjectionMatrix();
   $("#scope-overlay").hidden = !(aiming && tool === "sniper");
   $("#aim").classList.toggle("selected", aiming);
 }
 function equip(next: Tool) {
+  cancelReload(loadout);
+  punchRemaining = 0;
   if (build) toggleBuild();
   setAim(false);
   firePointer = undefined;
@@ -910,6 +933,8 @@ $("#reset").addEventListener("click", () => {
   )
     return;
   save = readSave(null);
+  loadout = newWeaponState();
+  punchRemaining = punchCooldown = 0;
   health = 100;
   resetDoors();
   for (const unit of enemies)
@@ -1057,15 +1082,66 @@ function interact() {
 function jump() {
   if (playing && vertical === 0) verticalSpeed = 4.8;
 }
+function requestReload() {
+  if (!playing || health <= 0 || build || tool === "hands") return;
+  if (beginReload(loadout, tool)) {
+    setAim(false);
+    recoilRemaining = 0;
+    updateHud();
+  }
+}
+$("#reload").addEventListener("click", requestReload);
+function punch() {
+  if (punchCooldown > 0) return;
+  punchCooldown = MELEE.interval;
+  punchRemaining = MELEE.duration;
+  punchLanded = false;
+  punchSerial++;
+}
+function landPunch() {
+  aimRay();
+  const hit = raycaster
+    .intersectObjects(
+      [
+        ...targets,
+        ...construction.children,
+        ...lootMeshes,
+        ...shotObstacles,
+        ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.hitbox),
+      ],
+      true,
+    )
+    .find((h) => h.distance <= MELEE.range);
+  const unit =
+    hit &&
+    enemies.find(
+      (u) => u.enemy.health > 0 && u.hitbox.getObjectById(hit.object.id),
+    );
+  if (unit) {
+    damageEnemy(unit.enemy, MELEE.damage);
+    toast(
+      unit.enemy.health <= 0
+        ? "Enemy down"
+        : "Punch hit · " + unit.enemy.health + " health",
+    );
+  } else if (hit?.object.userData.target) toast("Target punched");
+}
 function fire() {
   if (!playing || health <= 0) return;
   if (build) return place();
-  if (tool === "hands")
-    return toast("Equip a weapon with 2–5 or the weapon buttons");
+  if (tool === "hands") return punch();
+  if (loadout.reload) return;
   const weapon = WEAPONS[tool];
   const now = performance.now();
   if (!canShoot(tool, now, lastShot)) return;
   lastShot = now;
+  if (!spendRound(loadout, tool)) {
+    if (now - lastEmptyNotice > 1200) {
+      toast("Empty magazine · R / RELOAD");
+      lastEmptyNotice = now;
+    }
+    return;
+  }
   recoilRemaining = 1;
   flashRemaining = 0.055;
   shotSerial++;
@@ -1172,8 +1248,10 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyB") toggleBuild();
   if (e.code === "KeyE") interact();
   if (e.code === "KeyR") {
-    rotation = (rotation + 1) % 4;
-    rebuildPreview();
+    if (build) {
+      rotation = (rotation + 1) % 4;
+      rebuildPreview();
+    } else requestReload();
   }
   if (build && ["Digit1", "Digit2", "Digit3", "Digit4"].includes(e.code)) {
     selected = (["floor", "wall", "doorway", "storage"] as PieceKind[])[
@@ -1297,6 +1375,21 @@ canvas.addEventListener("webglcontextlost", (e) => {
   toast("Graphics interrupted. Reload to restore the world.");
 });
 function updateHud() {
+  const unarmed = tool === "hands";
+  $("#fire").textContent = build ? "PLACE" : unarmed ? "PUNCH" : "FIRE";
+  $("#weapon-status").hidden = unarmed || build;
+  if (tool !== "hands") {
+    $("#ammo").textContent = loadout.reload
+      ? "RELOADING " + Math.ceil(loadout.reload.remaining * 10) / 10 + "s"
+      : loadout.rounds[tool] +
+        " / " +
+        WEAPONS[tool].magazineSize +
+        " · ∞ reserve";
+    $("#reload").toggleAttribute(
+      "disabled",
+      !!loadout.reload || loadout.rounds[tool] === WEAPONS[tool].magazineSize,
+    );
+  }
   $("#health").textContent = "HEALTH " + health;
   $("#wood").textContent = `WOOD ${save.wood.toLocaleString()}`;
   $("#budget").textContent = `${save.pieces.length} / ${BUILD_LIMIT}`;
@@ -1417,10 +1510,25 @@ function frame(now: number) {
       player.z,
     );
     camera.rotation.set(pitch, yaw, 0);
-    if (firePointer !== undefined && tool !== "hands" && !build) fire();
+    advanceReload(loadout, dt);
+    punchCooldown = Math.max(0, punchCooldown - dt);
+    if (punchRemaining > 0) {
+      punchRemaining = Math.max(0, punchRemaining - dt);
+      if (!punchLanded && MELEE.duration - punchRemaining >= MELEE.impactAt) {
+        punchLanded = true;
+        if (tool === "hands" && !build && health > 0) landPunch();
+      }
+    }
+    if (firePointer !== undefined && !build && health > 0) fire();
     const recoil =
       tool !== "hands" ? recoilRemaining * WEAPONS[tool].recoil : 0;
-    viewModel.animate(clock, length > 0.1, recoil);
+    viewModel.animate(clock, length > 0.1, recoil, {
+      punch: punchRemaining > 0 ? 1 - punchRemaining / MELEE.duration : 0,
+      side: punchSerial % 2 ? -1 : 1,
+      reload: loadout.reload
+        ? 1 - loadout.reload.remaining / loadout.reload.duration
+        : 0,
+    });
     recoilRemaining = Math.max(0, recoilRemaining - dt / 0.15);
     body.root.position.set(player.x, vertical, player.z);
     body.root.rotation.y = yaw;
@@ -1508,6 +1616,17 @@ function frame(now: number) {
   canvas.dataset.lastHitDoor = String(lastHitDoor);
   canvas.dataset.nearestDoor = String(nearestDoor());
   canvas.dataset.equipped = tool;
+  canvas.dataset.ammo = JSON.stringify(loadout.rounds);
+  canvas.dataset.reload = loadout.reload?.kind || "";
+  canvas.dataset.reloadPose = viewModel.gun.root.rotation.z.toFixed(4);
+  canvas.dataset.punchSide = String(punchSerial % 2 ? -1 : 1);
+  canvas.dataset.reloadProgress = String(
+    loadout.reload ? 1 - loadout.reload.remaining / loadout.reload.duration : 0,
+  );
+  canvas.dataset.punches = String(punchSerial);
+  canvas.dataset.punchProgress = String(
+    punchRemaining > 0 ? 1 - punchRemaining / MELEE.duration : 0,
+  );
   canvas.dataset.aiming = String(aiming);
   canvas.dataset.fov = String(camera.fov);
   canvas.dataset.actorModels = "rounded-stick-player,detailed-pistol";

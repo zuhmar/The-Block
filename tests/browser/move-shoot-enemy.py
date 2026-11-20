@@ -24,6 +24,8 @@ with sync_playwright() as p:
  for _ in range(3):
   d=page.locator('#world').evaluate('(c)=>({...c.dataset})');x,z=[float(v) for v in d['position'].split(',')];enemy=json.loads(d['enemy']);yaw=float(d['yaw']);pitch=float(d['pitch']);want=math.atan2(x-enemy['x'],z-enemy['z']);delta=(want-yaw+math.pi)%(2*math.pi)-math.pi;dx=max(-280,min(280,-delta/.005));dy=(pitch-(-.04))/.005;startx=340 if dx<0 else 40
   touch('touchStart',[{'x':startx,'y':300,'id':3}]);touch('touchMove',[{'x':startx+dx,'y':300+dy,'id':3}]);touch('touchEnd',[]);page.wait_for_timeout(160)
+ if json.loads(page.locator('#world').get_attribute('data-ammo'))['pistol']<3:
+  page.locator('#reload').click();page.wait_for_function('document.querySelector("#world").dataset.reload===""',timeout=20000)
  touch('touchStart',[point('#fire',4)]);page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.enemy).health===0',timeout=12000);touch('touchEnd',[])
  page.screenshot(path='work/move-shoot-enemy.png');final=page.locator('#world').evaluate('(c)=>({...c.dataset})')
  # Reload resets the practice opponent; remain exposed until death, then respawn.

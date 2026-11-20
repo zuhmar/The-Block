@@ -1,22 +1,22 @@
 [
   {
     "kind": "pistol",
-    "triangles": 4760,
-    "drawCalls": 5
+    "triangles": 5360,
+    "drawCalls": 6
   },
   {
     "kind": "smg",
     "triangles": 9220,
-    "drawCalls": 4
+    "drawCalls": 6
   },
   {
     "kind": "rifle",
     "triangles": 9220,
-    "drawCalls": 5
+    "drawCalls": 7
   },
   {
     "kind": "sniper",
     "triangles": 11640,
-    "drawCalls": 6
+    "drawCalls": 7
   }
 ]

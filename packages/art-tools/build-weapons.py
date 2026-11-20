@@ -14,7 +14,7 @@ allmodels=[];report=[]
 def build(kind):
  objects=[]
  def finish(o,n,m,moving=False):
-  o.name=n;o.data.materials.append(mats[m]);o['weaponPart']='slide' if moving else 'frame';objects.append(o)
+  o.name=n;o.data.materials.append(mats[m]);o['weaponPart']='slide' if moving else 'magazine' if 'magazine' in n else 'frame';objects.append(o)
   for p in o.data.polygons:p.use_smooth=True
   return o
  def box(n,p,s,m='body',r=.008,moving=False):
@@ -36,6 +36,8 @@ def build(kind):
   for x in [-.024,.024]:box('grip inset',(x,-.035,-.091),(.004,.045,.065),'steel',.006)
   for y in [-.01,.008,.026]:
    for x in [-.029,.029]:box('slide serration',(x,y,.017),(.002,.004,.036),'black',.001,True)
+  box('magazine body',(0,-.034,-.09),(.029,.035,.085),'black',.004)
+  box('magazine base',(0,-.043,-.14),(.049,.053,.015),'black',.005)
   tube('barrel',.151,.004,.045,.015);tube('muzzle recess',.175,.004,.002,.009,'black')
   for y in [-.035,.148]:box('iron sight',(0,y,.049),(.019,.016,.012),'black',.003,True)
  else:
@@ -74,7 +76,7 @@ def build(kind):
  line('trigger',[(0,.002,-.04),(0,.012,-.065),(0,.002,-.076)],.004,'steel')
  # Batch by moving part and material to reduce rendering cost.
  joined=[]
- for part in ['frame','slide']:
+ for part in ['frame','slide','magazine']:
   for material in mats.values():
    group=[o for o in objects if o['weaponPart']==part and o.data.materials[0]==material]
    if not group:continue

@@ -42,10 +42,14 @@ export function hydrateBlenderWeapon(
         mesh.geometry.dispose();
         mesh.removeFromParent();
       }
+      const magazine = new THREE.Group();
+      magazine.name = kind + "-magazine-group";
+      root.add(magazine);
       for (const mesh of meshes) {
         // Bake the exported hierarchy into coordinates local to the stable gun root.
         mesh.matrixWorld.decompose(mesh.position, mesh.quaternion, mesh.scale);
         if (mesh.userData.weaponPart === "slide") slide.add(mesh);
+        else if (mesh.userData.weaponPart === "magazine") magazine.add(mesh);
         else root.add(mesh);
       }
       muzzle.position.copy(position);

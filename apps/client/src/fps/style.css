@@ -869,3 +869,46 @@ h1 em {
 .image-options {
   border-top: 1px solid #c1c9ac33;
 }
+
+#weapon-status {
+  position: absolute;
+  right: 24px;
+  bottom: 110px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #18382ee6;
+  border-radius: 8px;
+  font-size: 13px;
+  pointer-events: auto;
+}
+#weapon-status[hidden] {
+  display: none;
+}
+#reload {
+  padding: 9px 12px;
+}
+#reload:disabled {
+  opacity: 0.55;
+}
+.touch #weapon-status {
+  top: 95px;
+  bottom: auto;
+  right: 18px;
+  max-width: calc(100% - 36px);
+  font-size: 12px;
+}
+/* Keep temporary notices clear of the persistent ammo / reload controls. */
+.touch #toast {
+  top: 158px;
+}
+@media (max-height: 520px) {
+  .touch #weapon-status {
+    top: 12px;
+    right: 110px;
+  }
+  .touch #toast {
+    top: 70px;
+  }
+}
