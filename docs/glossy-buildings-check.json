@@ -1,0 +1,49 @@
+{
+  "style": "Glossy cartoon urban street-survival buildings and furnishings",
+  "buildingWalkthroughs": [
+    {
+      "building": "THE HAVEN",
+      "entered": true,
+      "closedDoorBlocksShots": true,
+      "exited": true
+    },
+    {
+      "building": "GENERAL STORE",
+      "entered": true,
+      "closedDoorBlocksShots": true,
+      "exited": true
+    },
+    {
+      "building": "WORKSHOP",
+      "entered": true,
+      "closedDoorBlocksShots": true,
+      "exited": true
+    },
+    {
+      "building": "WAREHOUSE",
+      "entered": true,
+      "closedDoorBlocksShots": true,
+      "exited": true
+    },
+    {
+      "building": "OLD RESIDENCE",
+      "entered": true,
+      "closedDoorBlocksShots": true,
+      "exited": true
+    }
+  ],
+  "phoneUseWhileMoving": true,
+  "phoneSpawnRender": {
+    "drawCalls": 43,
+    "triangles": 12962
+  },
+  "browserErrors": [],
+  "checks": [
+    "10 building/world tests passed",
+    "TypeScript passed",
+    "ESLint passed",
+    "Production build passed",
+    "Five GLB model exports regenerated"
+  ],
+  "limitation": "Software-WebGL rendering checks; not a physical-phone FPS benchmark."
+}

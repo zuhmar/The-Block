@@ -14,7 +14,11 @@ const mat = (color: number) => {
   if (!colors.has(color))
     colors.set(
       color,
-      new THREE.MeshStandardMaterial({ color, roughness: 0.78 }),
+      new THREE.MeshStandardMaterial({
+        color,
+        roughness: 0.32,
+        metalness: 0.08,
+      }),
     );
   return colors.get(color)!;
 };
@@ -428,6 +432,183 @@ export function createBuildingModel(
         0xd9bb84,
       );
   }
+  // Bold painted shapes and shallow facade relief: street character without
+  // adding obstacles to the existing walkways or increasing texture downloads.
+  const ink = 0x283344,
+    cream = 0xffd994;
+  const accent = [0xe04b64, 0x46b9ba, 0xeea636, 0x8069c7, 0xe5a538][index];
+  const facadeZ = front * (b.depth / 2 + 0.14);
+  box(root, "painted-plinth", 0, 0.35, facadeZ, b.width, 0.65, 0.045, ink);
+  box(
+    root,
+    "cornice-outline",
+    0,
+    b.height - 0.22,
+    0,
+    b.width + 0.28,
+    0.3,
+    b.depth + 0.28,
+    ink,
+  );
+  box(
+    root,
+    "cornice-gloss",
+    0,
+    b.height - 0.045,
+    facadeZ,
+    b.width + 0.3,
+    0.055,
+    0.12,
+    cream,
+  );
+  for (const side of [-1, 1]) {
+    box(
+      root,
+      "corner-pilaster",
+      side * (b.width / 2 - 0.18),
+      1.6,
+      facadeZ,
+      0.28,
+      3.2,
+      0.1,
+      accent,
+    );
+    box(
+      root,
+      "paint-highlight",
+      side * (b.width / 2 - 0.25),
+      1.75,
+      front * (b.depth / 2 + 0.2),
+      0.045,
+      2.6,
+      0.025,
+      cream,
+    );
+    // Simplified security grilles remain inside the existing solid window strip.
+    for (const dx of [-0.65, 0, 0.65])
+      box(
+        root,
+        "security-bar",
+        side * b.width * 0.3 + dx,
+        1.975,
+        facadeZ,
+        0.045,
+        1.55,
+        0.06,
+        ink,
+      );
+    box(
+      root,
+      "security-crossbar",
+      side * b.width * 0.3,
+      1.8,
+      facadeZ,
+      2,
+      0.045,
+      0.06,
+      ink,
+    );
+  }
+  // Sparse oversized brick courses, deliberately graphic rather than noisy textures.
+  for (const side of [-1, 1])
+    for (let row = 0; row < 5; row++)
+      for (let col = 0; col < 3; col++)
+        box(
+          root,
+          "painted-brick",
+          side * (b.width / 2 + 0.12),
+          0.5 + row * 0.42,
+          -b.depth * 0.28 + col * 1.05 + (row % 2) * 0.38,
+          0.025,
+          0.055,
+          0.72,
+          ink,
+        );
+  // Original abstract graffiti on the side walls; no real gang insignia.
+  for (const side of [-1, 1]) {
+    for (let stroke = 0; stroke < 5; stroke++) {
+      const tag = box(
+        root,
+        "graffiti-stroke",
+        side * (b.width / 2 + 0.14),
+        1.65 + (stroke % 2) * 0.24,
+        b.depth * 0.22 + (stroke - 2) * 0.32,
+        0.035,
+        0.95 - (stroke % 2) * 0.25,
+        0.16,
+        stroke % 2 ? cream : accent,
+      );
+      tag.rotation.x = (stroke % 2 ? -1 : 1) * 0.35;
+    }
+    box(
+      root,
+      "graffiti-underline",
+      side * (b.width / 2 + 0.15),
+      1.02,
+      b.depth * 0.22,
+      0.035,
+      0.09,
+      1.8,
+      accent,
+    );
+  }
+  if (b.type === "workshop" || b.type === "warehouse") {
+    for (let n = 0; n < 5; n++)
+      box(
+        root,
+        "shutter-rib",
+        -b.width * 0.3,
+        1.35 + n * 0.27,
+        facadeZ + front * 0.05,
+        1.9,
+        0.045,
+        0.05,
+        ink,
+      );
+  }
+  if (b.type === "home") {
+    // Shallow boarded corner panes give the residence an abandoned-city silhouette.
+    for (const y of [1.55, 2.35]) {
+      const plank = box(
+        root,
+        "boarded-window",
+        -b.width * 0.3,
+        y,
+        facadeZ + front * 0.08,
+        1.9,
+        0.16,
+        0.08,
+        0xae7848,
+      );
+      plank.rotation.z = y < 2 ? 0.12 : -0.12;
+    }
+  }
+  if (makeSign) {
+    for (const x of [-1.8, 1.8])
+      box(
+        root,
+        "sign-support",
+        x,
+        b.height + 0.3,
+        front * (b.depth / 2 + 0.13),
+        0.06,
+        0.6,
+        0.06,
+        ink,
+      );
+    const text = [
+      "24 / 7 • FOOD & SUPPLIES",
+      "COMMUNITY SAFEHOUSE",
+      "REPAIRS • PARTS",
+      "NO VACANCY",
+      "FREIGHT • STORAGE",
+    ][index];
+    const badge = makeSign(text, Math.min(b.width - 1, 6), 0.38);
+    badge.name = "street-business-sign";
+    badge.position.set(0, b.height + 0.5, front * (b.depth / 2 + 0.18));
+    if (front < 0) badge.rotation.y = Math.PI;
+    root.add(badge);
+  }
   // Flat painted floor bands distinguish the clinic, work area and warehouse aisles.
   if (b.type === "warehouse")
     for (const x of [-2.8, 2.8])
@@ -518,7 +699,7 @@ export function createBuildingModel(
                 0.29,
                 0.28,
                 0.32,
-                [0xb58b5b, 0x778f91, 0xc3b274][i % 3],
+                [0xe65b6b, 0x41a9c5, 0xf0bd4b][i % 3],
               );
               add(
                 "product-label",
@@ -554,17 +735,17 @@ export function createBuildingModel(
       return;
     }
     if (f.kind === "sofa") {
-      add("sofa-base", 0, 0.35, 0, w, 0.5, d, 0x788d7a);
-      add("sofa-back", -w * 0.4, 0.77, 0, 0.2, 0.85, d, 0x657c6c);
+      add("sofa-base", 0, 0.35, 0, w, 0.5, d, 0x7961a8);
+      add("sofa-back", -w * 0.4, 0.77, 0, 0.2, 0.85, d, 0x493c72);
       for (const z of [-d * 0.43, d * 0.43])
-        add("sofa-arm", 0, 0.65, z, w, 0.5, 0.22, 0x657c6c);
+        add("sofa-arm", 0, 0.65, z, w, 0.5, 0.22, 0x493c72);
       for (const z of [-d * 0.23, d * 0.23])
-        add("seat-cushion", 0.1, 0.64, z, w * 0.7, 0.12, d * 0.4, 0x99a588);
+        add("seat-cushion", 0.1, 0.64, z, w * 0.7, 0.12, d * 0.4, 0xa28bcb);
       return;
     }
     if (f.kind === "fridge" || f.kind === "cabinet") {
       const h = f.kind === "fridge" ? 2.3 : 1.9;
-      add("cabinet-body", 0, h / 2, 0, w, h, d, 0x7e9589);
+      add("cabinet-body", 0, h / 2, 0, w, h, d, 0x367e89);
       for (const side of [-1, 1]) {
         add(
           "cabinet-door",
@@ -574,7 +755,7 @@ export function createBuildingModel(
           w * 0.47,
           h - 0.12,
           0.05,
-          0xb5c3b1,
+          0x76b9bf,
         );
         add(
           "cabinet-handle",

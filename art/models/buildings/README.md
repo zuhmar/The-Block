@@ -10,6 +10,8 @@ Five original furnished 3D buildings, using the same footprints and names as the
 | `home.glb`      | Old Residence | Living room, kitchen, bedroom partition, bed and cupboards; pitched roof |
 | `warehouse.glb` | Warehouse     | Storage racks, boxed stock, loaded pallets and workbench                 |
 
+The buildings use a glossy cartoon street-survival palette: warm corner-store paint, teal safehouse walls, terracotta workshop brick, purple abandoned residence and blue industrial cladding. Dark cornices, painted edge highlights, barred windows, oversized brick marks and original abstract graffiti keep the shapes readable. The residence has boarded panes and industrial buildings have shutter ribs. Interiors share glossy materials with brighter stock packaging and furniture accents. These details reuse the existing instancing pipeline, without additional downloaded textures or lights.
+
 Each GLB is self-contained and uses meters with Y up. The model origin is the building's ground-level center. The front faces +Z for store/shelter/workshop and −Z for home/warehouse, matching their existing world placements. The files include an independent `door-hinge` node and `open-door` / `close-door` animation clips. The game adds its text signage separately; the exports require no image textures.
 
 ```sh
