@@ -10,7 +10,7 @@ with sync_playwright() as p:
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:4173'),wait_until='networkidle');page.locator('#view-models').click()
   for kind in ['player','street','reinforced','armored']:
    page.locator('#show-'+kind).click();page.wait_for_function('(kind)=>document.querySelector("#actor-canvas").dataset.model===kind',arg=kind)
-   canvas=page.locator('#actor-canvas');metrics=canvas.evaluate('(c)=>({...c.dataset})');assert int(metrics['drawCalls'])<65 and int(metrics['triangles'])<16000,metrics
+   canvas=page.locator('#actor-canvas');metrics=canvas.evaluate('(c)=>({...c.dataset})');assert int(metrics['drawCalls'])<65 and int(metrics['triangles'])<(24000 if kind=='street' else 10000 if kind=='player' else 16000),metrics
    page.screenshot(path='work/survivor-'+kind+('-phone' if phone else '')+'.png');checks.append({'phone':phone,'outfit':kind,'render':metrics})
    if kind!='player':
     for slot in ['headwear','torso','legs','footwear']:

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { createSmoothSurvivor } from "./smooth-survivor";
 import { createStickPlayer } from "./actor-models";
 
 export const OUTFITS = ["base", "street", "reinforced", "armored"] as const;
@@ -35,6 +36,24 @@ const BLACK = 0x090b10,
 
 /** Rigid articulated outfit pieces follow the existing limb pivots; no textures or skinning runtime required. */
 export function createSurvivor(outfit: Outfit = "base") {
+  if (["base", "street"].includes(outfit)) {
+    const actor = createSmoothSurvivor(
+      outfit === "street",
+      material(BLACK),
+      material(BURGUNDY),
+      material(CUFF),
+      material(CHARCOAL),
+      material(IVORY),
+      material(0xd8ac40),
+    );
+    return {
+      ...actor,
+      outfit,
+      setSlot(slot: ClothingSlot, visible: boolean) {
+        actor.slots[slot].forEach((g) => (g.visible = visible));
+      },
+    };
+  }
   const actor = createStickPlayer();
   actor.root.name = "survivor-" + outfit;
   actor.root.userData.outfit = outfit;

@@ -7,8 +7,8 @@
         "engine": "three.js r187",
         "model": "player",
         "hiddenSlots": "",
-        "drawCalls": "11",
-        "triangles": "2704",
+        "drawCalls": "13",
+        "triangles": "5976",
         "rotation": "3.492"
       }
     },
@@ -19,8 +19,8 @@
         "engine": "three.js r187",
         "model": "street",
         "hiddenSlots": "",
-        "drawCalls": "29",
-        "triangles": "7094",
+        "drawCalls": "33",
+        "triangles": "20388",
         "rotation": "3.492"
       }
     },
@@ -55,8 +55,8 @@
         "engine": "three.js r187",
         "model": "player",
         "hiddenSlots": "",
-        "drawCalls": "11",
-        "triangles": "2704",
+        "drawCalls": "13",
+        "triangles": "5976",
         "rotation": "3.492"
       }
     },
@@ -67,8 +67,8 @@
         "engine": "three.js r187",
         "model": "street",
         "hiddenSlots": "",
-        "drawCalls": "29",
-        "triangles": "7094",
+        "drawCalls": "33",
+        "triangles": "20388",
         "rotation": "3.492"
       }
     },

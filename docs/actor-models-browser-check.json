@@ -3,8 +3,8 @@
     "engine": "three.js r187",
     "model": "player",
     "hiddenSlots": "",
-    "drawCalls": "11",
-    "triangles": "2704",
+    "drawCalls": "13",
+    "triangles": "5976",
     "rotation": "3.492"
   },
   "pistolPreview": {
@@ -21,7 +21,7 @@
     "yaw": "0.000",
     "pitch": "-1.130",
     "drawCalls": "34",
-    "triangles": "13124",
+    "triangles": "14452",
     "mapSize": "128",
     "shots": "1",
     "health": "100",
