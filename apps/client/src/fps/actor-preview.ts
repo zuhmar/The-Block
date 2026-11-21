@@ -43,7 +43,7 @@ export function openActorPreview() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options image-options"><button id="show-image-base">IMAGE BASE</button><button id="show-street-v2">IMAGE STREET</button><button id="show-image-reinforced">IMAGE MILITARY</button><button id="show-image-armored">IMAGE ARMOR</button></div><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><a id="image-reference" target="_blank" rel="noopener">FOUR-CHARACTER REFERENCE IMAGE</a><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options image-options"><button id="show-meshy">MESHY BASE</button><button id="show-image-base">IMAGE BASE</button><button id="show-street-v2">IMAGE STREET</button><button id="show-image-reinforced">IMAGE MILITARY</button><button id="show-image-armored">IMAGE ARMOR</button></div><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><div id="meshy-motion" class="actor-options" hidden><label>ANIMATION <select id="meshy-animation" aria-label="Meshy animation"></select></label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><a id="image-reference" target="_blank" rel="noopener">FOUR-CHARACTER REFERENCE IMAGE</a><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
   overlay.querySelector<HTMLAnchorElement>("#image-reference")!.href =
     IMAGE_REFERENCE_URL;
@@ -125,6 +125,7 @@ export function openActorPreview() {
   let review: Awaited<ReturnType<typeof loadStreetReview>> | undefined;
   let reviewGeneration = 0;
   const reviewButtons = {
+    meshy: "show-meshy",
     base: "show-image-base",
     street: "show-street-v2",
     reinforced: "show-image-reinforced",
@@ -167,25 +168,55 @@ export function openActorPreview() {
     const isNpc = kind === "lookout" || kind === "police" || kind === "swat";
     const referenceLink =
       overlay.querySelector<HTMLAnchorElement>("#image-reference")!;
-    referenceLink.href = isNpc ? NPC_REFERENCE_URL : IMAGE_REFERENCE_URL;
-    referenceLink.textContent = isNpc
-      ? "SAVED NPC REFERENCE IMAGE"
-      : "FOUR-CHARACTER REFERENCE IMAGE";
+    referenceLink.href =
+      kind === "meshy"
+        ? new URL("./models/meshy-shadow/animated.glb", import.meta.url).href
+        : isNpc
+          ? NPC_REFERENCE_URL
+          : IMAGE_REFERENCE_URL;
+    referenceLink.textContent =
+      kind === "meshy"
+        ? "DOWNLOAD ANIMATED MODEL"
+        : isNpc
+          ? "SAVED NPC REFERENCE IMAGE"
+          : "FOUR-CHARACTER REFERENCE IMAGE";
     activeReviewKind = kind;
     overlay.classList.add("reviewing");
     for (const c of Object.values(characters)) c.root.visible = false;
     overlay.querySelector("#show-street")!.classList.remove("selected");
     overlay.querySelector("#" + reviewButtons[kind])!.classList.add("selected");
-    overlay.querySelector<HTMLElement>("#review-motion")!.hidden = false;
+    overlay.querySelector<HTMLElement>("#review-motion")!.hidden =
+      kind === "meshy";
+    overlay.querySelector<HTMLElement>("#meshy-motion")!.hidden =
+      kind !== "meshy";
+    if (kind === "meshy") yaw = 0.3;
     overlay.querySelector<HTMLElement>("#clothing-slots")!.hidden =
-      kind === "base";
+      kind === "base" || kind === "meshy";
     camera.position.set(0, 1.45, 3.5);
     camera.lookAt(0, 1.0, 0);
     const caption =
-      "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
+      kind === "meshy"
+        ? "Your Meshy character · Movement and combat animations"
+        : "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
+    function configureMeshy() {
+      if (kind !== "meshy" || !review) return;
+      const select =
+        overlay.querySelector<HTMLSelectElement>("#meshy-animation")!;
+      select.replaceChildren(
+        ...["still", ...review.clips.map((c) => c.name)].map((name) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name.replaceAll("_", " ");
+          return option;
+        }),
+      );
+      select.value = "Idle_3";
+      setMotion("Idle_3");
+    }
     overlay.querySelector("#actor-description")!.textContent = caption;
     if (review?.kind === kind) {
       review.root.visible = true;
+      configureMeshy();
       for (const input of overlay.querySelectorAll<HTMLInputElement>(
         "[data-slot]",
       ))
@@ -210,7 +241,8 @@ export function openActorPreview() {
       }
       review = loaded;
       scene.add(review.root);
-      setMotion(motion);
+      if (kind === "meshy") configureMeshy();
+      else setMotion(motion);
       for (const input of overlay.querySelectorAll<HTMLInputElement>(
         "[data-slot]",
       ))
@@ -233,6 +265,7 @@ export function openActorPreview() {
     if (review) review.root.visible = false;
     setMotion("still");
     overlay.querySelector<HTMLElement>("#review-motion")!.hidden = true;
+    overlay.querySelector<HTMLElement>("#meshy-motion")!.hidden = true;
     for (const id of Object.values(reviewButtons))
       overlay.querySelector("#" + id)!.classList.remove("selected");
     const isPlayer = kind in characters;
@@ -307,6 +340,11 @@ export function openActorPreview() {
     "[data-motion]",
   ))
     button.addEventListener("click", () => setMotion(button.dataset.motion!));
+  overlay
+    .querySelector<HTMLSelectElement>("#meshy-animation")!
+    .addEventListener("change", (e) =>
+      setMotion((e.target as HTMLSelectElement).value),
+    );
   canvas.addEventListener("pointerdown", (e) => {
     drag = e.pointerId;
     lastX = e.clientX;
@@ -431,6 +469,15 @@ export function openActorPreview() {
     );
     canvas.dataset.reviewKind = activeReviewKind || "";
     canvas.dataset.motion = motion;
+    canvas.dataset.reviewClips = JSON.stringify(
+      review?.clips.map((c) => c.name) || [],
+    );
+    canvas.dataset.reviewTime = String(review?.mixer.time || 0);
+    canvas.dataset.reviewArmPose =
+      review?.root
+        .getObjectByName("mixamorigLeftArm")
+        ?.quaternion.toArray()
+        .join(",") || "";
     canvas.dataset.handPose =
       review?.root.getObjectByName("finger0R")?.quaternion.x.toFixed(4) || "";
     canvas.dataset.bonePose =

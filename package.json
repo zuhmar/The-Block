@@ -24,7 +24,8 @@
     "assets:image-characters": "blender -b -t 4 --python packages/art-tools/build-image-characters.py",
     "assets:image-npcs": "blender -b -t 4 --python packages/art-tools/build-image-npcs.py",
     "assets:weapons": "blender -b -t 4 --python packages/art-tools/build-weapons.py",
-    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py"
+    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py",
+    "assets:meshy-shadow": "blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

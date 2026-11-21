@@ -912,3 +912,24 @@ h1 em {
     top: 70px;
   }
 }
+#meshy-animation {
+  max-width: 100%;
+  padding: 10px;
+  background: #213d33;
+  color: #f0e6cd;
+  border: 1px solid #8d9b7d;
+  border-radius: 6px;
+  font: inherit;
+}
+#meshy-motion {
+  display: block;
+}
+#meshy-motion label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#meshy-animation {
+  width: 100%;
+}
