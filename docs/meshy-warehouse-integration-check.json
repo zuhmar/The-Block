@@ -1,0 +1,50 @@
+{
+  "validation": {
+    "fullSuiteTestsPassed": 150,
+    "finalWarehouseGeometryTest": "passed",
+    "productionBuild": "passed"
+  },
+  "art": {
+    "triangles": 59484,
+    "meshes": 18,
+    "bytes": 6086108,
+    "sourceFilesPreserved": 7,
+    "propTypes": 6
+  },
+  "desktopWarehouseChecks": [
+    {
+      "building": "WAREHOUSE",
+      "entered": true,
+      "closedFromInside": true,
+      "closedDoorBlocksShots": true,
+      "openDoorAllowsShots": true,
+      "exited": true
+    }
+  ],
+  "desktopPageErrors": [],
+  "mobileFinal": {
+    "touchNavigation": true,
+    "warehouseEntryAndExit": true,
+    "touchDoorOpenClose": true,
+    "savePreserved": true,
+    "pageErrors": [],
+    "scope": "Compiled game, real touch input in software WebGL; not a physical-phone performance benchmark."
+  },
+  "assetFailureFallback": {
+    "sources": [
+      "blender",
+      "blender",
+      "blender",
+      "blender",
+      "fallback"
+    ],
+    "gameStarts": true,
+    "pageErrors": []
+  },
+  "notes": [
+    "Reused existing warehouse footprint, centered door pivot, fixture reservations, collision and shooting proxies.",
+    "Final art pass welds coincident vertices, repairs normals and preserves extra geometry on thin props.",
+    "Source Blender file, originals and six standalone optimized props retained.",
+    "No player-save schema or server gameplay changes."
+  ]
+}

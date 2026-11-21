@@ -44,7 +44,7 @@ with sync_playwright() as p:
    if sprint:page.keyboard.up('Shift')
    page.wait_for_timeout(140)
   raise AssertionError(('route blocked',goal,state()))
- for i in ([] if os.environ.get("BUILDING_PHONE_ONLY") else [1,0,2,4,3]):
+ for i in ([] if os.environ.get("BUILDING_PHONE_ONLY") else ([4] if os.environ.get("WAREHOUSE_ONLY") else [1,0,2,4,3])):
   b=nav['buildings'][i];front=b['front'];outside=(b['x'],b['doorZ']+front*2);inside=(b['x'],b['doorZ']-front*2.2)
   for waypoint in route(position(),outside):go(waypoint)
   page.wait_for_function('(i)=>Number(document.querySelector("#world").dataset.nearestDoor)===i',arg=i);page.keyboard.press('e');page.wait_for_function('(i)=>Math.abs(JSON.parse(document.querySelector("#world").dataset.doors)[i])>1.55',arg=i)

@@ -14,7 +14,8 @@ const URLS: Record<string, string> = {
   shelter: new URL("./models/buildings/shelter.glb", import.meta.url).href,
   workshop: new URL("./models/buildings/workshop.glb", import.meta.url).href,
   home: new URL("./models/buildings/home.glb", import.meta.url).href,
-  warehouse: new URL("./models/buildings/warehouse.glb", import.meta.url).href,
+  warehouse: new URL("./models/meshy-warehouse/warehouse.glb", import.meta.url)
+    .href,
 };
 const proxyGeometry = new THREE.BoxGeometry(1, 1, 1),
   proxyMaterial = new THREE.MeshBasicMaterial();
