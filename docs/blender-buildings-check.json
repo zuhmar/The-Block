@@ -1,0 +1,434 @@
+{
+  "models": {
+    "source": "Fresh Blender scenes measured to current layout; five saved reference images",
+    "buildings": [
+      {
+        "kind": "store",
+        "referenceSha256": "d5467148b3b59eef896926b864a92402288ea7c7d6f6a78f822d69915af4c2b9",
+        "triangles": 35172,
+        "drawCalls": 24,
+        "bytes": 1031364
+      },
+      {
+        "kind": "shelter",
+        "referenceSha256": "099b9c96965b5b8a6315781f62a0dcfa30a81455e6193921ffed1a4c443c662b",
+        "triangles": 25172,
+        "drawCalls": 21,
+        "bytes": 751272
+      },
+      {
+        "kind": "workshop",
+        "referenceSha256": "dff598493b48fb33a2f5f0a51342f418705c0a7cc2e57afbdd33447455da1315",
+        "triangles": 26712,
+        "drawCalls": 22,
+        "bytes": 801676
+      },
+      {
+        "kind": "home",
+        "referenceSha256": "2c5c58998765ea5327bf73aae2e58c86056404818b9a3d2bbf1d84d414f6ce9a",
+        "triangles": 26842,
+        "drawCalls": 19,
+        "bytes": 794664
+      },
+      {
+        "kind": "warehouse",
+        "referenceSha256": "b841809becae3cf520cc603c600ff033610a4c369ed88eacb6b8966bea88ba23",
+        "triangles": 35400,
+        "drawCalls": 19,
+        "bytes": 1051992
+      }
+    ],
+    "props": [
+      {
+        "name": "store-checkout",
+        "triangles": 924,
+        "drawCalls": 5
+      },
+      {
+        "name": "store-shelf",
+        "triangles": 3024,
+        "drawCalls": 6
+      },
+      {
+        "name": "store-refrigerator",
+        "triangles": 1964,
+        "drawCalls": 7
+      },
+      {
+        "name": "store-cabinet",
+        "triangles": 476,
+        "drawCalls": 2
+      },
+      {
+        "name": "store-trash-bin",
+        "triangles": 564,
+        "drawCalls": 2
+      },
+      {
+        "name": "store-wall-vent",
+        "triangles": 916,
+        "drawCalls": 2
+      },
+      {
+        "name": "shelter-single-bed",
+        "triangles": 1472,
+        "drawCalls": 3
+      },
+      {
+        "name": "shelter-bedside-cabinet",
+        "triangles": 620,
+        "drawCalls": 3
+      },
+      {
+        "name": "shelter-waiting-bench",
+        "triangles": 1316,
+        "drawCalls": 2
+      },
+      {
+        "name": "shelter-dining-table",
+        "triangles": 772,
+        "drawCalls": 4
+      },
+      {
+        "name": "shelter-kitchenette",
+        "triangles": 1496,
+        "drawCalls": 4
+      },
+      {
+        "name": "shelter-reception",
+        "triangles": 924,
+        "drawCalls": 5
+      },
+      {
+        "name": "workshop-workbench",
+        "triangles": 1888,
+        "drawCalls": 5
+      },
+      {
+        "name": "workshop-tool-chest",
+        "triangles": 1228,
+        "drawCalls": 3
+      },
+      {
+        "name": "workshop-pegboard",
+        "triangles": 972,
+        "drawCalls": 3
+      },
+      {
+        "name": "workshop-parts-cabinet",
+        "triangles": 476,
+        "drawCalls": 2
+      },
+      {
+        "name": "workshop-fabrication-table",
+        "triangles": 1016,
+        "drawCalls": 2
+      },
+      {
+        "name": "workshop-exhaust-fan",
+        "triangles": 916,
+        "drawCalls": 2
+      },
+      {
+        "name": "home-sofa",
+        "triangles": 1316,
+        "drawCalls": 1
+      },
+      {
+        "name": "home-coffee-table",
+        "triangles": 620,
+        "drawCalls": 2
+      },
+      {
+        "name": "home-tv-cabinet",
+        "triangles": 1500,
+        "drawCalls": 5
+      },
+      {
+        "name": "home-double-bed",
+        "triangles": 1760,
+        "drawCalls": 3
+      },
+      {
+        "name": "home-wardrobe",
+        "triangles": 476,
+        "drawCalls": 2
+      },
+      {
+        "name": "home-kitchen",
+        "triangles": 1496,
+        "drawCalls": 5
+      },
+      {
+        "name": "warehouse-storage-rack",
+        "triangles": 2784,
+        "drawCalls": 3
+      },
+      {
+        "name": "warehouse-pallet",
+        "triangles": 972,
+        "drawCalls": 2
+      },
+      {
+        "name": "warehouse-cartons",
+        "triangles": 360,
+        "drawCalls": 2
+      },
+      {
+        "name": "warehouse-packing-bench",
+        "triangles": 740,
+        "drawCalls": 3
+      },
+      {
+        "name": "warehouse-cabinet",
+        "triangles": 476,
+        "drawCalls": 2
+      },
+      {
+        "name": "warehouse-pallet-jack",
+        "triangles": 716,
+        "drawCalls": 2
+      }
+    ]
+  },
+  "checks": {
+    "repository": "pnpm verify: 140 passing tests, lint, typecheck, asset validation and production build",
+    "finalAssetUnitTests": "\u2714 five fresh Blender buildings identify their reference and match the existing door pivot and dimensions (145.482824ms)\n\u2714 all 30 standalone props export without external images, terrain bases or oversized mesh budgets (95.737639ms)\n\u2714 lightweight shot proxies retain closed-door cover and clear the doorway when opened (4.936537ms)\n\u2139 tests 3\n\u2139 suites 0\n\u2139 pass 3\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 878.055713\n",
+    "buildingInteriors": {
+      "existingWoodAndStructuresPreserved": true,
+      "allFiveBlenderModelsLoaded": true,
+      "fiveBuildings": [
+        {
+          "building": "THE HAVEN",
+          "entered": true,
+          "closedFromInside": true,
+          "closedDoorBlocksShots": true,
+          "openDoorAllowsShots": true,
+          "exited": true,
+          "render": {
+            "engine": "three.js r187",
+            "position": "3.000,-3.999",
+            "yaw": "-3.142",
+            "pitch": "-0.030",
+            "drawCalls": "77",
+            "triangles": "64486",
+            "mapSize": "128",
+            "shots": "2",
+            "health": "100",
+            "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"police\",\"visual\":\"fallback\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"blender\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+            "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+            "firing": "false",
+            "inside": "-1",
+            "visibleInteriors": "[]",
+            "buildingSources": "[\"blender\",\"blender\",\"blender\",\"blender\",\"blender\"]",
+            "doors": "[0,1.5707963267948966,0,0,0]",
+            "lastHitDoor": "-1",
+            "nearestDoor": "-1",
+            "equipped": "pistol",
+            "ammo": "{\"pistol\":10,\"smg\":30,\"rifle\":30,\"sniper\":5}",
+            "reload": "",
+            "reloadPose": "0.0000",
+            "punchSide": "1",
+            "reloadProgress": "0",
+            "punches": "0",
+            "punchProgress": "0",
+            "aiming": "false",
+            "fov": "72",
+            "actorModels": "rounded-stick-player,detailed-pistol",
+            "weaponSource": "blender",
+            "recoil": "0.0000",
+            "movement": "0.00,0.00",
+            "recoilRendered": "2"
+          }
+        },
+        {
+          "building": "GENERAL STORE",
+          "entered": true,
+          "closedFromInside": true,
+          "closedDoorBlocksShots": true,
+          "openDoorAllowsShots": true,
+          "exited": true,
+          "render": {
+            "engine": "three.js r187",
+            "position": "-13.000,-3.075",
+            "yaw": "-6.281",
+            "pitch": "-0.030",
+            "drawCalls": "77",
+            "triangles": "104704",
+            "mapSize": "128",
+            "shots": "4",
+            "health": "100",
+            "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"blender\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"swat\",\"visual\":\"blender\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+            "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+            "firing": "false",
+            "inside": "-1",
+            "visibleInteriors": "[0]",
+            "buildingSources": "[\"blender\",\"blender\",\"blender\",\"blender\",\"blender\"]",
+            "doors": "[1.5707963267948966,1.5707963267948966,0,0,0]",
+            "lastHitDoor": "-1",
+            "nearestDoor": "-1",
+            "equipped": "pistol",
+            "ammo": "{\"pistol\":8,\"smg\":30,\"rifle\":30,\"sniper\":5}",
+            "reload": "",
+            "reloadPose": "0.0000",
+            "punchSide": "1",
+            "reloadProgress": "0",
+            "punches": "0",
+            "punchProgress": "0",
+            "aiming": "false",
+            "fov": "72",
+            "actorModels": "rounded-stick-player,detailed-pistol",
+            "weaponSource": "blender",
+            "recoil": "0.0000",
+            "movement": "0.00,0.00",
+            "recoilRendered": "4"
+          }
+        },
+        {
+          "building": "WORKSHOP",
+          "entered": true,
+          "closedFromInside": true,
+          "closedDoorBlocksShots": true,
+          "openDoorAllowsShots": true,
+          "exited": true,
+          "render": {
+            "engine": "three.js r187",
+            "position": "19.000,-1.925",
+            "yaw": "-3.142",
+            "pitch": "-0.030",
+            "drawCalls": "63",
+            "triangles": "51122",
+            "mapSize": "128",
+            "shots": "6",
+            "health": "100",
+            "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"police\",\"visual\":\"blender\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"blender\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":true}]",
+            "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+            "firing": "false",
+            "inside": "-1",
+            "visibleInteriors": "[]",
+            "buildingSources": "[\"blender\",\"blender\",\"blender\",\"blender\",\"blender\"]",
+            "doors": "[1.5707963267948966,1.5707963267948966,1.5707963267948966,0,0]",
+            "lastHitDoor": "-1",
+            "nearestDoor": "-1",
+            "equipped": "pistol",
+            "ammo": "{\"pistol\":6,\"smg\":30,\"rifle\":30,\"sniper\":5}",
+            "reload": "",
+            "reloadPose": "0.0000",
+            "punchSide": "1",
+            "reloadProgress": "0",
+            "punches": "0",
+            "punchProgress": "0",
+            "aiming": "false",
+            "fov": "72",
+            "actorModels": "rounded-stick-player,detailed-pistol",
+            "weaponSource": "blender",
+            "recoil": "0.0000",
+            "movement": "0.00,0.00",
+            "recoilRendered": "6"
+          }
+        },
+        {
+          "building": "WAREHOUSE",
+          "entered": true,
+          "closedFromInside": true,
+          "closedDoorBlocksShots": true,
+          "openDoorAllowsShots": true,
+          "exited": true,
+          "render": {
+            "engine": "three.js r187",
+            "position": "18.000,12.565",
+            "yaw": "-6.286",
+            "pitch": "-0.030",
+            "drawCalls": "78",
+            "triangles": "81654",
+            "mapSize": "128",
+            "shots": "8",
+            "health": "100",
+            "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0,\"visible\":true},{\"kind\":\"police\",\"visual\":\"blender\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"blender\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+            "enemy": "{\"x\":-14,\"z\":33,\"health\":75,\"state\":\"patrol\",\"shots\":0}",
+            "firing": "false",
+            "inside": "-1",
+            "visibleInteriors": "[]",
+            "buildingSources": "[\"blender\",\"blender\",\"blender\",\"blender\",\"blender\"]",
+            "doors": "[1.5707963267948966,1.5707963267948966,1.5707963267948966,0,-1.5707963267948966]",
+            "lastHitDoor": "-1",
+            "nearestDoor": "-1",
+            "equipped": "pistol",
+            "ammo": "{\"pistol\":4,\"smg\":30,\"rifle\":30,\"sniper\":5}",
+            "reload": "",
+            "reloadPose": "0.0000",
+            "punchSide": "1",
+            "reloadProgress": "0",
+            "punches": "0",
+            "punchProgress": "0",
+            "aiming": "false",
+            "fov": "72",
+            "actorModels": "rounded-stick-player,detailed-pistol",
+            "weaponSource": "blender",
+            "recoil": "0.0000",
+            "movement": "0.00,0.00",
+            "recoilRendered": "8"
+          }
+        },
+        {
+          "building": "OLD RESIDENCE",
+          "entered": true,
+          "closedFromInside": true,
+          "closedDoorBlocksShots": true,
+          "openDoorAllowsShots": true,
+          "exited": true,
+          "render": {
+            "engine": "three.js r187",
+            "position": "-19.000,7.602",
+            "yaw": "-6.286",
+            "pitch": "-0.030",
+            "drawCalls": "58",
+            "triangles": "61882",
+            "mapSize": "128",
+            "shots": "10",
+            "health": "100",
+            "enemies": "[{\"kind\":\"lookout\",\"visual\":\"blender\",\"x\":-13.215043010111087,\"z\":27.972145218640083,\"health\":75,\"state\":\"patrol\",\"shots\":1,\"visible\":true},{\"kind\":\"police\",\"visual\":\"blender\",\"x\":-32,\"z\":-30,\"health\":125,\"state\":\"patrol\",\"shots\":0,\"visible\":false},{\"kind\":\"swat\",\"visual\":\"blender\",\"x\":32,\"z\":-32,\"health\":225,\"state\":\"patrol\",\"shots\":0,\"visible\":false}]",
+            "enemy": "{\"x\":-13.215043010111087,\"z\":27.972145218640083,\"health\":75,\"state\":\"patrol\",\"shots\":1}",
+            "firing": "false",
+            "inside": "-1",
+            "visibleInteriors": "[]",
+            "buildingSources": "[\"blender\",\"blender\",\"blender\",\"blender\",\"blender\"]",
+            "doors": "[1.5707963267948966,1.5707963267948966,1.5707963267948966,-1.5707963267948966,-1.5707963267948966]",
+            "lastHitDoor": "-1",
+            "nearestDoor": "-1",
+            "equipped": "pistol",
+            "ammo": "{\"pistol\":2,\"smg\":30,\"rifle\":30,\"sniper\":5}",
+            "reload": "",
+            "reloadPose": "0.0000",
+            "punchSide": "1",
+            "reloadProgress": "0",
+            "punches": "0",
+            "punchProgress": "0",
+            "aiming": "false",
+            "fov": "72",
+            "actorModels": "rounded-stick-player,detailed-pistol",
+            "weaponSource": "blender",
+            "recoil": "0.0000",
+            "movement": "0.00,0.00",
+            "recoilRendered": "10"
+          }
+        }
+      ],
+      "mobileUseAndEntry": true,
+      "mobileUseWhileMoving": true,
+      "closedDoorStopsWalking": true,
+      "pageErrors": [],
+      "scope": "Actual desktop input and phone multitouch in local software-WebGL Chromium; no teleporting, no physical-device performance claim."
+    },
+    "failedAssetFallback": {
+      "sources": ["blender", "fallback", "blender", "blender", "blender"],
+      "gameStarts": true,
+      "pageErrors": []
+    }
+  },
+  "limitations": [
+    "Browser checks use software WebGL and do not establish physical-phone FPS.",
+    "Reference exteriors are adapted to existing footprints, a centered single pedestrian doorway and existing fixture reservations.",
+    "The 30 standalone props include additional variants not yet placed as new obstacles in the town."
+  ]
+}

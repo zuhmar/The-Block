@@ -25,7 +25,8 @@ def route(start,goal):
  return [(nav['minX']+x*.5,nav['minZ']+z*.5) for x,z in points]
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
- context=browser.new_context(viewport={'width':1280,'height':800});page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:5173'),wait_until='networkidle');page.locator('#start').click();page.wait_for_function('document.pointerLockElement===document.querySelector("#world")')
+ context=browser.new_context(viewport={'width':1280,'height':800});context.add_init_script("localStorage.setItem('street-survival:3d-prototype:v1',JSON.stringify({version:1,wood:9876,pieces:[{id:'prior-floor',kind:'floor',x:42,z:44,rotation:0}],opened:[]}))");page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:5173'),wait_until='networkidle');page.locator('#start').click();page.wait_for_function('document.pointerLockElement===document.querySelector("#world")')
+ page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.buildingSources).every(s=>s==="blender")')
  def state():return page.locator('#world').evaluate('(c)=>({...c.dataset})')
  def position():return tuple(float(v) for v in state()['position'].split(','))
  def look(yaw,pitch=-.03):
@@ -59,6 +60,7 @@ with sync_playwright() as p:
   look(math.pi if front>0 else 0,0);page.wait_for_timeout(220);page.mouse.down();page.mouse.up();page.wait_for_function('(i)=>Number(document.querySelector("#world").dataset.lastHitDoor)!==i',arg=i)
   go(outside);page.wait_for_function('Number(document.querySelector("#world").dataset.inside)===-1')
   check={'building':b['name'],'entered':True,'closedFromInside':True,'closedDoorBlocksShots':True,'openDoorAllowsShots':True,'exited':True,'render':state()};checks.append(check);print('Passed:',b['name'],flush=True)
+ saved=page.evaluate("JSON.parse(localStorage.getItem('street-survival:3d-prototype:v1'))");assert saved['wood']==9876 and saved['pieces'][0]['id']=='prior-floor'
  context.close()
  mobile=browser.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True);phone=mobile.new_page();phone.on('pageerror',lambda e:errors.append(str(e)));phone.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:5173'),wait_until='networkidle');phone.locator('#start').click();cdp=mobile.new_cdp_session(phone)
  box=phone.locator('#joystick').bounding_box();cx=box['x']+box['width']/2;cy=box['y']+box['height']/2
@@ -78,4 +80,4 @@ with sync_playwright() as p:
  cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]});phone.wait_for_timeout(200)
  assert phone.locator('#zone').inner_text()=='THE HAVEN';phone.locator('#interact').click();phone.wait_for_function('Math.abs(JSON.parse(document.querySelector("#world").dataset.doors)[1])<.01');phone.screenshot(path='work/interior-mobile-haven.png')
  assert not errors,errors
- result={'fiveBuildings':checks,'mobileUseAndEntry':True,'mobileUseWhileMoving':True,'closedDoorStopsWalking':True,'pageErrors':errors,'scope':'Actual desktop input and phone multitouch in local software-WebGL Chromium; no teleporting, no physical-device performance claim.'};Path('work/building-mobile-held-use-check.json' if os.environ.get('BUILDING_PHONE_ONLY') else 'work/building-interiors-check.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));mobile.close();browser.close()
+ result={'existingWoodAndStructuresPreserved':True,'allFiveBlenderModelsLoaded':True,'fiveBuildings':checks,'mobileUseAndEntry':True,'mobileUseWhileMoving':True,'closedDoorStopsWalking':True,'pageErrors':errors,'scope':'Actual desktop input and phone multitouch in local software-WebGL Chromium; no teleporting, no physical-device performance claim.'};Path('work/building-mobile-held-use-check.json' if os.environ.get('BUILDING_PHONE_ONLY') else 'work/building-interiors-check.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));mobile.close();browser.close()

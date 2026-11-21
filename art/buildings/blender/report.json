@@ -1,0 +1,192 @@
+{
+  "source": "Fresh Blender scenes measured to current layout; five saved reference images",
+  "buildings": [
+    {
+      "kind": "store",
+      "referenceSha256": "d5467148b3b59eef896926b864a92402288ea7c7d6f6a78f822d69915af4c2b9",
+      "triangles": 35172,
+      "drawCalls": 24,
+      "bytes": 1031364
+    },
+    {
+      "kind": "shelter",
+      "referenceSha256": "099b9c96965b5b8a6315781f62a0dcfa30a81455e6193921ffed1a4c443c662b",
+      "triangles": 25172,
+      "drawCalls": 21,
+      "bytes": 751272
+    },
+    {
+      "kind": "workshop",
+      "referenceSha256": "dff598493b48fb33a2f5f0a51342f418705c0a7cc2e57afbdd33447455da1315",
+      "triangles": 26712,
+      "drawCalls": 22,
+      "bytes": 801676
+    },
+    {
+      "kind": "home",
+      "referenceSha256": "2c5c58998765ea5327bf73aae2e58c86056404818b9a3d2bbf1d84d414f6ce9a",
+      "triangles": 26842,
+      "drawCalls": 19,
+      "bytes": 794664
+    },
+    {
+      "kind": "warehouse",
+      "referenceSha256": "b841809becae3cf520cc603c600ff033610a4c369ed88eacb6b8966bea88ba23",
+      "triangles": 35400,
+      "drawCalls": 19,
+      "bytes": 1051992
+    }
+  ],
+  "props": [
+    {
+      "name": "store-checkout",
+      "triangles": 924,
+      "drawCalls": 5
+    },
+    {
+      "name": "store-shelf",
+      "triangles": 3024,
+      "drawCalls": 6
+    },
+    {
+      "name": "store-refrigerator",
+      "triangles": 1964,
+      "drawCalls": 7
+    },
+    {
+      "name": "store-cabinet",
+      "triangles": 476,
+      "drawCalls": 2
+    },
+    {
+      "name": "store-trash-bin",
+      "triangles": 564,
+      "drawCalls": 2
+    },
+    {
+      "name": "store-wall-vent",
+      "triangles": 916,
+      "drawCalls": 2
+    },
+    {
+      "name": "shelter-single-bed",
+      "triangles": 1472,
+      "drawCalls": 3
+    },
+    {
+      "name": "shelter-bedside-cabinet",
+      "triangles": 620,
+      "drawCalls": 3
+    },
+    {
+      "name": "shelter-waiting-bench",
+      "triangles": 1316,
+      "drawCalls": 2
+    },
+    {
+      "name": "shelter-dining-table",
+      "triangles": 772,
+      "drawCalls": 4
+    },
+    {
+      "name": "shelter-kitchenette",
+      "triangles": 1496,
+      "drawCalls": 4
+    },
+    {
+      "name": "shelter-reception",
+      "triangles": 924,
+      "drawCalls": 5
+    },
+    {
+      "name": "workshop-workbench",
+      "triangles": 1888,
+      "drawCalls": 5
+    },
+    {
+      "name": "workshop-tool-chest",
+      "triangles": 1228,
+      "drawCalls": 3
+    },
+    {
+      "name": "workshop-pegboard",
+      "triangles": 972,
+      "drawCalls": 3
+    },
+    {
+      "name": "workshop-parts-cabinet",
+      "triangles": 476,
+      "drawCalls": 2
+    },
+    {
+      "name": "workshop-fabrication-table",
+      "triangles": 1016,
+      "drawCalls": 2
+    },
+    {
+      "name": "workshop-exhaust-fan",
+      "triangles": 916,
+      "drawCalls": 2
+    },
+    {
+      "name": "home-sofa",
+      "triangles": 1316,
+      "drawCalls": 1
+    },
+    {
+      "name": "home-coffee-table",
+      "triangles": 620,
+      "drawCalls": 2
+    },
+    {
+      "name": "home-tv-cabinet",
+      "triangles": 1500,
+      "drawCalls": 5
+    },
+    {
+      "name": "home-double-bed",
+      "triangles": 1760,
+      "drawCalls": 3
+    },
+    {
+      "name": "home-wardrobe",
+      "triangles": 476,
+      "drawCalls": 2
+    },
+    {
+      "name": "home-kitchen",
+      "triangles": 1496,
+      "drawCalls": 5
+    },
+    {
+      "name": "warehouse-storage-rack",
+      "triangles": 2784,
+      "drawCalls": 3
+    },
+    {
+      "name": "warehouse-pallet",
+      "triangles": 972,
+      "drawCalls": 2
+    },
+    {
+      "name": "warehouse-cartons",
+      "triangles": 360,
+      "drawCalls": 2
+    },
+    {
+      "name": "warehouse-packing-bench",
+      "triangles": 740,
+      "drawCalls": 3
+    },
+    {
+      "name": "warehouse-cabinet",
+      "triangles": 476,
+      "drawCalls": 2
+    },
+    {
+      "name": "warehouse-pallet-jack",
+      "triangles": 716,
+      "drawCalls": 2
+    }
+  ]
+}

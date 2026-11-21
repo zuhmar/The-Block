@@ -9,7 +9,7 @@ import {
 import { createNpcHitbox, loadNpcImage } from "./npc-image";
 import { createNpc, NPC_KINDS } from "./npc-models";
 import { createSurvivor } from "./survivor-models";
-import { createBuildingModel } from "./building-models";
+import { loadBlenderBuilding } from "./blender-buildings";
 import {
   doorAngles,
   doorTargets,
@@ -293,8 +293,10 @@ for (const z of [3.8, 10.2]) {
     box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
 }
 const buildingModels = BUILDINGS.map((b, index) => {
-  const model = createBuildingModel(index, boxGeo, sign);
+  const model = loadBlenderBuilding(index, boxGeo, sign);
   model.root.position.set(b.x, 0, b.z);
+  model.shotRoot.position.set(b.x, 0, b.z);
+  model.shotRoot.updateMatrixWorld(true);
   scene.add(model.root);
   return model;
 });
@@ -440,7 +442,7 @@ const shotObstacles: THREE.Object3D[] = [
   trunks,
   crowns,
   rocks,
-  ...buildingModels.map((m) => m.root),
+  ...buildingModels.map((m) => m.shotRoot),
 ];
 // A simple target range supports testing the visible pistol and shot feedback.
 const targets: THREE.Object3D[] = [];
@@ -459,7 +461,11 @@ const batches = new Map<
   string,
   { mat: THREE.Material; meshes: THREE.Mesh[]; building?: number }
 >();
-const interiorBatches: { building: number; mesh: THREE.InstancedMesh }[] = [];
+const interiorBatches: {
+  building: number;
+  mesh: THREE.Mesh;
+  bounds: THREE.Box3;
+}[] = [];
 scene.traverse((o) => {
   if (
     !(o instanceof THREE.Mesh) ||
@@ -483,9 +489,24 @@ for (const { mat, meshes, building } of batches.values()) {
   shotObstacles.push(batch);
   if (building !== undefined) {
     batch.computeBoundingBox();
-    interiorBatches.push({ building, mesh: batch });
+    interiorBatches.push({
+      building,
+      mesh: batch,
+      bounds: new THREE.Box3().setFromObject(batch),
+    });
   }
 }
+// Blender furniture is already merged by material; cull its world-space bounds.
+for (const model of buildingModels)
+  if (model.source === "blender")
+    model.root.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.userData.interiorBuilding !== undefined)
+        interiorBatches.push({
+          building: o.userData.interiorBuilding,
+          mesh: o,
+          bounds: new THREE.Box3().setFromObject(o),
+        });
+    });
 const construction = new THREE.Group();
 scene.add(construction);
 function pieceModel(p: Omit<Piece, "id">, preview = false) {
@@ -1476,6 +1497,8 @@ function frame(now: number) {
     buildingModels.forEach((model, i) => {
       model.door.rotation.y = doorAngles[i];
       model.door.updateMatrixWorld(true);
+      model.shotDoor.rotation.y = doorAngles[i];
+      model.shotRoot.updateMatrixWorld(true);
     });
     let forward =
       Number(keys.has("KeyW") || keys.has("ArrowUp")) -
@@ -1556,7 +1579,7 @@ function frame(now: number) {
     entry.mesh.visible =
       Math.abs(player.x - b.x) < b.width / 2 + 8 &&
       Math.abs(player.z - b.z) < b.depth / 2 + 8 &&
-      interiorFrustum.intersectsBox(entry.mesh.boundingBox!);
+      interiorFrustum.intersectsBox(entry.bounds);
   }
   muzzle.visible = tracer.visible = flashRemaining > 0;
   if (playing) flashRemaining = Math.max(0, flashRemaining - dt);
@@ -1612,6 +1635,9 @@ function frame(now: number) {
         .map((entry) => entry.building),
     ),
   ]);
+  canvas.dataset.buildingSources = JSON.stringify(
+    buildingModels.map((m) => m.source),
+  );
   canvas.dataset.doors = JSON.stringify(doorAngles);
   canvas.dataset.lastHitDoor = String(lastHitDoor);
   canvas.dataset.nearestDoor = String(nearestDoor());

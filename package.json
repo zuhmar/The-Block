@@ -23,7 +23,8 @@
     "assets:street-v2": "blender -b -t 4 --python packages/art-tools/build-street-v2.py",
     "assets:image-characters": "blender -b -t 4 --python packages/art-tools/build-image-characters.py",
     "assets:image-npcs": "blender -b -t 4 --python packages/art-tools/build-image-npcs.py",
-    "assets:weapons": "blender -b -t 4 --python packages/art-tools/build-weapons.py"
+    "assets:weapons": "blender -b -t 4 --python packages/art-tools/build-weapons.py",
+    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
