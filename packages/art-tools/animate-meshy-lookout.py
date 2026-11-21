@@ -1,21 +1,27 @@
 """Animate the user's Meshy rig without altering the original upload.
-Keep three native actions; author pistol grip/fire clips using geometric two-bone solves,
+Keep three native actions; author weapon grip/fire clips using geometric two-bone solves,
 then bake FK keys for glTF. Save full-detail editable source, export a lighter review copy.
 """
 import bpy,math,json,os,hashlib,shutil,struct
 from mathutils import Vector,Matrix,Quaternion
-ROOT=os.getcwd();OUT=ROOT+'/art/characters/meshy-lookout';CLIENT=ROOT+'/apps/client/src/fps/models/meshy-lookout'
+KIND=os.environ.get('MESHY_NPC','lookout')
+if KIND not in ['lookout','police','swat']:raise ValueError(KIND)
+WEAPON='Rifle' if KIND=='swat' else 'Pistol'
+ROOT=os.getcwd();OUT=ROOT+'/art/characters/meshy-'+KIND;CLIENT=ROOT+'/apps/client/src/fps/models/meshy-'+KIND
 UPLOAD=ROOT+'/../attachments/f78b26db-5f8c-42b1-81ca-ad600cc6d3c6/Meshy_AI_Urban_Lime_Scout_20261121_animated_mixamo_All_animation.glb'
+UPLOAD=os.environ.get('MESHY_UPLOAD',UPLOAD)
 ORIGINAL=OUT+'/original.glb'
 os.makedirs(OUT,exist_ok=True);os.makedirs(CLIENT,exist_ok=True)
-if not os.path.exists(ORIGINAL):shutil.copyfile(UPLOAD,ORIGINAL)
+if not os.path.exists(ORIGINAL):
+ if KIND!='lookout' and 'MESHY_UPLOAD' not in os.environ:raise RuntimeError('Supply the correct original via MESHY_UPLOAD')
+ shutil.copyfile(UPLOAD,ORIGINAL)
 sha=hashlib.sha256(open(ORIGINAL,'rb').read()).hexdigest()
 bpy.ops.wm.read_factory_settings(use_empty=True);bpy.context.preferences.filepaths.save_version=0
 bpy.ops.import_scene.gltf(filepath=ORIGINAL)
 # Load embedded textures from stable local files. Resizing packed GLB images can
 # discard their buffers in headless Blender; never resize those packed originals.
 raw=open(ORIGINAL,'rb').read();jn=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+jn]);binary=raw[28+jn:]
-TEMP=ROOT+'/work/lookout-textures';os.makedirs(TEMP,exist_ok=True);texture_paths={};texture_hashes={};material_images=[]
+TEMP=ROOT+'/work/'+KIND+'-textures';os.makedirs(TEMP,exist_ok=True);texture_paths={};texture_hashes={};material_images=[]
 for i,image in enumerate(doc.get('images',[])):
  view=doc['bufferViews'][image['bufferView']];path=TEMP+'/source-'+str(i)+'.jpg';open(path,'wb').write(binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']]);texture_paths[i]=path;texture_hashes[hashlib.sha256(open(path,'rb').read()).hexdigest()]=i
 for material in bpy.data.materials:
@@ -26,7 +32,7 @@ for material in bpy.data.materials:
   if index is None:raise RuntimeError('Cannot identify original embedded texture '+old.name)
   im=bpy.data.images.load(texture_paths[index],check_existing=False);im.colorspace_settings.name=old.colorspace_settings.name;node.image=im;material_images.append((node,index,old.colorspace_settings.name))
 scene=bpy.context.scene;import_fps=scene.render.fps;scene.render.fps=30
-rig=next(o for o in scene.objects if o.type=='ARMATURE');meshes=[o for o in scene.objects if o.type=='MESH' and any(m.type=='ARMATURE' and m.object==rig for m in o.modifiers)];rig['originalSha256']=sha;rig['animationSource']='Three Meshy clips plus Blender-authored pistol clips';rig['clothingSlot']='base'
+rig=next(o for o in scene.objects if o.type=='ARMATURE');meshes=[o for o in scene.objects if o.type=='MESH' and any(m.type=='ARMATURE' and m.object==rig for m in o.modifiers)];rig['originalSha256']=sha;rig['animationSource']='Three Meshy clips plus Blender-authored '+WEAPON+' clips';rig['clothingSlot']='base'
 rig.animation_data_create()
 for track in list(rig.animation_data.nla_tracks):rig.animation_data.nla_tracks.remove(track)
 native=list(bpy.data.actions)
@@ -55,10 +61,11 @@ def arm(side,wrist,forward=(0,-1,0)):
  start=upper.head.copy();delta=Vector(wrist)-start;l1=upper.bone.length;l2=fore.bone.length;dist=max(.035,min(delta.length,l1+l2-.002));direction=delta.normalized();w=start+direction*dist
  pole=Vector((side*.65,.03,.65))-start;pole=(pole-direction*pole.dot(direction)).normalized();along=(l1*l1-l2*l2+dist*dist)/(2*dist);height=math.sqrt(max(0,l1*l1-along*along));elbow=start+direction*along+pole*height
  orient(upper,start,elbow-start);orient(fore,elbow,w-elbow);orient(hand,w,Vector(forward))
- # Curl articulated fingers around the pistol grip.
+ # Curl available articulated finger chains around the weapon grip.
  for digit in ['Index','Middle','Ring','Pinky','Thumb']:
   for segment in [1,2,3]:
-   pb=joint(label+'Hand'+digit+str(segment));pb.rotation_quaternion=base[pb.name][1]@Quaternion((1,0,0),.45 if digit=='Thumb' else .8)
+   pb=rig.pose.bones.get('mixamorig:'+label+'Hand'+digit+str(segment))
+   if pb:pb.rotation_quaternion=base[pb.name][1]@Quaternion((1,0,0),.45 if digit=='Thumb' else .8)
 def smooth(t):return t*t*(3-2*t)
 def interp(keys,t):
  for i in range(1,len(keys)):
@@ -81,10 +88,10 @@ def action(name,duration,pose):
   for k in fc.keyframe_points:k.interpolation='LINEAR'
  authored.append(a);rig.animation_data.action=None
 
-for name,duration in [('Pistol_Hold',1),('Pistol_Fire',.25)]:
+for name,duration in [(WEAPON+'_Hold',1),(WEAPON+'_Fire',.25)]:
  def pose(t,name=name):
   recoil=math.sin(math.pi*t)*.025 if name.endswith('Fire') else 0
-  for side,w in holds('Pistol').items():arm(side,Vector(w)+Vector((0,recoil,recoil)))
+  for side,w in holds(WEAPON).items():arm(side,Vector(w)+Vector((0,recoil,recoil)))
  action(name,duration,pose)
 reset();rig.animation_data.action=None
 # Keep all actions discoverable in Blender and export them by their clean names.
@@ -115,5 +122,5 @@ for o in rig.children:
 scene.frame_set(0);reset();rig.animation_data.action=None
 bpy.ops.export_scene.gltf(filepath=CLIENT+'/animated.glb',export_format='GLB',use_selection=True,export_animation_mode='ACTIONS',export_anim_single_armature=False,export_skins=True,export_extras=True,export_image_format='JPEG',export_jpeg_quality=85)
 triangles=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes)
-report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original upload and editable Blender source retained.','Original 10355 triangles preserved; runtime textures limited to 1024px.','Full finger rig with authored pistol grip and fire clips.','Used for the easy Lookout NPC only.']}
+report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original upload and editable Blender source retained.','Original topology preserved; runtime textures limited to 1024px.','Uploaded rig retained with authored '+WEAPON+' grip and fire clips.','Used for the '+KIND+' NPC only.']}
 json.dump(report,open(OUT+'/report.json','w'),indent=2);print(json.dumps(report))

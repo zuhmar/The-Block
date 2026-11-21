@@ -3,7 +3,7 @@ import {
   loadStreetReview,
   disposeReview,
   IMAGE_REFERENCE_URL,
-  NPC_REFERENCE_URL,
+  IMAGE_MODEL_URLS,
   type ImageModelKind,
 } from "./street-review";
 import { createNpc } from "./npc-models";
@@ -168,38 +168,31 @@ export function openActorPreview() {
     const isNpc = kind === "lookout" || kind === "police" || kind === "swat";
     const referenceLink =
       overlay.querySelector<HTMLAnchorElement>("#image-reference")!;
-    referenceLink.href =
-      kind === "meshy"
-        ? new URL("./models/meshy-shadow/animated.glb", import.meta.url).href
-        : isNpc
-          ? NPC_REFERENCE_URL
-          : IMAGE_REFERENCE_URL;
-    referenceLink.textContent =
-      kind === "meshy"
-        ? "DOWNLOAD ANIMATED MODEL"
-        : isNpc
-          ? "SAVED NPC REFERENCE IMAGE"
-          : "FOUR-CHARACTER REFERENCE IMAGE";
+    const isMeshy = kind === "meshy" || isNpc;
+    referenceLink.href = isMeshy ? IMAGE_MODEL_URLS[kind] : IMAGE_REFERENCE_URL;
+    referenceLink.textContent = isMeshy
+      ? "DOWNLOAD ANIMATED MODEL"
+      : "FOUR-CHARACTER REFERENCE IMAGE";
     activeReviewKind = kind;
     overlay.classList.add("reviewing");
     for (const c of Object.values(characters)) c.root.visible = false;
     overlay.querySelector("#show-street")!.classList.remove("selected");
     overlay.querySelector("#" + reviewButtons[kind])!.classList.add("selected");
-    overlay.querySelector<HTMLElement>("#review-motion")!.hidden =
-      kind === "meshy";
-    overlay.querySelector<HTMLElement>("#meshy-motion")!.hidden =
-      kind !== "meshy";
-    if (kind === "meshy") yaw = 0.3;
+    overlay.querySelector<HTMLElement>("#review-motion")!.hidden = isMeshy;
+    overlay.querySelector<HTMLElement>("#meshy-motion")!.hidden = !isMeshy;
+    if (isMeshy) yaw = 0.3;
     overlay.querySelector<HTMLElement>("#clothing-slots")!.hidden =
-      kind === "base" || kind === "meshy";
+      kind === "base" || isMeshy;
     camera.position.set(0, 1.45, 3.5);
     camera.lookAt(0, 1.0, 0);
     const caption =
       kind === "meshy"
         ? "Your Meshy character · Movement and combat animations"
-        : "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
+        : isNpc
+          ? "Meshy " + kind.toUpperCase() + " · Movement and combat animations"
+          : "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
     function configureMeshy() {
-      if (kind !== "meshy" || !review) return;
+      if (!isMeshy || !review) return;
       const select =
         overlay.querySelector<HTMLSelectElement>("#meshy-animation")!;
       select.replaceChildren(
@@ -241,7 +234,7 @@ export function openActorPreview() {
       }
       review = loaded;
       scene.add(review.root);
-      if (kind === "meshy") configureMeshy();
+      if (isMeshy) configureMeshy();
       else setMotion(motion);
       for (const input of overlay.querySelectorAll<HTMLInputElement>(
         "[data-slot]",

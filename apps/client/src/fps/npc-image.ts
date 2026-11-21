@@ -20,39 +20,13 @@ export function createNpcHitbox() {
 }
 export async function loadNpcImage(kind: NpcKind) {
   const model = await loadStreetReview(kind);
-  if (kind === "lookout") return prepareMeshyLookout(model);
-  const walk = model.clips.find((c) => c.name === "walk"),
-    combat = model.clips.find((c) => c.name === "combat");
-  if (!walk || !combat) throw Error("NPC rig missing combat/walk clips");
-  const lower = new THREE.AnimationClip(
-    "walking-legs",
-    walk.duration,
-    walk.tracks.filter((t) => /thigh|shin|foot/.test(t.name)),
-  );
-  const upper = new THREE.AnimationClip(
-    "aiming-arm",
-    combat.duration,
-    combat.tracks.filter((t) =>
-      /upper_armR|forearmR|handR|finger0R|thumbR/.test(t.name),
-    ),
-  );
-  const walkAction = model.mixer.clipAction(lower);
-  model.mixer.clipAction(upper).play();
-  return {
-    ...model,
-    attachWeapon: undefined as ((weapon: THREE.Group) => void) | undefined,
-    animate(moving: boolean, dt: number) {
-      if (moving) {
-        if (!walkAction.isRunning()) walkAction.reset().play();
-      } else if (walkAction.isRunning()) walkAction.stop();
-      model.mixer.update(dt);
-    },
-  };
+  return prepareMeshyNpc(model, kind === "swat" ? "Rifle" : "Pistol");
 }
 
 /** Layer native locomotion below the authored grip, with the weapon on its hand. */
-function prepareMeshyLookout(
+function prepareMeshyNpc(
   model: Awaited<ReturnType<typeof loadStreetReview>>,
+  weaponKind: "Pistol" | "Rifle",
 ) {
   model.root.rotation.y = Math.PI;
   model.root.traverse((o) => {
@@ -60,7 +34,7 @@ function prepareMeshyLookout(
   });
   function action(name: string, upper: boolean) {
     const clip = model.clips.find((c) => c.name === name);
-    if (!clip) throw Error("Lookout missing " + name);
+    if (!clip) throw Error("NPC missing " + name);
     return model.mixer.clipAction(
       new THREE.AnimationClip(
         name,
@@ -75,8 +49,8 @@ function prepareMeshyLookout(
   }
   const idle = action("Idle_3", false).play(),
     walk = action("Walking", false);
-  const hold = action("Pistol_Hold", true).play();
-  const fire = action("Pistol_Fire", true);
+  const hold = action(weaponKind + "_Hold", true).play();
+  const fire = action(weaponKind + "_Fire", true);
   fire.setLoop(THREE.LoopOnce, 1);
   fire.clampWhenFinished = false;
   model.mixer.addEventListener("finished", () => {
@@ -88,7 +62,7 @@ function prepareMeshyLookout(
     ...model,
     attachWeapon(weapon: THREE.Group) {
       const hand = model.root.getObjectByName("mixamorigRightHand");
-      if (!hand) throw Error("Lookout missing right hand");
+      if (!hand) throw Error("NPC missing right hand");
       model.root.updateMatrixWorld(true);
       const target = hand
         .getWorldPosition(new THREE.Vector3())

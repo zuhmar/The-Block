@@ -1,0 +1,169 @@
+{
+  "validation": {
+    "unitTestsPassed": 146,
+    "lint": "passed",
+    "productionBuild": "passed"
+  },
+  "encounters": {
+    "encounters": [
+      {
+        "kind": "lookout",
+        "initialHealth": 75,
+        "defeated": true,
+        "playerHealth": "100",
+        "others": [
+          {
+            "kind": "lookout",
+            "visual": "blender",
+            "x": -10.70957263524859,
+            "z": 31.04169033512843,
+            "health": 0,
+            "state": "down",
+            "shots": 1,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "visual": "fallback",
+            "x": -32,
+            "z": -30,
+            "health": 125,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "visual": "fallback",
+            "x": 32,
+            "z": -32,
+            "health": 225,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "kind": "police",
+        "initialHealth": 125,
+        "defeated": true,
+        "playerHealth": "85",
+        "others": [
+          {
+            "kind": "lookout",
+            "visual": "blender",
+            "x": -12.977600831270976,
+            "z": 27.275931420764113,
+            "health": 75,
+            "state": "patrol",
+            "shots": 1,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "visual": "blender",
+            "x": -31.893697585564183,
+            "z": -28.94229299154736,
+            "health": 0,
+            "state": "down",
+            "shots": 2,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "visual": "fallback",
+            "x": 32,
+            "z": -32,
+            "health": 225,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "kind": "swat",
+        "initialHealth": 225,
+        "defeated": true,
+        "playerHealth": "100",
+        "others": [
+          {
+            "kind": "lookout",
+            "visual": "blender",
+            "x": -14,
+            "z": 33,
+            "health": 75,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "police",
+            "visual": "fallback",
+            "x": -32,
+            "z": -30,
+            "health": 125,
+            "state": "patrol",
+            "shots": 0,
+            "visible": false
+          },
+          {
+            "kind": "swat",
+            "visual": "blender",
+            "x": 29.204032885965173,
+            "z": -30.745152689159216,
+            "health": 0,
+            "state": "down",
+            "shots": 3,
+            "visible": false
+          }
+        ]
+      }
+    ],
+    "pageErrors": [],
+    "scope": "Actual compiled game, keyboard walking and firing; no teleportation or writable game hooks."
+  },
+  "mobilePreview": {
+    "checks": [
+      {
+        "kind": "lookout",
+        "clips": [
+          "Idle_3",
+          "Pistol_Fire",
+          "Pistol_Hold",
+          "Running",
+          "Walking"
+        ]
+      },
+      {
+        "kind": "police",
+        "clips": [
+          "Idle_3",
+          "Pistol_Fire",
+          "Pistol_Hold",
+          "Running",
+          "Walking"
+        ]
+      },
+      {
+        "kind": "swat",
+        "clips": [
+          "Idle_3",
+          "Rifle_Fire",
+          "Rifle_Hold",
+          "Running",
+          "Walking"
+        ]
+      }
+    ],
+    "pageErrors": [],
+    "scope": "Compiled game, phone viewport; not a physical-device performance benchmark."
+  },
+  "notes": [
+    "Police uses uploaded 66-joint model with authored pistol hold/fire.",
+    "SWAT uses uploaded 58-joint model with authored rifle hold/fire.",
+    "Original meshes, native clips, uploaded files and editable Blender sources preserved.",
+    "Existing enemy AI, spawns, damage, hitboxes, player and persistence retained."
+  ]
+}

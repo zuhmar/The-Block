@@ -1,0 +1,28 @@
+{
+  "originalSha256": "46d28653c891895b83927969aba1e15e0d4db2f34520759bb0b5a5859d1ce62c",
+  "originalTriangles": 10387,
+  "reviewTriangles": 10387,
+  "bones": 66,
+  "nativeClips": [
+    "Idle_3",
+    "Running",
+    "Walking"
+  ],
+  "authoredClips": [
+    {
+      "name": "Pistol_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "Pistol_Fire",
+      "duration": 0.26666666666666666
+    }
+  ],
+  "reviewBytes": 2077104,
+  "notes": [
+    "Original upload and editable Blender source retained.",
+    "Original topology preserved; runtime textures limited to 1024px.",
+    "Uploaded rig retained with authored Pistol grip and fire clips.",
+    "Used for the police NPC only."
+  ]
+}

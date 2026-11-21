@@ -1,0 +1,28 @@
+{
+  "originalSha256": "1b1213872134105a078e9989c33e15e7120ceec3288e633926b973ae50d4fbed",
+  "originalTriangles": 10403,
+  "reviewTriangles": 10403,
+  "bones": 58,
+  "nativeClips": [
+    "Idle_3",
+    "Running",
+    "Walking"
+  ],
+  "authoredClips": [
+    {
+      "name": "Rifle_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "Rifle_Fire",
+      "duration": 0.26666666666666666
+    }
+  ],
+  "reviewBytes": 2255488,
+  "notes": [
+    "Original upload and editable Blender source retained.",
+    "Original topology preserved; runtime textures limited to 1024px.",
+    "Uploaded rig retained with authored Rifle grip and fire clips.",
+    "Used for the swat NPC only."
+  ]
+}
