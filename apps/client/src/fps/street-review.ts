@@ -2,8 +2,7 @@ import * as THREE from "three";
 
 export const IMAGE_MODEL_URLS = {
   meshy: new URL("./models/meshy-shadow/animated.glb", import.meta.url).href,
-  lookout: new URL("./models/npc-image-rebuild/lookout.glb", import.meta.url)
-    .href,
+  lookout: new URL("./models/meshy-lookout/animated.glb", import.meta.url).href,
   police: new URL("./models/npc-image-rebuild/police.glb", import.meta.url)
     .href,
   swat: new URL("./models/npc-image-rebuild/swat.glb", import.meta.url).href,
@@ -26,7 +25,7 @@ export const NPC_REFERENCE_URL = new URL(
 export async function loadStreetReview(kind: ImageModelKind = "street") {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const gltf = await new GLTFLoader().loadAsync(IMAGE_MODEL_URLS[kind]);
-  if (kind === "meshy") {
+  if (kind === "meshy" || kind === "lookout") {
     const bounds = new THREE.Box3().setFromObject(gltf.scene);
     const height = bounds.max.y - bounds.min.y;
     if (height > 0) {

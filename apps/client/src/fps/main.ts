@@ -735,7 +735,9 @@ function enemyFrame(dt: number) {
             mesh.removeFromParent();
           }
           enemyActor.root.clear();
-          enemyActor.root.add(model.root, enemyWeapon.root);
+          enemyActor.root.add(model.root);
+          if (model.attachWeapon) model.attachWeapon(enemyWeapon.root);
+          else enemyActor.root.add(enemyWeapon.root);
           unit.imageRig = model;
         })
         .catch(() => {
@@ -754,7 +756,7 @@ function enemyFrame(dt: number) {
     const moving =
       enemy.state === "chase" &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) > 11;
-    if (unit.imageRig) unit.imageRig.animate(moving, dt);
+    if (unit.imageRig) unit.imageRig.animate(moving, dt, Boolean(shot));
     else {
       enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
       enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
