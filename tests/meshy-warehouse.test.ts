@@ -67,16 +67,17 @@ test("warehouse preserves uploaded sources, bounds mobile art cost and keeps all
   const gltf = await geometryOnly(raw);
   gltf.scene.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
-    for (const attribute of Object.values(object.geometry.attributes))
+    const geometry = object.geometry as THREE.BufferGeometry;
+    for (const attribute of Object.values(geometry.attributes))
       assert(
         Array.from(attribute.array).every(Number.isFinite),
         object.name + " invalid vertex data",
       );
-    const indices = object.geometry.index;
+    const indices = geometry.index;
     if (indices)
       assert(
         Array.from(indices.array).every(
-          (i) => i < object.geometry.attributes.position.count,
+          (i) => i < geometry.attributes.position.count,
         ),
       );
   });
