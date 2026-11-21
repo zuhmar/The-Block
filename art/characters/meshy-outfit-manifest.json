@@ -1,0 +1,17 @@
+{
+  "street": {
+    "sha": "6c07c8b94fc9edbcb86fa0bbfe48f9d76ffefbd643db4f0cc23023b477b8e79d",
+    "bones": 58,
+    "triangles": 10390
+  },
+  "reinforced": {
+    "sha": "bafa67d68ffc777dd2ca91415128e85ccfafec08ff2688ee8154ea1a293a2d0d",
+    "bones": 58,
+    "triangles": 10387
+  },
+  "armored": {
+    "sha": "41b6944527fc47a5c76e4a3b9451e0124ceb3bd3ef75bfa14b9efab073409887",
+    "bones": 66,
+    "triangles": 10351
+  }
+}

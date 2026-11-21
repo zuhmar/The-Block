@@ -168,7 +168,10 @@ export function openActorPreview() {
     const isNpc = kind === "lookout" || kind === "police" || kind === "swat";
     const referenceLink =
       overlay.querySelector<HTMLAnchorElement>("#image-reference")!;
-    const isMeshy = kind === "meshy" || isNpc;
+    const isMeshy =
+      kind === "meshy" ||
+      isNpc ||
+      ["street", "reinforced", "armored"].includes(kind);
     referenceLink.href = isMeshy ? IMAGE_MODEL_URLS[kind] : IMAGE_REFERENCE_URL;
     referenceLink.textContent = isMeshy
       ? "DOWNLOAD ANIMATED MODEL"
@@ -188,7 +191,7 @@ export function openActorPreview() {
     const caption =
       kind === "meshy"
         ? "Your Meshy character · Movement and combat animations"
-        : isNpc
+        : isMeshy
           ? "Meshy " + kind.toUpperCase() + " · Movement and combat animations"
           : "Image rebuild · " + kind.toUpperCase() + " · Fresh Blender model";
     function configureMeshy() {

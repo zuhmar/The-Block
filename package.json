@@ -28,7 +28,8 @@
     "assets:meshy-shadow": "blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py",
     "assets:meshy-lookout": "blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
     "assets:meshy-police": "MESHY_NPC=police blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
-    "assets:meshy-swat": "MESHY_NPC=swat blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py"
+    "assets:meshy-swat": "MESHY_NPC=swat blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
+    "assets:meshy-outfits": "MESHY_PLAYER_TIER=street blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py && MESHY_PLAYER_TIER=reinforced blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py && MESHY_PLAYER_TIER=armored blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

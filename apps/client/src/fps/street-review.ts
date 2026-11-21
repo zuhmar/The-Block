@@ -6,10 +6,10 @@ export const IMAGE_MODEL_URLS = {
   police: new URL("./models/meshy-police/animated.glb", import.meta.url).href,
   swat: new URL("./models/meshy-swat/animated.glb", import.meta.url).href,
   base: new URL("./models/image-rebuild/base.glb", import.meta.url).href,
-  street: new URL("./models/image-rebuild/street.glb", import.meta.url).href,
-  reinforced: new URL("./models/image-rebuild/reinforced.glb", import.meta.url)
+  street: new URL("./models/meshy-street/animated.glb", import.meta.url).href,
+  reinforced: new URL("./models/meshy-reinforced/animated.glb", import.meta.url)
     .href,
-  armored: new URL("./models/image-rebuild/armored.glb", import.meta.url).href,
+  armored: new URL("./models/meshy-armored/animated.glb", import.meta.url).href,
 };
 export type ImageModelKind = keyof typeof IMAGE_MODEL_URLS;
 export const IMAGE_REFERENCE_URL = new URL(
@@ -24,7 +24,17 @@ export const NPC_REFERENCE_URL = new URL(
 export async function loadStreetReview(kind: ImageModelKind = "street") {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const gltf = await new GLTFLoader().loadAsync(IMAGE_MODEL_URLS[kind]);
-  if (["meshy", "lookout", "police", "swat"].includes(kind)) {
+  if (
+    [
+      "meshy",
+      "lookout",
+      "police",
+      "swat",
+      "street",
+      "reinforced",
+      "armored",
+    ].includes(kind)
+  ) {
     const bounds = new THREE.Box3().setFromObject(gltf.scene);
     const height = bounds.max.y - bounds.min.y;
     if (height > 0) {

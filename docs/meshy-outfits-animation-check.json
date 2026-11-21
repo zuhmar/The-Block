@@ -1,0 +1,84 @@
+{
+  "checks": [
+    {
+      "kind": "street",
+      "clips": [
+        "CrouchLookAroundBow",
+        "Idle_3",
+        "Pistol_Fire",
+        "Pistol_Hold",
+        "Pistol_Reload",
+        "Punch_Left",
+        "Punch_Right",
+        "Regular_Jump",
+        "Rifle_Fire",
+        "Rifle_Hold",
+        "Rifle_Reload",
+        "Running",
+        "SMG_Fire",
+        "SMG_Hold",
+        "SMG_Reload",
+        "Sniper_Fire",
+        "Sniper_Hold",
+        "Sniper_Reload",
+        "Walking"
+      ]
+    },
+    {
+      "kind": "reinforced",
+      "clips": [
+        "CrouchLookAroundBow",
+        "Idle_3",
+        "Pistol_Fire",
+        "Pistol_Hold",
+        "Pistol_Reload",
+        "Punch_Left",
+        "Punch_Right",
+        "Regular_Jump",
+        "Rifle_Fire",
+        "Rifle_Hold",
+        "Rifle_Reload",
+        "Running",
+        "SMG_Fire",
+        "SMG_Hold",
+        "SMG_Reload",
+        "Sniper_Fire",
+        "Sniper_Hold",
+        "Sniper_Reload",
+        "Walking"
+      ]
+    },
+    {
+      "kind": "armored",
+      "clips": [
+        "CrouchLookAroundBow",
+        "Idle_3",
+        "Pistol_Fire",
+        "Pistol_Hold",
+        "Pistol_Reload",
+        "Punch_Left",
+        "Punch_Right",
+        "Regular_Jump",
+        "Rifle_Fire",
+        "Rifle_Hold",
+        "Rifle_Reload",
+        "Running",
+        "SMG_Fire",
+        "SMG_Hold",
+        "SMG_Reload",
+        "Sniper_Fire",
+        "Sniper_Hold",
+        "Sniper_Reload",
+        "Walking"
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "scope": "Animation authoring and model viewer integration. Live player equipment selection is unchanged.",
+  "validation": {
+    "unitTestsPassed": 149,
+    "lint": "passed",
+    "productionBuild": "passed",
+    "outfitClipPlaybackChecks": 57
+  }
+}

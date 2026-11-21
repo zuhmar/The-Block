@@ -1,0 +1,78 @@
+{
+  "originalSha256": "6c07c8b94fc9edbcb86fa0bbfe48f9d76ffefbd643db4f0cc23023b477b8e79d",
+  "originalTriangles": 10390,
+  "reviewTriangles": 10390,
+  "bones": 58,
+  "nativeClips": [
+    "CrouchLookAroundBow",
+    "Idle_3",
+    "Regular_Jump",
+    "Running",
+    "Walking"
+  ],
+  "authoredClips": [
+    {
+      "name": "Punch_Left",
+      "duration": 0.4
+    },
+    {
+      "name": "Punch_Right",
+      "duration": 0.4
+    },
+    {
+      "name": "Pistol_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "Pistol_Fire",
+      "duration": 0.2
+    },
+    {
+      "name": "Pistol_Reload",
+      "duration": 1.4
+    },
+    {
+      "name": "SMG_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "SMG_Fire",
+      "duration": 0.1
+    },
+    {
+      "name": "SMG_Reload",
+      "duration": 1.8
+    },
+    {
+      "name": "Rifle_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "Rifle_Fire",
+      "duration": 0.16666666666666666
+    },
+    {
+      "name": "Rifle_Reload",
+      "duration": 2.1
+    },
+    {
+      "name": "Sniper_Hold",
+      "duration": 1.0
+    },
+    {
+      "name": "Sniper_Fire",
+      "duration": 0.4
+    },
+    {
+      "name": "Sniper_Reload",
+      "duration": 2.6
+    }
+  ],
+  "reviewBytes": 2568060,
+  "notes": [
+    "Original GLB and full-detail Blender source retained.",
+    "Runtime uses 1024px textures; topology is reduced only above 25000 triangles.",
+    "Available finger chains are posed; generic hand helpers are preserved.",
+    "Combat clip names and timings match the existing player animation interface."
+  ]
+}

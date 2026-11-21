@@ -4,18 +4,22 @@ then bake FK keys for glTF. Save full-detail editable source, export a lighter r
 """
 import bpy,math,json,os,hashlib,shutil,struct
 from mathutils import Vector,Matrix,Quaternion
-ROOT=os.getcwd();OUT=ROOT+'/art/characters/meshy-shadow';CLIENT=ROOT+'/apps/client/src/fps/models/meshy-shadow'
+TIER=os.environ.get('MESHY_PLAYER_TIER','shadow')
+if TIER not in ['shadow','street','reinforced','armored']:raise ValueError(TIER)
+ROOT=os.getcwd();OUT=ROOT+'/art/characters/meshy-'+TIER;CLIENT=ROOT+'/apps/client/src/fps/models/meshy-'+TIER
 UPLOAD='/workspace/.codex-attachments/7e1a4ab7-8a05-4bfc-b437-42daa1f319dd/0571390a-d654-4f51-9a38-cc7f58bfcfc7/Meshy_AI_Glossy_Shadow_Figure_20261121_animated_mixamo_All_animation.glb'
 ORIGINAL=OUT+'/original.glb'
 os.makedirs(OUT,exist_ok=True);os.makedirs(CLIENT,exist_ok=True)
-if not os.path.exists(ORIGINAL):shutil.copyfile(UPLOAD,ORIGINAL)
+if not os.path.exists(ORIGINAL):
+ if TIER!='shadow':raise RuntimeError('Missing original upload for '+TIER)
+ shutil.copyfile(UPLOAD,ORIGINAL)
 sha=hashlib.sha256(open(ORIGINAL,'rb').read()).hexdigest()
 bpy.ops.wm.read_factory_settings(use_empty=True);bpy.context.preferences.filepaths.save_version=0
 bpy.ops.import_scene.gltf(filepath=ORIGINAL)
 # Load embedded textures from stable local files. Resizing packed GLB images can
 # discard their buffers in headless Blender; never resize those packed originals.
 raw=open(ORIGINAL,'rb').read();jn=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+jn]);binary=raw[28+jn:]
-TEMP=ROOT+'/work/meshy-textures';os.makedirs(TEMP,exist_ok=True);texture_paths={};texture_hashes={};material_images=[]
+TEMP=ROOT+'/work/meshy-'+TIER+'-textures';os.makedirs(TEMP,exist_ok=True);texture_paths={};texture_hashes={};material_images=[]
 for i,image in enumerate(doc.get('images',[])):
  view=doc['bufferViews'][image['bufferView']];path=TEMP+'/source-'+str(i)+'.jpg';open(path,'wb').write(binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']]);texture_paths[i]=path;texture_hashes[hashlib.sha256(open(path,'rb').read()).hexdigest()]=i
 for material in bpy.data.materials:
@@ -55,8 +59,11 @@ def arm(side,wrist,forward=(0,-1,0)):
  start=upper.head.copy();delta=Vector(wrist)-start;l1=upper.bone.length;l2=fore.bone.length;dist=max(.035,min(delta.length,l1+l2-.002));direction=delta.normalized();w=start+direction*dist
  pole=Vector((side*.65,.03,.65))-start;pole=(pole-direction*pole.dot(direction)).normalized();along=(l1*l1-l2*l2+dist*dist)/(2*dist);height=math.sqrt(max(0,l1*l1-along*along));elbow=start+direction*along+pole*height
  orient(upper,start,elbow-start);orient(fore,elbow,w-elbow);orient(hand,w,Vector(forward))
- # The uploaded mittens have generic helper bones, not an articulated five-finger rig.
- # Preserve those local transforms instead of inventing finger anatomy.
+ # Curl only available finger chains; preserve generic mitten helper bones.
+ for digit in ['Index','Middle','Ring','Pinky','Thumb']:
+  for segment in [1,2,3]:
+   pb=rig.pose.bones.get('mixamorig:'+label+'Hand'+digit+str(segment))
+   if pb:pb.rotation_quaternion=base[pb.name][1]@Quaternion((1,0,0),.45 if digit=='Thumb' else .8)
 def smooth(t):return t*t*(3-2*t)
 def interp(keys,t):
  for i in range(1,len(keys)):
@@ -115,10 +122,11 @@ for im in bpy.data.images:
  if im.source=='FILE' and not im.packed_file and im.size[0]>0:
   try:im.pack()
   except RuntimeError:pass
-bpy.ops.wm.save_as_mainfile(filepath=OUT+'/animated-character.blend')
+bpy.ops.wm.save_as_mainfile(filepath=OUT+'/animated-character.blend',compress=TIER!='shadow')
 # Build a separate phone review export; apply topology reduction while retaining skin weights.
 original_triangles=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes)
 for o in meshes:
+ if original_triangles<25000:continue
  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o
  mod=o.modifiers.new('Phone topology reduction','DECIMATE');mod.ratio=.245
  while o.modifiers[0]!=mod:bpy.ops.object.modifier_move_up(modifier=mod.name)
@@ -137,5 +145,5 @@ for o in rig.children:
 scene.frame_set(0);reset();rig.animation_data.action=None
 bpy.ops.export_scene.gltf(filepath=CLIENT+'/animated.glb',export_format='GLB',use_selection=True,export_animation_mode='ACTIONS',export_anim_single_armature=False,export_skins=True,export_extras=True,export_image_format='JPEG',export_jpeg_quality=85)
 triangles=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes)
-report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original GLB and full-detail Blender source retained.','Review export uses a separate decimated mesh and 1024px textures.','Hand helper bones are preserved; this upload has mitten hands rather than a full finger rig.','Combat clips drive the live player body and first-person forearms with hand-mounted weapons.']}
+report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original GLB and full-detail Blender source retained.','Runtime uses 1024px textures; topology is reduced only above 25000 triangles.','Available finger chains are posed; generic hand helpers are preserved.','Combat clip names and timings match the existing player animation interface.']}
 json.dump(report,open(OUT+'/report.json','w'),indent=2);print(json.dumps(report))
