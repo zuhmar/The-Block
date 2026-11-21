@@ -21,7 +21,7 @@ with sync_playwright() as p:
  # Repeated preview opening/closing must not leak key capture or WebGL contexts.
  for i in range(2):
   page.locator('#view-models').click();page.locator('#actor-canvas').wait_for();page.keyboard.press('Escape');assert page.locator('#actor-preview').count()==0
- page.locator('#start').click();page.wait_for_function('document.querySelector("#world").dataset.actorModels==="rounded-stick-player,detailed-pistol"')
+ page.locator('#start').click();page.wait_for_function('document.querySelector("#world").dataset.playerSource==="meshy"')
  page.locator('#pistol-tool').click();page.wait_for_function('document.querySelector("#world").dataset.equipped==="pistol"')
  # The diagnostic advances only after an actual rendered frame has positive slide recoil.
  before=int(page.locator('#world').get_attribute('data-recoil-rendered') or 0)

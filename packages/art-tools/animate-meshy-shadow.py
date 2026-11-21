@@ -65,9 +65,9 @@ def interp(keys,t):
  return keys[-1][1]
 def holds(kind):
  if kind=='Pistol':return {1:(.035,-.30,1.09),-1:(-.035,-.33,1.12)}
- if kind=='SMG':return {1:(.09,-.31,1.13),-1:(-.055,-.29,1.10)}
- if kind=='Sniper':return {1:(.10,-.36,1.15),-1:(-.055,-.29,1.12)}
- return {1:(.09,-.35,1.13),-1:(-.055,-.29,1.10)}
+ if kind=='SMG':return {1:(-.035,-.37,1.10),-1:(-.055,-.29,1.10)}
+ if kind=='Sniper':return {1:(-.035,-.40,1.12),-1:(-.055,-.29,1.12)}
+ return {1:(-.035,-.39,1.10),-1:(-.055,-.29,1.10)}
 authored=[]
 def action(name,duration,pose):
  a=bpy.data.actions.new(name);a.use_fake_user=True;rig.animation_data.action=a;frames=max(2,round(duration*30))
@@ -137,5 +137,5 @@ for o in rig.children:
 scene.frame_set(0);reset();rig.animation_data.action=None
 bpy.ops.export_scene.gltf(filepath=CLIENT+'/animated.glb',export_format='GLB',use_selection=True,export_animation_mode='ACTIONS',export_anim_single_armature=False,export_skins=True,export_extras=True,export_image_format='JPEG',export_jpeg_quality=85)
 triangles=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in meshes)
-report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original GLB and full-detail Blender source retained.','Review export uses a separate decimated mesh and 1024px textures.','Hand helper bones are preserved; this upload has mitten hands rather than a full finger rig.','Combat clips are full-body animation assets; first-person controller integration and weapon attachment alignment are separate.']}
+report={'originalSha256':sha,'originalTriangles':original_triangles,'reviewTriangles':triangles,'bones':len(rig.data.bones),'nativeClips':[a.name for a in native],'authoredClips':[{'name':a.name,'duration':float(a.frame_range.y-a.frame_range.x)/30} for a in authored],'reviewBytes':os.path.getsize(CLIENT+'/animated.glb'),'notes':['Original GLB and full-detail Blender source retained.','Review export uses a separate decimated mesh and 1024px textures.','Hand helper bones are preserved; this upload has mitten hands rather than a full finger rig.','Combat clips drive the live player body and first-person forearms with hand-mounted weapons.']}
 json.dump(report,open(OUT+'/report.json','w'),indent=2);print(json.dumps(report))

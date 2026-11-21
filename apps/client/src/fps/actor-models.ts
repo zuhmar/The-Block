@@ -692,7 +692,15 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     time: number,
     moving: boolean,
     recoil: number,
-    action: { punch?: number; side?: number; reload?: number } = {},
+    action: {
+      punch?: number;
+      side?: number;
+      reload?: number;
+      dt?: number;
+      shotSerial?: number;
+      running?: boolean;
+      jumping?: boolean;
+    } = {},
   ) {
     root.position.y = moving
       ? Math.sin(time * 9) * 0.008

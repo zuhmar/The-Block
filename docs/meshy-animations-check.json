@@ -125,5 +125,5 @@
       "scope": "Software WebGL Chromium in a phone viewport; not a physical-device FPS claim."
     }
   },
-  "scope": "Authored full-body animation assets and a lazy-loaded model-viewer review; active first-person controller/outfits remain separate integration work."
+  "scope": "Animation-authoring verification. See meshy-player-integration-check.json for active-player integration verification."
 }

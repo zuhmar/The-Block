@@ -73,6 +73,6 @@
     "Original GLB and full-detail Blender source retained.",
     "Review export uses a separate decimated mesh and 1024px textures.",
     "Hand helper bones are preserved; this upload has mitten hands rather than a full finger rig.",
-    "Combat clips are full-body animation assets; first-person controller integration and weapon attachment alignment are separate."
+    "Combat clips drive the live player body and first-person forearms with hand-mounted weapons."
   ]
 }

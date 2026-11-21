@@ -8,7 +8,7 @@ import {
 } from "./weapon-state";
 import { createNpcHitbox, loadNpcImage } from "./npc-image";
 import { createNpc, NPC_KINDS } from "./npc-models";
-import { createSurvivor } from "./survivor-models";
+import { createPlayerViewRig, createPlayerBody } from "./meshy-player";
 import { loadBlenderBuilding } from "./blender-buildings";
 import {
   doorAngles,
@@ -27,7 +27,7 @@ import {
   segmentHitsPlayer,
   ENEMY_TYPES,
 } from "./enemy";
-import { createFirstPersonRig, createWeapon } from "./actor-models";
+import { createWeapon } from "./actor-models";
 import { openActorPreview } from "./actor-preview";
 import * as THREE from "three";
 import {
@@ -595,16 +595,23 @@ let movePointer: number | undefined,
 const raycaster = new THREE.Raycaster(),
   ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
   hitPoint = new THREE.Vector3();
-let viewModel = createFirstPersonRig();
-const weaponRigs = new Map<WeaponKind, ReturnType<typeof createFirstPersonRig>>(
-  [["pistol", viewModel]],
-);
+let viewModel = createPlayerViewRig();
+const weaponRigs = new Map<WeaponKind, ReturnType<typeof createPlayerViewRig>>([
+  ["pistol", viewModel],
+]);
 let aiming = false;
 viewModel.setAspect(camera.aspect);
-camera.add(viewModel.root);
-const body = createSurvivor("base");
-body.head.visible = false;
-body.arms.forEach((arm) => (arm.visible = false));
+const viewScene = new THREE.Scene();
+const viewCamera = new THREE.PerspectiveCamera(72, camera.aspect, 0.025, 10);
+viewScene.add(viewCamera);
+viewScene.add(new THREE.HemisphereLight(0xffffff, 0x526b54, 2));
+const viewLight = new THREE.DirectionalLight(0xffecd2, 2.5);
+viewLight.position.set(-2, 3, 2);
+viewScene.add(viewLight);
+renderer.autoClear = false;
+renderer.info.autoReset = false;
+viewCamera.add(viewModel.root);
+const body = createPlayerBody();
 scene.add(body.root);
 let muzzle = viewModel.flash;
 const muzzlePosition = new THREE.Vector3();
@@ -896,9 +903,9 @@ function equip(next: Tool) {
   if (next !== "hands") {
     let rig = weaponRigs.get(next);
     if (!rig) {
-      rig = createFirstPersonRig(next);
+      rig = createPlayerViewRig(next);
       weaponRigs.set(next, rig);
-      camera.add(rig.root);
+      viewCamera.add(rig.root);
     }
     viewModel = rig;
   }
@@ -1184,7 +1191,9 @@ function fire() {
   const end =
     hits[0]?.point || raycaster.ray.at(weapon.range, new THREE.Vector3());
   viewModel.root.updateMatrixWorld(true);
-  const start = viewModel.gun.muzzle.getWorldPosition(muzzlePosition);
+  const start = camera.localToWorld(
+    viewModel.gun.muzzle.getWorldPosition(muzzlePosition),
+  );
   tracer.geometry.setFromPoints([start, end]);
   tracer.visible = true;
   const hitEnemy =
@@ -1545,18 +1554,21 @@ function frame(now: number) {
     if (firePointer !== undefined && !build && health > 0) fire();
     const recoil =
       tool !== "hands" ? recoilRemaining * WEAPONS[tool].recoil : 0;
-    viewModel.animate(clock, length > 0.1, recoil, {
+    const playerAction = {
+      dt,
+      shotSerial,
+      running: run || keys.has("ShiftLeft") || keys.has("ShiftRight"),
+      jumping: vertical > 0,
       punch: punchRemaining > 0 ? 1 - punchRemaining / MELEE.duration : 0,
       side: punchSerial % 2 ? -1 : 1,
       reload: loadout.reload
         ? 1 - loadout.reload.remaining / loadout.reload.duration
         : 0,
-    });
-    recoilRemaining = Math.max(0, recoilRemaining - dt / 0.15);
+    };
+    viewModel.animate(clock, length > 0.1, recoil, playerAction);
     body.root.position.set(player.x, vertical, player.z);
     body.root.rotation.y = yaw;
-    body.legs[0].rotation.x = length > 0.1 ? Math.sin(clock * 9) * 0.3 : 0;
-    body.legs[1].rotation.x = -body.legs[0].rotation.x;
+    body.animate(clock, length > 0.1, playerAction, tool);
     updatePreview();
     if (now - lastHud > 160) {
       updateHud();
@@ -1589,7 +1601,14 @@ function frame(now: number) {
     fpsAt = now;
   }
   frameCount++;
+  viewCamera.fov = camera.fov;
+  viewCamera.aspect = camera.aspect;
+  viewCamera.updateProjectionMatrix();
+  renderer.info.reset();
+  renderer.clear();
   renderer.render(scene, camera);
+  renderer.clearDepth();
+  renderer.render(viewScene, viewCamera);
   if (
     tool !== "hands" &&
     viewModel.gun.slide.position.z > 0 &&
@@ -1644,7 +1663,11 @@ function frame(now: number) {
   canvas.dataset.equipped = tool;
   canvas.dataset.ammo = JSON.stringify(loadout.rounds);
   canvas.dataset.reload = loadout.reload?.kind || "";
-  canvas.dataset.reloadPose = viewModel.gun.root.rotation.z.toFixed(4);
+  canvas.dataset.reloadPose = new THREE.Euler()
+    .setFromQuaternion(
+      viewModel.gun.root.getWorldQuaternion(new THREE.Quaternion()),
+    )
+    .z.toFixed(4);
   canvas.dataset.punchSide = String(punchSerial % 2 ? -1 : 1);
   canvas.dataset.reloadProgress = String(
     loadout.reload ? 1 - loadout.reload.remaining / loadout.reload.duration : 0,
@@ -1655,7 +1678,13 @@ function frame(now: number) {
   );
   canvas.dataset.aiming = String(aiming);
   canvas.dataset.fov = String(camera.fov);
-  canvas.dataset.actorModels = "rounded-stick-player,detailed-pistol";
+  canvas.dataset.playerSource = body.root.userData.playerSource;
+  canvas.dataset.playerMotion = body.root.userData.playerClip || "legacy";
+  canvas.dataset.playerCombat = viewModel.root.userData.playerClip || "legacy";
+  canvas.dataset.actorModels =
+    body.root.userData.playerSource === "meshy"
+      ? "meshy-shadow,blender-weapons"
+      : "rounded-stick-player,detailed-pistol";
   canvas.dataset.weaponSource =
     viewModel.gun.root.userData.weaponSource || "fallback";
   canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
