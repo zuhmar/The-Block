@@ -1,3 +1,4 @@
+import { readInventory, type Inventory } from "./inventory";
 import { WORLD_SIZE, onIsland } from "./coast";
 import {
   inHarbor,
@@ -824,6 +825,7 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
   );
 }
 export type Save = {
+  inventory?: Inventory;
   resources?: ResourceWallet;
   harvest?: HarvestSave;
   version: 1;
@@ -869,6 +871,9 @@ export function readSave(raw: string | null): Save {
     }
     return {
       version: 1,
+      ...(readInventory(s.inventory)
+        ? { inventory: readInventory(s.inventory) }
+        : {}),
       ...(readWallet(s.resources)
         ? { resources: readWallet(s.resources) }
         : {}),

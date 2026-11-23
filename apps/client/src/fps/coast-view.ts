@@ -80,6 +80,7 @@ export function createCoast() {
   root.add(ripples);
   return {
     root,
+    surface: land,
     update(time: number) {
       (ripples.material as THREE.MeshBasicMaterial).opacity =
         0.18 + Math.sin(time * 0.6) * 0.04;

@@ -402,3 +402,12 @@ export function createPlayerBody() {
     },
   };
 }
+
+/** Full cached player for the inventory paper doll; independent bones, shared immutable art. */
+export function createInventoryPlayer() {
+  const root = asset ? clone(asset.root) : createSurvivor("base").root;
+  const mixer = asset ? new THREE.AnimationMixer(root) : undefined;
+  const idle = asset?.clips.find((c) => c.name === "Idle_3");
+  if (idle) mixer!.clipAction(idle).play();
+  return { root, update: (dt: number) => mixer?.update(dt) };
+}

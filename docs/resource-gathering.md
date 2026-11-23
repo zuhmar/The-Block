@@ -18,3 +18,5 @@ Resource damage, mineral coordinates/generations, depleted tree timers and the r
 Wood joins the existing building balance. Rock, sulfur and metal appear in their own HUD counters and are stockpiled; this change does not alter existing practice-building recipes, add crafting recipes or change weapon ammunition.
 
 Verification: `pnpm verify` includes resource population/placement, collision removal, fixed/random respawn, base obstruction, wallet/save compatibility, hit cooldown, swing phases and stable proxy identity checks. `tests/nature-models.test.ts` checks all twelve GLB exports through GLTFLoader.
+
+The carried inventory now limits collection to available stack space and requires a carried axe/pickaxe. See [inventory](fps-inventory.md) for capacity, the starter reserve, and resource item handling.

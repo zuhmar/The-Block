@@ -1,3 +1,25 @@
+import {
+  migrateInventory,
+  countItem,
+  roomFor,
+  addItem,
+  takeItem,
+  selectedItem,
+  isResource,
+  isHarvestTool,
+  isGun,
+  itemTool,
+  itemName,
+  cleanHotbar,
+  storeStack,
+  withdrawStack,
+  dropStack,
+  pickupDrop,
+  useSelected,
+  type WorldDrop,
+} from "./inventory";
+import { createInventoryDialog, itemMarkup } from "./inventory-ui";
+import { createDroppedItems, createHeldResource } from "./inventory-art";
 import { createCoast } from "./coast-view";
 import { coastLimits } from "./coast";
 import { inHarbor } from "./harbor-layout";
@@ -58,7 +80,6 @@ import {
 } from "./building-layout";
 import {
   WEAPONS,
-  WEAPON_KINDS,
   explosiveKind,
   canShoot,
   type WeaponKind,
@@ -92,6 +113,7 @@ import {
   riverX,
   roadDistance,
   inTown,
+  blocked,
   movePlayer,
   snapPiece,
   placementReason,
@@ -111,7 +133,7 @@ const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
 $("#app").innerHTML = `
 <canvas id="world" aria-label="Street Survival first-person 3D world"></canvas>
 <div id="hud" hidden>
-  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
+  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="inventory-button" aria-label="Open inventory">BAG <small>I</small></button><button id="build-tool">BUILD <small>B</small></button><button id="pause-button" aria-label="Pause game">||</button></header>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="resource-wallet" aria-label="Gathered resources"><span>ROCK <b id="rock-count">0</b></span><span>SULFUR <b id="sulfur-count">0</b></span><span>METAL <b id="metal-count">0</b></span></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span><span id="structure-health-label" hidden></span><meter id="structure-health-bar" min="0" max="100" value="100" aria-label="Structure health" hidden></meter></div>
@@ -127,14 +149,15 @@ $("#app").innerHTML = `
     )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button><button id="gather" hidden>GATHER</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <div id="weapon-status"><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
-  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <img src="/assets/weapon-icons/pistol.png" alt=""><b>PISTOL</b></button><button id="smg-tool">3 <img src="/assets/weapon-icons/smg.png" alt=""><b>SMG</b></button><button id="rifle-tool">4 <img src="/assets/weapon-icons/assault-rifle.png" alt=""><b>RIFLE</b></button><button id="sniper-tool">5 <img src="/assets/weapon-icons/sniper.png" alt=""><b>SNIPER</b></button><button id="lmg-tool">6 <img src="/assets/weapon-icons/light-machine-gun.png" alt=""><b>LMG</b></button><button id="rocket-tool">7 <img src="/assets/weapon-icons/rocket-launcher.png" alt=""><b>ROCKET</b></button><button id="grenade-tool">8 <img src="/assets/weapon-icons/grenade.png" alt=""><b>GRENADE</b></button><button id="c4-tool">9 <img src="/assets/weapon-icons/c4.png" alt=""><b>C4</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
+  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
 document.body.classList.toggle("touch", touch);
 const SAVE_KEY = "street-survival:3d-prototype:v1";
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let save = readSave(null),
   saveAvailable = true;
 try {
@@ -142,6 +165,19 @@ try {
 } catch {
   saveAvailable = false;
 }
+save.inventory ??= migrateInventory(save.wood, save.resources);
+function inventory() {
+  return save.inventory!;
+}
+function syncCarry() {
+  save.wood = countItem(inventory(), "wood");
+  save.resources = {
+    rock: countItem(inventory(), "rock"),
+    sulfur: countItem(inventory(), "sulfur"),
+    metal: countItem(inventory(), "metal"),
+  };
+}
+syncCarry();
 configureWestRoad(save.pieces);
 const resourceWorld = new ResourceWorld(() => save.pieces, save.harvest);
 save.resources ??= { rock: 0, sulfur: 0, metal: 0 };
@@ -149,6 +185,11 @@ setResourceCollisionProvider((p, feet, build, radius) =>
   resourceWorld.blocked(p, feet, build, radius),
 );
 function persist() {
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  storeCurrentGun();
+  syncCarry();
+  droppedItems.sync(inventory().drops);
   save.harvest = resourceWorld.snapshot();
   try {
     localStorage.setItem(
@@ -161,6 +202,14 @@ function persist() {
     saveAvailable = false;
     toast("Device storage unavailable · progress lasts for this session");
   }
+}
+function persistSoon() {
+  storeCurrentGun();
+  if (saveTimer === undefined)
+    saveTimer = setTimeout(() => {
+      saveTimer = undefined;
+      persist();
+    }, 200);
 }
 function toast(message: string) {
   $("#toast").textContent = message;
@@ -279,6 +328,9 @@ const coast = createCoast();
 scene.add(coast.root);
 const harbor = harborModel();
 scene.add(harbor.root, harbor.proxy);
+const droppedItems = createDroppedItems();
+scene.add(droppedItems.root);
+droppedItems.sync(inventory().drops);
 // River banks follow a gentle curve, rather than a rectangular water strip.
 const waterShape = new THREE.Shape();
 let riverNorth = -250,
@@ -480,6 +532,7 @@ officeSign.position.set(-111, 2.9, 201.19);
 scene.add(officeSign);
 const shotObstacles: THREE.Object3D[] = [
   jailGrounds.proxy,
+  coast.surface,
   nature.cover,
   harbor.proxy,
   ...buildingModels.map((m) => m.shotRoot),
@@ -807,6 +860,9 @@ let player = { ...START },
   yaw = 0,
   pitch = -0.03,
   playing = false,
+  inventoryOpen = false,
+  resumeAfterInventory = false,
+  equippedItemId: string | undefined,
   vertical = 0,
   verticalSpeed = 0,
   run = false;
@@ -930,6 +986,8 @@ function respawn() {
   cancelHarvest();
   health = 100;
   loadout = newWeaponState();
+  equippedItemId = undefined;
+  reconcileEquipment();
   clearExplosives();
   punchRemaining = punchCooldown = 0;
   player = { ...START };
@@ -1187,6 +1245,20 @@ function useExplosive(kind: ChargeKind) {
     toast("Limit · 8 active explosives");
     return;
   }
+  const available =
+    kind === "rocket"
+      ? countItem(inventory(), "rockets")
+      : selectedItem(inventory())?.kind === kind
+        ? selectedItem(inventory())!.quantity
+        : 0;
+  if (!available) {
+    notifyInventory(
+      "No " + (kind === "rocket" ? "rockets" : itemName(kind)) + " carried",
+    );
+    return;
+  }
+  if (kind !== "rocket")
+    loadout.rounds[kind] = Math.min(WEAPONS[kind].magazineSize, available);
   if (loadout.rounds[kind] <= 0) {
     toast("Empty · R / RELOAD");
     return;
@@ -1225,7 +1297,12 @@ function spawnExplosive(
     toast("Move closer to place C4");
     return;
   }
+  if (kind === "rocket" && !countItem(inventory(), "rockets")) return;
+  if (kind !== "rocket" && selectedItem(inventory())?.kind !== kind) return;
   if (!spendRound(loadout, kind)) return;
+  if (kind === "rocket") takeItem(inventory(), "rockets", 1);
+  else useSelected(inventory());
+  persist();
   shotSerial++;
   if (kind === "rocket") {
     recoilRemaining = 1;
@@ -1288,6 +1365,7 @@ function spawnExplosive(
     visual.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
   scene.add(visual);
   projectileModels.set(p.id, visual);
+  reconcileEquipment();
   updateHud();
 }
 function explode(p: Projectile) {
@@ -1464,6 +1542,9 @@ let lastShot = 0,
   frameCount = 0,
   fpsAt = performance.now(),
   fps = 0;
+const heldResource = createHeldResource();
+viewCamera.add(heldResource.root);
+heldResource.setAspect(camera.aspect);
 const harvestView = createHarvestView();
 viewCamera.add(harvestView.root);
 harvestView.setAspect(camera.aspect);
@@ -1504,6 +1585,23 @@ function beginHarvest() {
   if (harvestAction) return true;
   const target = nearestResource();
   if (!target) return false;
+  const needed =
+    GATHER_TYPES[target.kind].action === "chop" ? "axe" : "pickaxe";
+  if (!countItem(inventory(), needed)) {
+    notifyInventory(
+      "Carry an " +
+        (needed === "axe" ? "axe" : "pickaxe") +
+        " to gather this resource",
+    );
+    return false;
+  }
+  if (
+    roomFor(inventory(), GATHER_TYPES[target.kind].resource) <
+    GATHER_TYPES[target.kind].yield
+  ) {
+    notifyInventory("Inventory full · make room before gathering");
+    return false;
+  }
   setAim(false);
   harvestAction = { id: target.id, kind: target.kind, elapsed: 0, hit: false };
   viewModel.root.visible = false;
@@ -1518,16 +1616,17 @@ function updateHarvest(dt: number) {
     if (!action.hit && action.elapsed >= config.duration * 0.55) {
       action.hit = true;
       const target = nearestResource();
-      if (target?.id === action.id && health > 0 && !build) {
+      if (action.id === "air") landPunch();
+      if (
+        target?.id === action.id &&
+        roomFor(inventory(), config.resource) < config.yield
+      ) {
+        notifyInventory("Inventory full · swing cancelled");
+        cancelHarvest();
+      } else if (target?.id === action.id && health > 0 && !build) {
         const result = resourceWorld.hit(action.id, Date.now());
         if (result) {
-          const before =
-            result.resource === "wood"
-              ? save.wood
-              : save.resources![result.resource];
-          const after = Math.min(1000000, before + result.amount);
-          if (result.resource === "wood") save.wood = after;
-          else save.resources![result.resource] = after;
+          const awarded = addItem(inventory(), result.resource, result.amount);
           lastHarvest = {
             id: target.id,
             kind: target.kind,
@@ -1535,7 +1634,7 @@ function updateHarvest(dt: number) {
             depleted: result.depleted,
             respawnAt: target.respawnAt,
             resource: result.resource,
-            amount: after - before,
+            amount: awarded,
           };
           if (result.depleted) {
             nature.depleted(target, player);
@@ -1543,7 +1642,7 @@ function updateHarvest(dt: number) {
           }
           persist();
           toast(
-            `+${after - before} ${result.resource.toUpperCase()}${result.depleted ? " · depleted" : ""}`,
+            `+${awarded} ${result.resource.toUpperCase()}${result.depleted ? " · depleted" : ""}`,
           );
           updateHud();
         }
@@ -1640,15 +1739,171 @@ function equip(next: Tool) {
   viewModel.root.visible = true;
   viewModel.setAspect(camera.aspect);
   harvestView.setAspect(camera.aspect);
+  heldResource.setAspect(camera.aspect);
   viewModel.equip(next !== "hands");
   muzzle = viewModel.flash;
   recoilRemaining = flashRemaining = 0;
   tool = next;
-  for (const name of ["hands", ...WEAPON_KINDS])
-    $("#" + (name === "hands" ? "hand" : name) + "-tool").classList.toggle(
-      "selected",
-      next === name,
+  refreshHotbar();
+}
+let inventoryNoticeAt = -Infinity;
+function notifyInventory(message: string) {
+  if (performance.now() - inventoryNoticeAt > 1500) {
+    inventoryNoticeAt = performance.now();
+    toast(message);
+  }
+}
+function storeCurrentGun() {
+  if (tool === "hands" || !isGun(tool) || !equippedItemId) return;
+  const item =
+    inventory().slots.find((s) => s?.id === equippedItemId) ??
+    inventory().reserve.find((s) => s.id === equippedItemId) ??
+    inventory().drops.find((s) => s.id === equippedItemId);
+  if (item) item.magazine = loadout.rounds[tool];
+}
+function reconcileEquipment() {
+  const item = selectedItem(inventory()),
+    next = item ? itemTool(item.kind) : "hands";
+  if (item?.id === equippedItemId && tool === next) return;
+  storeCurrentGun();
+  equip(next);
+  equippedItemId = item?.id;
+  if (item && isGun(item.kind))
+    loadout.rounds[next as WeaponKind] =
+      item.magazine ?? WEAPONS[next as WeaponKind].magazineSize;
+  if (item && (item.kind === "grenade" || item.kind === "c4"))
+    loadout.rounds[item.kind] = Math.min(
+      item.quantity,
+      WEAPONS[item.kind].magazineSize,
     );
+}
+function activateHand(index: number, toggle = true) {
+  storeCurrentGun();
+  inventory().active =
+    index >= 0 && index < 5
+      ? toggle && inventory().active === index
+        ? -1
+        : index
+      : -1;
+  cleanHotbar(inventory());
+  reconcileEquipment();
+  persist();
+  updateHud();
+}
+function refreshHotbar() {
+  const inv = inventory();
+  for (let i = 0; i < 5; i++) {
+    const button = $<HTMLButtonElement>("#hotbar-" + i),
+      item = inv.slots.find((s) => s?.id === inv.hotbar[i]) ?? null;
+    const html = `<small class="slot-number">${i + 1}</small>${itemMarkup(item)}`;
+    if (button.innerHTML !== html) button.innerHTML = html;
+    button.classList.toggle("selected", inv.active === i);
+    button.setAttribute("aria-pressed", String(inv.active === i));
+    button.setAttribute(
+      "aria-label",
+      `Hand ${i + 1}: ${item ? itemName(item.kind) : "Empty hands"}`,
+    );
+  }
+}
+function inventoryChanged() {
+  cleanHotbar(inventory());
+  reconcileEquipment();
+  persist();
+  updateHud();
+}
+const atReserve = () => Math.hypot(player.x - START.x, player.z - START.z) <= 6;
+const inventoryDialog = createInventoryDialog({
+  get: inventory,
+  changed: inventoryChanged,
+  activate: activateHand,
+  health: () => health,
+  atReserve,
+  close: closeInventory,
+  store(id) {
+    if (!atReserve()) return false;
+    storeCurrentGun();
+    const ok = storeStack(inventory(), id);
+    if (ok) inventoryChanged();
+    return ok;
+  },
+  withdraw(kind) {
+    if (!atReserve()) return 0;
+    const n = withdrawStack(inventory(), kind);
+    if (n) inventoryChanged();
+    return n;
+  },
+  drop(id) {
+    storeCurrentGun();
+    let point = { x: player.x, z: player.z, y: vertical };
+    for (let i = 0; i < 8; i++) {
+      const a = yaw + (i * Math.PI) / 4,
+        p = {
+          x: player.x - Math.sin(a) * 1.8,
+          z: player.z - Math.cos(a) * 1.8,
+        };
+      if (!blocked(p, save.pieces, vertical)) {
+        const y = surfaceHeight(p, save.pieces, vertical + 0.75);
+        if (Math.abs(y - vertical) < 0.75) {
+          point = { ...p, y };
+          break;
+        }
+      }
+    }
+    const ok = dropStack(inventory(), id, point);
+    if (ok) inventoryChanged();
+    else notifyInventory("Too many dropped stacks nearby");
+    return ok;
+  },
+});
+function openInventory() {
+  if (inventoryOpen || health <= 0) return;
+  resumeAfterInventory = playing;
+  storeCurrentGun();
+  cancelReload(loadout);
+  resetInput();
+  pendingUse = undefined;
+  useRemaining = 0;
+  inventoryOpen = true;
+  canvas.dataset.inventoryOpen = "true";
+  playing = false;
+  persist();
+  if (document.pointerLockElement) document.exitPointerLock();
+  inventoryDialog.open();
+}
+function closeInventory() {
+  if (!inventoryOpen) return;
+  inventoryDialog.close();
+  inventoryOpen = false;
+  canvas.dataset.inventoryOpen = "false";
+  reconcileEquipment();
+  persist();
+  updateHud();
+  playing = resumeAfterInventory && health > 0;
+  lastFrame = performance.now();
+  if (playing && !touch) captureMouse();
+  else $("#inventory-button").focus();
+}
+function nearestDrop() {
+  let result: WorldDrop | undefined;
+  let distance = 3.2;
+  for (const d of inventory().drops) {
+    const dist = Math.hypot(d.x - player.x, d.z - player.z);
+    if (dist >= distance || Math.abs(d.y - vertical) > 1.1) continue;
+    const from = new THREE.Vector3(player.x, vertical + 1.65, player.z),
+      target = new THREE.Vector3(d.x, d.y + 0.22, d.z);
+    coverRay.set(from, target.clone().sub(from).normalize());
+    coverRay.far = from.distanceTo(target) - 0.08;
+    if (
+      coverRay.intersectObjects(
+        [...shotObstacles, ...construction.children],
+        true,
+      ).length
+    )
+      continue;
+    result = d;
+    distance = dist;
+  }
+  return result;
 }
 function resetInput() {
   cancelHarvest();
@@ -1662,18 +1917,26 @@ function resetInput() {
   $("#stick").style.transform = "translate(-50%,-50%)";
 }
 function pause() {
+  if (inventoryOpen) return;
+  persist();
   playing = false;
   resetInput();
   $("#menu").hidden = false;
   $("#start").innerHTML = "RESUME EXPLORING <span>↗</span>";
   if (document.pointerLockElement) document.exitPointerLock();
 }
+function captureMouse() {
+  if (touch) return;
+  void Promise.resolve(canvas.requestPointerLock?.()).catch(() => {
+    if (playing && !inventoryOpen) pause();
+  });
+}
 function start() {
   playing = true;
   $("#hud").hidden = false;
   $("#menu").hidden = true;
   lastFrame = performance.now();
-  if (!touch) canvas.requestPointerLock?.();
+  if (!touch) captureMouse();
   if (!saveAvailable)
     toast("Storage unavailable · progress lasts for this session");
   else toast("Explore the town. Build beyond the streets.");
@@ -1693,6 +1956,10 @@ $("#reset").addEventListener("click", () => {
     return;
   save = readSave(null);
   save.resources = { rock: 0, sulfur: 0, metal: 0 };
+  save.inventory = migrateInventory(save.wood, save.resources);
+  syncCarry();
+  equippedItemId = undefined;
+  reconcileEquipment();
   resourceWorld.reset();
   nature.update(player, 0);
   cancelHarvest();
@@ -1713,10 +1980,11 @@ $("#reset").addEventListener("click", () => {
   toast("Local prototype reset");
 });
 $("#build-tool").addEventListener("click", toggleBuild);
-$("#hand-tool").addEventListener("click", () => equip("hands"));
-$("#pistol-tool").addEventListener("click", () => equip("pistol"));
-for (const kind of WEAPON_KINDS.filter((k) => k !== "pistol"))
-  $("#" + kind + "-tool").addEventListener("click", () => equip(kind));
+$("#inventory-button").addEventListener("click", () =>
+  inventoryOpen ? closeInventory() : openInventory(),
+);
+for (let i = 0; i < 5; i++)
+  $("#hotbar-" + i).addEventListener("click", () => activateHand(i));
 $("#aim").addEventListener("click", () => setAim(!aiming));
 for (const button of document.querySelectorAll<HTMLButtonElement>(
   "[data-piece]",
@@ -1770,7 +2038,8 @@ function place() {
     health: maxStructureHealth(candidate),
   };
   save.pieces.push(p);
-  save.wood -= pieceCost(p);
+  takeItem(inventory(), "wood", pieceCost(p));
+  reconcileEquipment();
   rebuildConstruction();
   persist();
   updateHud();
@@ -1811,9 +2080,12 @@ function remove() {
   if (!p) return toast("Aim at one of your pieces within 8 m");
   if (!canRemove(p, save.pieces))
     return toast("Remove attached doors, walls, floors or storage first");
+  const refund = dismantleRefund(p);
+  if (roomFor(inventory(), "wood") < refund)
+    return toast("Make room for returned wood before dismantling");
   save.pieces = save.pieces.filter((s) => s.id !== p.id);
   rebuildConstruction();
-  save.wood += dismantleRefund(p);
+  addItem(inventory(), "wood", refund);
   persist();
   updateHud();
   toast("Piece removed · wood returned");
@@ -1900,7 +2172,17 @@ function nearestBuiltDoor() {
 }
 function interact() {
   if (!playing) return;
-  if (beginHarvest()) return;
+  const drop = nearestDrop();
+  if (drop) {
+    const n = pickupDrop(inventory(), drop.id);
+    if (!n) return toast("Inventory full");
+    inventoryChanged();
+    return toast("Picked up " + n + " " + itemName(drop.kind));
+  }
+  if (nearestResource()) {
+    beginHarvest();
+    return;
+  }
   const built = nearestBuiltDoor();
   if (built) {
     built.doorAngle ??= built.open ? -Math.PI / 2 : 0;
@@ -1923,7 +2205,9 @@ function interact() {
   if (i < 0) return toast("Move closer to a crate or trash can");
   if (save.opened.includes(i)) return toast("This container has been searched");
   const wood = lootReward(LOOT[i]);
-  save.wood += wood;
+  if (roomFor(inventory(), "wood") < wood)
+    return toast("Inventory full · make room before searching");
+  addItem(inventory(), "wood", wood);
   save.opened.push(i);
   persist();
   updateHud();
@@ -1937,6 +2221,12 @@ function jump() {
     verticalSpeed = 4.8;
 }
 function requestReload() {
+  if (
+    tool === "grenade" ||
+    tool === "c4" ||
+    (tool === "rocket" && !countItem(inventory(), "rockets"))
+  )
+    return;
   if (!playing || health <= 0 || build || tool === "hands" || harvestAction)
     return;
   if (useRemaining > 0) {
@@ -1989,8 +2279,23 @@ function fire() {
   if (!playing || health <= 0) return;
   if (build) return place();
   if (harvestAction) return;
+  const held = selectedItem(inventory());
+  if (held && (isResource(held.kind) || held.kind === "rockets")) return;
   if (tool === "hands") {
-    if (beginHarvest()) return;
+    if (held && isHarvestTool(held.kind) && !nearestResource()) {
+      if (!harvestAction)
+        harvestAction = {
+          id: "air",
+          kind: held.kind === "axe" ? "tree-broadleaf" : "node-rock",
+          elapsed: 0,
+          hit: false,
+        };
+      return;
+    }
+    if (nearestResource()) {
+      beginHarvest();
+      return;
+    }
     return punch();
   }
   if (loadout.reload || useRemaining > 0) return;
@@ -2006,6 +2311,7 @@ function fire() {
     }
     return;
   }
+  persistSoon();
   recoilRemaining = 1;
   flashRemaining = 0.055;
   shotSerial++;
@@ -2103,6 +2409,15 @@ $("#run").addEventListener("click", () => {
   $("#run").classList.toggle("selected", run);
 });
 window.addEventListener("keydown", (e) => {
+  if (e.code === "KeyI" || (e.code === "Tab" && !inventoryOpen)) {
+    e.preventDefault();
+    if (!e.repeat) {
+      if (inventoryOpen) closeInventory();
+      else if (playing) openInventory();
+    }
+    return;
+  }
+  if (inventoryOpen) return;
   if (
     [
       "Space",
@@ -2150,24 +2465,17 @@ window.addEventListener("keydown", (e) => {
     )[Number(e.code.slice(-1)) - 1];
     rebuildPreview();
   } else {
-    if (e.code === "Digit1") equip("hands");
-    if (e.code === "Digit2") equip("pistol");
-    if (e.code === "Digit3") equip("smg");
-    if (e.code === "Digit4") equip("rifle");
-    if (e.code === "Digit5") equip("sniper");
-    if (["Digit6", "Digit7", "Digit8", "Digit9"].includes(e.code))
-      equip(
-        (["lmg", "rocket", "grenade", "c4"] as WeaponKind[])[
-          Number(e.code.slice(-1)) - 6
-        ],
-      );
+    if (/^Digit[1-5]$/.test(e.code)) activateHand(Number(e.code.slice(-1)) - 1);
   }
+  if (e.code === "KeyH") activateHand(-1);
+
   if (e.code === "KeyQ") setAim(!aiming);
   if (e.code === "Space") jump();
   if (e.code === "Delete") remove();
   if (e.code === "Escape") pause();
 });
 window.addEventListener("keyup", (e) => keys.delete(e.code));
+window.addEventListener("pagehide", persist);
 window.addEventListener("blur", pause);
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) pause();
@@ -2263,6 +2571,7 @@ window.addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   viewModel.setAspect(camera.aspect);
   harvestView.setAspect(camera.aspect);
+  heldResource.setAspect(camera.aspect);
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(devicePixelRatio, touch ? 1.25 : 1.5));
   renderer.setSize(innerWidth, innerHeight);
@@ -2274,6 +2583,7 @@ canvas.addEventListener("webglcontextlost", (e) => {
   toast("Graphics interrupted. Reload to restore the world.");
 });
 function updateHud() {
+  refreshHotbar();
   const unarmed = tool === "hands";
   $("#fire").textContent = build
     ? "PLACE"
@@ -2289,7 +2599,7 @@ function updateHud() {
     "has-charges",
     projectiles.some((p) => p.kind === "c4"),
   );
-  $("#reload").hidden = unarmed || build;
+  $("#reload").hidden = unarmed || build || tool === "grenade" || tool === "c4";
   if (unarmed)
     $("#ammo").textContent =
       `C4 · ${projectiles.filter((p) => p.kind === "c4").length} placed`;
@@ -2301,7 +2611,17 @@ function updateHud() {
       : loadout.rounds[tool] +
         " / " +
         WEAPONS[tool].magazineSize +
-        " · ∞ reserve";
+        (tool === "rocket"
+          ? " · " + countItem(inventory(), "rockets") + " rockets carried"
+          : tool === "grenade" || tool === "c4"
+            ? " · " + (selectedItem(inventory())?.quantity ?? 0) + " carried"
+            : " · ∞ reserve");
+    if (tool === "grenade" || tool === "c4")
+      $("#ammo").textContent =
+        (selectedItem(inventory())?.quantity ?? 0) +
+        " " +
+        itemName(tool) +
+        " carried";
     $("#reload").toggleAttribute(
       "disabled",
       !!loadout.reload || loadout.rounds[tool] === WEAPONS[tool].magazineSize,
@@ -2414,6 +2734,11 @@ function updateHud() {
     meter.hidden = false;
     meter.max = config.health;
     meter.value = gatherTarget.health;
+  }
+  const loose = !build ? nearestDrop() : undefined;
+  if (loose) {
+    $("#hint-title").textContent = itemName(loose.kind) + " ×" + loose.quantity;
+    $("#hint-text").textContent = "E / USE · Pick up";
   }
 }
 function updatePreview() {
@@ -2579,7 +2904,10 @@ function frame(now: number) {
     camera.rotation.set(pitch, yaw, 0);
     updateHarvest(dt);
     nature.update(player, dt, camera);
-    advanceReload(loadout, dt);
+    if (advanceReload(loadout, dt)) {
+      persist();
+      updateHud();
+    }
     punchCooldown = Math.max(0, punchCooldown - dt);
     if (punchRemaining > 0) {
       punchRemaining = Math.max(0, punchRemaining - dt);
@@ -2617,7 +2945,29 @@ function frame(now: number) {
         harvestAction.elapsed / config.duration,
         dt,
       );
-    } else harvestView.root.visible = false;
+    } else {
+      const held = selectedItem(inventory());
+      harvestView.root.visible = !!held && isHarvestTool(held.kind) && !build;
+      if (harvestView.root.visible) {
+        viewModel.root.visible = false;
+        harvestView.animate(
+          clock,
+          length > 0.1,
+          held!.kind === "axe" ? "chop" : "mine",
+          0,
+          dt,
+        );
+      }
+    }
+    const carried = selectedItem(inventory());
+    heldResource.root.visible =
+      !!carried && isResource(carried.kind) && !harvestAction && !build;
+    if (heldResource.root.visible) {
+      viewModel.root.visible = false;
+      heldResource.animate(carried!.kind, clock, length > 0.1, dt);
+    } else if (!harvestAction && !harvestView.root.visible)
+      viewModel.root.visible = true;
+    droppedItems.update(player);
     body.root.position.set(player.x, vertical, player.z);
     body.root.rotation.y = yaw;
     body.animate(clock, length > 0.1, playerAction, tool);
@@ -2676,6 +3026,18 @@ function frame(now: number) {
   canvas.dataset.drawCalls = String(renderer.info.render.calls);
   canvas.dataset.triangles = String(renderer.info.render.triangles);
   canvas.dataset.mapSize = String(MAP_SIZE);
+  canvas.dataset.inventory = JSON.stringify({
+    slots: inventory().slots,
+    hotbar: inventory().hotbar,
+    active: inventory().active,
+    reserveStacks: inventory().reserve.length,
+    droppedStacks: inventory().drops.length,
+  });
+  canvas.dataset.heldItemSource = String(
+    heldResource.root.userData.itemSource ?? "",
+  );
+  canvas.dataset.inventoryOpen = String(inventoryOpen);
+  canvas.dataset.nearestDrop = nearestDrop()?.id ?? "";
   canvas.dataset.harborSource = harbor.source;
   canvas.dataset.harborRoad = JSON.stringify(
     ROADS.filter((r) => r[r.length - 1]?.z === 207),
@@ -2860,6 +3222,7 @@ function frame(now: number) {
   canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;
 }
+activateHand(inventory().active, false);
 persist();
 updateHud();
 requestAnimationFrame(frame);
