@@ -1042,3 +1042,39 @@ h1 em {
   padding: 5px 1px;
   font-size: 10px;
 }
+#resource-wallet {
+  position: absolute;
+  left: 24px;
+  bottom: 112px;
+  display: flex;
+  gap: 12px;
+  padding: 6px 10px;
+  background: #17352cce;
+  border-radius: 6px;
+  color: #e9e2c5;
+  font-size: 11px;
+  pointer-events: none;
+}
+#resource-wallet b {
+  color: #f1cb73;
+}
+.touch #resource-wallet {
+  left: 12px;
+  bottom: 139px;
+  font-size: 10px;
+  gap: 10px;
+  padding: 5px 8px;
+}
+#gather[hidden] {
+  display: none;
+}
+#gather {
+  color: #ffe8a8;
+  border-color: #c5b4679c;
+  background: #4b633a9c;
+}
+@media (max-width: 1000px) and (pointer: fine) {
+  #resource-wallet {
+    bottom: 150px;
+  }
+}

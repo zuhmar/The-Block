@@ -1,3 +1,4 @@
+import { harvestPose, type HarvestMotion } from "./harvest-animation";
 import { hydrateBlenderWeapon } from "./blender-weapons";
 import { WEAPONS, type WeaponKind } from "./weapons";
 import * as THREE from "three";
@@ -697,6 +698,7 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
       side?: number;
       reload?: number;
       use?: number;
+      harvest?: { kind: HarvestMotion; progress: number };
       detonate?: number;
       dt?: number;
       shotSerial?: number;
@@ -735,6 +737,12 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
         -Math.sin(Math.PI * Math.min(1, Math.max(0, (reload - 0.15) / 0.65))) *
         0.09;
     }
+    if (action.harvest) {
+      const p = harvestPose(action.harvest.kind, action.harvest.progress);
+      armed.rotation.x += p.shoulder;
+      armed.rotation.y = p.side;
+      gun.root.rotation.x += p.shoulder * 0.4;
+    } else armed.rotation.y = 0;
     for (const hand of hands.children) {
       const side = hand.userData.side as number;
       const p =

@@ -1,3 +1,4 @@
+import { preloadNatureModels } from "./nature-models";
 import { preloadStreetFurniture } from "./street-furniture";
 import { preloadLootChests } from "./loot-chests";
 import { preloadWoodBuildings } from "./wood-buildings";
@@ -13,6 +14,7 @@ void Promise.allSettled([
   preloadWoodBuildings(),
   preloadLootChests(),
   preloadStreetFurniture(),
+  preloadNatureModels(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));

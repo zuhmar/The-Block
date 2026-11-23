@@ -1,3 +1,4 @@
+import { harvestPose, type HarvestMotion } from "./harvest-animation";
 import { animationFamily } from "./weapons";
 import * as THREE from "three";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
@@ -32,6 +33,7 @@ export async function preloadMeshyPlayer() {
   asset = { root: g.scene, clips: g.animations };
 }
 export type PlayerAction = {
+  harvest?: { kind: HarvestMotion; progress: number };
   punch?: number;
   side?: number;
   reload?: number;
@@ -219,6 +221,9 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
     "mixamorigRightArm",
     "mixamorigRightForeArm",
     "mixamorigRightHand",
+    "mixamorigLeftArm",
+    "mixamorigLeftForeArm",
+    "mixamorigLeftHand",
   ]
     .map((name) => model.getObjectByName(name))
     .filter((o): o is THREE.Object3D => !!o);
@@ -263,6 +268,15 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
     }
     if (armed && state.detonate)
       useBones[2]?.rotateZ(-Math.sin(state.detonate * Math.PI) * 0.45);
+    if (state.harvest) {
+      const p = harvestPose(state.harvest.kind, state.harvest.progress);
+      useBones[0]?.rotateX(p.shoulder);
+      useBones[0]?.rotateY(p.side);
+      useBones[1]?.rotateZ(p.elbow);
+      useBones[2]?.rotateZ(p.wrist);
+      useBones[3]?.rotateX(p.shoulder * 0.35);
+      useBones[4]?.rotateZ(-p.elbow * 0.4);
+    }
     fireTime += dt;
     const bob = moving
       ? Math.sin(time * (state.running ? 12 : 9)) * 0.005

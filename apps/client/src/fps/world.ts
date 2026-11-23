@@ -1,4 +1,10 @@
 import {
+  readWallet,
+  readHarvest,
+  type ResourceWallet,
+  type HarvestSave,
+} from "./resource-state";
+import {
   structureMaterial,
   structureHealth,
   maxStructureHealth,
@@ -355,6 +361,19 @@ export const TREES = [
     Math.abs(p.x - riverX(p.z)) > 5 &&
     Math.hypot(p.x, p.z - START.z) > 8,
 );
+let resourceProvider:
+  | ((p: Point, feet: number, build: boolean, radius: number) => boolean)
+  | undefined;
+export function setResourceCollisionProvider(
+  provider: typeof resourceProvider,
+) {
+  resourceProvider = provider;
+}
+function resourceBlocked(p: Point, feet = 0, build = false, radius = 0.32) {
+  return resourceProvider
+    ? resourceProvider(p, feet, build, radius)
+    : TREES.some((t) => inBox(p, t, radius));
+}
 export function pieceBox(p: Piece): Box {
   const odd = p.rotation % 2 === 1;
   return {
@@ -402,7 +421,7 @@ export function blocked(
         footHeight < (b.y ?? 0) + b.height &&
         inBox(p, b, 0.32),
     ) ||
-    TREES.some((t) => inBox(p, t, 0.32)) ||
+    resourceBlocked(p, footHeight) ||
     pieces.some((s) => {
       const bottom = pieceBase(s, pieces),
         top =
@@ -541,7 +560,7 @@ export function placementReason(
           return "Build in the meadows outside towns and compounds";
         if (roadDistance(p) < 5) return "Keep roads and sidewalks clear";
         if (blockedTerrain(p, 0.3)) return "Choose dry, level ground";
-        if (TREES.some((t) => inBox(p, t, 0.6))) return "Keep clear of trees";
+        if (resourceBlocked(p, 0, true, 0.6)) return "Keep clear of trees";
       }
   } else if (
     !pieces.some(
@@ -782,6 +801,8 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
   );
 }
 export type Save = {
+  resources?: ResourceWallet;
+  harvest?: HarvestSave;
   version: 1;
   wood: number;
   pieces: Piece[];
@@ -825,6 +846,12 @@ export function readSave(raw: string | null): Save {
     }
     return {
       version: 1,
+      ...(readWallet(s.resources)
+        ? { resources: readWallet(s.resources) }
+        : {}),
+      ...(readHarvest(s.harvest, MAP_SIZE / 2)
+        ? { harvest: readHarvest(s.harvest, MAP_SIZE / 2) }
+        : {}),
       wood: s.wood,
       pieces: s.pieces
         .filter((p: Piece) => p.health !== 0)
