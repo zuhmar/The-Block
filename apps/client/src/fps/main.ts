@@ -1,3 +1,4 @@
+import { lootChestModel, lootChestSources } from "./loot-chests";
 import { woodBuildingModel, woodBuildingSources } from "./wood-buildings";
 import {
   newWeaponState,
@@ -405,44 +406,46 @@ for (const x of [-3, 9]) {
   for (const dx of [-0.7, 0.7])
     box(scene, x + dx, 0.25, -3.8, 0.1, 0.55, 0.5, 0x56655d);
 }
+// Keep cheap shot-cover boxes separate from the detailed visual meshes.
 const lootMeshes: THREE.Group[] = [];
 LOOT.forEach((c, index) => {
+  const visual = lootChestModel(c.tier);
   const g = new THREE.Group();
   g.position.set(c.x, 0, c.z);
   g.userData.loot = index;
   scene.add(g);
-  lootMeshes.push(g);
-  box(g, 0, c.height / 2, 0, c.width, c.height, c.depth, c.color);
-  box(
-    g,
+  const proxy = new THREE.Group();
+  proxy.position.copy(g.position);
+  const cover = box(
+    proxy,
     0,
-    c.height + 0.035,
+    c.height / 2,
     0,
-    c.width + 0.07,
-    0.09,
-    c.depth + 0.07,
-    0x344d4b,
+    c.width,
+    c.height,
+    c.depth,
+    c.color,
   );
-  for (const x of [-c.width * 0.32, c.width * 0.32])
-    box(
-      g,
-      x,
-      c.height / 2,
-      c.depth / 2 + 0.018,
-      0.07,
-      c.height,
-      0.04,
-      0xc7c5a6,
-    );
-  const badge = sign(
-    "T" + c.tier + " · SUPPLIES",
-    Math.min(c.width, 0.9),
-    0.22,
-    "#fff5c5",
-    "#3c615b",
-  );
-  badge.position.set(0, c.height * 0.65, c.depth / 2 + 0.045);
-  g.add(badge);
+  cover.visible = false;
+  scene.add(proxy);
+  lootMeshes.push(proxy);
+  if (visual) {
+    g.add(visual);
+  } else {
+    box(g, 0, c.height / 2, 0, c.width, c.height, c.depth, c.color);
+    box(g, 0, c.height, 0, c.width, 0.07, c.depth, 0x344d4b);
+    for (const x of [-c.width * 0.32, c.width * 0.32])
+      box(
+        g,
+        x,
+        c.height / 2,
+        c.depth / 2 + 0.018,
+        0.07,
+        c.height,
+        0.04,
+        0xc7c5a6,
+      );
+  }
 });
 const heading = sign("THE BLOCK  /  COUNTRYSIDE →", 7, 0.8);
 heading.position.set(0, 3.2, 26);
@@ -481,6 +484,7 @@ scene.traverse((o) => {
   if (
     !(o instanceof THREE.Mesh) ||
     o.geometry !== boxGeo ||
+    !o.visible ||
     o.userData.dynamicDoor
   )
     return;
@@ -1908,6 +1912,14 @@ function frame(now: number) {
   canvas.dataset.lastHitBuildPiece = lastHitBuildPiece;
   canvas.dataset.nearestDoor = String(nearestDoor());
   canvas.dataset.buildModels = woodBuildingSources();
+  canvas.dataset.lootModels = lootChestSources();
+  canvas.dataset.lootProxyCount = String(
+    lootMeshes.reduce(
+      (n, g) => n + g.children.filter((c) => !c.visible).length,
+      0,
+    ),
+  );
+  canvas.dataset.nearestLoot = String(nearestLoot());
   canvas.dataset.footHeight = String(vertical);
   canvas.dataset.playerDoors = JSON.stringify(
     save.pieces

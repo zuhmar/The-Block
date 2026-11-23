@@ -1,0 +1,72 @@
+{
+  "desktopSearchRewardAndCollision": true,
+  "noRepeatReward": true,
+  "searchedStateSurvivesReload": true,
+  "cases": [
+    {
+      "phone": false,
+      "fallback": false,
+      "sources": "1:meshy,2:meshy,3:meshy,4:meshy,5:meshy",
+      "legacySavePreserved": true,
+      "errors": []
+    },
+    {
+      "phone": true,
+      "fallback": false,
+      "sources": "1:meshy,2:meshy,3:meshy,4:meshy,5:meshy",
+      "legacySavePreserved": true,
+      "errors": []
+    },
+    {
+      "phone": true,
+      "fallback": true,
+      "sources": "1:fallback,2:fallback,3:fallback,4:fallback,5:fallback",
+      "legacySavePreserved": true,
+      "errors": []
+    }
+  ],
+  "story": "Existing tier loot locations display textured 3D chests; approach and search grants existing reward, saved once on this device.",
+  "assetGeometryChecks": "All five runtime GLBs match LOOT collision dimensions and floor contact, include UVs and embedded JPEG textures, and stay below 5500 triangles each.",
+  "runtimeAssets": [
+    {
+      "name": "tier-1-small",
+      "bytes": 452328,
+      "textureSize": 1024
+    },
+    {
+      "name": "tier-2-supply",
+      "bytes": 383616,
+      "textureSize": 1024
+    },
+    {
+      "name": "tier-3-reinforced",
+      "bytes": 385012,
+      "textureSize": 1024
+    },
+    {
+      "name": "tier-4-long",
+      "bytes": 365688,
+      "textureSize": 1024
+    },
+    {
+      "name": "tier-5-heavy",
+      "bytes": 414848,
+      "textureSize": 1024
+    }
+  ],
+  "runtimeBytes": 2001492,
+  "checks": [
+    "lint",
+    "typecheck",
+    "production build",
+    "10 focused model and construction/world tests"
+  ],
+  "limits": [
+    "Software WebGL browser checks are not physical-phone performance measurements.",
+    "Closed static lids; no opening animation added.",
+    "Rewards and persistent loot indices unchanged."
+  ],
+  "invisibleShotProxiesPreserved": true,
+  "staticBatchExcludesInvisibleGeometry": true,
+  "closeUpVisualReviewed": true
+}

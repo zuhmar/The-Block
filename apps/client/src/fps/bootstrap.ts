@@ -1,3 +1,4 @@
+import { preloadLootChests } from "./loot-chests";
 import { preloadWoodBuildings } from "./wood-buildings";
 import { preloadMeshyPlayer } from "./meshy-player";
 import { preloadBlenderBuildings } from "./blender-buildings";
@@ -9,6 +10,7 @@ void Promise.allSettled([
   preloadBlenderBuildings(),
   preloadMeshyPlayer(),
   preloadWoodBuildings(),
+  preloadLootChests(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));

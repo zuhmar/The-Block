@@ -1,0 +1,27 @@
+[
+  {
+    "name": "tier-1-small",
+    "bytes": 452328,
+    "textureSize": 1024
+  },
+  {
+    "name": "tier-2-supply",
+    "bytes": 383616,
+    "textureSize": 1024
+  },
+  {
+    "name": "tier-3-reinforced",
+    "bytes": 385012,
+    "textureSize": 1024
+  },
+  {
+    "name": "tier-4-long",
+    "bytes": 365688,
+    "textureSize": 1024
+  },
+  {
+    "name": "tier-5-heavy",
+    "bytes": 414848,
+    "textureSize": 1024
+  }
+]
