@@ -1,0 +1,22 @@
+[
+  {
+    "name": "tier-1-small",
+    "taskId": "01a205ea-747e-7463-bb63-086cc7eba958"
+  },
+  {
+    "name": "tier-2-supply",
+    "taskId": "01a205ea-a486-744d-96b5-4ff4c21861f8"
+  },
+  {
+    "name": "tier-3-reinforced",
+    "taskId": "01a205ea-ccaf-733f-a47c-11ba3ba5b086"
+  },
+  {
+    "name": "tier-4-long",
+    "taskId": "01a205eb-059b-73a1-bb7a-4b4525eab5b1"
+  },
+  {
+    "name": "tier-5-heavy",
+    "taskId": "01a205eb-4b0a-70bd-aa70-124e62153971"
+  }
+]

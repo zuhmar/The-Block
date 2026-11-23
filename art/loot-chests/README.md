@@ -13,3 +13,15 @@ Five original AI-generated glossy cartoon chest sprites, supplied as individual 
 Sizes are modeling targets, not measurements inferred from the artwork. Images are individually framed and are not to a common pixel scale. Preserve distinct silhouettes when building the models. Keep lids separate with rear hinge pivots for future opening animations; keep interiors clear of baked loot so contents can vary.
 
 All images show closed containers in three-quarter view, with no embedded ground, ground shadows, grass, or glow. Visual review and PNG alpha/dimension checks are recorded in `image-check.json`. Original generated files remain in the workspace generated-images directory.
+
+## Textured 3D assets
+
+The five designs now have reference-derived Meshy models (`meshy-t2` smart topology with `meshy-n1` textures). `models/` contains self-contained GLBs with embedded base-color textures, meter dimensions from the table above, and centered bottom origins. `textures/` contains the separate texture PNGs. `originals/` preserves the unmodified downloads; `tasks.json` records their Meshy task IDs for follow-up work without regenerating them.
+
+Open `loot-chest-library.blend` to edit all five models side by side. `renders/` contains transparent studio previews rendered from the actual geometry. `model-check.json` records measured triangle counts, UV presence, dimensions, sizes, and source hashes. Rebuild with:
+
+```sh
+blender -b -t 4 --python packages/art-tools/build-loot-chests.py
+```
+
+These generated meshes are closed static containers. Their lids are not separated or rigged; opening lids and usable interiors require further mesh work. The models have a base-color texture and shared glossy material settings, rather than dedicated metallic/roughness/normal texture maps. They are delivered as assets and are not wired into gameplay. Generation cost 75 Meshy credits total (15 per chest); balance after generation was 125.

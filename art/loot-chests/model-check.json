@@ -1,0 +1,167 @@
+[
+  {
+    "name": "tier-1-small",
+    "dimensionsMeters": [
+      0.8,
+      0.7,
+      0.7
+    ],
+    "sourceDimensionsBlender": [
+      0.9994779825210571,
+      0.835191011428833,
+      0.7875049710273743
+    ],
+    "triangles": 3859,
+    "meshes": 1,
+    "bytes": 3011244,
+    "sourceSha256": "f996629e04f0c4557184eeb7d479959337326d1dfa81fde36fba6f3b1fbce75f",
+    "uvLayers": 1,
+    "reimportChecks": {
+      "dimensionsMeters": true,
+      "bottomCenteredOrigin": true,
+      "triangleCount": true,
+      "uvs": true,
+      "embedded2048Textures": true
+    },
+    "preview": {
+      "size": [
+        1000,
+        800
+      ],
+      "trueAlpha": true,
+      "visuallyReviewed": true
+    }
+  },
+  {
+    "name": "tier-2-supply",
+    "dimensionsMeters": [
+      1.1,
+      0.85,
+      0.9
+    ],
+    "sourceDimensionsBlender": [
+      1.0002789497375488,
+      0.767441987991333,
+      0.6328690052032471
+    ],
+    "triangles": 4173,
+    "meshes": 1,
+    "bytes": 2982600,
+    "sourceSha256": "493905587edbb576df652357de4dba8f61866fa484fce7ccbecbc063a77a48ba",
+    "uvLayers": 1,
+    "reimportChecks": {
+      "dimensionsMeters": true,
+      "bottomCenteredOrigin": true,
+      "triangleCount": true,
+      "uvs": true,
+      "embedded2048Textures": true
+    },
+    "preview": {
+      "size": [
+        1000,
+        800
+      ],
+      "trueAlpha": true,
+      "visuallyReviewed": true
+    }
+  },
+  {
+    "name": "tier-3-reinforced",
+    "dimensionsMeters": [
+      1.25,
+      1,
+      1.05
+    ],
+    "sourceDimensionsBlender": [
+      0.9402130246162415,
+      1.0,
+      0.7671229839324951
+    ],
+    "triangles": 3818,
+    "meshes": 1,
+    "bytes": 2948220,
+    "sourceSha256": "efe7c565ef44fa6232ed3f8f56e90155de622f2a749f99fa0c1eb1eef4f5332e",
+    "uvLayers": 1,
+    "reimportChecks": {
+      "dimensionsMeters": true,
+      "bottomCenteredOrigin": true,
+      "triangleCount": true,
+      "uvs": true,
+      "embedded2048Textures": true
+    },
+    "preview": {
+      "size": [
+        1000,
+        800
+      ],
+      "trueAlpha": true,
+      "visuallyReviewed": true
+    }
+  },
+  {
+    "name": "tier-4-long",
+    "dimensionsMeters": [
+      2.1,
+      0.6,
+      0.55
+    ],
+    "sourceDimensionsBlender": [
+      1.0,
+      0.3770129978656769,
+      0.15110300481319427
+    ],
+    "triangles": 3772,
+    "meshes": 1,
+    "bytes": 2417328,
+    "sourceSha256": "a8e0499c375a13085d383cba820bbd0eb96d043655d59981d09118a670ecfaae",
+    "uvLayers": 1,
+    "reimportChecks": {
+      "dimensionsMeters": true,
+      "bottomCenteredOrigin": true,
+      "triangleCount": true,
+      "uvs": true,
+      "embedded2048Textures": true
+    },
+    "preview": {
+      "size": [
+        1000,
+        800
+      ],
+      "trueAlpha": true,
+      "visuallyReviewed": true
+    }
+  },
+  {
+    "name": "tier-5-heavy",
+    "dimensionsMeters": [
+      2.2,
+      1,
+      0.9
+    ],
+    "sourceDimensionsBlender": [
+      1.0,
+      0.5754289627075195,
+      0.3968150019645691
+    ],
+    "triangles": 4772,
+    "meshes": 1,
+    "bytes": 3209176,
+    "sourceSha256": "4b49aad064977229b0207281bb9fd45ab4afc88e9592850993a86acace9b90f0",
+    "uvLayers": 1,
+    "reimportChecks": {
+      "dimensionsMeters": true,
+      "bottomCenteredOrigin": true,
+      "triangleCount": true,
+      "uvs": true,
+      "embedded2048Textures": true
+    },
+    "preview": {
+      "size": [
+        1000,
+        800
+      ],
+      "trueAlpha": true,
+      "visuallyReviewed": true
+    }
+  }
+]
