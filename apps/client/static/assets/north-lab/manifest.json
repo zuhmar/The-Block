@@ -1,0 +1,50 @@
+[
+  {
+    "kind": "north-main-lab",
+    "triangles": 12032,
+    "drawCalls": 19,
+    "bytes": 376228
+  },
+  {
+    "kind": "north-workshop",
+    "triangles": 10296,
+    "drawCalls": 18,
+    "bytes": 317164
+  },
+  {
+    "kind": "north-warehouse",
+    "triangles": 25076,
+    "drawCalls": 15,
+    "bytes": 725660
+  },
+  {
+    "kind": "north-secondary-lab",
+    "triangles": 9412,
+    "drawCalls": 17,
+    "bytes": 296700
+  },
+  {
+    "kind": "north-packing",
+    "triangles": 9460,
+    "drawCalls": 18,
+    "bytes": 292888
+  },
+  {
+    "kind": "north-security",
+    "triangles": 7636,
+    "drawCalls": 18,
+    "bytes": 239176
+  },
+  {
+    "kind": "north-staff",
+    "triangles": 8440,
+    "drawCalls": 16,
+    "bytes": 266308
+  },
+  {
+    "kind": "yard",
+    "triangles": 50364,
+    "drawCalls": 12,
+    "bytes": 1602232
+  }
+]

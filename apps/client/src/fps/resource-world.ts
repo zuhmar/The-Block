@@ -1,3 +1,4 @@
+import { buildingEnabled } from "./building-layout";
 import {
   BUILDINGS,
   LOOT,
@@ -122,6 +123,7 @@ export class ResourceWorld {
     return (
       !BUILDINGS.some(
         (b) =>
+          buildingEnabled(b) &&
           Math.abs(p.x - b.x) < b.width / 2 + radius + 1 &&
           Math.abs(p.z - b.z) < b.depth / 2 + radius + 1,
       ) &&

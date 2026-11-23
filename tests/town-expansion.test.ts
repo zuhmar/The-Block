@@ -44,13 +44,16 @@ test("prison gates stay open, fences block and all four stairways reach the plat
 });
 test("six distinct new buildings, appended crates and roadside trash preserve old saves", async () => {
   resetDoors();
-  assert.equal(BUILDINGS.length, 19);
+  assert.equal(
+    BUILDINGS.filter((b) => !b.type.startsWith("north-")).length,
+    19,
+  );
   assert.equal(LOOT.length, 70);
   assert.equal(LOOT.filter((l) => l.kind === "trash").length, 23);
   assert.equal(LOOT[26].x, 104);
   assert.equal(LOOT[27].x, 69);
   for (const [i, b] of BUILDINGS.entries()) {
-    if (i < 13) continue;
+    if (i < 13 || i >= 19) continue;
     assert(b.x < -125);
     const bytes = await readFile(
       `apps/client/src/fps/models/buildings/${b.type}.glb`,
@@ -148,7 +151,7 @@ test("three original bin models match physical bounds and prison artwork has no 
 
 test("resolved western connector has room for sidewalks beside every building", () => {
   configureWestRoad([]);
-  assert.equal(ROADS.length, 6);
+  assert.equal(ROADS.length, 7);
   for (const b of BUILDINGS)
     for (const x of [-b.width / 2, b.width / 2])
       for (const z of [-b.depth / 2, b.depth / 2])

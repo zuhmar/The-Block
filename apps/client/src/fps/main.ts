@@ -1,3 +1,6 @@
+import { NORTH_LAB, inNorthLab, isNorthBuilding } from "./north-lab-layout";
+import { northLabModel } from "./north-lab-model";
+import { buildingEnabled } from "./building-layout";
 import {
   storageSpec,
   storageSize,
@@ -419,6 +422,8 @@ const coast = createCoast();
 scene.add(coast.root);
 const harbor = harborModel();
 scene.add(harbor.root, harbor.proxy);
+const northLab = northLabModel();
+scene.add(northLab.root, northLab.proxy);
 const droppedItems = createDroppedItems();
 scene.add(droppedItems.root);
 droppedItems.sync(inventory().drops);
@@ -516,6 +521,7 @@ const buildingModels = BUILDINGS.map((b, index) => {
   model.root.position.set(b.x, 0, b.z);
   model.shotRoot.position.set(b.x, 0, b.z);
   model.shotRoot.updateMatrixWorld(true);
+  model.root.visible = buildingEnabled(b);
   scene.add(model.root);
   return model;
 });
@@ -529,7 +535,11 @@ fade.addColorStop(1, "#fff0");
 contactCtx.fillStyle = fade;
 contactCtx.fillRect(0, 0, 64, 64);
 const contacts = [
-  ...BUILDINGS.map((b) => ({ ...b, width: b.width + 3, depth: b.depth + 3 })),
+  ...BUILDINGS.filter(buildingEnabled).map((b) => ({
+    ...b,
+    width: b.width + 3,
+    depth: b.depth + 3,
+  })),
 ];
 const shadow = new THREE.InstancedMesh(
   new THREE.PlaneGeometry(1, 1),
@@ -626,7 +636,10 @@ const shotObstacles: THREE.Object3D[] = [
   coast.surface,
   nature.cover,
   harbor.proxy,
-  ...buildingModels.map((m) => m.shotRoot),
+  northLab.proxy,
+  ...buildingModels
+    .filter((_, i) => buildingEnabled(BUILDINGS[i]))
+    .map((m) => m.shotRoot),
 ];
 // A simple target range supports testing the visible pistol and shot feedback.
 const targets: THREE.Object3D[] = [];
@@ -2572,6 +2585,7 @@ function nearestDoor() {
   let nearest = -1,
     distance = 2.4;
   for (let i = 0; i < BUILDINGS.length; i++) {
+    if (!buildingEnabled(BUILDINGS[i])) continue;
     const p = doorPosition(i),
       d = Math.hypot(player.x - p.x, player.z - p.z);
     if (d >= distance) continue;
@@ -3199,15 +3213,17 @@ function updateHud() {
     ? "SOUTH HARBOR"
     : inside >= 0
       ? BUILDINGS[inside].name
-      : inCompound(player, 1)
-        ? "FORT EAST"
-        : inWestQuarter(player)
-          ? "WEST QUARTER"
-          : inTown(player)
-            ? "JAIL DISTRICT"
-            : roadDistance(player) < 5
-              ? "OUTBOUND ROAD"
-              : "OPEN MEADOW";
+      : inNorthLab(player)
+        ? "NORTH WORKS"
+        : inCompound(player, 1)
+          ? "FORT EAST"
+          : inWestQuarter(player)
+            ? "WEST QUARTER"
+            : inTown(player)
+              ? "JAIL DISTRICT"
+              : roadDistance(player) < 5
+                ? "OUTBOUND ROAD"
+                : "OPEN MEADOW";
   const floorLabel =
     inside >= 0 && buildingStories(BUILDINGS[inside]) > 1
       ? `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
@@ -3432,6 +3448,14 @@ function frame(now: number) {
   clock += dt;
   coast.update(clock);
   harbor.root.visible = Math.hypot(player.x + 60, player.z - 234) < 165;
+  northLab.root.visible =
+    NORTH_LAB.enabled &&
+    Math.hypot(player.x - NORTH_LAB.x, player.z - NORTH_LAB.z) < 170;
+  BUILDINGS.forEach((b, i) => {
+    if (isNorthBuilding(b.type))
+      buildingModels[i].root.visible =
+        buildingEnabled(b) && Math.hypot(player.x - b.x, player.z - b.z) < 155;
+  });
   if (playing || stationOpen) tickProduction(productionDt, now);
   if (!playing && !needsRender) return;
   needsRender = false;
@@ -3712,6 +3736,11 @@ function frame(now: number) {
   canvas.dataset.ammoModels = JSON.stringify(ammoSources());
   canvas.dataset.nearestDrop = nearestDrop()?.id ?? "";
   canvas.dataset.harborSource = harbor.source;
+  canvas.dataset.northLab = JSON.stringify({
+    ...NORTH_LAB,
+    source: northLab.source,
+    buildings: BUILDINGS.filter((b) => isNorthBuilding(b.type)).length,
+  });
   canvas.dataset.harborRoad = JSON.stringify(
     ROADS.filter((r) => r[r.length - 1]?.z === 207),
   );

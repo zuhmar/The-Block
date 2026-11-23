@@ -13,6 +13,32 @@ import {
 } from "./building-layout";
 import { createBuildingModel } from "./building-models";
 const URLS: Record<string, string> = {
+  "north-main-lab": new URL(
+    "./models/buildings/north-main-lab.glb",
+    import.meta.url,
+  ).href,
+  "north-workshop": new URL(
+    "./models/buildings/north-workshop.glb",
+    import.meta.url,
+  ).href,
+  "north-warehouse": new URL(
+    "./models/buildings/north-warehouse.glb",
+    import.meta.url,
+  ).href,
+  "north-secondary-lab": new URL(
+    "./models/buildings/north-secondary-lab.glb",
+    import.meta.url,
+  ).href,
+  "north-packing": new URL(
+    "./models/buildings/north-packing.glb",
+    import.meta.url,
+  ).href,
+  "north-security": new URL(
+    "./models/buildings/north-security.glb",
+    import.meta.url,
+  ).href,
+  "north-staff": new URL("./models/buildings/north-staff.glb", import.meta.url)
+    .href,
   "district-diner": new URL(
     "./models/buildings/district-diner.glb",
     import.meta.url,

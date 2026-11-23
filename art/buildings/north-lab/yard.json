@@ -1,0 +1,537 @@
+{
+  "center": {
+    "x": -80,
+    "z": -188,
+    "width": 120,
+    "depth": 100,
+    "enabled": true
+  },
+  "props": [
+    {
+      "kind": "van",
+      "x": -28,
+      "z": 25,
+      "width": 2.4,
+      "depth": 5.5,
+      "height": 2.4,
+      "color": 3422532
+    },
+    {
+      "kind": "forklift",
+      "x": 20,
+      "z": 12,
+      "width": 1.5,
+      "depth": 2.5,
+      "height": 2.1,
+      "color": 14460722
+    },
+    {
+      "kind": "container",
+      "x": 56.5,
+      "z": 19,
+      "width": 5.5,
+      "depth": 12,
+      "height": 2.8,
+      "color": 11422776
+    },
+    {
+      "kind": "container",
+      "x": 56.5,
+      "z": 34,
+      "width": 5.5,
+      "depth": 12,
+      "height": 2.8,
+      "color": 3575186
+    },
+    {
+      "kind": "pallet",
+      "x": -53,
+      "z": -12,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": -53,
+      "z": -8,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": -12,
+      "z": -15,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": 53,
+      "z": -19,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": 56,
+      "z": -24,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": -22,
+      "z": -43,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": 22,
+      "z": -43,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": -40,
+      "z": -22,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": -44,
+      "z": -22,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": 36,
+      "z": 22,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "pallet",
+      "x": 40,
+      "z": 22,
+      "width": 2,
+      "depth": 1.7,
+      "height": 1.35,
+      "color": 14130256
+    },
+    {
+      "kind": "parcel",
+      "x": -24,
+      "z": -35,
+      "width": 1.7,
+      "depth": 1.4,
+      "height": 1.15,
+      "color": 14195790
+    },
+    {
+      "kind": "parcel",
+      "x": 23,
+      "z": -35,
+      "width": 1.7,
+      "depth": 1.4,
+      "height": 1.15,
+      "color": 14195790
+    },
+    {
+      "kind": "parcel",
+      "x": 15,
+      "z": -6,
+      "width": 1.7,
+      "depth": 1.4,
+      "height": 1.15,
+      "color": 14195790
+    },
+    {
+      "kind": "parcel",
+      "x": -24,
+      "z": 16,
+      "width": 1.7,
+      "depth": 1.4,
+      "height": 1.15,
+      "color": 14195790
+    },
+    {
+      "kind": "barrel",
+      "x": -13,
+      "z": 7,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 3698075
+    },
+    {
+      "kind": "barrel",
+      "x": -10,
+      "z": 7,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 3698075
+    },
+    {
+      "kind": "barrel",
+      "x": -7,
+      "z": 7,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 3698075
+    },
+    {
+      "kind": "barrel",
+      "x": 45,
+      "z": 17,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 12012343
+    },
+    {
+      "kind": "barrel",
+      "x": 45,
+      "z": 20,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 12012343
+    },
+    {
+      "kind": "barrel",
+      "x": 42,
+      "z": 17,
+      "width": 0.9,
+      "depth": 0.9,
+      "height": 1.2,
+      "color": 12012343
+    },
+    {
+      "kind": "dumpster",
+      "x": -14,
+      "z": 14,
+      "width": 2.5,
+      "depth": 1.4,
+      "height": 1.5,
+      "color": 5208413
+    },
+    {
+      "kind": "dumpster",
+      "x": 57,
+      "z": -5,
+      "width": 2.5,
+      "depth": 1.4,
+      "height": 1.5,
+      "color": 5208413
+    },
+    {
+      "kind": "bin",
+      "x": -10,
+      "z": 15,
+      "width": 0.65,
+      "depth": 0.75,
+      "height": 1.1,
+      "color": 6583919
+    },
+    {
+      "kind": "bin",
+      "x": -8,
+      "z": 15,
+      "width": 0.65,
+      "depth": 0.75,
+      "height": 1.1,
+      "color": 6583919
+    },
+    {
+      "kind": "bin",
+      "x": 57,
+      "z": 0,
+      "width": 0.65,
+      "depth": 0.75,
+      "height": 1.1,
+      "color": 6583919
+    },
+    {
+      "kind": "generator",
+      "x": -20,
+      "z": 14,
+      "width": 2.5,
+      "depth": 1.4,
+      "height": 1.5,
+      "color": 14132019
+    },
+    {
+      "kind": "generator",
+      "x": -57,
+      "z": -38,
+      "width": 2.5,
+      "depth": 1.4,
+      "height": 1.5,
+      "color": 14132019
+    },
+    {
+      "kind": "generator",
+      "x": 50,
+      "z": -12,
+      "width": 2.5,
+      "depth": 1.4,
+      "height": 1.5,
+      "color": 14132019
+    },
+    {
+      "kind": "ac",
+      "x": -36,
+      "z": -13.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -33,
+      "z": -13.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -46,
+      "z": -45.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -43,
+      "z": -45.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -4,
+      "z": -43.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -1,
+      "z": -43.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 38,
+      "z": -42.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 41,
+      "z": -42.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 38,
+      "z": -10.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 41,
+      "z": -10.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -47,
+      "z": 44.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": -44,
+      "z": 44.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 32,
+      "z": 45.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "ac",
+      "x": 35,
+      "z": 45.1,
+      "width": 1.3,
+      "depth": 0.65,
+      "height": 1,
+      "color": 11842983
+    },
+    {
+      "kind": "lamp",
+      "x": -56,
+      "z": 23,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 5,
+      "color": 4542037
+    },
+    {
+      "kind": "lamp",
+      "x": -12,
+      "z": 30,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 5,
+      "color": 4542037
+    },
+    {
+      "kind": "lamp",
+      "x": 56,
+      "z": 41,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 5,
+      "color": 4542037
+    },
+    {
+      "kind": "lamp",
+      "x": -56,
+      "z": -46,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 5,
+      "color": 4542037
+    },
+    {
+      "kind": "lamp",
+      "x": 25,
+      "z": -46,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 5,
+      "color": 4542037
+    }
+  ],
+  "barriers": [
+    {
+      "x": -140,
+      "z": -188,
+      "width": 0.18,
+      "depth": 100,
+      "height": 2.7
+    },
+    {
+      "x": -20,
+      "z": -234,
+      "width": 0.18,
+      "depth": 8,
+      "height": 2.7
+    },
+    {
+      "x": -20,
+      "z": -180,
+      "width": 0.18,
+      "depth": 84,
+      "height": 2.7
+    },
+    {
+      "x": -80,
+      "z": -238,
+      "width": 120,
+      "depth": 0.18,
+      "height": 2.7
+    },
+    {
+      "x": -112.5,
+      "z": -138,
+      "width": 55,
+      "depth": 0.18,
+      "height": 2.7
+    },
+    {
+      "x": -47.5,
+      "z": -138,
+      "width": 55,
+      "depth": 0.18,
+      "height": 2.7
+    },
+    {
+      "x": -85.5,
+      "z": -138,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 3.2
+    },
+    {
+      "x": -74.5,
+      "z": -138,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 3.2
+    }
+  ]
+}

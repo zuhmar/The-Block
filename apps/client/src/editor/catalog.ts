@@ -1,5 +1,13 @@
 /// <reference types="vite/client" />
-import { BUILDINGS, ROADS, pavedWidth, LOOT, riverX } from "../fps/world";
+import { NORTH_LAB } from "../fps/north-lab-layout";
+import {
+  BUILDINGS,
+  ROADS,
+  pavedWidth,
+  LOOT,
+  riverX,
+  configureWestRoad,
+} from "../fps/world";
 import { COASTLINE } from "../fps/coast";
 import { ResourceWorld } from "../fps/resource-world";
 import {
@@ -202,6 +210,14 @@ for (const size of ["small", "large"] as const)
     behavior: "solid",
     url: `/assets/player-storage/chest-${size}.glb`,
   });
+CATALOG.push({
+  id: "assembly:north-lab-yard",
+  name: "North Works · yard and perimeter",
+  layer: "Buildings",
+  behavior: "solid",
+  url: "/assets/north-lab/yard.glb",
+  anchor: [0, 0, 0],
+});
 export const KNOWN_ASSETS = new Set(CATALOG.map((a) => a.id));
 export function newMap(current = true): MapDocument {
   const objects: MapDocument["objects"] = [];
@@ -225,6 +241,13 @@ export function newMap(current = true): MapDocument {
     );
   };
   if (current) {
+    configureWestRoad([]);
+    add(
+      "assembly:north-lab-yard",
+      "North Works · yard",
+      NORTH_LAB.x,
+      NORTH_LAB.z,
+    );
     BUILDINGS.forEach((b) =>
       add(
         b.type === "warehouse"

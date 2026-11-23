@@ -1,3 +1,4 @@
+import { preloadNorthLab } from "./north-lab-model";
 import { preloadStorageModels } from "./storage-models";
 import { preloadCraftingModels } from "./crafting-models";
 import { preloadSoundFiles } from "./sound";
@@ -30,6 +31,7 @@ void Promise.allSettled([
   preloadAmmoModels(),
   preloadCraftingModels(),
   preloadStorageModels(),
+  preloadNorthLab(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));

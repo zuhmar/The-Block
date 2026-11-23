@@ -1,3 +1,10 @@
+import {
+  NORTH_BUILDINGS,
+  NORTH_LAB,
+  isNorthBuilding,
+  northFront,
+  northFixtures,
+} from "./north-lab-layout";
 export const BUILDINGS = [
   {
     x: -26.5,
@@ -189,8 +196,11 @@ export const BUILDINGS = [
     name: "CORNER OFFICES",
     type: "district-offices",
   },
+  ...NORTH_BUILDINGS,
 ];
 export type Building = (typeof BUILDINGS)[number];
+export const buildingEnabled = (b: Building) =>
+  !isNorthBuilding(b.type) || NORTH_LAB.enabled;
 export type BuildingPoint = { x: number; z: number; y?: number };
 export type Fixture = {
   kind:
@@ -218,7 +228,12 @@ export const DOOR_WIDTH = 1.6,
   WALL = 0.22;
 export const doorAngles = BUILDINGS.map(() => 0);
 export const doorTargets = BUILDINGS.map(() => false);
-export const frontOf = (b: Building) => (b.type === "jail" || b.z < 0 ? 1 : -1);
+export const frontOf = (b: Building) =>
+  isNorthBuilding(b.type)
+    ? northFront(b.type)
+    : b.type === "jail" || b.z < 0
+      ? 1
+      : -1;
 export const doorPosition = (index: number) => {
   const b = BUILDINGS[index],
     a = doorAngles[index];
@@ -268,6 +283,7 @@ function createFixtures(index: number): Fixture[] {
   const b = BUILDINGS[index],
     x = b.width / 2,
     z = b.depth / 2;
+  if (isNorthBuilding(b.type)) return northFixtures(b.type);
   switch (b.type) {
     case "district-diner":
       return [
@@ -621,6 +637,21 @@ export type Partition = {
 };
 function createPartitions(index: number): Partition[] {
   const b = BUILDINGS[index];
+  if (b.type === "north-main-lab")
+    return [
+      { x: -8, z: 8.5, width: 0.2, depth: 7, height: 3.5 },
+      ...[-16, -10].map((x) => ({
+        x,
+        z: 5,
+        width: 4,
+        depth: 0.2,
+        height: 3.5,
+      })),
+      { x: 8, z: -8.5, width: 0.2, depth: 7, height: 3.5 },
+      ...[10, 16].map((x) => ({ x, z: -5, width: 4, depth: 0.2, height: 3.5 })),
+    ];
+  if (b.type === "north-staff")
+    return [{ x: 8, z: 2, width: 0.2, depth: 8, height: 3.2 }];
   if (b.type === "district-clinic")
     return [{ x: 0.7, z: 1.8, width: 0.18, depth: 3.8, height: 3.1 }];
   if (b.type === "military-command")
@@ -680,6 +711,7 @@ export function buildingBlocked(
   ignoreDoors = false,
 ) {
   return BUILDINGS.some((b, i) => {
+    if (!buildingEnabled(b)) return false;
     const feet = p.y ?? 0;
     const x = p.x - b.x,
       z = p.z - b.z,
@@ -754,6 +786,7 @@ export function buildingBlocked(
 export function containingBuilding(p: BuildingPoint) {
   return BUILDINGS.findIndex(
     (b) =>
+      buildingEnabled(b) &&
       Math.abs(p.x - b.x) < b.width / 2 - WALL / 2 &&
       Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2,
   );

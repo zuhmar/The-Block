@@ -111,7 +111,10 @@ test("building geometry has hollow rooms, named animated doors, furniture and re
         triangles +=
           (o.geometry.index?.count || o.geometry.attributes.position.count) / 3;
     });
-    assert(triangles < 6000, BUILDINGS[i].name + ": " + triangles);
+    assert(
+      triangles < (BUILDINGS[i].type.startsWith("north-") ? 12000 : 6000),
+      BUILDINGS[i].name + ": " + triangles,
+    );
   }
 });
 

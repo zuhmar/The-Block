@@ -89,3 +89,5 @@ Visual theme: original illustrated Street Survival menu/loading artwork, self-ho
 ## Standalone map editor
 
 Open [`/editor.html`](https://the-block-tau-eight.vercel.app/editor.html) to arrange buildings, props, terrain, roads and spawn markers outside the game. It has its own local draft, transform tools, layers, undo/redo and complete ZIP backups with imported GLBs. Exported layouts do not change the playable world or player saves automatically. See [map editor workflow and controls](docs/map-editor.md).
+
+North Works adds the seven-building lab compound on the northern shoreline, with a curved road from the jail district, furnished interiors and industrial yard props. The map remains 640 × 640 m. Saved bases are protected by alternate placement or omission when the northern sites are occupied. See [North Works layout and compatibility](docs/north-works.md).

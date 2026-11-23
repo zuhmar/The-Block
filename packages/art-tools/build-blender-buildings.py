@@ -183,7 +183,7 @@ def export(root,parts,path):
  for o in parts:o.select_set(True)
  bpy.ops.export_scene.gltf(filepath=path,export_format='GLB',use_selection=True,export_extras=True)
 def triangles(parts):return sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in parts)
-for index,data in enumerate([d for d in D['buildings'] if d['type'] not in ['jail','flats','tenement'] and not d['type'].startswith(('military-','district-'))]):
+for index,data in enumerate([d for d in D['buildings'] if d['type'] not in ['jail','flats','tenement'] and not d['type'].startswith(('military-','district-','north-'))]):
  typ=data['type'];ref='../references/'+REFS[index]+'.png';refpath=os.path.normpath(OUT+'/'+ref);raw=open(refpath,'rb').read();sha=hashlib.sha256(raw).hexdigest();im=bpy.data.images.load(refpath);im.pack();packed.append(im);mats=palette(index)
  # Separate reusable, centered prop assets, available even when not placed in this room.
  for name,kind,pw,pd in PROPSETS[index]:

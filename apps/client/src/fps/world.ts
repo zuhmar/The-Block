@@ -1,3 +1,10 @@
+import {
+  configureNorthLab,
+  inNorthLab,
+  northBlocked,
+  northSurface,
+} from "./north-lab-layout";
+import { NORTH_ROAD, northConnector } from "./north-road";
 import { storageSpec, storageSize, type StorageSize } from "./storage-spec";
 import { readStorage, type StorageSlots } from "./storage";
 import {
@@ -129,13 +136,17 @@ ROADS.push([
 ]);
 export const CITY_RING = ROADS[1];
 export function configureWestRoad(pieces: Piece[]) {
+  configureNorthLab(pieces);
   const route = westConnector(pieces, TREES, BUILDINGS);
   ROADS.splice(4);
   if (route.length > 1) ROADS.push(route);
   const harborRoute = harborConnector(pieces, TREES, BUILDINGS);
   if (harborRoute.length > 1) ROADS.push(harborRoute);
+  NORTH_ROAD.splice(0, NORTH_ROAD.length, ...northConnector(pieces, BUILDINGS));
+  if (NORTH_ROAD.length > 1) ROADS.push(NORTH_ROAD);
 }
-export const pavedWidth = (road: Point[]) => (road === CITY_RING ? 5.4 : 9);
+export const pavedWidth = (road: Point[]) =>
+  road === CITY_RING ? 5.4 : road === NORTH_ROAD ? 6 : 9;
 export function pavedRoadDistance(p: Point) {
   return Math.min(
     ...ROADS.flatMap((road) =>
@@ -286,7 +297,7 @@ LOOT.push(
   { ...crateTiers[4], x: 69, z: -19, y: 0 },
 );
 // New entries follow every legacy crate, preserving saved searched indices.
-for (const b of BUILDINGS.slice(13)) {
+for (const b of BUILDINGS.slice(13, 19)) {
   const stories = buildingStories(b);
   const spots =
     stories > 1
@@ -361,6 +372,7 @@ export function inBox(p: Point, b: Box, radius = 0) {
 export const inTown = (p: Point) =>
   (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) ||
   inCompound(p, 1) ||
+  inNorthLab(p, 1) ||
   inWestQuarter(p) ||
   inHarbor(p);
 export const onBridge = (p: Point) =>
@@ -452,6 +464,7 @@ export function blocked(
     jailGroundBlocked(p, footHeight) ||
     harborBlocked(p, footHeight) ||
     compoundBlocked(p, 0.32, footHeight) ||
+    northBlocked(p, 0.32, footHeight) ||
     buildingBlocked({ ...p, y: footHeight }, 0.32, ignoreBuildingDoors) ||
     LOOT.some(
       (b) =>
@@ -721,6 +734,7 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
     buildingSurface(p, maxHeight),
     jailGroundSurface(p, maxHeight),
     compoundSurface(p, maxHeight),
+    northSurface(p, maxHeight),
     harborSurface(p, maxHeight),
   );
   for (const piece of pieces)
