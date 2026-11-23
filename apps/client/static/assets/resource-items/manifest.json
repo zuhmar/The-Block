@@ -1,0 +1,59 @@
+{
+  "sourceReference": "art/ai/resource-items/resource-items.png",
+  "sourceSHA256": "d0d19d926a2a4770b9edcd83dd1e534aedea7b6cf8f036bdb8196aa6490052cc",
+  "units": "metres",
+  "models": [
+    {
+      "id": "wood",
+      "file": "item-wood.glb",
+      "sourceSHA256": "d0d19d926a2a4770b9edcd83dd1e534aedea7b6cf8f036bdb8196aa6490052cc",
+      "triangles": 1332,
+      "materialMeshes": 3,
+      "sizeMetres": {
+        "x": 0.6783,
+        "y": 0.5801,
+        "z": 0.7302
+      },
+      "bytes": 1656176
+    },
+    {
+      "id": "rock",
+      "file": "item-rock.glb",
+      "sourceSHA256": "d0d19d926a2a4770b9edcd83dd1e534aedea7b6cf8f036bdb8196aa6490052cc",
+      "triangles": 540,
+      "materialMeshes": 3,
+      "sizeMetres": {
+        "x": 0.6862,
+        "y": 0.6017,
+        "z": 0.66
+      },
+      "bytes": 324600
+    },
+    {
+      "id": "sulfur",
+      "file": "item-sulfur.glb",
+      "sourceSHA256": "d0d19d926a2a4770b9edcd83dd1e534aedea7b6cf8f036bdb8196aa6490052cc",
+      "triangles": 540,
+      "materialMeshes": 3,
+      "sizeMetres": {
+        "x": 0.6775,
+        "y": 0.6283,
+        "z": 0.66
+      },
+      "bytes": 334736
+    },
+    {
+      "id": "metal",
+      "file": "item-metal.glb",
+      "sourceSHA256": "d0d19d926a2a4770b9edcd83dd1e534aedea7b6cf8f036bdb8196aa6490052cc",
+      "triangles": 620,
+      "materialMeshes": 3,
+      "sizeMetres": {
+        "x": 0.6731,
+        "y": 0.5676,
+        "z": 0.66
+      },
+      "bytes": 357924
+    }
+  ]
+}

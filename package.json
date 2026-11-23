@@ -42,7 +42,8 @@
     "assets:nature-sprites": "python packages/art-tools/pack-nature-sprites.py",
     "assets:nature-models": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-nature-models.py && python packages/art-tools/pack-nature-models.py",
     "assets:harvest-tools": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-harvest-tools.py && python packages/art-tools/pack-harvest-tools.py",
-    "assets:harbor": "tsx packages/art-tools/export-harbor.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-harbor.py"
+    "assets:harbor": "tsx packages/art-tools/export-harbor.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-harbor.py",
+    "assets:resource-items": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-resource-items.py && python packages/art-tools/pack-resource-items.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
