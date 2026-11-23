@@ -1,0 +1,74 @@
+[
+  {
+    "name": "tree-broadleaf",
+    "triangles": 3578,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 3689564,
+    "sha256": "ec7d130697694965eba1c03533f8e92bc9246d7369ba148701ac33341394e10c",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  },
+  {
+    "name": "tree-pine",
+    "triangles": 4286,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 3495868,
+    "sha256": "42ca2450e3e4745f2c090529a4750e45539e89b56b718466268a6be7fd1c76d6",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  },
+  {
+    "name": "tree-birch",
+    "triangles": 3776,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 3561796,
+    "sha256": "08057c86240a9affdc43e2823268bf90ee015e3a55bbcc845ad934b18ab1af6d",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  },
+  {
+    "name": "node-rock",
+    "triangles": 2410,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 2836432,
+    "sha256": "04c5f5959f40ee81ab64f5728c28b3e1e987b06327759b3dbacfecf582546ac8",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  },
+  {
+    "name": "node-sulfur",
+    "triangles": 2689,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 3061256,
+    "sha256": "59fc9fddc191886f2c0623cd0c95a90adf023c2fc54187e7376315208498f8b7",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  },
+  {
+    "name": "node-metal",
+    "triangles": 2645,
+    "meshCount": 1,
+    "materials": 1,
+    "embeddedImages": 1,
+    "bytes": 3889048,
+    "sha256": "fa595a6f8a97b2a108da932293ecb9b168d7c6f1bb1207e9a6b4d42e7514a09e",
+    "finitePositions": true,
+    "embeddedBuffersAndTextures": true,
+    "previewInspected": true
+  }
+]

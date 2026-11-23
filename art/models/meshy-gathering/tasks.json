@@ -1,0 +1,88 @@
+{
+  "estimatedCredits": 90,
+  "balanceBefore": 115,
+  "models": [
+    {
+      "name": "tree-broadleaf",
+      "requestId": "57c810c9-4a7e-47d2-ab1e-21f22357500a",
+      "reference": "apps/client/static/assets/nature-sprites/tree-broadleaf.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 4000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-0a59-757c-bf73-066dc3d66518",
+      "resource": "image-to-3d",
+      "file": "tree-broadleaf.glb",
+      "referenceSHA256": "b3272744febd922e1c48e4a2bf1239a9ee5ec8f5555e07d4ba47975163417d4b"
+    },
+    {
+      "name": "tree-pine",
+      "requestId": "36bd21ac-5743-4bed-9323-304ca30415e8",
+      "reference": "apps/client/static/assets/nature-sprites/tree-pine.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 4000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-6bcf-774d-b9c4-e5f1935068da",
+      "resource": "image-to-3d",
+      "file": "tree-pine.glb",
+      "referenceSHA256": "20b045a6650291f90edcb440a12ee6fbf931f8f3db24b8b3d2bf432755224ef7"
+    },
+    {
+      "name": "tree-birch",
+      "requestId": "cdc40e11-0d23-493c-8f72-feb3faf98f5a",
+      "reference": "apps/client/static/assets/nature-sprites/tree-birch.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 4000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-7fd1-75a9-8b3c-de48456d37ae",
+      "resource": "image-to-3d",
+      "file": "tree-birch.glb",
+      "referenceSHA256": "079e51c95bd2af6b172cc8ad0fb917bc781e3754a38ec0f23c6599fdf93bce8d"
+    },
+    {
+      "name": "node-rock",
+      "requestId": "12d18a1d-0342-4dde-8f7d-728a337f3a65",
+      "reference": "apps/client/static/assets/nature-sprites/node-rock.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 2500,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-9372-71bd-b843-832c8fca39a5",
+      "resource": "image-to-3d",
+      "file": "node-rock.glb",
+      "referenceSHA256": "ec2efb31892d4a08b5d182e4b1de69f6b78a476752ee0a493370a8380652f6ca"
+    },
+    {
+      "name": "node-sulfur",
+      "requestId": "ce7485a9-0ee4-425c-a15d-5bcfc7a3314a",
+      "reference": "apps/client/static/assets/nature-sprites/node-sulfur.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 2500,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-a54f-750a-858e-71f5d6f7137a",
+      "resource": "image-to-3d",
+      "file": "node-sulfur.glb",
+      "referenceSHA256": "8441e3b5e6ebf7e51c6fb8524a39372010a29de908674ad3de669849e0c528a3"
+    },
+    {
+      "name": "node-metal",
+      "requestId": "3df5f72e-6d5b-4e61-b5c5-b33d3ec75159",
+      "reference": "apps/client/static/assets/nature-sprites/node-metal.png",
+      "aiModel": "meshy-t2",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 2500,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a79-b93c-7248-bd91-f8541641f111",
+      "resource": "image-to-3d",
+      "file": "node-metal.glb",
+      "referenceSHA256": "50f6749022b19d5d29b37d0b3b1a01a1ae2426f7e296de674afee5d350b0daae"
+    }
+  ],
+  "actualCredits": 90,
+  "creditEvidence": "Balance delta 115 to 25 after six requested generations",
+  "balanceAfter": 25,
+  "integratedInGame": false
+}
