@@ -6,4 +6,4 @@ The first four render the game's existing GLBs directly, preserving their geomet
 
 Run `pnpm assets:weapon-sprites` from the repository root. `render-weapon-sprites.py` generates the models and transparent icons; `pack-weapon-sprites.py` verifies dimensions, real transparency and clear margins, then creates the atlas, labeled preview and ZIP. `report.json` records source models; `sprite-checks.json` records bounds and PNG hashes.
 
-Game-ready PNGs, atlas JSON, preview and ZIP are published under `/assets/weapon-icons/`. The sprites are supplied as assets without changing the current weapon loadout, damage, ammo or animations.
+Game-ready files live in `apps/client/static/assets/weapon-icons/`, a dedicated Vite static folder separate from the legacy 2D assets. PNGs, atlas JSON, preview and ZIP are published under `/assets/weapon-icons/`. The sprites are supplied as assets without changing the current weapon loadout, damage, ammo or animations.

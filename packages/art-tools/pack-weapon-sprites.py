@@ -2,7 +2,7 @@
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 import json,hashlib,zipfile
-OUT=Path('apps/client/public/assets/weapon-icons');ROOT=Path('art/weapons/sprites')
+OUT=Path('apps/client/static/assets/weapon-icons');ROOT=Path('art/weapons/sprites')
 items=[('pistol','PISTOL'),('smg','SMG'),('assault-rifle','ASSAULT RIFLE'),('sniper','SNIPER'),('light-machine-gun','LIGHT MACHINE GUN'),('rocket-launcher','ROCKET LAUNCHER'),('grenade','GRENADE'),('c4','C4')]
 atlas=Image.new('RGBA',(1024,1024));preview=Image.new('RGB',(1024,1248),'#14232c');draw=ImageDraw.Draw(preview);frames={};checks=[]
 font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',22)

@@ -4,8 +4,8 @@ export default defineConfig(() => {
   const envDir = resolve(import.meta.dirname, "../..");
   return {
     envDir,
-    // The 3D prototype creates its own geometry; keep legacy sprites in source only.
-    publicDir: false as const,
+    // Ship intentional 3D asset downloads; keep legacy public/ sprites in source only.
+    publicDir: "static",
     build: {
       rollupOptions: {
         output: {

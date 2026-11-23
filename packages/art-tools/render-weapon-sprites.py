@@ -5,7 +5,7 @@ Run from repository root: blender -b -t 4 --python packages/art-tools/render-wea
 import bpy,math,json
 from pathlib import Path
 from mathutils import Vector
-ROOT=Path('art/weapons/sprites');OUT=Path('apps/client/public/assets/weapon-icons')
+ROOT=Path('art/weapons/sprites');OUT=Path('apps/client/static/assets/weapon-icons')
 ROOT.mkdir(parents=True,exist_ok=True);(ROOT/'models').mkdir(exist_ok=True);OUT.mkdir(parents=True,exist_ok=True)
 bpy.context.preferences.filepaths.save_version=0
 KINDS=['pistol','smg','assault-rifle','sniper','light-machine-gun','rocket-launcher','grenade','c4']
