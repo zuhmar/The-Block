@@ -1,0 +1,62 @@
+[
+  {
+    "file": "references/tier-1-small.png",
+    "size": [
+      1341,
+      1173
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "references/tier-2-supply.png",
+    "size": [
+      1426,
+      1103
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "references/tier-3-reinforced.png",
+    "size": [
+      1374,
+      1145
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "references/tier-4-long.png",
+    "size": [
+      2172,
+      724
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "file": "references/tier-5-heavy.png",
+    "size": [
+      1774,
+      887
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ]
+  }
+]
