@@ -2,6 +2,19 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { createPlayerViewRig, type PlayerAction } from "./meshy-player";
 import type { HarvestMotion } from "./harvest-animation";
+const toolModels = new Map<string, THREE.Group>();
+export async function preloadHarvestTools() {
+  const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+  const loader = new GLTFLoader();
+  await Promise.allSettled(
+    ["axe", "pickaxe"].map(async (kind) => {
+      const { scene } = await loader.loadAsync(
+        `/assets/harvest-tools/${kind}.glb`,
+      );
+      toolModels.set(kind, scene);
+    }),
+  );
+}
 export function createHarvestView() {
   const rig = createPlayerViewRig("pistol"),
     tools = new THREE.Group(),
@@ -53,7 +66,30 @@ export function createHarvestView() {
   pick.add(
     new THREE.Mesh(new THREE.TubeGeometry(curve, 14, 0.027, 6, false), steel),
   );
-  axe.rotation.y = 0.6;
+  for (const [kind, group] of [
+    ["axe", axe],
+    ["pickaxe", pick],
+  ] as const) {
+    const template = toolModels.get(kind);
+    if (!template) continue;
+    group.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.geometry.dispose();
+    });
+    group.clear();
+    const model = template.clone(true);
+    // Exports use a Y-up haft and a grip-centered origin. Fit the existing
+    // hand socket without stretching the approved head/handle proportions.
+    model.scale.setScalar(0.58);
+    group.add(model);
+    group.userData.modelSource = "blender";
+  }
+  if (toolModels.size === 2) {
+    wood.dispose();
+    steel.dispose();
+    dark.dispose();
+  }
+  axe.rotation.y = 0.35;
+  pick.rotation.y = -0.12;
   tools.scale.setScalar(0.8);
   // Keep the winding tool hand ahead of the near plane throughout the swing.
   rig.root.position.set(0, -0.23, -0.45);
@@ -63,6 +99,12 @@ export function createHarvestView() {
     root: rig.root,
     setAspect: (aspect: number) => {
       rig.setAspect(aspect);
+      // Keep the wider reference-shaped heads inside a narrow phone view.
+      rig.root.position.set(
+        aspect < 0.8 ? -0.18 : 0,
+        aspect < 0.8 ? -0.28 : -0.23,
+        aspect < 0.8 ? -0.6 : -0.45,
+      );
       tools.scale.setScalar(aspect < 0.8 ? 0.6 : 0.8);
     },
     animate(
@@ -85,6 +127,8 @@ export function createHarvestView() {
       pick.visible = motion === "mine";
       rig.root.userData.harvestPose = rig.root.userData.usePose ?? "";
       rig.root.userData.harvestTool = kind === "chop" ? "axe" : "pickaxe";
+      rig.root.userData.harvestModelSource =
+        (kind === "chop" ? axe : pick).userData.modelSource ?? "fallback";
     },
   };
 }

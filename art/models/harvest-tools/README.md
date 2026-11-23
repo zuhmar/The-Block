@@ -8,4 +8,4 @@ GLBs are in metres, Y-up, with the lower hand grip centered at the local origin.
 
 Run `pnpm assets:harvest-tools` from the repository root with Blender installed. Run `pnpm exec tsx --test tests/harvest-tool-models.test.ts` to validate GLTFLoader import, reference hashes, dimensions, UVs, embedded texture decoding, materials and rendering budgets.
 
-This asset pass supplies the new models for integration. The current in-game contextual tool models and harvesting animations are unchanged.
+The game preloads both GLBs and attaches their grip-centered origins to the existing first-person harvesting hand socket. Chopping selects the axe; mining selects the pickaxe. The existing swing timing, gathering rewards and respawn/save logic remain in use. A procedural tool is retained as a loading-failure fallback.

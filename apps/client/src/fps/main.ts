@@ -2697,6 +2697,9 @@ function frame(now: number) {
           harvestAction.elapsed / GATHER_TYPES[harvestAction.kind].duration,
       })
     : "";
+  canvas.dataset.harvestModelSource = String(
+    harvestView.root.userData.harvestModelSource ?? "",
+  );
   canvas.dataset.harvestTool = String(
     harvestView.root.userData.harvestTool ?? "",
   );

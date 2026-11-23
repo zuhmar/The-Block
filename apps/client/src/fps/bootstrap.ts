@@ -1,3 +1,4 @@
+import { preloadHarvestTools } from "./harvest-view";
 import { preloadNatureModels } from "./nature-models";
 import { preloadStreetFurniture } from "./street-furniture";
 import { preloadLootChests } from "./loot-chests";
@@ -15,6 +16,7 @@ void Promise.allSettled([
   preloadLootChests(),
   preloadStreetFurniture(),
   preloadNatureModels(),
+  preloadHarvestTools(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));
