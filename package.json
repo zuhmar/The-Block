@@ -45,7 +45,8 @@
     "assets:harbor": "tsx packages/art-tools/export-harbor.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-harbor.py",
     "assets:resource-items": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-resource-items.py && python packages/art-tools/pack-resource-items.py",
     "assets:ammo": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-ammo.py && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/optimize-ammo.py && python packages/art-tools/pack-ammo.py",
-    "assets:sounds": "python packages/art-tools/build-sounds.py"
+    "assets:sounds": "python packages/art-tools/build-sounds.py",
+    "assets:crafting": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-crafting.py && python packages/art-tools/pack-crafting.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

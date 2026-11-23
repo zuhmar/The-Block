@@ -1,4 +1,16 @@
 import {
+  STATIONS,
+  isStationKind,
+  startProduction,
+  collectProduction,
+  cancelProduction,
+  advanceProduction,
+  missingIngredients,
+  ingredientEntries,
+} from "./crafting";
+import { stationModel, craftingSources } from "./crafting-models";
+import { createStationDialog } from "./crafting-ui";
+import {
   GameSound,
   FootstepClock,
   spatialSound,
@@ -156,12 +168,12 @@ $("#app").innerHTML = `
     )
     .join(
       "",
-    )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
+    )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door", "workbench", "furnace"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${isStationKind(k) ? `<img src="/assets/crafting/station-${k}.png" alt="">${STATIONS[k].name}` : k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button><button id="gather" hidden>GATHER</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–8 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -769,8 +781,25 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
   g.position.set(p.x, pieceBase(p, save.pieces), p.z);
   g.rotation.y = (p.rotation * Math.PI) / 2;
   const tier = structureMaterial(p);
-  const imported = tier === "wood" ? woodBuildingModel(p.kind) : undefined;
+  const imported = isStationKind(p.kind)
+    ? stationModel(p.kind)
+    : tier === "wood"
+      ? woodBuildingModel(p.kind)
+      : undefined;
   if (imported) g.add(imported);
+  if (!imported && isStationKind(p.kind)) {
+    const station = STATIONS[p.kind];
+    box(
+      g,
+      0,
+      station.height / 2,
+      0,
+      station.width,
+      station.height,
+      station.depth,
+      p.kind === "furnace" ? 0x887b6a : 0x586a3e,
+    );
+  }
   if (!imported && p.kind === "foundation")
     box(g, 0, 0.25, 0, 2, 0.5, 2, 0xb78b4e);
   if (!imported && p.kind === "door")
@@ -796,7 +825,7 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
     for (const x of [-0.32, 0.32])
       box(g, x, 0.6, 0.42, 0.08, 0.8, 0.05, 0xcfb78b);
   }
-  if (tier !== "wood")
+  if (tier !== "wood" && !isStationKind(p.kind))
     g.traverse((o) => {
       if (o instanceof THREE.Mesh)
         o.material = material(STRUCTURE_MATERIALS[tier].color);
@@ -850,7 +879,17 @@ function buildProxy(p: Piece) {
   } else if (p.kind === "wall") part(0, 1.25, 0, 2, 2.5, 0.16);
   else if (p.kind === "foundation") part(0, 0.25, 0, 2, 0.5, 2);
   else if (p.kind === "floor") part(0, 0.09, 0, 2, 0.18, 2);
-  else part(0, 0.6, 0, 1, 0.8, 0.8);
+  else if (isStationKind(p.kind)) {
+    const station = STATIONS[p.kind];
+    part(
+      0,
+      station.height / 2,
+      0,
+      station.width,
+      station.height,
+      station.depth,
+    );
+  } else part(0, 0.6, 0, 1, 0.8, 0.8);
   return root;
 }
 function rebuildConstruction() {
@@ -1964,7 +2003,129 @@ const inventoryDialog = createInventoryDialog({
     return ok;
   },
 });
+let stationOpen = false,
+  stationId: string | undefined,
+  resumeAfterStation = false,
+  productionSaveElapsed = 0,
+  lastStationRender = 0;
+function reachableStation(piece: Piece) {
+  if (
+    !isStationKind(piece.kind) ||
+    Math.hypot(piece.x - player.x, piece.z - player.z) > 3.2 ||
+    Math.abs(pieceBase(piece, save.pieces) - vertical) > 1.1
+  )
+    return false;
+  const origin = new THREE.Vector3(player.x, vertical + 1.65, player.z),
+    target = new THREE.Vector3(
+      piece.x,
+      pieceBase(piece, save.pieces) + 0.8,
+      piece.z,
+    );
+  coverRay.set(origin, target.clone().sub(origin).normalize());
+  coverRay.far = origin.distanceTo(target) - 0.05;
+  return !coverRay
+    .intersectObjects([...shotObstacles, ...construction.children], true)
+    .some((hit) => hit.object.userData.pieceId !== piece.id);
+}
+function nearestStation() {
+  return save.pieces
+    .filter((p) => isStationKind(p.kind) && reachableStation(p))
+    .sort(
+      (a, b) =>
+        Math.hypot(a.x - player.x, a.z - player.z) -
+        Math.hypot(b.x - player.x, b.z - player.z),
+    )[0];
+}
+const stationDialog = createStationDialog({
+  inventory,
+  piece: () => save.pieces.find((p) => p.id === stationId),
+  close: () => closeStation(),
+  action(action, recipe) {
+    const piece = save.pieces.find((p) => p.id === stationId);
+    if (!piece || !reachableStation(piece)) return "Move closer to the station";
+    storeCurrentGun();
+    const error =
+      action === "start"
+        ? startProduction(piece, inventory(), recipe ?? "")
+        : action === "collect"
+          ? collectProduction(piece, inventory())
+          : cancelProduction(piece, inventory());
+    if (!error) {
+      reconcileEquipment();
+      persist();
+      updateHud();
+      sound.play(
+        action === "collect"
+          ? "loot"
+          : action === "cancel"
+            ? "pickup"
+            : "reload-rack",
+        { ui: true, gain: 0.3 },
+      );
+    }
+    return error;
+  },
+});
+function openStation(piece: Piece) {
+  if (stationOpen || inventoryOpen || !playing || !reachableStation(piece))
+    return;
+  stationId = piece.id;
+  resumeAfterStation = playing;
+  storeCurrentGun();
+  cancelReload(loadout);
+  resetInput();
+  pendingUse = undefined;
+  useRemaining = 0;
+  stationOpen = true;
+  playing = false;
+  sound.setPaused(true);
+  sound.play("ui-open", { ui: true, gain: 0.2 });
+  persist();
+  if (document.pointerLockElement) document.exitPointerLock();
+  stationDialog.open();
+  canvas.dataset.stationOpen = "true";
+}
+function closeStation(resume = true) {
+  if (!stationOpen) return;
+  stationDialog.close();
+  stationOpen = false;
+  stationId = undefined;
+  playing = resume && resumeAfterStation && health > 0;
+  persist();
+  sound.setPaused(!playing);
+  sound.play("ui-close", { ui: true, gain: 0.2 });
+  lastFrame = performance.now();
+  $("#inventory-button").focus();
+  if (playing && !touch) captureMouse();
+  canvas.dataset.stationOpen = "false";
+}
+function tickProduction(seconds: number, now: number) {
+  const active = save.pieces.some((p) => p.job && p.job.remaining > 0);
+  if (active) {
+    const completed = advanceProduction(save.pieces, seconds);
+    productionSaveElapsed += seconds;
+    if (completed.length || productionSaveElapsed >= 1) {
+      productionSaveElapsed = 0;
+      persist();
+    }
+    for (const id of completed) {
+      const p = save.pieces.find((p) => p.id === id);
+      if (p && Math.hypot(p.x - player.x, p.z - player.z) < 10)
+        sound.play("pickup", { ui: stationOpen, gain: 0.25 });
+    }
+  }
+  if (stationOpen && now - lastStationRender > 150) {
+    stationDialog.render();
+    lastStationRender = now;
+    canvas.dataset.productionJobs = JSON.stringify(
+      save.pieces
+        .filter((p) => p.job)
+        .map((p) => ({ id: p.id, kind: p.kind, ...p.job })),
+    );
+  }
+}
 function openInventory() {
+  if (stationOpen) closeStation();
   if (inventoryOpen || health <= 0) return;
   resumeAfterInventory = playing;
   storeCurrentGun();
@@ -2033,6 +2194,7 @@ function resetInput() {
   $("#stick").style.transform = "translate(-50%,-50%)";
 }
 function pause() {
+  if (stationOpen) closeStation(false);
   if (inventoryOpen) return;
   persist();
   playing = false;
@@ -2046,7 +2208,7 @@ function pause() {
 function captureMouse() {
   if (touch) return;
   void Promise.resolve(canvas.requestPointerLock?.()).catch(() => {
-    if (playing && !inventoryOpen) pause();
+    if (playing && !inventoryOpen && !stationOpen) pause();
   });
 }
 function start() {
@@ -2154,6 +2316,13 @@ function place() {
     save.wood,
   );
   if (reason) return toast(reason);
+  if (isStationKind(candidate.kind)) {
+    const missing = missingIngredients(
+      inventory(),
+      STATIONS[candidate.kind].extras,
+    );
+    if (missing) return toast("Need " + missing);
+  }
   const p = {
     ...candidate,
     id: crypto.randomUUID(),
@@ -2169,6 +2338,9 @@ function place() {
     { gain: 0.65 },
   );
   takeItem(inventory(), "wood", pieceCost(p));
+  if (isStationKind(p.kind))
+    for (const [kind, n] of ingredientEntries(STATIONS[p.kind].extras))
+      takeItem(inventory(), kind, n);
   reconcileEquipment();
   rebuildConstruction();
   persist();
@@ -2209,14 +2381,31 @@ function remove() {
   const p = aimedPiece();
   if (!p) return toast("Aim at one of your pieces within 8 m");
   if (!canRemove(p, save.pieces))
-    return toast("Remove attached doors, walls, floors or storage first");
+    return toast(
+      "Remove attached doors, walls, floors, storage or stations first",
+    );
+  if (isStationKind(p.kind) && p.job)
+    return toast("Collect or cancel this station’s job before dismantling");
   const refund = dismantleRefund(p);
-  if (roomFor(inventory(), "wood") < refund)
+  const refundInventory = structuredClone(inventory());
+  if (addItem(refundInventory, "wood", refund) !== refund)
     return toast("Make room for returned wood before dismantling");
+  if (isStationKind(p.kind))
+    for (const [kind, n] of ingredientEntries(STATIONS[p.kind].extras)) {
+      const amount = Math.floor(
+        (n * structureHealth(p)) / maxStructureHealth(p),
+      );
+      if (amount && addItem(refundInventory, kind, amount) !== amount)
+        return toast("Make room for station materials before dismantling");
+    }
   save.pieces = save.pieces.filter((s) => s.id !== p.id);
   sound.play("dismantle", { gain: 0.55 });
   rebuildConstruction();
-  addItem(inventory(), "wood", refund);
+  storeCurrentGun();
+  const gun = refundInventory.slots.find((s) => s?.id === equippedItemId);
+  if (gun && tool !== "hands" && isGun(tool))
+    gun.magazine = loadout.rounds[tool];
+  save.inventory = refundInventory;
   persist();
   updateHud();
   toast("Piece removed · wood returned");
@@ -2310,6 +2499,11 @@ function interact() {
     inventoryChanged();
     sound.play("pickup", { gain: 0.35 });
     return toast("Picked up " + n + " " + itemName(drop.kind));
+  }
+  const station = nearestStation();
+  if (station) {
+    openStation(station);
+    return;
   }
   if (nearestResource()) {
     beginHarvest();
@@ -2590,6 +2784,20 @@ $("#run").addEventListener("click", () => {
   $("#run").classList.toggle("selected", run);
 });
 window.addEventListener("keydown", (e) => {
+  if (stationOpen) {
+    if (e.code === "Escape") {
+      e.preventDefault();
+      closeStation();
+      return;
+    }
+    if (e.code === "KeyI") {
+      e.preventDefault();
+      closeStation();
+      openInventory();
+      return;
+    }
+    if (e.code !== "KeyM") return;
+  }
   if (e.code === "KeyI" || (e.code === "Tab" && !inventoryOpen)) {
     e.preventDefault();
     if (!e.repeat) {
@@ -2623,7 +2831,7 @@ window.addEventListener("keydown", (e) => {
   keys.add(e.code);
   if (e.repeat) return;
   if (e.code === "KeyB") toggleBuild();
-  if (e.code === "KeyT" && build) {
+  if (e.code === "KeyT" && build && !isStationKind(selected)) {
     const tiers = Object.keys(STRUCTURE_MATERIALS) as StructureMaterial[];
     selectBuildMaterial(
       tiers[(tiers.indexOf(buildMaterial) + 1) % tiers.length],
@@ -2639,9 +2847,16 @@ window.addEventListener("keydown", (e) => {
   }
   if (
     build &&
-    ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6"].includes(
-      e.code,
-    )
+    [
+      "Digit1",
+      "Digit2",
+      "Digit3",
+      "Digit4",
+      "Digit5",
+      "Digit6",
+      "Digit7",
+      "Digit8",
+    ].includes(e.code)
   ) {
     selected = (
       [
@@ -2651,6 +2866,8 @@ window.addEventListener("keydown", (e) => {
         "storage",
         "foundation",
         "door",
+        "workbench",
+        "furnace",
       ] as PieceKind[]
     )[Number(e.code.slice(-1)) - 1];
     rebuildPreview();
@@ -2866,10 +3083,18 @@ function updateHud() {
     "[data-piece]",
   )) {
     b.classList.toggle("selected", b.dataset.piece === selected);
-    b.querySelector("span")!.textContent =
-      `${pieceCost({ kind: b.dataset.piece as PieceKind, material: buildMaterial })} wood`;
+    b.querySelector("span")!.textContent = isStationKind(b.dataset.piece!)
+      ? `${COST[b.dataset.piece as PieceKind]} wood · ${Object.entries(
+          STATIONS[b.dataset.piece as keyof typeof STATIONS].extras,
+        )
+          .map(
+            ([k, n]) => `${n} ${itemName(k as Parameters<typeof itemName>[0])}`,
+          )
+          .join(" · ")}`
+      : `${pieceCost({ kind: b.dataset.piece as PieceKind, material: buildMaterial })} wood`;
   }
 
+  $("#build-materials").hidden = isStationKind(selected);
   const near = nearestLoot(),
     door = nearestDoor(),
     built = nearestBuiltDoor(),
@@ -2886,7 +3111,7 @@ function updateHud() {
             ? "YOUR " + p.kind.toUpperCase()
             : "";
   $("#hint-text").textContent = build
-    ? "T material · 1–6 pieces · R rotate · Aim at wall tops for upper floors"
+    ? "T material · 1–8 pieces · R rotate · Aim at wall tops for upper floors"
     : built
       ? "E / USE · " + (built.open ? "Close door" : "Open door")
       : door >= 0
@@ -2934,6 +3159,18 @@ function updateHud() {
     meter.hidden = false;
     meter.max = config.health;
     meter.value = gatherTarget.health;
+  }
+  const station = !build ? nearestStation() : undefined;
+  if (station) {
+    $("#hint-title").textContent =
+      STATIONS[station.kind as keyof typeof STATIONS].name.toUpperCase();
+    $("#hint-text").textContent =
+      "E / USE · " +
+      (station.job
+        ? station.job.remaining === 0
+          ? "Collect output"
+          : "Processing · open station"
+        : "Open workshop");
   }
   const loose = !build ? nearestDrop() : undefined;
   if (loose) {
@@ -2986,13 +3223,22 @@ function updatePreview() {
     candidate = target
       ? snapOnStructure(hit, selected, rotation, target, save.pieces)
       : snapPiece(hit, selected, rotation);
-    candidate.material = buildMaterial;
+    candidate.material = isStationKind(selected)
+      ? STATIONS[selected].material
+      : buildMaterial;
     reason = placementReason(
       candidate,
       { ...player, y: vertical },
       save.pieces,
       save.wood,
     );
+    if (!reason && isStationKind(candidate.kind)) {
+      const missing = missingIngredients(
+        inventory(),
+        STATIONS[candidate.kind].extras,
+      );
+      if (missing) reason = "Need " + missing;
+    }
     if (!preview) {
       preview = pieceModel(candidate, true);
       scene.add(preview);
@@ -3008,7 +3254,9 @@ function updatePreview() {
       preview.position.y += 0.02;
     }
     preview.rotation.y = (rotation * Math.PI) / 2;
-    preview.visible = true;
+    preview.visible = !(
+      isStationKind(candidate.kind) && reason.includes("occupied")
+    );
     previewMaterial.color.set(reason ? 0xe5806b : 0x94e4bb);
   }
   $("#placement").textContent =
@@ -3020,11 +3268,13 @@ const interiorFrustum = new THREE.Frustum(),
   interiorView = new THREE.Matrix4();
 function frame(now: number) {
   requestAnimationFrame(frame);
+  const productionDt = Math.min(Math.max(0, (now - lastFrame) / 1000), 1);
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
   clock += dt;
   coast.update(clock);
   harbor.root.visible = Math.hypot(player.x + 60, player.z - 234) < 165;
+  if (playing || stationOpen) tickProduction(productionDt, now);
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
@@ -3294,6 +3544,13 @@ function frame(now: number) {
     heldResource.root.userData.itemSource ?? "",
   );
   canvas.dataset.inventoryOpen = String(inventoryOpen);
+  canvas.dataset.stationOpen = String(stationOpen);
+  canvas.dataset.craftingSources = JSON.stringify(craftingSources());
+  canvas.dataset.productionJobs = JSON.stringify(
+    save.pieces
+      .filter((p) => p.job)
+      .map((p) => ({ id: p.id, kind: p.kind, ...p.job })),
+  );
   canvas.dataset.ammoModels = JSON.stringify(ammoSources());
   canvas.dataset.nearestDrop = nearestDrop()?.id ?? "";
   canvas.dataset.harborSource = harbor.source;

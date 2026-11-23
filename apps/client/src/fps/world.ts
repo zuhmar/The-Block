@@ -1,3 +1,9 @@
+import {
+  isStationKind,
+  STATIONS,
+  readProductionJob,
+  type ProductionJob,
+} from "./crafting";
 import { readInventory, type Inventory } from "./inventory";
 import { WORLD_SIZE, onIsland } from "./coast";
 import {
@@ -50,6 +56,8 @@ export type PieceKind =
   | "floor"
   | "wall"
   | "doorway"
+  | "workbench"
+  | "furnace"
   | "storage"
   | "foundation"
   | "door";
@@ -61,6 +69,7 @@ export type Piece = Point & {
   doorAngle?: number;
   material?: StructureMaterial;
   health?: number;
+  job?: ProductionJob;
 };
 export type Box = Point & { width: number; depth: number };
 export const MAP_SIZE = WORLD_SIZE;
@@ -72,9 +81,14 @@ export const COST: Record<PieceKind, number> = {
   wall: 5,
   doorway: 4,
   storage: 5,
+  workbench: 100,
+  furnace: 50,
 };
 export const pieceCost = (p: Pick<Piece, "kind" | "material">) =>
-  COST[p.kind] * STRUCTURE_MATERIALS[structureMaterial(p)].costMultiplier;
+  COST[p.kind] *
+  (isStationKind(p.kind)
+    ? 1
+    : STRUCTURE_MATERIALS[structureMaterial(p)].costMultiplier);
 export const dismantleRefund = (p: Piece) =>
   Math.floor((pieceCost(p) * structureHealth(p)) / maxStructureHealth(p));
 export const START = { x: 0, z: 14 };
@@ -398,6 +412,14 @@ function resourceBlocked(p: Point, feet = 0, build = false, radius = 0.32) {
 }
 export function pieceBox(p: Piece): Box {
   const odd = p.rotation % 2 === 1;
+  if (isStationKind(p.kind)) {
+    const station = STATIONS[p.kind];
+    return {
+      ...p,
+      width: odd ? station.depth : station.width,
+      depth: odd ? station.width : station.depth,
+    };
+  }
   return {
     ...p,
     width:
@@ -453,9 +475,11 @@ export function blocked(
             ? 0.18
             : s.kind === "foundation"
               ? 0.5
-              : s.kind === "storage"
-                ? 1
-                : 2.5);
+              : isStationKind(s.kind)
+                ? STATIONS[s.kind].height
+                : s.kind === "storage"
+                  ? 1
+                  : 2.5);
       if (bottom >= footHeight + 1.9 - 0.01 || top <= footHeight + 0.02)
         return false;
       if (isPlatform(s))
@@ -596,7 +620,20 @@ export function placementReason(
           : Math.abs(platformTop(p, pieces) - piece.y) < 0.01),
     )
   )
-    return "Place storage on a floor";
+    return isStationKind(piece.kind)
+      ? "Place stations on a floor or foundation"
+      : "Place storage on a floor";
+  if (
+    (isStationKind(piece.kind) || piece.kind === "storage") &&
+    pieces.some(
+      (p) =>
+        (isStationKind(p.kind) || p.kind === "storage") &&
+        p.x === piece.x &&
+        p.z === piece.z &&
+        Math.abs(pieceBase(p, pieces) - pieceBase(piece, pieces)) < 0.01,
+    )
+  )
+    return "This floor space is occupied";
   if (
     pieces.some(
       (p) =>
@@ -695,7 +732,8 @@ export function pieceBase(p: Omit<Piece, "id">, pieces: Piece[]): number {
     )
       ? 0.5
       : 0;
-  if (p.kind === "storage") return surfaceHeight(p, pieces, 0.75);
+  if (p.kind === "storage" || isStationKind(p.kind))
+    return surfaceHeight(p, pieces, 0.75);
   let h = 0.15;
   for (const s of pieces)
     if (isPlatform(s) && s.y === undefined && adjacentEdge(p, s))
@@ -731,7 +769,10 @@ export function snapOnStructure(
   } else if (
     isPlatform(hit) &&
     hit.y !== undefined &&
-    (kind === "wall" || kind === "doorway" || kind === "storage")
+    (kind === "wall" ||
+      kind === "doorway" ||
+      kind === "storage" ||
+      isStationKind(kind))
   )
     candidate.y = platformTop(hit, pieces);
   else if (kind === "door" && hit.kind === "doorway") {
@@ -815,7 +856,7 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
         p.y === undefined &&
         p.x === piece.x &&
         p.z === piece.z) ||
-        (p.kind === "storage" &&
+        ((p.kind === "storage" || isStationKind(p.kind)) &&
           p.x === piece.x &&
           p.z === piece.z &&
           Math.abs(pieceBase(p, pieces) - top) < 0.01) ||
@@ -897,6 +938,9 @@ export function readSave(raw: string | null): Save {
             ? { health: Math.max(1, structureHealth(p)) }
             : {}),
           ...(p.kind === "door" ? { open: !!p.open } : {}),
+          ...(readProductionJob(p.kind, p.job)
+            ? { job: readProductionJob(p.kind, p.job) }
+            : {}),
         })),
       opened: s.opened.filter(
         (n: unknown) =>

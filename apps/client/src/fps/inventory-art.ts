@@ -1,3 +1,4 @@
+import { craftingMaterialModel } from "./crafting-models";
 import { ammoModel } from "./ammo-models";
 import { isBulletAmmo } from "./ammo";
 import * as THREE from "three";
@@ -17,7 +18,11 @@ export async function preloadInventoryArt() {
   );
 }
 function resourceModel(kind: ItemKind) {
-  return models.get(kind)?.clone(true) ?? ammoModel(kind);
+  return (
+    models.get(kind)?.clone(true) ??
+    ammoModel(kind) ??
+    craftingMaterialModel(kind)
+  );
 }
 export function createDroppedItems() {
   const root = new THREE.Group(),
@@ -73,6 +78,10 @@ export function createHeldResource() {
   rig.gun.root.parent!.add(holder);
   const resources = new Map<string, THREE.Group>();
   for (const k of [
+    "sulfur-refined",
+    "metal-fragments",
+    "charcoal",
+    "gunpowder",
     "wood",
     "rock",
     "sulfur",

@@ -81,3 +81,5 @@ For the preserved 2D system, see [the archived README](docs/LEGACY_2D_README.md)
 Ammunition: five bullet types stack to 500 and reload matching guns from carried supplies. Rockets stack to five. Blender models, icons and editable sources: [`/assets/ammo/street-survival-ammo.zip`](https://the-block-tau-eight.vercel.app/assets/ammo/street-survival-ammo.zip). See [inventory details](docs/fps-inventory.md).
 
 Sound effects: original weapon, movement, gathering, building and interaction audio. Adjust effects volume or mute in the pause menu; desktop **M** toggles mute. Preferences save on this device. See [sound details](docs/sound-effects.md).
+
+Player crafting: build a **Crafting bench (7)** or **Furnace (8)** on your floors. Use E / USE nearby to smelt ore with wood fuel, make gunpowder and craft ammunition. Jobs and uncollected outputs save with the station. See [recipes and station behavior](docs/crafting-stations.md).

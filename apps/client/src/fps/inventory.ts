@@ -4,6 +4,10 @@ export const CARRY_SLOTS = 20,
   HOTBAR_SLOTS = 5;
 export const ITEM_KINDS = [
   ...BULLET_AMMO,
+  "sulfur-refined",
+  "metal-fragments",
+  "charcoal",
+  "gunpowder",
   "wood",
   "rock",
   "sulfur",
@@ -23,7 +27,16 @@ export const ITEM_KINDS = [
 export type ItemKind = (typeof ITEM_KINDS)[number];
 export const isHarvestTool = (k: ItemKind) => k === "axe" || k === "pickaxe";
 export const isResource = (k: ItemKind) =>
-  ["wood", "rock", "sulfur", "metal"].includes(k);
+  [
+    "wood",
+    "rock",
+    "sulfur",
+    "metal",
+    "sulfur-refined",
+    "metal-fragments",
+    "charcoal",
+    "gunpowder",
+  ].includes(k);
 export const isGun = (k: ItemKind) =>
   ["pistol", "smg", "rifle", "sniper", "lmg", "rocket"].includes(k);
 export const stackLimit = (k: ItemKind) =>
@@ -38,7 +51,11 @@ export const itemName = (k: ItemKind) =>
       "lmg-ammo": "LMG rounds",
       wood: "Wood",
       rock: "Rock",
-      sulfur: "Sulfur",
+      sulfur: "Sulfur ore",
+      "sulfur-refined": "Refined sulfur",
+      "metal-fragments": "Metal fragments",
+      charcoal: "Charcoal",
+      gunpowder: "Gunpowder",
       metal: "Metal ore",
       rockets: "Rockets",
       axe: "Axe",
@@ -46,13 +63,15 @@ export const itemName = (k: ItemKind) =>
     }) as Partial<Record<ItemKind, string>>
   )[k] ?? WEAPONS[k as WeaponKind].name;
 export const itemIcon = (k: ItemKind) =>
-  ammoModelKind(k)
-    ? `/assets/ammo/ammo-${ammoModelKind(k)}.png`
-    : isHarvestTool(k)
-      ? `/assets/harvest-tools/${k}-preview.png`
-      : isResource(k)
-        ? `/assets/resource-items/item-${k}.png`
-        : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
+  ["sulfur-refined", "metal-fragments", "charcoal", "gunpowder"].includes(k)
+    ? `/assets/crafting/item-${k}.png`
+    : ammoModelKind(k)
+      ? `/assets/ammo/ammo-${ammoModelKind(k)}.png`
+      : isHarvestTool(k)
+        ? `/assets/harvest-tools/${k}-preview.png`
+        : isResource(k)
+          ? `/assets/resource-items/item-${k}.png`
+          : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
 export const itemTool = (k: ItemKind): Tool =>
   isResource(k) || isHarvestTool(k) || isBulletAmmo(k) || k === "rockets"
     ? "hands"

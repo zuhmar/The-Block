@@ -1,0 +1,84 @@
+{
+  "models": [
+    {
+      "id": "workbench",
+      "file": "station-workbench.glb",
+      "icon": "station-workbench.png",
+      "triangles": 3628,
+      "materials": 5,
+      "size": [
+        1.56,
+        1.535,
+        0.8
+      ],
+      "bytes": 172464
+    },
+    {
+      "id": "furnace",
+      "file": "station-furnace.glb",
+      "icon": "station-furnace.png",
+      "triangles": 7408,
+      "materials": 5,
+      "size": [
+        1.274,
+        1.6,
+        1.344
+      ],
+      "bytes": 340464
+    },
+    {
+      "id": "sulfur-refined",
+      "file": "item-sulfur-refined.glb",
+      "icon": "item-sulfur-refined.png",
+      "triangles": 192,
+      "materials": 2,
+      "size": [
+        0.56,
+        0.365,
+        0.56
+      ],
+      "bytes": 16544
+    },
+    {
+      "id": "metal-fragments",
+      "file": "item-metal-fragments.glb",
+      "icon": "item-metal-fragments.png",
+      "triangles": 756,
+      "materials": 1,
+      "size": [
+        0.522,
+        0.19,
+        0.442
+      ],
+      "bytes": 37956
+    },
+    {
+      "id": "charcoal",
+      "file": "item-charcoal.glb",
+      "icon": "item-charcoal.png",
+      "triangles": 100,
+      "materials": 1,
+      "size": [
+        0.556,
+        0.357,
+        0.375
+      ],
+      "bytes": 11860
+    },
+    {
+      "id": "gunpowder",
+      "file": "item-gunpowder.glb",
+      "icon": "item-gunpowder.png",
+      "triangles": 760,
+      "materials": 2,
+      "size": [
+        0.48,
+        0.48,
+        0.38
+      ],
+      "bytes": 51192
+    }
+  ],
+  "units": "metres",
+  "upAxis": "Y"
+}

@@ -1,3 +1,4 @@
+import { preloadCraftingModels } from "./crafting-models";
 import { preloadSoundFiles } from "./sound";
 import { preloadAmmoModels } from "./ammo-models";
 import { preloadInventoryArt } from "./inventory-art";
@@ -25,6 +26,7 @@ void Promise.allSettled([
   preloadHarbor(),
   preloadInventoryArt(),
   preloadAmmoModels(),
+  preloadCraftingModels(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));

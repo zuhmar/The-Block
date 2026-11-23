@@ -1,3 +1,4 @@
+import { isStationKind, STATIONS } from "./crafting";
 import { pieceBase, type Piece } from "./world";
 import {
   C4_STRUCTURE_DAMAGE,
@@ -28,8 +29,17 @@ function parts(p: Piece, pieces: Piece[]): Part[] {
     y += 0.02;
     yaw += p.doorAngle ?? (p.open ? -Math.PI / 2 : 0);
   }
-  const local =
-    p.kind === "doorway"
+  const local = isStationKind(p.kind)
+    ? [
+        {
+          x: 0,
+          y: STATIONS[p.kind].height / 2,
+          width: STATIONS[p.kind].width,
+          height: STATIONS[p.kind].height,
+          depth: STATIONS[p.kind].depth,
+        },
+      ]
+    : p.kind === "doorway"
       ? [
           { x: -0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
           { x: 0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
