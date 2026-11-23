@@ -1,0 +1,16 @@
+[
+  {
+    "type": "flats",
+    "stories": 2,
+    "rooms": 4,
+    "triangles": 9348,
+    "bytes": 777452
+  },
+  {
+    "type": "tenement",
+    "stories": 3,
+    "rooms": 6,
+    "triangles": 14688,
+    "bytes": 1138124
+  }
+]

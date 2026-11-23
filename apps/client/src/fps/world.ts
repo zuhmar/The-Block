@@ -1,4 +1,11 @@
-import { buildingBlocked } from "./building-layout";
+import {
+  BUILDINGS,
+  buildingStories,
+  STORY_HEIGHT,
+  buildingSurface,
+  buildingCeiling,
+  buildingBlocked,
+} from "./building-layout";
 export type Point = { x: number; z: number; y?: number };
 export type PieceKind =
   | "floor"
@@ -51,7 +58,18 @@ export const ROADS = [
 ];
 export { BUILDINGS } from "./building-layout";
 
-export const LOOT = [
+export type Loot = {
+  x: number;
+  z: number;
+  y?: number;
+  width: number;
+  depth: number;
+  height: number;
+  tier: number;
+  name: string;
+  color: number;
+};
+export const LOOT: Loot[] = [
   {
     x: -20,
     z: 6,
@@ -63,7 +81,7 @@ export const LOOT = [
     color: 0xb78a55,
   },
   {
-    x: -24,
+    x: -30,
     z: -17,
     width: 1.1,
     depth: 0.85,
@@ -103,6 +121,42 @@ export const LOOT = [
     color: 0xc5a35c,
   },
 ];
+// Append only: legacy searched indices 0–4 remain stable across this expansion.
+const crateTiers = LOOT.slice(0, 5);
+BUILDINGS.forEach((b, index) => {
+  const stories = buildingStories(b);
+  const spots =
+    stories > 1
+      ? Array.from({ length: stories }, (_, floor) => [
+          {
+            x: -3.2,
+            z: -1.5,
+            y: floor * STORY_HEIGHT,
+            tier: Math.min(4, floor + 2),
+          },
+          {
+            x: -3.2,
+            z: 1.5,
+            y: floor * STORY_HEIGHT,
+            tier: floor === stories - 1 ? 5 : 1,
+          },
+        ]).flat()
+      : [
+          {
+            x: [1.7, 2.3, -0.5, -2, 0, -4.8][index],
+            z: [1.2, 3.8, 1.8, 2.4, -1.8, 1.4][index],
+            y: 0,
+            tier: (index % 3) + 1,
+          },
+        ];
+  for (const spot of spots)
+    LOOT.push({
+      ...crateTiers[spot.tier - 1],
+      x: b.x + spot.x,
+      z: b.z + spot.z,
+      y: spot.y,
+    });
+});
 export const riverX = (z: number) => 47 + Math.sin(z * 0.055) * 3;
 export function segmentDistance(p: Point, a: Point, b: Point) {
   const dx = b.x - a.x,
@@ -181,8 +235,13 @@ export function pieceBox(p: Piece): Box {
 export function blocked(p: Point, pieces: Piece[], footHeight = p.y ?? 0) {
   return (
     blockedTerrain(p) ||
-    buildingBlocked(p, 0.32) ||
-    LOOT.some((b) => inBox(p, b, 0.32)) ||
+    buildingBlocked({ ...p, y: footHeight }, 0.32) ||
+    LOOT.some(
+      (b) =>
+        footHeight + 1.9 > (b.y ?? 0) &&
+        footHeight < (b.y ?? 0) + b.height &&
+        inBox(p, b, 0.32),
+    ) ||
     TREES.some((t) => inBox(p, t, 0.32)) ||
     pieces.some((s) => {
       const bottom = pieceBase(s, pieces),
@@ -395,7 +454,7 @@ export function platformTop(p: Omit<Piece, "id">, pieces: Piece[]) {
   return pieceBase(p, pieces) + (p.kind === "foundation" ? 0.5 : 0.18);
 }
 export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
-  let height = 0;
+  let height = buildingSurface(p, maxHeight);
   for (const piece of pieces)
     if (
       isPlatform(piece) &&
@@ -407,7 +466,7 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   return height;
 }
 export function ceilingHeight(p: Point, pieces: Piece[], feet: number) {
-  let ceiling = Infinity;
+  let ceiling = buildingCeiling(p, feet);
   for (const s of pieces)
     if (s.kind === "floor" && inBox(p, { ...s, width: 2, depth: 2 }, 0.25)) {
       const base = pieceBase(s, pieces);

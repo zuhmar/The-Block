@@ -1,0 +1,115 @@
+{
+  "story": "Enter new multi-room two- and three-story buildings, climb physical stairs, search same-floor visible crates once, descend, and preserve saved progress.",
+  "buildings": [
+    {
+      "type": "flats",
+      "stories": 2,
+      "rooms": 4,
+      "triangles": 9348,
+      "bytes": 777452
+    },
+    {
+      "type": "tenement",
+      "stories": 3,
+      "rooms": 6,
+      "triangles": 14688,
+      "bytes": 1138124
+    }
+  ],
+  "browserRoutes": [
+    {
+      "building": "flats",
+      "phoneTouch": false,
+      "floorsVisited": 2,
+      "searchedUpstairsIndex": 13,
+      "rewardOnce": true,
+      "descendedAndExited": true,
+      "savePreservedAndReloaded": true,
+      "errors": []
+    },
+    {
+      "building": "tenement",
+      "phoneTouch": false,
+      "floorsVisited": 3,
+      "searchedUpstairsIndex": 19,
+      "rewardOnce": true,
+      "descendedAndExited": true,
+      "savePreservedAndReloaded": true,
+      "errors": []
+    },
+    {
+      "building": "flats",
+      "phoneTouch": true,
+      "floorsVisited": 2,
+      "searchedUpstairsIndex": 13,
+      "rewardOnce": true,
+      "descendedAndExited": true,
+      "savePreservedAndReloaded": true,
+      "errors": []
+    }
+  ],
+  "checks": {
+    "fullSuitePassed": 165,
+    "finalFocusedRegressionPassed": 15,
+    "sameFloorLoot": true,
+    "blockedThroughWalls": true,
+    "crateFixtureFootprintsClear": true,
+    "stairApproachesAndLandingsClear": true,
+    "lint": true,
+    "typecheck": true,
+    "productionBuild": true,
+    "phoneHeaderViewports": [
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "brandRight": 146.953125,
+        "locationLeft": 156,
+        "locationRight": 252,
+        "pauseLeft": 260,
+        "bottom": 73.625,
+        "overflow": false
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "brandRight": 146.953125,
+        "locationLeft": 156,
+        "locationRight": 322,
+        "pauseLeft": 330,
+        "bottom": 61.625,
+        "overflow": false
+      },
+      {
+        "viewport": [
+          844,
+          390
+        ],
+        "brandRight": 146.953125,
+        "locationLeft": 156,
+        "locationRight": 776,
+        "pauseLeft": 784,
+        "bottom": 61.625,
+        "overflow": false
+      }
+    ]
+  },
+  "loot": {
+    "total": 21,
+    "indoors": 16,
+    "originalIndicesPreserved": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "limitations": [
+    "Browser tests use software WebGL and emulated touch, not physical-phone performance measurements.",
+    "No new AI navigation, arrest, roof access or inventory systems were added."
+  ]
+}

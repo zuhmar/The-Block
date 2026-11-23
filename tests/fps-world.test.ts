@@ -23,17 +23,17 @@ test("small 3D world has a clear spawn, blocked building walls, trees and water,
   assert(blockedTerrain({ x: riverX(30), z: 30 }));
   assert(!blockedTerrain({ x: 47, z: 7 }));
   assert(blockedTerrain({ x: 63, z: 0 }));
-  assert.equal(LOOT.length, 5);
+  assert(LOOT.length >= 5);
   assert(LOOT[3].width / LOOT[3].depth > LOOT[4].width / LOOT[4].depth);
 });
 test("first-person movement cannot tunnel through a building or player wall", () => {
   const result = movePlayer({ x: 3, z: -3 }, 0, -20, []);
   assert(result.z >= -5.7);
-  const wall: Piece = { id: "w", kind: "wall", x: 0, z: 18, rotation: 0 };
-  const stopped = movePlayer({ x: 0, z: 14 }, 0, 12, [wall]);
-  assert(stopped.z < 18);
-  const slide = movePlayer({ x: 0, z: 17.5 }, 3, 2, [wall]);
-  assert(slide.x > 1);
+  const wall: Piece = { id: "w", kind: "wall", x: 40, z: 42, rotation: 0 };
+  const stopped = movePlayer({ x: 40, z: 38 }, 0, 12, [wall]);
+  assert(stopped.z < 42);
+  const slide = movePlayer({ x: 40, z: 41.5 }, 3, 2, [wall]);
+  assert(slide.x > 41);
 });
 test("floors use a two-meter grid, and walls and doorways snap to supported floor edges", () => {
   const floor: Piece = { ...snapPiece({ x: 0, z: 34 }, "floor", 0), id: "f" };

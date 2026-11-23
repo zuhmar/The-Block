@@ -20,13 +20,13 @@ with sync_playwright() as p:
    else:page.keyboard.up(direction)
   def go(z,direction):
    move(direction);page.wait_for_function('(g)=>{const z=Number(document.querySelector("#world").dataset.position.split(",")[1]);return g.north?z<=g.z:z>=g.z}',arg={'z':z,'north':direction=='w'},timeout=60000);stop(direction)
-  assert json.loads(state()['buildingSources'])==['blender']*6,state()
+  assert json.loads(state()['buildingSources'])==['blender']*8,state()
   page.screenshot(path='work/jail-'+('phone' if mobile else 'desktop')+'-exterior.png')
   go(9,'w');move('w');page.wait_for_timeout(1500);stop('w');assert float(state()['position'].split(',')[1])>7.3
   page.locator('#interact').tap() if mobile else page.keyboard.press('e');page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.doors)[5]>1.55')
   go(4,'w');page.wait_for_function('document.querySelector("#world").dataset.inside==="5"');assert 'CENTRAL JAIL' in page.locator('#zone').inner_text()
   page.screenshot(path='work/jail-'+('phone' if mobile else 'desktop')+'-interior.png');go(-2,'w');go(9,'s');page.wait_for_function('document.querySelector("#world").dataset.inside==="-1"')
   saved=page.evaluate('JSON.parse(localStorage.getItem("'+KEY+'"))');assert saved['wood']==8765 and saved['opened']==[0,4] and saved['pieces'][0]['id']=='existing-house';assert not errors,errors
-  results.append({'phone':mobile,'loadedSixBuildings':True,'doorCollisionAndOpen':True,'enteredHoldingCellAndExited':True,'savePreserved':True,'errors':errors});print(results[-1],flush=True);c.close()
+  results.append({'phone':mobile,'loadedEightBuildings':True,'doorCollisionAndOpen':True,'enteredHoldingCellAndExited':True,'savePreserved':True,'errors':errors});print(results[-1],flush=True);c.close()
  b.close()
 Path('work/jail-district-browser-check.json').write_text(json.dumps({'cases':results,'scope':'Software WebGL browser tests, not physical phone performance.'},indent=2)+'\n')

@@ -59,9 +59,29 @@ export const BUILDINGS = [
     name: "CENTRAL JAIL",
     type: "jail",
   },
+  {
+    x: 0,
+    z: 23,
+    width: 12,
+    depth: 10,
+    height: 6.7,
+    color: 0xd5aa78,
+    name: "COURTYARD FLATS",
+    type: "flats",
+  },
+  {
+    x: -24,
+    z: -25,
+    width: 10,
+    depth: 10,
+    height: 9.9,
+    color: 0xa87968,
+    name: "CORNER TENEMENTS",
+    type: "tenement",
+  },
 ];
 export type Building = (typeof BUILDINGS)[number];
-export type BuildingPoint = { x: number; z: number };
+export type BuildingPoint = { x: number; z: number; y?: number };
 export type Fixture = {
   kind:
     | "shelf"
@@ -81,6 +101,7 @@ export type Fixture = {
   width: number;
   depth: number;
   rotation?: number;
+  y?: number;
 };
 export const DOOR_WIDTH = 1.6,
   OPENING_WIDTH = 1.8,
@@ -102,6 +123,7 @@ export function doorBlocksPoint(
   angle = doorAngles[index],
   radius = 0.32,
 ) {
+  if ((p.y ?? 0) > 2.8) return false;
   const b = BUILDINGS[index],
     dx = p.x - (b.x - DOOR_WIDTH / 2),
     dz = p.z - (b.z + (frontOf(b) * b.depth) / 2);
@@ -137,6 +159,42 @@ function createFixtures(index: number): Fixture[] {
     x = b.width / 2,
     z = b.depth / 2;
   switch (b.type) {
+    case "flats":
+    case "tenement":
+      return Array.from({ length: buildingStories(b) }, (_, floor) => [
+        {
+          kind: "bed" as const,
+          x: -3.3,
+          z: -3.4,
+          width: 1.5,
+          depth: 2.3,
+          y: floor * STORY_HEIGHT,
+        },
+        {
+          kind: "table" as const,
+          x: -3.2,
+          z: 3.5,
+          width: 1.2,
+          depth: 0.8,
+          y: floor * STORY_HEIGHT,
+        },
+        {
+          kind: "cabinet" as const,
+          x: -4.35,
+          z: 4,
+          width: 0.8,
+          depth: 1,
+          y: floor * STORY_HEIGHT,
+        },
+        {
+          kind: "bench" as const,
+          x: 1.4,
+          z: 0,
+          width: 1.2,
+          depth: 0.5,
+          y: floor * STORY_HEIGHT,
+        },
+      ]).flat();
     case "jail":
       return [
         ...[-5.3, 0, 5.3].map((at) => ({
@@ -199,10 +257,168 @@ function createFixtures(index: number): Fixture[] {
       ];
   }
 }
+export const STORY_HEIGHT = 3.2;
+export function buildingStories(b: Building) {
+  return b.type === "flats" ? 2 : b.type === "tenement" ? 3 : 1;
+}
+type Stair = {
+  x: number;
+  startZ: number;
+  run: number;
+  width: number;
+  y: number;
+};
+type Slab = { x: number; z: number; width: number; depth: number; y: number };
+const stairCache = new Map<number, Stair[]>(),
+  slabCache = new Map<number, Slab[]>();
+export function buildingStairs(index: number): Stair[] {
+  const cached = stairCache.get(index);
+  if (cached) return cached;
+  const b = BUILDINGS[index];
+  const stairs = Array.from({ length: buildingStories(b) - 1 }, (_, floor) => ({
+    x: b.width / 2 - 1.35,
+    startZ: frontOf(b) * 3.4,
+    run: 6,
+    width: 1.8,
+    y: floor * STORY_HEIGHT,
+  }));
+  stairCache.set(index, stairs);
+  return stairs;
+}
+export function buildingSlabs(index: number): Slab[] {
+  const cached = slabCache.get(index);
+  if (cached) return cached;
+  const b = BUILDINGS[index],
+    stair = buildingStairs(index)[0];
+  if (!stair) {
+    slabCache.set(index, []);
+    return [];
+  }
+  const left = -b.width / 2 + 0.12,
+    right = b.width / 2 - 0.12,
+    holeLeft = stair.x - 1.05,
+    holeRight = stair.x + 1.05;
+  const holeMin = Math.min(stair.startZ, stair.startZ - frontOf(b) * stair.run),
+    holeMax = Math.max(stair.startZ, stair.startZ - frontOf(b) * stair.run);
+  const slabs = Array.from({ length: buildingStories(b) - 1 }, (_, floor) => [
+    {
+      x: (left + holeLeft) / 2,
+      z: 0,
+      width: holeLeft - left,
+      depth: b.depth - 0.24,
+      y: (floor + 1) * STORY_HEIGHT,
+    },
+    {
+      x: (holeRight + right) / 2,
+      z: 0,
+      width: right - holeRight,
+      depth: b.depth - 0.24,
+      y: (floor + 1) * STORY_HEIGHT,
+    },
+    {
+      x: stair.x,
+      z: (-b.depth / 2 + 0.12 + holeMin) / 2,
+      width: 2.1,
+      depth: holeMin + b.depth / 2 - 0.12,
+      y: (floor + 1) * STORY_HEIGHT,
+    },
+    {
+      x: stair.x,
+      z: (b.depth / 2 - 0.12 + holeMax) / 2,
+      width: 2.1,
+      depth: b.depth / 2 - 0.12 - holeMax,
+      y: (floor + 1) * STORY_HEIGHT,
+    },
+  ]).flat();
+  slabCache.set(index, slabs);
+  return slabs;
+}
+function within(
+  p: BuildingPoint,
+  b: { x: number; z: number; width: number; depth: number },
+  radius = 0,
+) {
+  return (
+    Math.abs(p.x - b.x) <= b.width / 2 + radius &&
+    Math.abs(p.z - b.z) <= b.depth / 2 + radius
+  );
+}
+export function buildingSurface(p: BuildingPoint, maxHeight: number) {
+  let y = 0;
+  BUILDINGS.forEach((b, i) => {
+    const local = { x: p.x - b.x, z: p.z - b.z };
+    for (const slab of buildingSlabs(i))
+      if (within(local, slab) && slab.y <= maxHeight + 0.001)
+        y = Math.max(y, slab.y);
+    for (const stair of buildingStairs(i)) {
+      const progress = ((stair.startZ - local.z) * frontOf(b)) / stair.run;
+      const top = stair.y + Math.max(0, Math.min(1, progress)) * STORY_HEIGHT;
+      if (
+        Math.abs(local.x - stair.x) <= stair.width / 2 &&
+        progress >= 0 &&
+        progress <= 1 &&
+        top <= maxHeight + 0.001
+      )
+        y = Math.max(y, top);
+    }
+  });
+  return y;
+}
+export function buildingCeiling(p: BuildingPoint, feet: number) {
+  let ceiling = Infinity;
+  BUILDINGS.forEach((b, i) => {
+    if (buildingStories(b) < 2) return;
+    const local = { x: p.x - b.x, z: p.z - b.z };
+    for (const slab of buildingSlabs(i))
+      if (within(local, slab, 0.12) && slab.y - 0.18 >= feet + 1.9 - 0.01)
+        ceiling = Math.min(ceiling, slab.y - 0.18);
+    for (const stair of buildingStairs(i)) {
+      const progress = ((stair.startZ - local.z) * frontOf(b)) / stair.run;
+      const underside = stair.y + progress * STORY_HEIGHT - 0.2;
+      if (
+        progress >= 0 &&
+        progress <= 1 &&
+        Math.abs(local.x - stair.x) < stair.width / 2 + 0.12 &&
+        underside >= feet + 1.9 - 0.01
+      )
+        ceiling = Math.min(ceiling, underside);
+    }
+    if (within(local, { x: 0, z: 0, width: b.width, depth: b.depth }))
+      ceiling = Math.min(ceiling, b.height - 0.15);
+  });
+  return ceiling;
+}
 export const FURNITURE = BUILDINGS.map((_, i) => createFixtures(i));
 export const fixtures = (index: number) => FURNITURE[index];
-export function partitions(index: number) {
+export type Partition = {
+  x: number;
+  z: number;
+  y?: number;
+  width: number;
+  depth: number;
+  height: number;
+};
+function createPartitions(index: number): Partition[] {
   const b = BUILDINGS[index];
+  if (buildingStories(b) > 1)
+    return Array.from({ length: buildingStories(b) }, (_, floor) => [
+      ...[-4, 0, 4].map((z) => ({
+        x: -1.3,
+        z,
+        y: floor * STORY_HEIGHT,
+        width: 0.16,
+        depth: 2,
+        height: STORY_HEIGHT - 0.18,
+      })),
+      {
+        x: (-b.width / 2 + 0.12 - 1.3) / 2,
+        z: 0,
+        y: floor * STORY_HEIGHT,
+        width: b.width / 2 - 1.3 - 0.12,
+        depth: 0.16,
+        height: STORY_HEIGHT - 0.18,
+      },
+    ]).flat();
   if (b.type === "jail")
     return [
       ...[-2.65, 2.65].map((x) => ({
@@ -229,8 +445,13 @@ export function partitions(index: number) {
       ]
     : [];
 }
+const PARTITIONS = BUILDINGS.map((_, index) => createPartitions(index));
+export function partitions(index: number) {
+  return PARTITIONS[index];
+}
 export function buildingBlocked(p: BuildingPoint, radius = 0.32) {
   return BUILDINGS.some((b, i) => {
+    const feet = p.y ?? 0;
     const x = p.x - b.x,
       z = p.z - b.z,
       hx = b.width / 2,
@@ -251,20 +472,50 @@ export function buildingBlocked(p: BuildingPoint, radius = 0.32) {
     if (
       Math.abs(z - front * hz) < WALL / 2 + radius &&
       Math.abs(x) < hx + radius &&
-      Math.abs(x) > DOOR_WIDTH / 2 - radius
+      (feet > 2.8 || Math.abs(x) > DOOR_WIDTH / 2 - radius)
     )
       return true;
     if (doorBlocksPoint(i, p, doorAngles[i], radius)) return true;
     if (
       partitions(i).some(
         (f) =>
+          feet + 1.9 > (f.y ?? 0) &&
+          feet < (f.y ?? 0) + f.height &&
           Math.abs(x - f.x) < f.width / 2 + radius &&
           Math.abs(z - f.z) < f.depth / 2 + radius,
       )
     )
       return true;
+    if (
+      buildingStairs(i).some((stair) => {
+        const progress = ((stair.startZ - z) * frontOf(b)) / stair.run;
+        const top = stair.y + progress * STORY_HEIGHT;
+        if (
+          progress > 0 &&
+          progress < 1 &&
+          feet < top + 0.9 &&
+          feet + 1.9 > top &&
+          [-1, 1].some(
+            (side) =>
+              Math.abs(x - (stair.x + side * (stair.width / 2 + 0.07))) <
+              0.025 + radius,
+          )
+        )
+          return true;
+        return (
+          Math.abs(x - stair.x) < stair.width / 2 + radius &&
+          progress > 0 &&
+          progress < 1 &&
+          feet + 1.9 > stair.y + progress * STORY_HEIGHT - 0.2 &&
+          feet < stair.y + progress * STORY_HEIGHT - 0.45
+        );
+      })
+    )
+      return true;
     return fixtures(i).some(
       (f) =>
+        feet + 1.9 > (f.y ?? 0) &&
+        feet < (f.y ?? 0) + 1.9 &&
         Math.abs(x - f.x) < f.width / 2 + radius &&
         Math.abs(z - f.z) < f.depth / 2 + radius,
     );

@@ -4,12 +4,17 @@ import {
   frontOf,
   fixtures,
   partitions,
+  buildingSlabs,
+  buildingStairs,
+  STORY_HEIGHT,
   DOOR_WIDTH,
   OPENING_WIDTH,
   WALL,
 } from "./building-layout";
 import { createBuildingModel } from "./building-models";
 const URLS: Record<string, string> = {
+  flats: new URL("./models/buildings/flats.glb", import.meta.url).href,
+  tenement: new URL("./models/buildings/tenement.glb", import.meta.url).href,
   jail: new URL("./models/buildings/jail.glb", import.meta.url).href,
   store: new URL("./models/buildings/store.glb", import.meta.url).href,
   shelter: new URL("./models/buildings/shelter.glb", import.meta.url).href,
@@ -97,10 +102,25 @@ export function createBuildingShotProxy(index: number) {
       pallet: 1,
       workbench: 2.25,
     }[f.kind];
-    box(root, f.x, height / 2, f.z, f.width, height, f.depth);
+    box(root, f.x, (f.y ?? 0) + height / 2, f.z, f.width, height, f.depth);
   }
   for (const p of partitions(index))
-    box(root, p.x, p.height / 2, p.z, p.width, p.height, p.depth);
+    box(root, p.x, (p.y ?? 0) + p.height / 2, p.z, p.width, p.height, p.depth);
+  for (const slab of buildingSlabs(index))
+    box(root, slab.x, slab.y - 0.09, slab.z, slab.width, 0.18, slab.depth);
+  for (const stair of buildingStairs(index))
+    for (let step = 0; step < 16; step++) {
+      const height = ((step + 1) / 16) * STORY_HEIGHT;
+      box(
+        root,
+        stair.x,
+        stair.y + height - 0.1,
+        stair.startZ - (front * (step + 0.5) * stair.run) / 16,
+        stair.width,
+        0.2,
+        stair.run / 16,
+      );
+    }
   // Match the bedroom partition from the same source as player collision.
   return { root, door, doorPanel };
 }

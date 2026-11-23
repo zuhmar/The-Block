@@ -19,6 +19,8 @@ import {
   animateDoors,
   toggleDoor,
   containingBuilding,
+  buildingStories,
+  STORY_HEIGHT,
   resetDoors,
 } from "./building-layout";
 import { WEAPONS, canShoot, type WeaponKind, type Tool } from "./weapons";
@@ -413,7 +415,7 @@ const lootMeshes: THREE.Group[] = [];
 LOOT.forEach((c, index) => {
   const visual = lootChestModel(c.tier);
   const g = new THREE.Group();
-  g.position.set(c.x, 0, c.z);
+  g.position.set(c.x, c.y ?? 0, c.z);
   g.userData.loot = index;
   scene.add(g);
   const proxy = new THREE.Group();
@@ -450,10 +452,10 @@ LOOT.forEach((c, index) => {
   }
 });
 const heading = sign("JAIL DISTRICT  /  COUNTRYSIDE →", 7, 0.8);
-heading.position.set(0, 3.2, 26);
+heading.position.set(12, 3.2, 26);
 heading.rotation.y = Math.PI;
 scene.add(heading);
-for (const x of [-3, 3]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
+for (const x of [9, 15]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
 const shotObstacles: THREE.Object3D[] = [
   trunks,
   crowns,
@@ -1161,6 +1163,18 @@ function nearestLoot() {
     index = -1;
   LOOT.forEach((c, i) => {
     const d = Math.hypot(c.x - player.x, c.z - player.z);
+    if (d >= distance || Math.abs((c.y ?? 0) - vertical) > 1.1) return;
+    const from = new THREE.Vector3(player.x, vertical + 1.65, player.z),
+      target = new THREE.Vector3(c.x, (c.y ?? 0) + c.height * 0.5, c.z);
+    coverRay.set(from, target.clone().sub(from).normalize());
+    coverRay.far = from.distanceTo(target) - 0.08;
+    if (
+      coverRay.intersectObjects(
+        [...shotObstacles, ...construction.children],
+        true,
+      ).length
+    )
+      return;
     if (d < distance) {
       index = i;
       distance = d;
@@ -1169,6 +1183,7 @@ function nearestLoot() {
   return index;
 }
 function nearestDoor() {
+  if (vertical > 2.2) return -1;
   let nearest = -1,
     distance = 2.4;
   for (let i = 0; i < BUILDINGS.length; i++) {
@@ -1603,8 +1618,12 @@ function updateHud() {
         : roadDistance(player) < 5
           ? "OUTBOUND ROAD"
           : "OPEN MEADOW";
+  const floorLabel =
+    inside >= 0 && buildingStories(BUILDINGS[inside]) > 1
+      ? `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
+      : "";
   $("#coordinates").textContent =
-    `${Math.round(player.x)} E · ${Math.round(player.z)} S`;
+    `${floorLabel}${Math.round(player.x)} E · ${Math.round(player.z)} S`;
   $("#fps").textContent = `${fps} FPS`;
   for (const b of document.querySelectorAll<HTMLButtonElement>("[data-piece]"))
     b.classList.toggle("selected", b.dataset.piece === selected);
@@ -1722,7 +1741,7 @@ function frame(now: number) {
   needsRender = false;
   if (playing) {
     animateDoors(dt, [
-      player,
+      { ...player, y: vertical },
       ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
     ]);
     buildingModels.forEach((model, i) => {

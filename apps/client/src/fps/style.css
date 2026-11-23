@@ -440,9 +440,14 @@ h1 em {
 .touch header {
   padding: 20px 16px;
 }
+.touch .location {
+  left: 156px;
+  right: 68px;
+  transform: none;
+}
 .touch .location b {
-  font-size: 14px;
-  letter-spacing: 2px;
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 .touch .location span {
   font-size: 9px;

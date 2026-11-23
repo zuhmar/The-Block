@@ -2,6 +2,10 @@ import * as THREE from "three";
 import {
   BUILDINGS,
   fixtures,
+  buildingSlabs,
+  buildingStairs,
+  buildingStories,
+  STORY_HEIGHT,
   frontOf,
   DOOR_WIDTH,
   OPENING_WIDTH,
@@ -625,6 +629,47 @@ export function createBuildingModel(
       );
   else if (b.type === "home")
     box(root, "living-room-rug", -1.25, 0.024, -1, 2.1, 0.008, 2.9, 0x768b7c);
+  if (buildingStories(b) > 1) {
+    for (const p of partitions(index))
+      box(
+        interior,
+        "room partition",
+        p.x,
+        (p.y ?? 0) + p.height / 2,
+        p.z,
+        p.width,
+        p.height,
+        p.depth,
+        0xd3cdbb,
+      );
+    for (const slab of buildingSlabs(index))
+      box(
+        interior,
+        "upper floor",
+        slab.x,
+        slab.y - 0.09,
+        slab.z,
+        slab.width,
+        0.18,
+        slab.depth,
+        0x9b9278,
+      );
+    for (const stair of buildingStairs(index))
+      for (let step = 0; step < 16; step++) {
+        const height = ((step + 1) / 16) * STORY_HEIGHT;
+        box(
+          interior,
+          "stair",
+          stair.x,
+          stair.y + height - 0.1,
+          stair.startZ - (front * (step + 0.5) * stair.run) / 16,
+          stair.width,
+          0.2,
+          stair.run / 16,
+          0x9b9278,
+        );
+      }
+  }
   for (const f of fixtures(index)) furnish(f);
   for (const z of [-b.depth * 0.23, b.depth * 0.23]) {
     box(root, "ceiling-fixture", 0, 3.17, z, 1.4, 0.08, 0.36, 0x596a60);
@@ -640,7 +685,7 @@ export function createBuildingModel(
   function furnish(f: Fixture) {
     const g = new THREE.Group();
     g.name = f.kind;
-    g.position.set(f.x, 0, f.z);
+    g.position.set(f.x, f.y ?? 0, f.z);
     interior.add(g);
     const w = f.width,
       d = f.depth;
