@@ -1,0 +1,180 @@
+#storage-overlay[hidden] {
+  display: none !important;
+}
+#storage-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: #090d14d9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+}
+.storage-card {
+  width: min(960px, 100%);
+  max-height: 94dvh;
+  overflow: auto;
+  background: linear-gradient(145deg, #282d37, #171b22);
+  color: #f5ead9;
+  border: 1px solid #79654b;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 20px 90px #0008;
+}
+.storage-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.storage-heading h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 32px;
+  margin: 3px 0;
+}
+.storage-heading button,
+.storage-controls button {
+  min-height: 44px;
+}
+.storage-guide,
+#storage-feedback {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #bab8b0;
+}
+.storage-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.storage-columns h3 {
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: space-between;
+}
+.storage-columns small {
+  color: #f2ac56;
+}
+.storage-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+}
+.storage-grid .inventory-slot {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 56px;
+  min-width: 0;
+  border: 1px solid #79654b70;
+  border-radius: 6px;
+  background: #11151d;
+  overflow: hidden;
+  padding: 5px;
+}
+.storage-grid .inventory-slot.selected {
+  border-color: #ffc77c;
+  background: #51412c;
+}
+.storage-grid img {
+  width: 75%;
+  height: 65%;
+  object-fit: contain;
+}
+.storage-grid .item-name {
+  font-size: 9px;
+  line-height: 1.1;
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+}
+.storage-grid .item-quantity {
+  position: absolute;
+  right: 5px;
+  top: 3px;
+  font-size: 12px;
+  color: #f2ac56;
+}
+.storage-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #79654b70;
+}
+.storage-controls > b {
+  margin-right: auto;
+}
+.storage-controls label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 13px;
+}
+.storage-controls select {
+  padding: 10px;
+  background: #171b22;
+  color: #f5ead9;
+  border: 1px solid #79654b;
+  border-radius: 5px;
+}
+.storage-controls button:disabled {
+  opacity: 0.4;
+}
+#storage-feedback {
+  min-height: 20px;
+  margin-bottom: 0;
+}
+@media (max-width: 650px) {
+  #storage-overlay {
+    padding: 8px;
+  }
+  .storage-card {
+    padding: 14px;
+    max-height: 96dvh;
+  }
+  .storage-heading h2 {
+    font-size: 25px;
+  }
+  .storage-columns {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .storage-grid {
+    gap: 5px;
+  }
+  .storage-grid .inventory-slot {
+    aspect-ratio: auto;
+    height: 56px;
+  }
+  .storage-guide {
+    font-size: 11px;
+  }
+  .storage-columns h3 {
+    margin: 8px 0;
+  }
+  .storage-controls {
+    gap: 9px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+  .storage-controls > b {
+    width: 100%;
+    font-size: 13px;
+  }
+  .storage-controls label {
+    flex: 1;
+  }
+  .storage-controls select {
+    max-width: 120px;
+  }
+  #storage-feedback {
+    font-size: 11px;
+  }
+}

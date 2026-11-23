@@ -1,3 +1,4 @@
+import { readStorage, type StorageSlots } from "./storage";
 import {
   isStationKind,
   STATIONS,
@@ -70,6 +71,7 @@ export type Piece = Point & {
   material?: StructureMaterial;
   health?: number;
   job?: ProductionJob;
+  contents?: StorageSlots;
 };
 export type Box = Point & { width: number; depth: number };
 export const MAP_SIZE = WORLD_SIZE;
@@ -938,6 +940,9 @@ export function readSave(raw: string | null): Save {
             ? { health: Math.max(1, structureHealth(p)) }
             : {}),
           ...(p.kind === "door" ? { open: !!p.open } : {}),
+          ...(p.kind === "storage"
+            ? { contents: readStorage(p.contents) }
+            : {}),
           ...(readProductionJob(p.kind, p.job)
             ? { job: readProductionJob(p.kind, p.job) }
             : {}),

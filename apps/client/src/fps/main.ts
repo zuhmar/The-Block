@@ -1,3 +1,5 @@
+import { emptyStorage, transferStorage } from "./storage";
+import { createStorageDialog } from "./storage-ui";
 import {
   STATIONS,
   isStationKind,
@@ -2011,7 +2013,7 @@ let stationOpen = false,
   lastStationRender = 0;
 function reachableStation(piece: Piece) {
   if (
-    !isStationKind(piece.kind) ||
+    (!isStationKind(piece.kind) && piece.kind !== "storage") ||
     Math.hypot(piece.x - player.x, piece.z - player.z) > 3.2 ||
     Math.abs(pieceBase(piece, save.pieces) - vertical) > 1.1
   )
@@ -2030,13 +2032,43 @@ function reachableStation(piece: Piece) {
 }
 function nearestStation() {
   return save.pieces
-    .filter((p) => isStationKind(p.kind) && reachableStation(p))
+    .filter(
+      (p) =>
+        (isStationKind(p.kind) || p.kind === "storage") && reachableStation(p),
+    )
     .sort(
       (a, b) =>
         Math.hypot(a.x - player.x, a.z - player.z) -
         Math.hypot(b.x - player.x, b.z - player.z),
     )[0];
 }
+const storageDialog = createStorageDialog({
+  inventory,
+  slots: () => {
+    const p = save.pieces.find(
+      (p) => p.id === stationId && p.kind === "storage",
+    );
+    return p ? (p.contents ??= emptyStorage()) : emptyStorage();
+  },
+  close: () => closeStation(),
+  transfer(side, index, quantity) {
+    const p = save.pieces.find(
+      (p) => p.id === stationId && p.kind === "storage",
+    );
+    if (!stationOpen || !p || !reachableStation(p)) return 0;
+    storeCurrentGun();
+    p.contents ??= emptyStorage();
+    const n =
+      side === "bag"
+        ? transferStorage(inventory().slots, p.contents, index, quantity)
+        : transferStorage(p.contents, inventory().slots, index, quantity);
+    if (n) {
+      inventoryChanged();
+      sound.play("pickup", { ui: true, gain: 0.25 });
+    }
+    return n;
+  },
+});
 const stationDialog = createStationDialog({
   inventory,
   piece: () => save.pieces.find((p) => p.id === stationId),
@@ -2083,12 +2115,14 @@ function openStation(piece: Piece) {
   sound.play("ui-open", { ui: true, gain: 0.2 });
   persist();
   if (document.pointerLockElement) document.exitPointerLock();
-  stationDialog.open();
+  if (piece.kind === "storage") storageDialog.open();
+  else stationDialog.open();
   canvas.dataset.stationOpen = "true";
 }
 function closeStation(resume = true) {
   if (!stationOpen) return;
   stationDialog.close();
+  storageDialog.close();
   stationOpen = false;
   stationId = undefined;
   playing = resume && resumeAfterStation && health > 0;
@@ -2116,7 +2150,8 @@ function tickProduction(seconds: number, now: number) {
     }
   }
   if (stationOpen && now - lastStationRender > 150) {
-    stationDialog.render();
+    if (save.pieces.find((p) => p.id === stationId)?.kind !== "storage")
+      stationDialog.render();
     lastStationRender = now;
     canvas.dataset.productionJobs = JSON.stringify(
       save.pieces
@@ -2407,6 +2442,8 @@ function remove() {
     );
   if (isStationKind(p.kind) && p.job)
     return toast("Collect or cancel this station’s job before dismantling");
+  if (p.kind === "storage" && p.contents?.some(Boolean))
+    return toast("Empty this storage chest before dismantling it");
   const refund = dismantleRefund(p);
   const refundInventory = structuredClone(inventory());
   if (addItem(refundInventory, "wood", refund) !== refund)
@@ -3183,15 +3220,20 @@ function updateHud() {
   }
   const station = !build ? nearestStation() : undefined;
   if (station) {
-    $("#hint-title").textContent =
-      STATIONS[station.kind as keyof typeof STATIONS].name.toUpperCase();
+    $("#hint-title").textContent = (
+      station.kind === "storage"
+        ? "Storage chest"
+        : STATIONS[station.kind as keyof typeof STATIONS].name
+    ).toUpperCase();
     $("#hint-text").textContent =
       "E / USE · " +
-      (station.job
-        ? station.job.remaining === 0
-          ? "Collect output"
-          : "Processing · open station"
-        : "Open workshop");
+      (station.kind === "storage"
+        ? "Open storage · 20 slots"
+        : station.job
+          ? station.job.remaining === 0
+            ? "Collect output"
+            : "Processing · open station"
+          : "Open workshop");
   }
   const loose = !build ? nearestDrop() : undefined;
   if (loose) {
