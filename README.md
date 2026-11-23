@@ -79,3 +79,5 @@ The full automated suite retains legacy backend checks, which require local Post
 For the preserved 2D system, see [the archived README](docs/LEGACY_2D_README.md). `pnpm dev:legacy` starts the preserved backend and asset pipeline, but the frontend entry now points to the 3D prototype.
 
 Ammunition: five bullet types stack to 500 and reload matching guns from carried supplies. Rockets stack to five. Blender models, icons and editable sources: [`/assets/ammo/street-survival-ammo.zip`](https://the-block-tau-eight.vercel.app/assets/ammo/street-survival-ammo.zip). See [inventory details](docs/fps-inventory.md).
+
+Sound effects: original weapon, movement, gathering, building and interaction audio. Adjust effects volume or mute in the pause menu; desktop **M** toggles mute. Preferences save on this device. See [sound details](docs/sound-effects.md).

@@ -1532,5 +1532,56 @@ h1 em {
   }
 }
 
-#ammo-icon { width: 25px; height: 32px; object-fit: contain; flex-shrink: 0; }
-#ammo-icon[hidden] { display: none; }
+#ammo-icon {
+  width: 25px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+#ammo-icon[hidden] {
+  display: none;
+}
+
+.sound-settings {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  margin-top: 14px;
+  border: 1px solid #b3c3a735;
+  border-radius: 8px;
+  background: #152e2680;
+  text-align: left;
+}
+.sound-settings button {
+  min-height: 44px;
+  min-width: 106px;
+  font-size: 11px;
+}
+.sound-settings button[aria-pressed="true"] {
+  color: #e5c89d;
+  border-color: #b08a59;
+}
+.sound-settings label {
+  flex: 1;
+  min-width: 0;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.sound-settings output {
+  float: right;
+  letter-spacing: 0;
+  color: #e4d29a;
+}
+.sound-settings input {
+  display: block;
+  width: 100%;
+  min-height: 34px;
+  margin: 2px 0 -4px;
+  accent-color: #c5b172;
+  cursor: pointer;
+}
+.sound-settings input:focus-visible {
+  outline: 2px solid #e7d795;
+  outline-offset: 2px;
+}

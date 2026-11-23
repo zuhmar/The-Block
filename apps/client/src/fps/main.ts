@@ -1,3 +1,9 @@
+import {
+  GameSound,
+  FootstepClock,
+  spatialSound,
+  type SoundName,
+} from "./sound";
 import { ammoFor, isBulletAmmo, BULLET_AMMO, LOOT_AMMO } from "./ammo";
 import { bulletModel, rocketModel, ammoSources } from "./ammo-models";
 import { advanceInventoryReload } from "./ammo-loadout";
@@ -155,11 +161,60 @@ $("#app").innerHTML = `
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
 document.body.classList.toggle("touch", touch);
+const sound = new GameSound(),
+  footsteps = new FootstepClock();
+function syncSoundControls() {
+  const settings = sound.getSettings(),
+    silent = settings.muted || settings.volume === 0;
+  const button = $<HTMLButtonElement>("#sound-mute");
+  button.textContent = silent ? "SOUND OFF" : "SOUND ON";
+  button.setAttribute("aria-pressed", String(settings.muted));
+  button.setAttribute(
+    "aria-label",
+    silent ? "Unmute sound effects" : "Mute sound effects",
+  );
+  $<HTMLInputElement>("#sound-volume").value = String(
+    Math.round(settings.volume * 100),
+  );
+  $("#sound-level").textContent = Math.round(settings.volume * 100) + "%";
+  canvas.dataset.audio = JSON.stringify(sound.diagnostics());
+}
+$("#sound-mute").addEventListener("click", () => {
+  sound.toggleMute();
+  syncSoundControls();
+  void sound.unlock().then(syncSoundControls);
+});
+$("#sound-volume").addEventListener("input", (e) => {
+  sound.setVolume(Number((e.target as HTMLInputElement).value) / 100);
+  syncSoundControls();
+});
+$("#sound-volume").addEventListener("change", () => {
+  void sound
+    .unlock()
+    .then(() => sound.play("ui-open", { ui: true, gain: 0.2 }));
+});
+window.addEventListener(
+  "pointerdown",
+  () => {
+    if (playing || inventoryOpen) void sound.unlock();
+  },
+  { passive: true },
+);
+function playAt(
+  name: SoundName,
+  source: { x: number; z: number },
+  gain = 0.7,
+  reach = 90,
+) {
+  const spatial = spatialSound(player, yaw, source, reach);
+  sound.play(name, { ...spatial, gain: gain * spatial.gain });
+}
+
 const SAVE_KEY = "street-survival:3d-prototype:v1";
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let save = readSave(null),
@@ -1102,6 +1157,7 @@ function enemyFrame(dt: number) {
         bulletModel(enemy.kind === "swat" ? "rifle" : "pistol") ??
         new THREE.Mesh(bulletGeometry, bulletMaterial);
       mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+      playAt(enemy.kind === "swat" ? "rifle" : "pistol", enemy, 0.65);
       mesh.position.copy(muzzlePoint);
       scene.add(mesh);
       enemyBullets.push({
@@ -1124,6 +1180,7 @@ function enemyFrame(dt: number) {
     if (!blocked && segmentHitsPlayer(a, end, player, vertical)) {
       health = Math.max(0, health - b.damage);
       damageFlash = 0.25;
+      sound.play("hurt", { gain: 0.6, interval: 0.15 });
       toast("Enemy hit you · find cover or keep moving");
       b.life = 0;
     }
@@ -1195,6 +1252,7 @@ let loadout = newWeaponState();
 const lastExplosiveUse: Partial<Record<ChargeKind, number>> = {};
 let detonationRemaining = 0,
   reloadRequested = false;
+let reloadSoundStage = 0;
 let useRemaining = 0,
   explosiveLatch = false,
   projectileSerial = 0,
@@ -1317,6 +1375,14 @@ function spawnExplosive(
   else useSelected(inventory());
   persist();
   shotSerial++;
+  sound.play(
+    kind === "rocket"
+      ? "rocket-launch"
+      : kind === "grenade"
+        ? "grenade-throw"
+        : "c4-place",
+    { gain: 0.8 },
+  );
   if (kind === "rocket") {
     recoilRemaining = 1;
     flashRemaining = 0.055;
@@ -1390,6 +1456,7 @@ function spawnExplosive(
 }
 function explode(p: Projectile) {
   explosionSerial++;
+  playAt("explosion", p.position, 1, 150);
   const center = new THREE.Vector3(p.position.x, p.position.y, p.position.z),
     spec = BLAST[p.kind];
   for (const u of enemies) {
@@ -1420,6 +1487,7 @@ function explode(p: Projectile) {
     )
       selfDamage = 0;
     health = Math.max(0, health - selfDamage);
+    if (selfDamage > 0) sound.play("hurt", { gain: 0.65, interval: 0.15 });
     if (health <= 0) {
       $("#defeated").hidden = false;
       resetInput();
@@ -1474,7 +1542,10 @@ function explode(p: Projectile) {
 }
 function detonateC4() {
   if (!playing || health <= 0) return;
-  if (projectiles.some((p) => p.kind === "c4")) detonationRemaining = 0.5;
+  if (projectiles.some((p) => p.kind === "c4")) {
+    detonationRemaining = 0.5;
+    sound.play("detonate", { gain: 0.5 });
+  }
   for (const p of [...projectiles]) if (p.kind === "c4") explode(p);
 }
 $("#detonate").addEventListener("click", detonateC4);
@@ -1624,6 +1695,7 @@ function beginHarvest() {
   }
   setAim(false);
   harvestAction = { id: target.id, kind: target.kind, elapsed: 0, hit: false };
+  sound.play("punch-swing", { gain: 0.18, pitch: 0.8 });
   viewModel.root.visible = false;
   harvestView.root.visible = true;
   return true;
@@ -1647,6 +1719,10 @@ function updateHarvest(dt: number) {
         const result = resourceWorld.hit(action.id, Date.now());
         if (result) {
           const awarded = addItem(inventory(), result.resource, result.amount);
+          sound.play(config.action === "chop" ? "chop" : "mine", {
+            gain: 0.6,
+            pitch: 0.94 + Math.random() * 0.12,
+          });
           lastHarvest = {
             id: target.id,
             kind: target.kind,
@@ -1657,6 +1733,9 @@ function updateHarvest(dt: number) {
             amount: awarded,
           };
           if (result.depleted) {
+            sound.play(config.action === "chop" ? "tree-fall" : "node-break", {
+              gain: 0.65,
+            });
             nature.depleted(target, player);
             nature.update(player, 0);
           }
@@ -1712,6 +1791,7 @@ function toggleBuild() {
   reloadRequested = false;
   useRemaining = 0;
   build = !build;
+  sound.play("equip", { gain: 0.25 });
   setAim(false);
   $("#build-panel").hidden = !build;
   $("#build-tool").classList.toggle("selected", build);
@@ -1764,6 +1844,7 @@ function equip(next: Tool) {
   muzzle = viewModel.flash;
   recoilRemaining = flashRemaining = 0;
   tool = next;
+  sound.play("equip", { gain: 0.3 });
   refreshHotbar();
 }
 let inventoryNoticeAt = -Infinity;
@@ -1843,13 +1924,19 @@ const inventoryDialog = createInventoryDialog({
     if (!atReserve()) return false;
     storeCurrentGun();
     const ok = storeStack(inventory(), id);
-    if (ok) inventoryChanged();
+    if (ok) {
+      inventoryChanged();
+      sound.play("pickup", { ui: true, gain: 0.2, pitch: 0.85 });
+    }
     return ok;
   },
   withdraw(kind) {
     if (!atReserve()) return 0;
     const n = withdrawStack(inventory(), kind);
-    if (n) inventoryChanged();
+    if (n) {
+      inventoryChanged();
+      sound.play("pickup", { ui: true, gain: 0.2 });
+    }
     return n;
   },
   drop(id) {
@@ -1870,8 +1957,10 @@ const inventoryDialog = createInventoryDialog({
       }
     }
     const ok = dropStack(inventory(), id, point);
-    if (ok) inventoryChanged();
-    else notifyInventory("Too many dropped stacks nearby");
+    if (ok) {
+      inventoryChanged();
+      sound.play("pickup", { ui: true, gain: 0.2, pitch: 0.85 });
+    } else notifyInventory("Too many dropped stacks nearby");
     return ok;
   },
 });
@@ -1888,7 +1977,10 @@ function openInventory() {
   playing = false;
   persist();
   if (document.pointerLockElement) document.exitPointerLock();
+  sound.setPaused(true);
+  sound.play("ui-open", { ui: true, gain: 0.2 });
   inventoryDialog.open();
+  canvas.dataset.audio = JSON.stringify(sound.diagnostics());
 }
 function closeInventory() {
   if (!inventoryOpen) return;
@@ -1899,6 +1991,9 @@ function closeInventory() {
   persist();
   updateHud();
   playing = resumeAfterInventory && health > 0;
+  sound.setPaused(!playing);
+  sound.play("ui-close", { ui: true, gain: 0.2 });
+  canvas.dataset.audio = JSON.stringify(sound.diagnostics());
   lastFrame = performance.now();
   $("#inventory-button").focus();
   if (playing && !touch) captureMouse();
@@ -1926,6 +2021,7 @@ function nearestDrop() {
   return result;
 }
 function resetInput() {
+  footsteps.reset();
   cancelHarvest();
   setAim(false);
   keys.clear();
@@ -1940,6 +2036,8 @@ function pause() {
   if (inventoryOpen) return;
   persist();
   playing = false;
+  sound.setPaused(true);
+  canvas.dataset.audio = JSON.stringify(sound.diagnostics());
   resetInput();
   $("#menu").hidden = false;
   $("#start").innerHTML = "RESUME EXPLORING <span>↗</span>";
@@ -1953,6 +2051,10 @@ function captureMouse() {
 }
 function start() {
   playing = true;
+  sound.setPaused(false);
+  void sound.unlock().then(() => {
+    if (playing) sound.play("ui-open", { gain: 0.2 });
+  });
   $("#hud").hidden = false;
   $("#menu").hidden = true;
   lastFrame = performance.now();
@@ -2058,6 +2160,14 @@ function place() {
     health: maxStructureHealth(candidate),
   };
   save.pieces.push(p);
+  sound.play(
+    p.material === "stone"
+      ? "build-stone"
+      : p.material === "metal"
+        ? "build-metal"
+        : "build-wood",
+    { gain: 0.65 },
+  );
   takeItem(inventory(), "wood", pieceCost(p));
   reconcileEquipment();
   rebuildConstruction();
@@ -2104,6 +2214,7 @@ function remove() {
   if (roomFor(inventory(), "wood") < refund)
     return toast("Make room for returned wood before dismantling");
   save.pieces = save.pieces.filter((s) => s.id !== p.id);
+  sound.play("dismantle", { gain: 0.55 });
   rebuildConstruction();
   addItem(inventory(), "wood", refund);
   persist();
@@ -2197,6 +2308,7 @@ function interact() {
     const n = pickupDrop(inventory(), drop.id);
     if (!n) return toast("Inventory full");
     inventoryChanged();
+    sound.play("pickup", { gain: 0.35 });
     return toast("Picked up " + n + " " + itemName(drop.kind));
   }
   if (nearestResource()) {
@@ -2207,6 +2319,7 @@ function interact() {
   if (built) {
     built.doorAngle ??= built.open ? -Math.PI / 2 : 0;
     built.open = !built.open;
+    sound.play(built.open ? "door-open" : "door-close", { gain: 0.5 });
     persist();
     updateHud();
     return toast(built.open ? "Opening wood door" : "Closing wood door");
@@ -2214,6 +2327,7 @@ function interact() {
   const door = nearestDoor();
   if (door >= 0) {
     toggleDoor(door);
+    sound.play(doorTargets[door] ? "door-open" : "door-close", { gain: 0.5 });
     updateHud();
     return toast(
       (doorTargets[door] ? "Opening " : "Closing ") +
@@ -2240,6 +2354,7 @@ function interact() {
     gun.magazine = loadout.rounds[tool];
   save.inventory = rewards;
   save.opened.push(i);
+  sound.play("loot", { gain: 0.5 });
   persist();
   updateHud();
   toast(`${LOOT[i].name} · +${wood} wood · +${rounds} ${itemName(ammo)}`);
@@ -2248,8 +2363,10 @@ function jump() {
   if (
     playing &&
     vertical <= surfaceHeight(player, save.pieces, vertical + 0.02) + 0.001
-  )
+  ) {
     verticalSpeed = 4.8;
+    sound.play("jump", { gain: 0.25 });
+  }
 }
 function requestReload() {
   if (
@@ -2268,6 +2385,8 @@ function requestReload() {
   if (ammo && !countItem(inventory(), ammo))
     return toast("No " + itemName(ammo) + " carried");
   if (beginReload(loadout, tool)) {
+    reloadSoundStage = 1;
+    sound.play("reload-out", { gain: 0.45 });
     setAim(false);
     recoilRemaining = 0;
     updateHud();
@@ -2280,6 +2399,7 @@ function punch() {
   punchRemaining = MELEE.duration;
   punchLanded = false;
   punchSerial++;
+  sound.play("punch-swing", { gain: 0.4 });
 }
 function landPunch() {
   aimRay();
@@ -2300,6 +2420,7 @@ function landPunch() {
     enemies.find(
       (u) => u.enemy.health > 0 && u.hitbox.getObjectById(hit.object.id),
     );
+  if (hit) sound.play("punch-hit", { gain: 0.6 });
   if (unit) {
     damageEnemy(unit.enemy, MELEE.damage);
     toast(
@@ -2345,12 +2466,14 @@ function fire() {
   if (!canShoot(tool, now, lastShot)) return;
   lastShot = now;
   if (!spendRound(loadout, tool)) {
+    sound.play("empty", { gain: 0.45, interval: 0.2 });
     if (now - lastEmptyNotice > 1200) {
       toast("Empty magazine · R / RELOAD");
       lastEmptyNotice = now;
     }
     return;
   }
+  sound.play(tool as SoundName, { gain: 0.8, interval: 0 });
   persistSoon();
   recoilRemaining = 1;
   flashRemaining = 0.055;
@@ -2401,12 +2524,16 @@ function fire() {
   if (hitEnemy) {
     const enemy = hitEnemy.enemy;
     damageEnemy(enemy, weapon.damage);
+    sound.play("hit-marker", { gain: 0.3 });
     toast(
       enemy.health <= 0
         ? "Enemy down"
         : "Enemy hit · " + enemy.health + " health",
     );
-  } else if (hits[0]?.object.userData.target) toast("Target hit");
+  } else if (hits[0]?.object.userData.target) {
+    sound.play("hit-marker", { gain: 0.18 });
+    toast("Target hit");
+  }
 }
 $("#interact").addEventListener("pointerdown", (e) => {
   e.preventDefault();
@@ -2471,7 +2598,16 @@ window.addEventListener("keydown", (e) => {
     }
     return;
   }
+  if (e.code === "KeyM" && !(e.target instanceof HTMLInputElement)) {
+    if (!e.repeat) {
+      sound.toggleMute();
+      syncSoundControls();
+      void sound.unlock().then(syncSoundControls);
+    }
+    return;
+  }
   if (inventoryOpen) return;
+  if (e.target instanceof HTMLInputElement) return;
   if (
     [
       "Space",
@@ -2532,7 +2668,10 @@ window.addEventListener("keyup", (e) => keys.delete(e.code));
 window.addEventListener("pagehide", persist);
 window.addEventListener("blur", pause);
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) pause();
+  if (document.hidden) {
+    sound.setPaused(true);
+    pause();
+  }
 });
 document.addEventListener("pointerlockchange", () => {
   if (!touch && !document.pointerLockElement && playing) pause();
@@ -2915,6 +3054,8 @@ function frame(now: number) {
     }
     const speed =
       run || keys.has("ShiftLeft") || keys.has("ShiftRight") ? 7 : 4.5;
+    const previousPosition = { ...player },
+      fallSpeed = verticalSpeed;
     player = movePlayer(
       player,
       (-Math.sin(yaw) * forward + Math.cos(yaw) * right) * speed * dt,
@@ -2934,6 +3075,31 @@ function frame(now: number) {
       vertical = surface;
       verticalSpeed = 0;
     }
+    const grounded = Math.abs(vertical - surface) < 0.02 && verticalSpeed === 0;
+    if (grounded && fallSpeed < -0.8)
+      sound.play("land", {
+        gain: Math.min(0.7, 0.2 + Math.abs(fallSpeed) * 0.05),
+      });
+    if (
+      footsteps.advance(
+        Math.hypot(
+          player.x - previousPosition.x,
+          player.z - previousPosition.z,
+        ),
+        grounded,
+        speed > 5,
+      )
+    )
+      sound.play(
+        inTown(player) || roadDistance(player) < 4.5 || vertical > 0.1
+          ? "step-pavement"
+          : "step-grass",
+        {
+          gain: speed > 5 ? 0.4 : 0.28,
+          pitch: 0.9 + Math.random() * 0.2,
+          interval: 0.12,
+        },
+      );
     for (const p of save.pieces)
       if (p.kind === "door") {
         advancePlayerDoor(
@@ -2978,6 +3144,17 @@ function frame(now: number) {
     camera.rotation.set(pitch, yaw, 0);
     updateHarvest(dt);
     nature.update(player, dt, camera);
+    if (loadout.reload) {
+      const progress = 1 - loadout.reload.remaining / loadout.reload.duration;
+      if (progress >= 0.42 && reloadSoundStage === 1) {
+        reloadSoundStage = 2;
+        sound.play("reload-in", { gain: 0.45 });
+      }
+      if (progress >= 0.78 && reloadSoundStage === 2) {
+        reloadSoundStage = 3;
+        sound.play("reload-rack", { gain: 0.45 });
+      }
+    }
     if (advanceInventoryReload(loadout, inventory(), dt)) {
       persist();
       updateHud();
@@ -3102,6 +3279,7 @@ function frame(now: number) {
   canvas.dataset.position = `${player.x.toFixed(3)},${player.z.toFixed(3)}`;
   canvas.dataset.yaw = yaw.toFixed(3);
   canvas.dataset.pitch = pitch.toFixed(3);
+  canvas.dataset.audio = JSON.stringify(sound.diagnostics());
   canvas.dataset.drawCalls = String(renderer.info.render.calls);
   canvas.dataset.triangles = String(renderer.info.render.triangles);
   canvas.dataset.mapSize = String(MAP_SIZE);
@@ -3302,6 +3480,7 @@ function frame(now: number) {
   canvas.dataset.recoil = viewModel.gun.slide.position.z.toFixed(4);
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;
 }
+syncSoundControls();
 activateHand(inventory().active, false);
 persist();
 updateHud();
