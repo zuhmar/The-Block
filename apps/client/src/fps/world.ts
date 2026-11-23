@@ -1,12 +1,26 @@
 import { buildingBlocked } from "./building-layout";
 export type Point = { x: number; z: number };
-export type PieceKind = "floor" | "wall" | "doorway" | "storage";
-export type Piece = Point & { id: string; kind: PieceKind; rotation: number };
+export type PieceKind =
+  | "floor"
+  | "wall"
+  | "doorway"
+  | "storage"
+  | "foundation"
+  | "door";
+export type Piece = Point & {
+  id: string;
+  kind: PieceKind;
+  rotation: number;
+  open?: boolean;
+  doorAngle?: number;
+};
 export type Box = Point & { width: number; depth: number };
 export const MAP_SIZE = 128;
 export const BUILD_LIMIT = 100;
 export const COST: Record<PieceKind, number> = {
   floor: 8,
+  foundation: 12,
+  door: 4,
   wall: 5,
   doorway: 4,
   storage: 5,
@@ -122,7 +136,7 @@ export function pieceBox(p: Piece): Box {
   return {
     ...p,
     width:
-      p.kind === "wall"
+      p.kind === "wall" || p.kind === "door"
         ? odd
           ? 0.16
           : 2
@@ -134,7 +148,7 @@ export function pieceBox(p: Piece): Box {
             ? 1
             : 2,
     depth:
-      p.kind === "wall"
+      p.kind === "wall" || p.kind === "door"
         ? odd
           ? 2
           : 0.16
@@ -154,7 +168,8 @@ export function blocked(p: Point, pieces: Piece[]) {
     LOOT.some((b) => inBox(p, b, 0.32)) ||
     TREES.some((t) => inBox(p, t, 0.32)) ||
     pieces.some((s) => {
-      if (s.kind === "floor") return false;
+      if (isPlatform(s)) return false;
+      if (s.kind === "door") return playerDoorBlocks(p, s, 0.32);
       if (s.kind !== "doorway") return inBox(p, pieceBox(s), 0.32);
       return [-0.78, 0.78].some((offset) =>
         inBox(
@@ -186,7 +201,7 @@ export function snapPiece(
   kind: PieceKind,
   rotation: number,
 ): Omit<Piece, "id"> {
-  const edge = kind === "wall" || kind === "doorway";
+  const edge = kind === "wall" || kind === "doorway" || kind === "door";
   return {
     kind,
     rotation: rotation % 4,
@@ -208,16 +223,21 @@ export function placementReason(
   if (wood < COST[piece.kind]) return "Not enough wood";
   if (Math.hypot(piece.x - player.x, piece.z - player.z) > 8)
     return "Move closer · building reach is 8 m";
-  if (piece.kind === "wall" || piece.kind === "doorway") {
+  if (piece.kind === "door") {
+    if (!pieces.some((p) => p.kind === "doorway" && sameEdge(p, piece)))
+      return "Place a door in a doorway";
+    if (playerDoorBlocks(player, { ...piece, id: "preview", open: false }, 0.4))
+      return "Step out of the doorway";
+  } else if (piece.kind === "wall" || piece.kind === "doorway") {
     const supported = pieces.some(
       (p) =>
-        p.kind === "floor" &&
+        isPlatform(p) &&
         (piece.rotation % 2 === 0
           ? Math.abs(p.x - piece.x) < 0.01 && Math.abs(p.z - piece.z) === 1
           : Math.abs(p.z - piece.z) < 0.01 && Math.abs(p.x - piece.x) === 1),
     );
     if (!supported) return "Place walls and doorways along a floor edge";
-  } else if (piece.kind === "floor") {
+  } else if (isPlatform(piece)) {
     for (const dx of [-1, 0, 1])
       for (const dz of [-1, 0, 1]) {
         const p = { x: piece.x + dx, z: piece.z + dz };
@@ -227,9 +247,7 @@ export function placementReason(
         if (TREES.some((t) => inBox(p, t, 0.6))) return "Keep clear of trees";
       }
   } else if (
-    !pieces.some(
-      (p) => p.kind === "floor" && p.x === piece.x && p.z === piece.z,
-    )
+    !pieces.some((p) => isPlatform(p) && p.x === piece.x && p.z === piece.z)
   )
     return "Place storage on a floor";
   if (
@@ -238,7 +256,9 @@ export function placementReason(
         p.kind === piece.kind &&
         p.x === piece.x &&
         p.z === piece.z &&
-        ((piece.kind !== "wall" && piece.kind !== "doorway") ||
+        ((piece.kind !== "wall" &&
+          piece.kind !== "doorway" &&
+          piece.kind !== "door") ||
           p.rotation % 2 === piece.rotation % 2),
     )
   )
@@ -255,24 +275,112 @@ export function placementReason(
   )
     return "This edge is occupied";
   if (
-    piece.kind !== "floor" &&
+    !isPlatform(piece) &&
     piece.kind !== "doorway" &&
+    piece.kind !== "door" &&
     inBox(player, pieceBox({ ...piece, id: "preview" }), 0.4)
   )
     return "Step out of the placement area";
   return "";
 }
+export function isPlatform(p: Pick<Piece, "kind">) {
+  return p.kind === "floor" || p.kind === "foundation";
+}
+export function sameEdge(a: Omit<Piece, "id">, b: Omit<Piece, "id">) {
+  return a.x === b.x && a.z === b.z && a.rotation % 2 === b.rotation % 2;
+}
+export function surfaceHeight(p: Point, pieces: Piece[]) {
+  let height = 0;
+  for (const piece of pieces)
+    if (
+      isPlatform(piece) &&
+      inBox(p, { ...piece, width: 2, depth: 2 }, 0.025)
+    ) {
+      const foundation = pieces.some(
+        (s) => s.kind === "foundation" && s.x === piece.x && s.z === piece.z,
+      );
+      height = Math.max(
+        height,
+        piece.kind === "foundation" ? 0.5 : (foundation ? 0.5 : 0) + 0.18,
+      );
+    }
+  return height;
+}
+export function pieceBase(p: Omit<Piece, "id">, pieces: Piece[]) {
+  if (p.kind === "foundation") return 0;
+  if (p.kind === "floor")
+    return pieces.some(
+      (s) => s.kind === "foundation" && s.x === p.x && s.z === p.z,
+    )
+      ? 0.5
+      : 0;
+  if (p.kind === "storage") return surfaceHeight(p, pieces);
+  let h = 0.15;
+  for (const s of pieces)
+    if (
+      isPlatform(s) &&
+      (p.rotation % 2 === 0
+        ? Math.abs(s.x - p.x) < 0.01 && Math.abs(s.z - p.z) === 1
+        : Math.abs(s.z - p.z) < 0.01 && Math.abs(s.x - p.x) === 1)
+    )
+      h = Math.max(h, surfaceHeight(s, pieces));
+  return h;
+}
+export function playerDoorBlocks(
+  p: Point,
+  door: Piece,
+  radius = 0.32,
+  angle = door.doorAngle ?? (door.open ? -Math.PI / 2 : 0),
+) {
+  const r = (door.rotation * Math.PI) / 2,
+    dx = p.x - door.x,
+    dz = p.z - door.z;
+  const x = Math.cos(r) * dx - Math.sin(r) * dz + 0.54,
+    z = Math.sin(r) * dx + Math.cos(r) * dz;
+  const localX = Math.cos(angle) * x - Math.sin(angle) * z - 0.54,
+    localZ = Math.sin(angle) * x + Math.cos(angle) * z;
+  return Math.abs(localX) < 0.54 + radius && Math.abs(localZ) < 0.05 + radius;
+}
+export function advancePlayerDoor(door: Piece, dt: number, occupants: Point[]) {
+  const current = door.doorAngle ?? (door.open ? -Math.PI / 2 : 0),
+    target = door.open ? -Math.PI / 2 : 0;
+  const next =
+    current +
+    Math.sign(target - current) *
+      Math.min(Math.abs(target - current), dt * 3.2);
+  const steps = Math.max(1, Math.ceil(Math.abs(next - current) / 0.04));
+  for (let i = 1; i <= steps; i++)
+    if (
+      occupants.some((p) =>
+        playerDoorBlocks(
+          p,
+          door,
+          0.34,
+          current + ((next - current) * i) / steps,
+        ),
+      )
+    ) {
+      door.doorAngle = current;
+      return;
+    }
+  door.doorAngle = next;
+}
 export function canRemove(piece: Piece, pieces: Piece[]) {
-  if (piece.kind !== "floor") return true;
+  if (piece.kind === "doorway")
+    return !pieces.some((p) => p.kind === "door" && sameEdge(piece, p));
+  if (!isPlatform(piece)) return true;
   return !pieces.some(
     (p) =>
       p.id !== piece.id &&
-      (p.kind === "storage"
-        ? p.x === piece.x && p.z === piece.z
-        : (p.kind === "wall" || p.kind === "doorway") &&
+      ((piece.kind === "foundation" &&
+        p.kind === "floor" &&
+        p.x === piece.x &&
+        p.z === piece.z) ||
+        (p.kind === "storage" && p.x === piece.x && p.z === piece.z) ||
+        ((p.kind === "wall" || p.kind === "doorway") &&
           (p.rotation % 2 === 0
             ? p.x === piece.x && Math.abs(p.z - piece.z) === 1
-            : p.z === piece.z && Math.abs(p.x - piece.x) === 1)),
+            : p.z === piece.z && Math.abs(p.x - piece.x) === 1))),
   );
 }
 export type Save = {
@@ -309,7 +417,9 @@ export function readSave(raw: string | null): Save {
         Math.abs(p.z) > 60 ||
         !Number.isInteger(p.rotation) ||
         p.rotation < 0 ||
-        p.rotation > 3
+        p.rotation > 3 ||
+        (p.open !== undefined &&
+          (p.kind !== "door" || typeof p.open !== "boolean"))
       )
         return fresh;
       ids.add(p.id);
@@ -317,7 +427,14 @@ export function readSave(raw: string | null): Save {
     return {
       version: 1,
       wood: s.wood,
-      pieces: s.pieces,
+      pieces: s.pieces.map((p: Piece) => ({
+        id: p.id,
+        kind: p.kind,
+        x: p.x,
+        z: p.z,
+        rotation: p.rotation,
+        ...(p.kind === "door" ? { open: !!p.open } : {}),
+      })),
       opened: s.opened.filter(
         (n: unknown) =>
           Number.isInteger(n) && Number(n) >= 0 && Number(n) < LOOT.length,

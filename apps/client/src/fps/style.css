@@ -103,7 +103,7 @@ header {
 .location b {
   display: block;
   font:
-    700 17px "Barlow Condensed",
+    700 15px "Barlow Condensed",
     Arial,
     sans-serif;
   letter-spacing: 3px;
@@ -165,7 +165,7 @@ header {
 #hint b {
   display: block;
   font:
-    700 17px "Barlow Condensed",
+    700 15px "Barlow Condensed",
     Arial,
     sans-serif;
   letter-spacing: 1.5px;
@@ -262,7 +262,7 @@ footer {
 }
 #pieces {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
   margin: 14px 0;
 }
@@ -278,10 +278,10 @@ footer {
 #pieces b {
   text-transform: uppercase;
   font:
-    700 17px "Barlow Condensed",
+    700 15px "Barlow Condensed",
     Arial,
     sans-serif;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
 }
 #pieces span {
   font-size: 10px;
@@ -535,8 +535,13 @@ h1 em {
   gap: 5px;
 }
 .touch #pieces button {
-  padding: 7px;
+  min-width: 0;
+  padding: 4px;
   min-height: 54px;
+}
+.touch #pieces b {
+  font-size: 12px;
+  letter-spacing: 0;
 }
 .touch .panel-heading {
   font-size: 15px;
@@ -598,7 +603,7 @@ h1 em {
   .touch #build-panel {
     top: 74px;
     right: 150px;
-    width: 210px;
+    width: 320px;
   }
   .touch .status {
     max-width: 130px;
@@ -606,10 +611,10 @@ h1 em {
     gap: 5px;
   }
   .touch #pieces {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .touch #pieces b {
-    font-size: 13px;
+    font-size: 12px;
   }
   .touch #pieces button {
     padding: 5px;

@@ -1,0 +1,87 @@
+{
+  "validation": {
+    "fullSuiteTestsPassed": 154,
+    "finalFocusedRegressionTestsPassed": 21,
+    "lint": "passed",
+    "typecheck": "passed",
+    "productionBuild": "passed"
+  },
+  "models": {
+    "originalUploadsPreserved": 5,
+    "runtimeBytes": 2738200,
+    "triangles": {
+      "floor": 1598,
+      "wall": 2599,
+      "foundation": 3600,
+      "doorway": 3598,
+      "door": 2198
+    }
+  },
+  "desktop": {
+    "fiveKindsPlaced": true,
+    "snappingAndRaisedSurface": true,
+    "jumpAndLandOnFloor": true,
+    "doorOpenCloseAndWalking": true,
+    "doorBlocksShotsWhenClosed": true,
+    "openDoorAllowsShots": true,
+    "savedDoorReopensAfterReload": true,
+    "dependencyRemovalAndFullRefund": true,
+    "oldSavePreserved": true,
+    "pageErrors": []
+  },
+  "phone": {
+    "touchWalkAndDoorUse": true,
+    "raisedFloorAndJump": true,
+    "touchFoundationPlacement": true,
+    "correctPreviewCell": true,
+    "saveAndWoodPreserved": true,
+    "pageErrors": [],
+    "scope": "Compiled game with actual phone touch input in software WebGL; not a physical-device FPS benchmark."
+  },
+  "layout": {
+    "checks": [
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "allSixChoicesVisible": true,
+        "buttonsInsideViewport": true,
+        "labelsDoNotOverflow": true
+      },
+      {
+        "viewport": [
+          844,
+          390
+        ],
+        "allSixChoicesVisible": true,
+        "buttonsInsideViewport": true,
+        "labelsDoNotOverflow": true
+      },
+      {
+        "viewport": [
+          800,
+          600
+        ],
+        "allSixChoicesVisible": true,
+        "buttonsInsideViewport": true,
+        "labelsDoNotOverflow": true
+      }
+    ],
+    "pageErrors": []
+  },
+  "missingAssets": {
+    "allFiveModelsUseFallback": true,
+    "gameStarts": true,
+    "legacySavePreserved": true,
+    "newBuildChoicesAvailable": true,
+    "pageErrors": []
+  },
+  "notes": [
+    "Build choices add foundation (12 wood) and door (4 wood); existing costs and 100-piece cap retained.",
+    "2m grid; foundation top .5m, optional floor top .68m; attached walls and doors use platform height.",
+    "Repeated static art is instanced; detailed meshes are excluded from shooting and removal raycasts.",
+    "Old version-1 local saves retain wood and piece IDs; only door open targets persist, not animation angles.",
+    "Input tests use real desktop controls and phone touch events with read-only diagnostics; not a physical-device FPS benchmark."
+  ]
+}

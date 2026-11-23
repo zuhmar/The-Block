@@ -1,0 +1,38 @@
+{
+  "sources": {
+    "floor": "9a11ba0a82615831d6a60fa387beeaa517386adfe613b5fba1d8345013c0b227",
+    "wall": "5fc2e9779dc5c84a41c8c0e432939c1935e4e75af09131e2a74e7441c70f2abe",
+    "foundation": "a3d8ac48950964fc847e40561d11e28b3fc22c1dbe1a69cd1d39bd8135ed14c2",
+    "doorway": "cc225b15ef4efe95dccee2345e38b72d9744d9b50aa3b1b87ece04fcf66e27cf",
+    "door": "5b85d4178b3fb58fc03a923dedd1ef67043a003ead8a442e3e78b37568e56cb3"
+  },
+  "props": {
+    "floor": {
+      "originalTriangles": 91912,
+      "triangles": 1598
+    },
+    "wall": {
+      "originalTriangles": 228404,
+      "triangles": 2599
+    },
+    "foundation": {
+      "originalTriangles": 216004,
+      "triangles": 3600
+    },
+    "doorway": {
+      "originalTriangles": 161732,
+      "triangles": 3598
+    },
+    "door": {
+      "originalTriangles": 143048,
+      "triangles": 2198
+    }
+  },
+  "placements": [],
+  "doorwayOriginalOpening": [
+    -0.168,
+    0.169,
+    0.652
+  ],
+  "runtimeBytes": 2738200
+}

@@ -1,3 +1,4 @@
+import { woodBuildingModel, woodBuildingSources } from "./wood-buildings";
 import {
   newWeaponState,
   spendRound,
@@ -47,6 +48,9 @@ import {
   placementReason,
   canRemove,
   readSave,
+  pieceBase,
+  surfaceHeight,
+  advancePlayerDoor,
   type Piece,
   type PieceKind,
 } from "./world";
@@ -59,12 +63,12 @@ $("#app").innerHTML = `
   <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · SMALL WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
-  <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
+  <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <div id="weapon-status"><span id="ammo"></span><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–4 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -79,7 +83,12 @@ try {
 }
 function persist() {
   try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify(save, (key, value) =>
+        key === "doorAngle" ? undefined : value,
+      ),
+    );
   } catch {
     saveAvailable = false;
     toast("Device storage unavailable · progress lasts for this session");
@@ -511,21 +520,28 @@ const construction = new THREE.Group();
 scene.add(construction);
 function pieceModel(p: Omit<Piece, "id">, preview = false) {
   const g = new THREE.Group();
-  g.position.set(p.x, 0, p.z);
+  g.position.set(p.x, pieceBase(p, save.pieces), p.z);
   g.rotation.y = (p.rotation * Math.PI) / 2;
-  if (p.kind === "floor") {
+  const imported = woodBuildingModel(p.kind);
+  if (imported) g.add(imported);
+  if (!imported && p.kind === "foundation")
+    box(g, 0, 0.25, 0, 2, 0.5, 2, 0xb78b4e);
+  if (!imported && p.kind === "door")
+    box(g, 0.54, 1.03, 0, 1.08, 2.06, 0.1, 0xb78b4e);
+  if (!imported && p.kind === "floor") {
     box(g, 0, 0.09, 0, 2, 0.18, 2, 0xb3a17c);
     for (const x of [-0.65, 0, 0.65])
       box(g, x, 0.185, 0, 0.025, 0.012, 1.96, 0x85785e);
   }
-  if (p.kind === "wall") {
-    box(g, 0, 1.4, 0, 2, 2.5, 0.16, 0xc6b38b);
+  if (!imported && p.kind === "wall") {
+    box(g, 0, 1.25, 0, 2, 2.5, 0.16, 0xc6b38b);
     for (const x of [-0.9, 0, 0.9])
-      box(g, x, 1.4, 0.1, 0.08, 2.5, 0.06, 0x8d795c);
+      box(g, x, 1.25, 0.1, 0.08, 2.5, 0.06, 0x8d795c);
   }
-  if (p.kind === "doorway") {
-    for (const x of [-0.78, 0.78]) box(g, x, 1.4, 0, 0.44, 2.5, 0.16, 0xc6b38b);
-    box(g, 0, 2.45, 0, 2, 0.4, 0.16, 0x9c8664);
+  if (!imported && p.kind === "doorway") {
+    for (const x of [-0.78, 0.78])
+      box(g, x, 1.25, 0, 0.44, 2.5, 0.16, 0xc6b38b);
+    box(g, 0, 2.3, 0, 2, 0.4, 0.16, 0x9c8664);
   }
   if (p.kind === "storage") {
     box(g, 0, 0.6, 0, 1, 0.8, 0.8, 0x97754c);
@@ -539,32 +555,94 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
     });
   return g;
 }
-function rebuildConstruction() {
-  for (const batch of [...construction.children]) {
-    construction.remove(batch);
-    if (batch instanceof THREE.InstancedMesh) batch.dispose();
+const constructionArt = new THREE.Group();
+scene.add(constructionArt);
+const builtDoors = new Map<
+  string,
+  { hinge: THREE.Group; proxy: THREE.Group }
+>();
+const buildProxyMaterial = new THREE.MeshBasicMaterial();
+function buildProxy(p: Piece) {
+  const root = new THREE.Group();
+  root.position.set(p.x, pieceBase(p, save.pieces), p.z);
+  root.rotation.y = (p.rotation * Math.PI) / 2;
+  function part(
+    x: number,
+    y: number,
+    z: number,
+    w: number,
+    h: number,
+    d: number,
+  ) {
+    const mesh = new THREE.Mesh(boxGeo, buildProxyMaterial);
+    mesh.position.set(x, y, z);
+    mesh.scale.set(w, h, d);
+    mesh.visible = false;
+    mesh.userData.pieceId = p.id;
+    root.add(mesh);
   }
+  if (p.kind === "doorway") {
+    for (const x of [-0.78, 0.78]) part(x, 1.25, 0, 0.44, 2.5, 0.16);
+    part(0, 2.3, 0, 2, 0.4, 0.16);
+  } else if (p.kind === "door") {
+    root.position.x += -0.54 * Math.cos(root.rotation.y);
+    root.position.z += 0.54 * Math.sin(root.rotation.y);
+    root.position.y += 0.02;
+    root.rotation.y += p.doorAngle ?? (p.open ? -Math.PI / 2 : 0);
+    part(0.54, 1.03, 0, 1.08, 2.06, 0.1);
+  } else if (p.kind === "wall") part(0, 1.25, 0, 2, 2.5, 0.16);
+  else if (p.kind === "foundation") part(0, 0.25, 0, 2, 0.5, 2);
+  else if (p.kind === "floor") part(0, 0.09, 0, 2, 0.18, 2);
+  else part(0, 0.6, 0, 1, 0.8, 0.8);
+  return root;
+}
+function rebuildConstruction() {
+  for (const old of constructionArt.children)
+    if (old instanceof THREE.InstancedMesh) old.dispose();
+  constructionArt.clear();
+  construction.clear();
+  builtDoors.clear();
   const groups = new Map<
-    THREE.Material,
-    { matrix: THREE.Matrix4; id: string }[]
+    THREE.BufferGeometry,
+    Map<THREE.Material, { matrix: THREE.Matrix4; id: string }[]>
   >();
   for (const p of save.pieces) {
+    const proxy = buildProxy(p);
+    construction.add(proxy);
     const model = pieceModel(p);
+    if (p.kind === "door") {
+      const parent = new THREE.Group();
+      parent.position.copy(model.position);
+      parent.rotation.copy(model.rotation);
+      const hinge = new THREE.Group();
+      hinge.position.set(-0.54, 0.02, 0);
+      parent.add(hinge);
+      model.position.set(0, 0, 0);
+      model.rotation.set(0, 0, 0);
+      hinge.add(model);
+      hinge.rotation.y = p.doorAngle ?? (p.open ? -Math.PI / 2 : 0);
+      constructionArt.add(parent);
+      builtDoors.set(p.id, { hinge, proxy });
+      continue;
+    }
     model.updateMatrixWorld(true);
     model.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
       const mat = o.material as THREE.Material;
-      if (!groups.has(mat)) groups.set(mat, []);
-      groups.get(mat)!.push({ matrix: o.matrixWorld.clone(), id: p.id });
+      if (!groups.has(o.geometry)) groups.set(o.geometry, new Map());
+      const materials = groups.get(o.geometry)!;
+      if (!materials.has(mat)) materials.set(mat, []);
+      materials.get(mat)!.push({ matrix: o.matrixWorld.clone(), id: p.id });
     });
   }
-  for (const [mat, parts] of groups) {
-    const batch = new THREE.InstancedMesh(boxGeo, mat, parts.length);
-    parts.forEach((part, i) => batch.setMatrixAt(i, part.matrix));
-    batch.userData.pieceIds = parts.map((part) => part.id);
-    construction.add(batch);
-  }
+  for (const [geometry, materials] of groups)
+    for (const [mat, parts] of materials) {
+      const batch = new THREE.InstancedMesh(geometry, mat, parts.length);
+      parts.forEach((p, i) => batch.setMatrixAt(i, p.matrix));
+      constructionArt.add(batch);
+    }
   construction.updateMatrixWorld(true);
+  constructionArt.updateMatrixWorld(true);
 }
 rebuildConstruction();
 const previewMaterial = new THREE.MeshBasicMaterial({
@@ -711,7 +789,8 @@ function enemyFrame(dt: number) {
       flash: enemyFlash,
       aim: enemyAim,
     } = unit;
-    const from = new THREE.Vector3(enemy.x, 1.4, enemy.z),
+    const enemySurface = surfaceHeight(enemy, save.pieces);
+    const from = new THREE.Vector3(enemy.x, enemySurface + 1.4, enemy.z),
       to = new THREE.Vector3(player.x, 1.1 + vertical, player.z);
     const visible =
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 24 &&
@@ -751,7 +830,11 @@ function enemyFrame(dt: number) {
     enemyActor.root.visible =
       enemy.health > 0 &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
-    enemyActor.root.position.set(enemy.x, 0, enemy.z);
+    enemyActor.root.position.set(
+      enemy.x,
+      surfaceHeight(enemy, save.pieces),
+      enemy.z,
+    );
     enemyActor.root.rotation.y = enemy.yaw;
     const moving =
       enemy.state === "chase" &&
@@ -761,7 +844,11 @@ function enemyFrame(dt: number) {
       enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
       enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
     }
-    unit.hitbox.position.set(enemy.x, 0, enemy.z);
+    unit.hitbox.position.set(
+      enemy.x,
+      surfaceHeight(enemy, save.pieces),
+      enemy.z,
+    );
     unit.hitbox.rotation.y = enemy.yaw;
     unit.hitbox.updateMatrixWorld(true);
     enemyActor.root.updateMatrixWorld(true);
@@ -861,6 +948,7 @@ let recoilRemaining = 0,
   flashRemaining = 0,
   shotSerial = 0;
 let lastHitDoor = -1;
+let lastHitBuildPiece = "";
 let lastEmptyNotice = -Infinity;
 let loadout = newWeaponState();
 let punchRemaining = 0,
@@ -1029,7 +1117,10 @@ function aimedPiece() {
   const hit = hits.find((h) => h.distance < 8);
   return hit
     ? save.pieces.find(
-        (p) => p.id === hit.object.userData.pieceIds[hit.instanceId!],
+        (p) =>
+          p.id ===
+          (hit.object.userData.pieceId ??
+            hit.object.userData.pieceIds?.[hit.instanceId!]),
       )
     : undefined;
 }
@@ -1038,7 +1129,7 @@ function remove() {
   const p = aimedPiece();
   if (!p) return toast("Aim at one of your pieces within 8 m");
   if (!canRemove(p, save.pieces))
-    return toast("Remove attached walls and storage first");
+    return toast("Remove attached doors, walls, floors or storage first");
   save.pieces = save.pieces.filter((s) => s.id !== p.id);
   rebuildConstruction();
   save.wood += COST[p.kind];
@@ -1086,8 +1177,42 @@ function nearestDoor() {
   }
   return nearest;
 }
+function nearestBuiltDoor() {
+  let nearest: Piece | undefined,
+    distance = 2.4;
+  for (const p of save.pieces) {
+    if (p.kind !== "door") continue;
+    const d = Math.hypot(player.x - p.x, player.z - p.z);
+    if (d >= distance) continue;
+    const target = new THREE.Vector3(p.x, pieceBase(p, save.pieces) + 1.1, p.z),
+      from = new THREE.Vector3(player.x, vertical + 1.65, player.z);
+    coverRay.set(from, target.clone().sub(from).normalize());
+    coverRay.far = from.distanceTo(target) + 0.05;
+    const hit = coverRay.intersectObjects(
+      [...shotObstacles, ...construction.children],
+      true,
+    )[0];
+    if (
+      hit &&
+      hit.object.userData.pieceId !== p.id &&
+      hit.distance < from.distanceTo(target) - 0.12
+    )
+      continue;
+    nearest = p;
+    distance = d;
+  }
+  return nearest;
+}
 function interact() {
   if (!playing) return;
+  const built = nearestBuiltDoor();
+  if (built) {
+    built.doorAngle ??= built.open ? -Math.PI / 2 : 0;
+    built.open = !built.open;
+    persist();
+    updateHud();
+    return toast(built.open ? "Opening wood door" : "Closing wood door");
+  }
   const door = nearestDoor();
   if (door >= 0) {
     toggleDoor(door);
@@ -1110,7 +1235,8 @@ function interact() {
   toast(`T${LOOT[i].tier} supply crate · +${wood} wood`);
 }
 function jump() {
-  if (playing && vertical === 0) verticalSpeed = 4.8;
+  if (playing && vertical <= surfaceHeight(player, save.pieces) + 0.001)
+    verticalSpeed = 4.8;
 }
 function requestReload() {
   if (!playing || health <= 0 || build || tool === "hands") return;
@@ -1190,6 +1316,7 @@ function fire() {
     )
     .filter((hit) => hit.distance <= weapon.range);
   lastHitDoor = hits[0]?.object.userData.doorIndex ?? -1;
+  lastHitBuildPiece = hits[0]?.object.userData.pieceId ?? "";
   const end =
     hits[0]?.point || raycaster.ray.at(weapon.range, new THREE.Vector3());
   viewModel.root.updateMatrixWorld(true);
@@ -1285,10 +1412,22 @@ window.addEventListener("keydown", (e) => {
       rebuildPreview();
     } else requestReload();
   }
-  if (build && ["Digit1", "Digit2", "Digit3", "Digit4"].includes(e.code)) {
-    selected = (["floor", "wall", "doorway", "storage"] as PieceKind[])[
-      Number(e.code.slice(-1)) - 1
-    ];
+  if (
+    build &&
+    ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6"].includes(
+      e.code,
+    )
+  ) {
+    selected = (
+      [
+        "floor",
+        "wall",
+        "doorway",
+        "storage",
+        "foundation",
+        "door",
+      ] as PieceKind[]
+    )[Number(e.code.slice(-1)) - 1];
     rebuildPreview();
   } else {
     if (e.code === "Digit1") equip("hands");
@@ -1441,27 +1580,32 @@ function updateHud() {
     b.classList.toggle("selected", b.dataset.piece === selected);
   const near = nearestLoot(),
     door = nearestDoor(),
+    built = nearestBuiltDoor(),
     p = aimedPiece();
   $("#hint-title").textContent = build
     ? "BUILD MODE"
-    : door >= 0
-      ? BUILDINGS[door].name + " DOOR"
-      : near >= 0
-        ? LOOT[near].name
-        : p
-          ? "YOUR " + p.kind.toUpperCase()
-          : "";
+    : built
+      ? "YOUR WOOD DOOR"
+      : door >= 0
+        ? BUILDINGS[door].name + " DOOR"
+        : near >= 0
+          ? LOOT[near].name
+          : p
+            ? "YOUR " + p.kind.toUpperCase()
+            : "";
   $("#hint-text").textContent = build
-    ? "Aim down · 1–4 select · R rotate · Click / PLACE to build"
-    : door >= 0
-      ? "E / USE · " + (doorTargets[door] ? "Close door" : "Open door")
-      : near >= 0
-        ? save.opened.includes(near)
-          ? "SEARCHED"
-          : "E / USE · Search supplies"
-        : p
-          ? "Build mode → Dismantle to remove"
-          : "";
+    ? "Aim down · 1–6 select · R rotate · Click / PLACE to build"
+    : built
+      ? "E / USE · " + (built.open ? "Close door" : "Open door")
+      : door >= 0
+        ? "E / USE · " + (doorTargets[door] ? "Close door" : "Open door")
+        : near >= 0
+          ? save.opened.includes(near)
+            ? "SEARCHED"
+            : "E / USE · Search supplies"
+          : p
+            ? "Build mode → Dismantle to remove"
+            : "";
 }
 function updatePreview() {
   if (!build || !playing) {
@@ -1470,6 +1614,24 @@ function updatePreview() {
   }
   aimRay();
   const hit = raycaster.ray.intersectPlane(ground, hitPoint);
+  if (hit) {
+    const platformHit = raycaster
+      .intersectObjects(construction.children, true)
+      .find((h) => {
+        const p = save.pieces.find((s) => s.id === h.object.userData.pieceId);
+        return (
+          p &&
+          (p.kind === "floor" || p.kind === "foundation") &&
+          h.face &&
+          Math.abs(h.face.normal.y) > 0.9
+        );
+      });
+    if (
+      platformHit &&
+      platformHit.distance < camera.position.distanceTo(hitPoint)
+    )
+      hitPoint.copy(platformHit.point);
+  }
   if (!hit || hit.distanceTo(camera.position) > 11) {
     candidate = undefined;
     reason = "Look down at nearby ground";
@@ -1481,7 +1643,16 @@ function updatePreview() {
       preview = pieceModel(candidate, true);
       scene.add(preview);
     }
-    preview.position.set(candidate.x, 0, candidate.z);
+    preview.position.set(
+      candidate.x,
+      pieceBase(candidate, save.pieces),
+      candidate.z,
+    );
+    if (candidate.kind === "door") {
+      preview.position.x -= 0.54 * Math.cos((rotation * Math.PI) / 2);
+      preview.position.z += 0.54 * Math.sin((rotation * Math.PI) / 2);
+      preview.position.y += 0.02;
+    }
     preview.rotation.y = (rotation * Math.PI) / 2;
     preview.visible = true;
     previewMaterial.color.set(reason ? 0xe5806b : 0x94e4bb);
@@ -1532,11 +1703,29 @@ function frame(now: number) {
       (-Math.cos(yaw) * forward - Math.sin(yaw) * right) * speed * dt,
       save.pieces,
     );
-    if (vertical > 0 || verticalSpeed > 0) {
+    const surface = surfaceHeight(player, save.pieces);
+    if (vertical > surface || verticalSpeed > 0) {
       verticalSpeed -= 12 * dt;
-      vertical = Math.max(0, vertical + verticalSpeed * dt);
-      if (vertical === 0) verticalSpeed = 0;
+      vertical = Math.max(surface, vertical + verticalSpeed * dt);
+      if (vertical === surface) verticalSpeed = 0;
+    } else {
+      vertical = surface;
+      verticalSpeed = 0;
     }
+    for (const p of save.pieces)
+      if (p.kind === "door") {
+        advancePlayerDoor(p, dt, [
+          player,
+          ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
+        ]);
+        const rig = builtDoors.get(p.id);
+        if (rig) {
+          rig.hinge.rotation.y = p.doorAngle ?? 0;
+          rig.proxy.rotation.y =
+            (p.rotation * Math.PI) / 2 + (p.doorAngle ?? 0);
+          rig.proxy.updateMatrixWorld(true);
+        }
+      }
     enemyFrame(dt);
     camera.position.set(
       player.x,
@@ -1560,7 +1749,7 @@ function frame(now: number) {
       dt,
       shotSerial,
       running: run || keys.has("ShiftLeft") || keys.has("ShiftRight"),
-      jumping: vertical > 0,
+      jumping: vertical > surfaceHeight(player, save.pieces) + 0.01,
       punch: punchRemaining > 0 ? 1 - punchRemaining / MELEE.duration : 0,
       side: punchSerial % 2 ? -1 : 1,
       reload: loadout.reload
@@ -1661,7 +1850,20 @@ function frame(now: number) {
   );
   canvas.dataset.doors = JSON.stringify(doorAngles);
   canvas.dataset.lastHitDoor = String(lastHitDoor);
+  canvas.dataset.lastHitBuildPiece = lastHitBuildPiece;
   canvas.dataset.nearestDoor = String(nearestDoor());
+  canvas.dataset.buildModels = woodBuildingSources();
+  canvas.dataset.footHeight = String(vertical);
+  canvas.dataset.playerDoors = JSON.stringify(
+    save.pieces
+      .filter((p) => p.kind === "door")
+      .map((p) => ({
+        id: p.id,
+        open: !!p.open,
+        angle: p.doorAngle ?? (p.open ? -Math.PI / 2 : 0),
+      })),
+  );
+  canvas.dataset.buildCandidate = JSON.stringify(candidate ?? null);
   canvas.dataset.equipped = tool;
   canvas.dataset.ammo = JSON.stringify(loadout.rounds);
   canvas.dataset.reload = loadout.reload?.kind || "";
