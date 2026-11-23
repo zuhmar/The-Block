@@ -1,0 +1,46 @@
+{
+  "estimatedCredits": 45,
+  "models": [
+    {
+      "name": "easy-worker",
+      "requestId": "b1175557-ed36-40ed-aedb-8c460b28f632",
+      "reference": "art/ai/north-lab-npcs/easy-worker.png",
+      "aiModel": "meshy-t2.5",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 10000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a4c-e540-7110-89a9-dd6fdf79f034",
+      "resource": "image-to-3d",
+      "file": "easy-worker.glb"
+    },
+    {
+      "name": "medium-security",
+      "requestId": "dd595f11-78d5-420c-8711-f5d7676a5272",
+      "reference": "art/ai/north-lab-npcs/medium-security.png",
+      "aiModel": "meshy-t2.5",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 10000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a4d-1cc2-7646-9c89-360b5dda4467",
+      "resource": "image-to-3d",
+      "file": "medium-security.glb"
+    },
+    {
+      "name": "hard-enforcer",
+      "requestId": "c3c255a3-de73-4481-ae1e-4748180191e5",
+      "reference": "art/ai/north-lab-npcs/hard-enforcer.png",
+      "aiModel": "meshy-t2.5",
+      "textureModel": "meshy-n1",
+      "targetPolycount": 10000,
+      "status": "SUCCEEDED",
+      "taskId": "01a20a4d-59cc-7496-8405-3b3b6abedd57",
+      "resource": "image-to-3d",
+      "file": "hard-enforcer.glb"
+    }
+  ],
+  "actualCredits": 45,
+  "balanceBefore": 175,
+  "balanceAfter": 130,
+  "rigged": false,
+  "integratedInGame": false
+}
