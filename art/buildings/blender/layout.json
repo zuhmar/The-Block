@@ -872,6 +872,260 @@
           "height": 3.02
         }
       ]
+    },
+    {
+      "x": 76,
+      "z": -12,
+      "width": 12,
+      "depth": 10,
+      "height": 4.5,
+      "color": 8623213,
+      "name": "FORT EAST COMMAND",
+      "type": "military-command",
+      "front": 1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "counter",
+          "x": -3,
+          "z": -2,
+          "width": 4,
+          "depth": 0.9
+        },
+        {
+          "kind": "table",
+          "x": 2,
+          "z": -1,
+          "width": 2,
+          "depth": 1.3
+        },
+        {
+          "kind": "cabinet",
+          "x": 4.8,
+          "z": -3.8,
+          "width": 0.8,
+          "depth": 1
+        },
+        {
+          "kind": "bench",
+          "x": -4.5,
+          "z": 2,
+          "width": 1.6,
+          "depth": 0.6
+        }
+      ],
+      "partitions": [
+        {
+          "x": 0.8,
+          "z": -2.5,
+          "width": 0.18,
+          "depth": 4,
+          "height": 3.1
+        }
+      ]
+    },
+    {
+      "x": 96,
+      "z": -12,
+      "width": 14,
+      "depth": 10,
+      "height": 4.3,
+      "color": 7701866,
+      "name": "SWAT BARRACKS",
+      "type": "military-barracks",
+      "front": 1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "bed",
+          "x": -5.4,
+          "z": -2.4,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": -5.4,
+          "z": 0.8,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": 5.4,
+          "z": -2.4,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": 5.4,
+          "z": 0.8,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "cabinet",
+          "x": 0,
+          "z": -3.8,
+          "width": 2,
+          "depth": 0.8
+        },
+        {
+          "kind": "table",
+          "x": 0,
+          "z": 1,
+          "width": 2,
+          "depth": 1.2
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": 100,
+      "z": 25,
+      "width": 16,
+      "depth": 12,
+      "height": 6,
+      "color": 7241847,
+      "name": "MILITARY SUPPLY HANGAR",
+      "type": "military-hangar",
+      "front": -1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "rack",
+          "x": -6.8,
+          "z": 0,
+          "width": 1.2,
+          "depth": 5.5
+        },
+        {
+          "kind": "rack",
+          "x": 6.8,
+          "z": 0,
+          "width": 1.2,
+          "depth": 5.5
+        },
+        {
+          "kind": "pallet",
+          "x": -3,
+          "z": 4.4,
+          "width": 1.4,
+          "depth": 1.2
+        },
+        {
+          "kind": "pallet",
+          "x": 3,
+          "z": 4.4,
+          "width": 1.4,
+          "depth": 1.2
+        },
+        {
+          "kind": "workbench",
+          "x": 0,
+          "z": 4.8,
+          "width": 2.7,
+          "depth": 1
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": 74,
+      "z": 22,
+      "width": 8,
+      "depth": 8,
+      "height": 3.8,
+      "color": 7832404,
+      "name": "FIELD TENT",
+      "type": "military-tent",
+      "front": -1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "bed",
+          "x": -2.5,
+          "z": -1.2,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": 2.5,
+          "z": -1.2,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "table",
+          "x": -2.1,
+          "z": 2.5,
+          "width": 1.2,
+          "depth": 0.7
+        },
+        {
+          "kind": "cabinet",
+          "x": 2.8,
+          "z": 2.5,
+          "width": 0.7,
+          "depth": 0.8
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": 86,
+      "z": 22,
+      "width": 8,
+      "depth": 8,
+      "height": 3.8,
+      "color": 11971205,
+      "name": "MEDICAL TENT",
+      "type": "military-medical",
+      "front": -1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "bed",
+          "x": -2.4,
+          "z": -0.8,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": 2.4,
+          "z": -0.8,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "cabinet",
+          "x": -2.8,
+          "z": 2.6,
+          "width": 0.7,
+          "depth": 0.8
+        },
+        {
+          "kind": "counter",
+          "x": 2.5,
+          "z": 2.5,
+          "width": 1.8,
+          "depth": 0.7
+        }
+      ],
+      "partitions": []
     }
   ]
 }

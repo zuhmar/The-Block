@@ -18,9 +18,24 @@ export function createNpcHitbox() {
   }
   return root;
 }
+const templates = new Map<
+  NpcKind,
+  Promise<Awaited<ReturnType<typeof loadStreetReview>>>
+>();
 export async function loadNpcImage(kind: NpcKind) {
-  const model = await loadStreetReview(kind);
-  return prepareMeshyNpc(model, kind === "swat" ? "Rifle" : "Pistol");
+  let pending = templates.get(kind);
+  if (!pending) {
+    pending = loadStreetReview(kind);
+    templates.set(kind, pending);
+    pending.catch(() => templates.delete(kind));
+  }
+  const template = await pending;
+  const { clone } = await import("three/addons/utils/SkeletonUtils.js");
+  const root = clone(template.root) as THREE.Group;
+  return prepareMeshyNpc(
+    { ...template, root, mixer: new THREE.AnimationMixer(root) },
+    kind === "swat" ? "Rifle" : "Pistol",
+  );
 }
 
 /** Layer native locomotion below the authored grip, with the weapon on its hand. */

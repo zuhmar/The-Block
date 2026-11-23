@@ -1,0 +1,27 @@
+[
+  {
+    "type": "military-command",
+    "triangles": 3632,
+    "bytes": 265472
+  },
+  {
+    "type": "military-barracks",
+    "triangles": 5412,
+    "bytes": 391872
+  },
+  {
+    "type": "military-hangar",
+    "triangles": 5040,
+    "bytes": 365092
+  },
+  {
+    "type": "military-tent",
+    "triangles": 3642,
+    "bytes": 263512
+  },
+  {
+    "type": "military-medical",
+    "triangles": 3966,
+    "bytes": 287824
+  }
+]

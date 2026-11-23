@@ -59,7 +59,7 @@ with sync_playwright() as p:
     page.wait_for_function('document.querySelector("#world").dataset.movement==="0.00,0.00"')
    raise AssertionError(('precision movement',pos(),goal,state()))
   def use():page.locator('#interact').tap() if mobile else page.keyboard.press('e')
-  assert json.loads(state()['buildingSources'])==['blender']*8,state()
+  assert json.loads(state()['buildingSources'])==['blender']*13,state()
   b=nav['buildings'][index];front=b['front'];bx,bz=b['x'],b['z'];floors=2 if index==6 else 3;stairx=bx+b['width']/2-1.35;startz=bz+front*3.4;endz=startz-front*6
   for goal in route(pos(),(bx,b['doorZ']+front*1.6)):go(goal)
   page.screenshot(path=f'work/{b["type"]}-exterior.png');use();page.wait_for_function('(g)=>Math.abs(JSON.parse(document.querySelector("#world").dataset.doors)[g.i]-g.a)<.01',arg={'i':index,'a':front*math.pi/2})

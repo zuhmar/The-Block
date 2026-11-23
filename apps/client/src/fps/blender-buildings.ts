@@ -13,6 +13,27 @@ import {
 } from "./building-layout";
 import { createBuildingModel } from "./building-models";
 const URLS: Record<string, string> = {
+  "military-command": new URL(
+    "./models/buildings/military-command.glb",
+    import.meta.url,
+  ).href,
+  "military-barracks": new URL(
+    "./models/buildings/military-barracks.glb",
+    import.meta.url,
+  ).href,
+  "military-hangar": new URL(
+    "./models/buildings/military-hangar.glb",
+    import.meta.url,
+  ).href,
+  "military-tent": new URL(
+    "./models/buildings/military-tent.glb",
+    import.meta.url,
+  ).href,
+  "military-medical": new URL(
+    "./models/buildings/military-medical.glb",
+    import.meta.url,
+  ).href,
+
   flats: new URL("./models/buildings/flats.glb", import.meta.url).href,
   tenement: new URL("./models/buildings/tenement.glb", import.meta.url).href,
   jail: new URL("./models/buildings/jail.glb", import.meta.url).href,

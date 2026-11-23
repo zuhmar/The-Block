@@ -79,6 +79,56 @@ export const BUILDINGS = [
     name: "CORNER TENEMENTS",
     type: "tenement",
   },
+  {
+    x: 76,
+    z: -12,
+    width: 12,
+    depth: 10,
+    height: 4.5,
+    color: 0x83946d,
+    name: "FORT EAST COMMAND",
+    type: "military-command",
+  },
+  {
+    x: 96,
+    z: -12,
+    width: 14,
+    depth: 10,
+    height: 4.3,
+    color: 0x75856a,
+    name: "SWAT BARRACKS",
+    type: "military-barracks",
+  },
+  {
+    x: 100,
+    z: 25,
+    width: 16,
+    depth: 12,
+    height: 6,
+    color: 0x6e8077,
+    name: "MILITARY SUPPLY HANGAR",
+    type: "military-hangar",
+  },
+  {
+    x: 74,
+    z: 22,
+    width: 8,
+    depth: 8,
+    height: 3.8,
+    color: 0x778354,
+    name: "FIELD TENT",
+    type: "military-tent",
+  },
+  {
+    x: 86,
+    z: 22,
+    width: 8,
+    depth: 8,
+    height: 3.8,
+    color: 0xb6aa85,
+    name: "MEDICAL TENT",
+    type: "military-medical",
+  },
 ];
 export type Building = (typeof BUILDINGS)[number];
 export type BuildingPoint = { x: number; z: number; y?: number };
@@ -159,6 +209,69 @@ function createFixtures(index: number): Fixture[] {
     x = b.width / 2,
     z = b.depth / 2;
   switch (b.type) {
+    case "military-command":
+      return [
+        { kind: "counter", x: -3, z: -2, width: 4, depth: 0.9 },
+        { kind: "table", x: 2, z: -1, width: 2, depth: 1.3 },
+        { kind: "cabinet", x: 4.8, z: -3.8, width: 0.8, depth: 1 },
+        { kind: "bench", x: -4.5, z: 2, width: 1.6, depth: 0.6 },
+      ];
+    case "military-barracks":
+      return [
+        ...[-5.4, 5.4].flatMap((x) =>
+          [-2.4, 0.8].map((z) => ({
+            kind: "bed" as const,
+            x,
+            z,
+            width: 1.5,
+            depth: 2.3,
+          })),
+        ),
+        { kind: "cabinet", x: 0, z: -3.8, width: 2, depth: 0.8 },
+        { kind: "table", x: 0, z: 1, width: 2, depth: 1.2 },
+      ];
+    case "military-hangar":
+      return [
+        ...[-6.8, 6.8].map((x) => ({
+          kind: "rack" as const,
+          x,
+          z: 0,
+          width: 1.2,
+          depth: 5.5,
+        })),
+        ...[-3, 3].map((x) => ({
+          kind: "pallet" as const,
+          x,
+          z: 4.4,
+          width: 1.4,
+          depth: 1.2,
+        })),
+        { kind: "workbench", x: 0, z: 4.8, width: 2.7, depth: 1 },
+      ];
+    case "military-tent":
+      return [
+        ...[-2.5, 2.5].map((x) => ({
+          kind: "bed" as const,
+          x,
+          z: -1.2,
+          width: 1.5,
+          depth: 2.3,
+        })),
+        { kind: "table", x: -2.1, z: 2.5, width: 1.2, depth: 0.7 },
+        { kind: "cabinet", x: 2.8, z: 2.5, width: 0.7, depth: 0.8 },
+      ];
+    case "military-medical":
+      return [
+        ...[-2.4, 2.4].map((x) => ({
+          kind: "bed" as const,
+          x,
+          z: -0.8,
+          width: 1.5,
+          depth: 2.3,
+        })),
+        { kind: "cabinet", x: -2.8, z: 2.6, width: 0.7, depth: 0.8 },
+        { kind: "counter", x: 2.5, z: 2.5, width: 1.8, depth: 0.7 },
+      ];
     case "flats":
     case "tenement":
       return Array.from({ length: buildingStories(b) }, (_, floor) => [
@@ -367,7 +480,17 @@ export function buildingSurface(p: BuildingPoint, maxHeight: number) {
 export function buildingCeiling(p: BuildingPoint, feet: number) {
   let ceiling = Infinity;
   BUILDINGS.forEach((b, i) => {
-    if (buildingStories(b) < 2) return;
+    if (buildingStories(b) < 2) {
+      if (
+        (b.type === "military-tent" || b.type === "military-medical") &&
+        within(p, b)
+      )
+        ceiling = Math.min(
+          ceiling,
+          b.height - 0.15 - (Math.abs(p.x - b.x) / (b.width / 2)) * 1.1,
+        );
+      return;
+    }
     const local = { x: p.x - b.x, z: p.z - b.z };
     for (const slab of buildingSlabs(i))
       if (within(local, slab, 0.12) && slab.y - 0.18 >= feet + 1.9 - 0.01)
@@ -400,6 +523,8 @@ export type Partition = {
 };
 function createPartitions(index: number): Partition[] {
   const b = BUILDINGS[index];
+  if (b.type === "military-command")
+    return [{ x: 0.8, z: -2.5, width: 0.18, depth: 4, height: 3.1 }];
   if (buildingStories(b) > 1)
     return Array.from({ length: buildingStories(b) }, (_, floor) => [
       ...[-4, 0, 4].map((z) => ({
@@ -449,7 +574,11 @@ const PARTITIONS = BUILDINGS.map((_, index) => createPartitions(index));
 export function partitions(index: number) {
   return PARTITIONS[index];
 }
-export function buildingBlocked(p: BuildingPoint, radius = 0.32) {
+export function buildingBlocked(
+  p: BuildingPoint,
+  radius = 0.32,
+  ignoreDoors = false,
+) {
   return BUILDINGS.some((b, i) => {
     const feet = p.y ?? 0;
     const x = p.x - b.x,
@@ -475,7 +604,8 @@ export function buildingBlocked(p: BuildingPoint, radius = 0.32) {
       (feet > 2.8 || Math.abs(x) > DOOR_WIDTH / 2 - radius)
     )
       return true;
-    if (doorBlocksPoint(i, p, doorAngles[i], radius)) return true;
+    if (!ignoreDoors && doorBlocksPoint(i, p, doorAngles[i], radius))
+      return true;
     if (
       partitions(i).some(
         (f) =>

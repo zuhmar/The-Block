@@ -1,0 +1,320 @@
+{
+  "worldSizeMeters": [
+    256,
+    256
+  ],
+  "previousSizeMeters": [
+    128,
+    128
+  ],
+  "compoundBounds": {
+    "minX": 64,
+    "maxX": 112,
+    "minZ": -21,
+    "maxZ": 35
+  },
+  "newMilitaryModels": [
+    {
+      "type": "military-command",
+      "triangles": 3632,
+      "bytes": 265472
+    },
+    {
+      "type": "military-barracks",
+      "triangles": 5412,
+      "bytes": 391872
+    },
+    {
+      "type": "military-hangar",
+      "triangles": 5040,
+      "bytes": 365092
+    },
+    {
+      "type": "military-tent",
+      "triangles": 3642,
+      "bytes": 263512
+    },
+    {
+      "type": "military-medical",
+      "triangles": 3966,
+      "bytes": 287824
+    }
+  ],
+  "roamingSwatGuards": 4,
+  "totalEnemies": 7,
+  "totalBuildings": 13,
+  "totalLoot": 28,
+  "savedLootIndicesRetained": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "browserRoutes": [
+    {
+      "phone": false,
+      "mapSize": 256,
+      "crossedBridgeAndFarBank": true,
+      "fourRoamingSwat": true,
+      "sharedSwatModelRequests": 1,
+      "enteredAndClosedTent": true,
+      "lootRewardOnce": true,
+      "oldHouseAndSearchedIndicesPreserved": true,
+      "reloadPreserved": true,
+      "healthAfterCrossing": "100",
+      "guards": [
+        {
+          "id": "lookout-town",
+          "moving": false,
+          "kind": "lookout",
+          "visual": "blender",
+          "x": -14,
+          "z": 33,
+          "health": 75,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "police-town",
+          "moving": false,
+          "kind": "police",
+          "visual": "fallback",
+          "x": -32,
+          "z": -30,
+          "health": 125,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "swat-town",
+          "moving": false,
+          "kind": "swat",
+          "visual": "fallback",
+          "x": 32,
+          "z": -32,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "gate-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 66.03285479012304,
+          "z": 10.026298673318834,
+          "health": 225,
+          "state": "patrol",
+          "shots": 4,
+          "visible": true
+        },
+        {
+          "id": "north-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "fallback",
+          "x": 106.86474999999902,
+          "z": -18,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "tent-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 79.94093268779521,
+          "z": 21.000570335325282,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": true
+        },
+        {
+          "id": "supply-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 108.85290909567938,
+          "z": 17.04160295050087,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "phone": true,
+      "mapSize": 256,
+      "crossedBridgeAndFarBank": true,
+      "fourRoamingSwat": true,
+      "sharedSwatModelRequests": 1,
+      "enteredAndClosedTent": true,
+      "lootRewardOnce": true,
+      "oldHouseAndSearchedIndicesPreserved": true,
+      "reloadPreserved": true,
+      "healthAfterCrossing": "100",
+      "rifleCombat": true,
+      "guards": [
+        {
+          "id": "lookout-town",
+          "moving": false,
+          "kind": "lookout",
+          "visual": "blender",
+          "x": -14,
+          "z": 33,
+          "health": 75,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "police-town",
+          "moving": false,
+          "kind": "police",
+          "visual": "fallback",
+          "x": -32,
+          "z": -30,
+          "health": 125,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "swat-town",
+          "moving": false,
+          "kind": "swat",
+          "visual": "fallback",
+          "x": 32,
+          "z": -32,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "gate-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 68.01387156721657,
+          "z": 0.10639739493968081,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": true
+        },
+        {
+          "id": "north-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 85.97472140757083,
+          "z": -4.374591009040025,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": true
+        },
+        {
+          "id": "tent-patrol",
+          "moving": false,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 75.76987560266868,
+          "z": 14.081782997772155,
+          "health": 0,
+          "state": "down",
+          "shots": 0,
+          "visible": false
+        },
+        {
+          "id": "supply-patrol",
+          "moving": true,
+          "kind": "swat",
+          "visual": "blender",
+          "x": 91.03040517660709,
+          "z": 18.374181436439837,
+          "health": 225,
+          "state": "patrol",
+          "shots": 0,
+          "visible": true
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "checks": {
+    "fullSuitePassed": 171,
+    "lint": true,
+    "typecheck": true,
+    "productionBuild": true,
+    "guardReturnFromOpenInterior": true,
+    "guardRecoveryAfterDoorReopens": true,
+    "bridgeAndExpandedBoundary": true,
+    "expandedWildernessSaveCoordinates": true,
+    "phoneHeaderViewports": [
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "brandRight": 142.015625,
+        "locationLeft": 156,
+        "locationRight": 252,
+        "pauseLeft": 260,
+        "bottom": 75.625,
+        "overflow": false
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "brandRight": 142.015625,
+        "locationLeft": 156,
+        "locationRight": 322,
+        "pauseLeft": 330,
+        "bottom": 68.625,
+        "overflow": false
+      },
+      {
+        "viewport": [
+          844,
+          390
+        ],
+        "brandRight": 142.015625,
+        "locationLeft": 156,
+        "locationRight": 776,
+        "pauseLeft": 784,
+        "bottom": 61.625,
+        "overflow": false
+      }
+    ]
+  },
+  "scope": "Production bundle exercised locally through keyboard and actual emulated touch input in software WebGL. Not a physical-phone performance measurement. Old database and online world unchanged."
+}

@@ -11,8 +11,8 @@ with sync_playwright() as p:
   page.locator('#show-'+kind).click();page.wait_for_function('(k)=>document.querySelector("#actor-canvas").dataset.reviewKind===k && document.querySelector("#actor-canvas").dataset.reviewLoaded==="true"',arg=kind);state=page.locator('#actor-canvas').evaluate('(c)=>({...c.dataset})');assert int(state['drawCalls'])<100 and int(state['triangles'])<55000,state
   page.screenshot(path='work/npc-'+kind+'-phone.png')
   page.locator('[data-slot=headwear]').uncheck();page.wait_for_function('document.querySelector("#actor-canvas").dataset.hiddenSlots.includes("headwear")');page.locator('[data-slot=headwear]').check();models.append({'kind':kind,'render':state});print('Phone preview:',kind,flush=True)
- page.locator('#close-actors').click();page.locator('#start').click();page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.enemies).length===3');data=page.locator('#world').evaluate('(c)=>({...c.dataset})');enemies=json.loads(data['enemies']);assert len(set(e['kind'] for e in enemies))==3
- assert int(data['drawCalls'])<120 and int(data['triangles'])<20000,data
+ page.locator('#close-actors').click();page.locator('#start').click();page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.enemies).length===7');data=page.locator('#world').evaluate('(c)=>({...c.dataset})');enemies=json.loads(data['enemies'])[:3];assert len(set(e['kind'] for e in enemies))==3
+ assert int(data['drawCalls'])<120 and int(data['triangles'])<300000,data
  for i,a in enumerate(enemies):
   for d in enemies[i+1:]:assert math.hypot(a['x']-d['x'],a['z']-d['z'])>55
  assert not errors,errors

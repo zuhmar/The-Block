@@ -1,3 +1,10 @@
+import {
+  COMPOUND,
+  COMPOUND_BARRIERS,
+  COMPOUND_PATROLS,
+  inCompound,
+  type PatrolSpec,
+} from "./military-compound";
 import { lootChestModel, lootChestSources } from "./loot-chests";
 import { woodBuildingModel, woodBuildingSources } from "./wood-buildings";
 import {
@@ -65,7 +72,7 @@ const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
 $("#app").innerHTML = `
 <canvas id="world" aria-label="Street Survival first-person 3D world"></canvas>
 <div id="hud" hidden>
-  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · SMALL WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
+  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
   <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
@@ -73,7 +80,7 @@ $("#app").innerHTML = `
   <div id="weapon-status"><span id="ammo"></span><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>A small town. Open country.<br>A fresh start in first person.</p><div class="menu-tags"><span>128 × 128 m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">TEST ENEMIES · Lookout: southwest · Police: northwest · SWAT: northeast</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -213,7 +220,7 @@ function sign(
   );
 }
 // All terrain shares a single lightweight mesh; scenery uses simple original 3D geometry.
-box(scene, 0, -0.35, 0, 128, 0.6, 128, 0x7f995c);
+box(scene, 0, -0.35, 0, MAP_SIZE, 0.6, MAP_SIZE, 0x7f995c);
 const water = new THREE.Mesh(
   new THREE.PlaneGeometry(13, 150),
   material(0x5eabba),
@@ -223,14 +230,14 @@ water.position.set(48, -0.035, 0);
 scene.add(water);
 // River banks follow a gentle curve, rather than a rectangular water strip.
 const waterShape = new THREE.Shape();
-for (let i = 0; i <= 64; i++) {
-  const z = -64 + i * 2,
+for (let i = 0; i <= MAP_SIZE / 2; i++) {
+  const z = -MAP_SIZE / 2 + i * 2,
     x = riverX(z) - 3.3;
   if (i) waterShape.lineTo(x, -z);
   else waterShape.moveTo(x, -z);
 }
-for (let i = 64; i >= 0; i--) {
-  const z = -64 + i * 2;
+for (let i = MAP_SIZE / 2; i >= 0; i--) {
+  const z = -MAP_SIZE / 2 + i * 2;
   waterShape.lineTo(riverX(z) + 3.3, -z);
 }
 waterShape.closePath();
@@ -382,11 +389,11 @@ const rocks = new THREE.InstancedMesh(
 );
 for (let i = 0; i < 38; i++) {
   const side = i % 4,
-    t = (i / 38) * 128 - 64;
+    t = (i / 38) * MAP_SIZE - MAP_SIZE / 2;
   dummy.position.set(
-    side === 0 ? -63 : side === 1 ? 63 : t,
+    side === 0 ? -MAP_SIZE / 2 + 1 : side === 1 ? MAP_SIZE / 2 - 1 : t,
     1.2,
-    side === 2 ? -63 : side === 3 ? 63 : t,
+    side === 2 ? -MAP_SIZE / 2 + 1 : side === 3 ? MAP_SIZE / 2 - 1 : t,
   );
   dummy.scale.set(2.8 + (i % 3), 2 + (i % 4), 3.3);
   dummy.rotation.set(0.2 * i, 0.6 * i, 0);
@@ -472,6 +479,107 @@ for (const x of [-7, -3, 1]) {
   targets.push(target);
   const bull = cylinder(scene, x, 2, 35.92, 0.18, 0.025, 0xb4674f, 12);
   bull.rotation.x = Math.PI / 2;
+}
+// The new compound uses the same inexpensive static batching as the town.
+box(
+  scene,
+  (COMPOUND.minX + COMPOUND.maxX) / 2,
+  0.012,
+  (COMPOUND.minZ + COMPOUND.maxZ) / 2,
+  COMPOUND.maxX - COMPOUND.minX,
+  0.025,
+  COMPOUND.maxZ - COMPOUND.minZ,
+  0x999d87,
+);
+for (const barrier of COMPOUND_BARRIERS) {
+  if (barrier.height < 1) {
+    for (let row = 0; row < 3; row++)
+      for (let col = 0; col < 4; col++)
+        box(
+          scene,
+          barrier.x + (col - 1.5) * 0.48 + (row % 2) * 0.06,
+          0.15 + row * 0.3,
+          barrier.z,
+          0.48,
+          0.28,
+          0.95,
+          0x9d956e,
+        );
+    continue;
+  }
+  const horizontal = barrier.width > barrier.depth,
+    length = horizontal ? barrier.width : barrier.depth;
+  for (const y of [0.3, 2.4])
+    box(
+      scene,
+      barrier.x,
+      y,
+      barrier.z,
+      horizontal ? length : 0.12,
+      0.11,
+      horizontal ? 0.12 : length,
+      0x5f6e6c,
+    );
+  for (let n = 0; n <= length; n += 1.2)
+    box(
+      scene,
+      barrier.x + (horizontal ? n - length / 2 : 0),
+      1.25,
+      barrier.z + (horizontal ? 0 : n - length / 2),
+      0.065,
+      2.5,
+      0.065,
+      0x72817b,
+    );
+  for (let n = 0; n <= length; n += 4)
+    box(
+      scene,
+      barrier.x + (horizontal ? n - length / 2 : 0),
+      1.3,
+      barrier.z + (horizontal ? 0 : n - length / 2),
+      0.16,
+      2.6,
+      0.16,
+      0x43534f,
+    );
+}
+for (const x of [64, 112]) {
+  for (const z of [3, 11]) box(scene, x, 2.2, z, 0.3, 4.4, 0.3, 0x43534f);
+  box(scene, x, 4.3, 7, 0.35, 0.25, 8.4, 0x43534f);
+  const marker = sign(
+    x === 64 ? "FORT EAST · MILITARY" : "COMPOUND EXIT",
+    5,
+    0.65,
+    "#eee8cd",
+    "#3e5140",
+  );
+  marker.position.set(x - 0.22, 3.75, 7);
+  marker.rotation.y = -Math.PI / 2;
+  scene.add(marker);
+}
+for (const [x, z] of [
+  [65, -20],
+  [111, -20],
+  [65, 34],
+  [111, 34],
+]) {
+  box(scene, x, 2.5, z, 0.14, 5, 0.14, 0x4f6259);
+  box(scene, x, 5, z, 0.8, 0.2, 0.5, 0xe0d6ae);
+}
+for (const b of BUILDINGS.filter((b) => b.type.startsWith("military-"))) {
+  const front = b.z < 0 ? 1 : -1,
+    start = b.z + (front * b.depth) / 2,
+    end = front > 0 ? 2.5 : 11.5;
+  box(
+    scene,
+    b.x,
+    0.033,
+    (start + end) / 2,
+    2,
+    0.012,
+    Math.abs(end - start),
+    0xb9b8a0,
+  );
 }
 // Batch static box geometry by material to keep phone draw calls low.
 scene.updateMatrixWorld(true);
@@ -703,8 +811,20 @@ const body = createPlayerBody();
 scene.add(body.root);
 let muzzle = viewModel.flash;
 const muzzlePosition = new THREE.Vector3();
-const enemies = NPC_KINDS.map((kind) => {
-  const enemy = newEnemy(kind, save.pieces),
+const encounters = [
+  ...NPC_KINDS.map((kind) => ({
+    id: kind + "-town",
+    kind,
+    patrol: undefined as PatrolSpec | undefined,
+  })),
+  ...COMPOUND_PATROLS.map((patrol) => ({
+    id: patrol.id,
+    kind: "swat" as const,
+    patrol,
+  })),
+];
+const enemies = encounters.map(({ kind, patrol, id }) => {
+  const enemy = newEnemy(kind, save.pieces, patrol),
     actor = createNpc(kind, (text, w, h) =>
       sign(text, w, h, "#ffffff", "#202735"),
     ),
@@ -735,6 +855,8 @@ const enemies = NPC_KINDS.map((kind) => {
   const hitbox = createNpcHitbox();
   scene.add(hitbox);
   return {
+    id,
+    patrol,
     enemy,
     actor,
     weapon,
@@ -742,6 +864,7 @@ const enemies = NPC_KINDS.map((kind) => {
     aim,
     hitbox,
     flashTime: 0,
+    moving: false,
     imageRig: undefined as Awaited<ReturnType<typeof loadNpcImage>> | undefined,
     imageLoading: false,
     retryImageAfter: 0,
@@ -783,7 +906,10 @@ function respawn() {
   player = { ...START };
   vertical = verticalSpeed = 0;
   for (const unit of enemies)
-    Object.assign(unit.enemy, newEnemy(unit.enemy.kind, save.pieces));
+    Object.assign(
+      unit.enemy,
+      newEnemy(unit.enemy.kind, save.pieces, unit.patrol),
+    );
   clearBullets();
   $("#defeated").hidden = true;
   updateHud();
@@ -840,6 +966,8 @@ function enemyFrame(dt: number) {
           unit.imageLoading = false;
         });
     }
+    const beforeX = enemy.x,
+      beforeZ = enemy.z;
     const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
     enemyActor.root.visible =
       enemy.health > 0 &&
@@ -850,9 +978,8 @@ function enemyFrame(dt: number) {
       enemy.z,
     );
     enemyActor.root.rotation.y = enemy.yaw;
-    const moving =
-      enemy.state === "chase" &&
-      Math.hypot(enemy.x - player.x, enemy.z - player.z) > 11;
+    const moving = Math.hypot(enemy.x - beforeX, enemy.z - beforeZ) > 0.0001;
+    unit.moving = moving;
     if (unit.imageRig) unit.imageRig.animate(moving, dt, Boolean(shot));
     else {
       enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
@@ -1613,11 +1740,13 @@ function updateHud() {
   $("#zone").textContent =
     inside >= 0
       ? BUILDINGS[inside].name
-      : inTown(player)
-        ? "JAIL DISTRICT"
-        : roadDistance(player) < 5
-          ? "OUTBOUND ROAD"
-          : "OPEN MEADOW";
+      : inCompound(player, 1)
+        ? "FORT EAST"
+        : inTown(player)
+          ? "JAIL DISTRICT"
+          : roadDistance(player) < 5
+            ? "OUTBOUND ROAD"
+            : "OPEN MEADOW";
   const floorLabel =
     inside >= 0 && buildingStories(BUILDINGS[inside]) > 1
       ? `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
@@ -1899,6 +2028,8 @@ function frame(now: number) {
   canvas.dataset.health = String(health);
   canvas.dataset.enemies = JSON.stringify(
     enemies.map((u) => ({
+      id: u.id,
+      moving: u.moving,
       kind: u.enemy.kind,
       visual: u.imageRig ? "blender" : u.imageLoading ? "loading" : "fallback",
       x: u.enemy.x,

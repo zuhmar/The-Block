@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   START,
+  MAP_SIZE,
   BUILDINGS,
   LOOT,
   TREES,
@@ -22,7 +23,7 @@ test("small 3D world has a clear spawn, blocked building walls, trees and water,
   for (const t of TREES) assert(blocked(t, []));
   assert(blockedTerrain({ x: riverX(30), z: 30 }));
   assert(!blockedTerrain({ x: 47, z: 7 }));
-  assert(blockedTerrain({ x: 63, z: 0 }));
+  assert(blockedTerrain({ x: MAP_SIZE / 2 - 1, z: 0 }));
   assert(LOOT.length >= 5);
   assert(LOOT[3].width / LOOT[3].depth > LOOT[4].width / LOOT[4].depth);
 });

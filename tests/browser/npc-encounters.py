@@ -47,7 +47,7 @@ with sync_playwright() as p:
     if sprint:page.keyboard.up('Shift')
     page.wait_for_timeout(140)
    raise AssertionError(('route blocked',goal,state()))
-  initial=json.loads(state()['enemies']);assert len(initial)==3 and len(set(e['kind'] for e in initial))==3
+  initial=json.loads(state()['enemies']);assert len(initial)==7 and len(set(e['kind'] for e in initial))==3
   page.keyboard.press('5')
   for waypoint in route(position(),goal):go(waypoint)
   def target():return next(e for e in json.loads(state()['enemies']) if e['kind']==kind)

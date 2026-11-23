@@ -1,4 +1,9 @@
 import {
+  inCompound,
+  compoundBlocked,
+  compoundSurface,
+} from "./military-compound";
+import {
   BUILDINGS,
   buildingStories,
   STORY_HEIGHT,
@@ -22,7 +27,7 @@ export type Piece = Point & {
   doorAngle?: number;
 };
 export type Box = Point & { width: number; depth: number };
-export const MAP_SIZE = 128;
+export const MAP_SIZE = 256;
 export const BUILD_LIMIT = 100;
 export const COST: Record<PieceKind, number> = {
   floor: 8,
@@ -54,6 +59,8 @@ export const ROADS = [
     { x: 29, z: 3 },
     { x: 37, z: 7 },
     { x: 61, z: 7 },
+    { x: 116, z: 7 },
+    { x: 124, z: 13 },
   ],
 ];
 export { BUILDINGS } from "./building-layout";
@@ -125,8 +132,40 @@ export const LOOT: Loot[] = [
 const crateTiers = LOOT.slice(0, 5);
 BUILDINGS.forEach((b, index) => {
   const stories = buildingStories(b);
-  const spots =
-    stories > 1
+  const spots = b.type.startsWith("military-")
+    ? [
+        {
+          x: (
+            {
+              "military-command": -2,
+              "military-barracks": 3,
+              "military-hangar": 0,
+              "military-tent": 0,
+              "military-medical": 0,
+            } as Record<string, number>
+          )[b.type],
+          z: (
+            {
+              "military-command": 1,
+              "military-barracks": 3,
+              "military-hangar": 0,
+              "military-tent": 1.2,
+              "military-medical": 1.3,
+            } as Record<string, number>
+          )[b.type],
+          y: 0,
+          tier: (
+            {
+              "military-command": 4,
+              "military-barracks": 3,
+              "military-hangar": 5,
+              "military-tent": 2,
+              "military-medical": 3,
+            } as Record<string, number>
+          )[b.type],
+        },
+      ]
+    : stories > 1
       ? Array.from({ length: stories }, (_, floor) => [
           {
             x: -3.2,
@@ -157,6 +196,10 @@ BUILDINGS.forEach((b, index) => {
       y: spot.y,
     });
 });
+LOOT.push(
+  { ...crateTiers[3], x: 104, z: 12, y: 0 },
+  { ...crateTiers[4], x: 69, z: -19, y: 0 },
+);
 export const riverX = (z: number) => 47 + Math.sin(z * 0.055) * 3;
 export function segmentDistance(p: Point, a: Point, b: Point) {
   const dx = b.x - a.x,
@@ -181,21 +224,30 @@ export function inBox(p: Point, b: Box, radius = 0) {
   );
 }
 export const inTown = (p: Point) =>
-  p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29;
-export const onBridge = (p: Point) => Math.abs(p.z - 7) < 4 && p.x > 39;
+  (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) || inCompound(p, 1);
+export const onBridge = (p: Point) =>
+  Math.abs(p.z - 7) < 3 && p.x > 39 && p.x < 54;
 export function blockedTerrain(p: Point, radius = 0.32) {
   return (
-    Math.abs(p.x) > 61 - radius ||
-    Math.abs(p.z) > 61 - radius ||
+    Math.abs(p.x) > MAP_SIZE / 2 - 3 - radius ||
+    Math.abs(p.z) > MAP_SIZE / 2 - 3 - radius ||
     (Math.abs(p.x - riverX(p.z)) < 3.3 + radius && !onBridge(p))
   );
 }
 // Sparse, deterministic trees; open meadows are deliberately left clear for homes.
-export const TREES = Array.from({ length: 95 }, (_, i) => {
+const legacyTrees = Array.from({ length: 95 }, (_, i) => {
   const x = Math.sin(i * 127.1 + 31) * 57,
     z = Math.sin(i * 311.7 + 9) * 57;
   return { x, z, width: 0.65, depth: 0.65, scale: 0.8 + (i % 5) * 0.12 };
-}).filter(
+});
+const outerTrees = Array.from({ length: 280 }, (_, i) => ({
+  x: Math.sin(i * 97.3 + 77) * 121,
+  z: Math.sin(i * 233.7 + 41) * 121,
+  width: 0.65,
+  depth: 0.65,
+  scale: 0.8 + (i % 5) * 0.12,
+})).filter((p) => Math.max(Math.abs(p.x), Math.abs(p.z)) > 65);
+export const TREES = [...legacyTrees, ...outerTrees].filter(
   (p) =>
     !inTown(p) &&
     roadDistance(p) > 7 &&
@@ -232,10 +284,16 @@ export function pieceBox(p: Piece): Box {
             : 2,
   };
 }
-export function blocked(p: Point, pieces: Piece[], footHeight = p.y ?? 0) {
+export function blocked(
+  p: Point,
+  pieces: Piece[],
+  footHeight = p.y ?? 0,
+  ignoreBuildingDoors = false,
+) {
   return (
     blockedTerrain(p) ||
-    buildingBlocked({ ...p, y: footHeight }, 0.32) ||
+    compoundBlocked(p, 0.32, footHeight) ||
+    buildingBlocked({ ...p, y: footHeight }, 0.32, ignoreBuildingDoors) ||
     LOOT.some(
       (b) =>
         footHeight + 1.9 > (b.y ?? 0) &&
@@ -377,7 +435,8 @@ export function placementReason(
     for (const dx of [-1, 0, 1])
       for (const dz of [-1, 0, 1]) {
         const p = { x: piece.x + dx, z: piece.z + dz };
-        if (inTown(p)) return "Build in the meadows outside town";
+        if (inTown(p))
+          return "Build in the meadows outside towns and compounds";
         if (roadDistance(p) < 5) return "Keep roads and sidewalks clear";
         if (blockedTerrain(p, 0.3)) return "Choose dry, level ground";
         if (TREES.some((t) => inBox(p, t, 0.6))) return "Keep clear of trees";
@@ -454,7 +513,10 @@ export function platformTop(p: Omit<Piece, "id">, pieces: Piece[]) {
   return pieceBase(p, pieces) + (p.kind === "foundation" ? 0.5 : 0.18);
 }
 export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
-  let height = buildingSurface(p, maxHeight);
+  let height = Math.max(
+    buildingSurface(p, maxHeight),
+    compoundSurface(p, maxHeight),
+  );
   for (const piece of pieces)
     if (
       isPlatform(piece) &&
@@ -647,8 +709,8 @@ export function readSave(raw: string | null): Save {
         !Number.isFinite(p.x) ||
         !Number.isFinite(p.z) ||
         (p.y !== undefined && (!Number.isFinite(p.y) || p.y < 0 || p.y > 40)) ||
-        Math.abs(p.x) > 60 ||
-        Math.abs(p.z) > 60 ||
+        Math.abs(p.x) > MAP_SIZE / 2 - 4 ||
+        Math.abs(p.z) > MAP_SIZE / 2 - 4 ||
         !Number.isInteger(p.rotation) ||
         p.rotation < 0 ||
         p.rotation > 3 ||

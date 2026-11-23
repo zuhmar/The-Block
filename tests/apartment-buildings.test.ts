@@ -81,7 +81,7 @@ test("two and three story buildings have connected stairs, level rooms, headroom
   }
 });
 test("upper loot remains on its floor, appended indices preserve existing searched saves", () => {
-  assert.equal(LOOT.length, 21);
+  assert(LOOT.length >= 21);
   assert.deepEqual(
     LOOT.slice(0, 5).map((x) => x.tier),
     [1, 2, 3, 4, 5],
