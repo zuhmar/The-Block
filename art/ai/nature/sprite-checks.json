@@ -1,0 +1,110 @@
+[
+  {
+    "id": "tree-broadleaf",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      16,
+      12,
+      493,
+      504
+    ],
+    "sha256": "b3272744febd922e1c48e4a2bf1239a9ee5ec8f5555e07d4ba47975163417d4b"
+  },
+  {
+    "id": "tree-pine",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      57,
+      15,
+      451,
+      502
+    ],
+    "sha256": "20b045a6650291f90edcb440a12ee6fbf931f8f3db24b8b3d2bf432755224ef7"
+  },
+  {
+    "id": "tree-birch",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      26,
+      9,
+      452,
+      503
+    ],
+    "sha256": "079e51c95bd2af6b172cc8ad0fb917bc781e3754a38ec0f23c6599fdf93bce8d"
+  },
+  {
+    "id": "node-rock",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      44,
+      73,
+      480,
+      462
+    ],
+    "sha256": "ec2efb31892d4a08b5d182e4b1de69f6b78a476752ee0a493370a8380652f6ca"
+  },
+  {
+    "id": "node-sulfur",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      34,
+      67,
+      482,
+      468
+    ],
+    "sha256": "8441e3b5e6ebf7e51c6fb8524a39372010a29de908674ad3de669849e0c528a3"
+  },
+  {
+    "id": "node-metal",
+    "dimensions": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      254
+    ],
+    "contentBoundsAtAlpha16": [
+      27,
+      70,
+      472,
+      475
+    ],
+    "sha256": "50f6749022b19d5d29b37d0b3b1a01a1ae2426f7e296de674afee5d350b0daae"
+  }
+]
