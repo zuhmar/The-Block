@@ -1,0 +1,158 @@
+[
+  {
+    "id": "tree-broadleaf",
+    "lod": 0,
+    "file": "tree-broadleaf.glb",
+    "triangles": 6624,
+    "drawCalls": 5,
+    "sizeMetres": {
+      "x": 6.641,
+      "y": 7.39,
+      "z": 5.802
+    },
+    "bytes": 179816
+  },
+  {
+    "id": "tree-broadleaf",
+    "lod": 1,
+    "file": "tree-broadleaf-lod1.glb",
+    "triangles": 600,
+    "drawCalls": 3,
+    "sizeMetres": {
+      "x": 6.175,
+      "y": 7.268,
+      "z": 5.12
+    },
+    "bytes": 18876
+  },
+  {
+    "id": "tree-pine",
+    "lod": 0,
+    "file": "tree-pine.glb",
+    "triangles": 3488,
+    "drawCalls": 3,
+    "sizeMetres": {
+      "x": 4.511,
+      "y": 7.59,
+      "z": 4.627
+    },
+    "bytes": 70304
+  },
+  {
+    "id": "tree-pine",
+    "lod": 1,
+    "file": "tree-pine-lod1.glb",
+    "triangles": 644,
+    "drawCalls": 3,
+    "sizeMetres": {
+      "x": 4.396,
+      "y": 7.589,
+      "z": 4.2
+    },
+    "bytes": 15648
+  },
+  {
+    "id": "tree-birch",
+    "lod": 0,
+    "file": "tree-birch.glb",
+    "triangles": 7704,
+    "drawCalls": 4,
+    "sizeMetres": {
+      "x": 5.318,
+      "y": 7.45,
+      "z": 3.729
+    },
+    "bytes": 198912
+  },
+  {
+    "id": "tree-birch",
+    "lod": 1,
+    "file": "tree-birch-lod1.glb",
+    "triangles": 760,
+    "drawCalls": 4,
+    "sizeMetres": {
+      "x": 5.113,
+      "y": 7.362,
+      "z": 3.148
+    },
+    "bytes": 24420
+  },
+  {
+    "id": "node-rock",
+    "lod": 0,
+    "file": "node-rock.glb",
+    "triangles": 1600,
+    "drawCalls": 3,
+    "sizeMetres": {
+      "x": 2.551,
+      "y": 1.82,
+      "z": 1.967
+    },
+    "bytes": 167148
+  },
+  {
+    "id": "node-rock",
+    "lod": 1,
+    "file": "node-rock-lod1.glb",
+    "triangles": 100,
+    "drawCalls": 3,
+    "sizeMetres": {
+      "x": 2.207,
+      "y": 1.82,
+      "z": 1.814
+    },
+    "bytes": 14108
+  },
+  {
+    "id": "node-sulfur",
+    "lod": 0,
+    "file": "node-sulfur.glb",
+    "triangles": 2080,
+    "drawCalls": 6,
+    "sizeMetres": {
+      "x": 2.551,
+      "y": 1.896,
+      "z": 1.967
+    },
+    "bytes": 219424
+  },
+  {
+    "id": "node-sulfur",
+    "lod": 1,
+    "file": "node-sulfur-lod1.glb",
+    "triangles": 160,
+    "drawCalls": 6,
+    "sizeMetres": {
+      "x": 2.207,
+      "y": 1.861,
+      "z": 1.814
+    },
+    "bytes": 23512
+  },
+  {
+    "id": "node-metal",
+    "lod": 0,
+    "file": "node-metal.glb",
+    "triangles": 1600,
+    "drawCalls": 6,
+    "sizeMetres": {
+      "x": 2.551,
+      "y": 1.82,
+      "z": 1.967
+    },
+    "bytes": 170276
+  },
+  {
+    "id": "node-metal",
+    "lod": 1,
+    "file": "node-metal-lod1.glb",
+    "triangles": 100,
+    "drawCalls": 6,
+    "sizeMetres": {
+      "x": 2.207,
+      "y": 1.82,
+      "z": 1.814
+    },
+    "bytes": 17184
+  }
+]
