@@ -11,7 +11,7 @@ with sync_playwright() as p:
   context=browser.new_context(viewport={'width':390,'height':844} if mobile else {'width':800,'height':600},is_mobile=mobile,has_touch=mobile)
   context.add_init_script("if(!localStorage.getItem('"+KEY+"'))localStorage.setItem('"+KEY+"',JSON.stringify({version:1,wood:8765,pieces:[{id:'old-house',kind:'floor',x:40,z:40,rotation:0}],opened:[0,4,13,19]}))")
   page=context.new_page();errors=[];requests=[];page.on('pageerror',lambda e:errors.append(str(e)));page.on('request',lambda r:requests.append(r.url) if swat in r.url else None)
-  page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:4173'),wait_until='networkidle');assert '256 × 256 m' in page.locator('#menu').inner_text();page.locator('#start').tap() if mobile else page.locator('#start').click();page.wait_for_function('document.querySelector("#world").dataset.buildingSources!==undefined');cdp=context.new_cdp_session(page)
+  page.goto(os.environ.get('FPS_CHECK_URL','http://127.0.0.1:4173'),wait_until='networkidle');assert '384 × 384 m' in page.locator('#menu').inner_text();page.locator('#start').tap() if mobile else page.locator('#start').click();page.wait_for_function('document.querySelector("#world").dataset.buildingSources!==undefined');cdp=context.new_cdp_session(page)
   def state():return page.locator('#world').evaluate('(c)=>({...c.dataset})')
   def pos():return tuple(map(float,state()['position'].split(',')))
   def touch(kind,points):cdp.send('Input.dispatchTouchEvent',{'type':kind,'touchPoints':points})
@@ -44,10 +44,10 @@ with sync_playwright() as p:
     page.wait_for_function('document.querySelector("#world").dataset.movement==="0.00,0.00"');assert int(state()['health'])>0,('defeated',state())
    raise AssertionError(('movement',goal,state()))
   def use():page.locator('#interact').tap() if mobile else page.keyboard.press('e')
-  assert state()['mapSize']=='256';assert json.loads(state()['buildingSources'])==['blender']*13
+  assert state()['mapSize']=='384';assert json.loads(state()['buildingSources'])==['blender']*19
   units=json.loads(state()['enemies']);assert len(units)==7;fort=[e for e in units if e['id'].endswith('-patrol')];assert len(fort)==4 and all(e['kind']=='swat' for e in fort)
   page.wait_for_function('(initial)=>JSON.parse(document.querySelector("#world").dataset.enemies).some(e=>e.id===initial.id && Math.hypot(e.x-initial.x,e.z-initial.z)>.15)',arg=fort[0])
-  for goal in [(14,14),(14,7),(35,7),(43,7)]:go(goal)
+  for goal in [(18,14),(18,7),(35,7),(43,7)]:go(goal)
   page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.enemies).some(e=>e.id.endsWith("-patrol")&&e.visual==="blender"&&e.moving)')
   look(-math.pi/2);page.screenshot(path='work/military-'+('phone' if mobile else 'desktop')+'-bridge.png')
   if mobile:
@@ -75,6 +75,6 @@ with sync_playwright() as p:
   page.screenshot(path='work/military-'+('phone' if mobile else 'desktop')+'-tent.png');assert len(requests)==1,requests
   health=state()['health'];guardStates=json.loads(state()['enemies']);assert not errors,errors
   page.reload(wait_until='networkidle');assert page.evaluate('JSON.parse(localStorage.getItem("'+KEY+'")).wood')==8835
-  results.append({'phone':mobile,'mapSize':256,'crossedBridgeAndFarBank':True,'fourRoamingSwat':True,'sharedSwatModelRequests':len(requests),'enteredAndClosedTent':True,'lootRewardOnce':True,'oldHouseAndSearchedIndicesPreserved':True,'reloadPreserved':True,'healthAfterCrossing':health,'rifleCombat':mobile,'guards':guardStates,'errors':errors});print(results[-1],flush=True);context.close()
+  results.append({'phone':mobile,'mapSize':384,'crossedBridgeAndFarBank':True,'fourRoamingSwat':True,'sharedSwatModelRequests':len(requests),'enteredAndClosedTent':True,'lootRewardOnce':True,'oldHouseAndSearchedIndicesPreserved':True,'reloadPreserved':True,'healthAfterCrossing':health,'rifleCombat':mobile,'guards':guardStates,'errors':errors});print(results[-1],flush=True);context.close()
  browser.close()
 Path('work/military-browser-'+(os.environ.get('MILITARY_CASE') or 'all')+'.json').write_text(json.dumps(results,indent=2)+'\n')

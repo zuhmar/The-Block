@@ -1,3 +1,8 @@
+import {
+  JAIL_BOXES,
+  JAIL_TOWERS,
+  JAIL_STAIRS,
+} from "../../apps/client/src/fps/jail-ground-layout";
 import { writeFile } from "node:fs/promises";
 import {
   BUILDINGS,
@@ -15,6 +20,7 @@ await writeFile(
   "art/buildings/blender/layout.json",
   JSON.stringify(
     {
+      jail: { boxes: JAIL_BOXES, towers: JAIL_TOWERS, stairs: JAIL_STAIRS },
       doorWidth: DOOR_WIDTH,
       openingWidth: OPENING_WIDTH,
       wall: WALL,

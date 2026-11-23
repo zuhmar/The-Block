@@ -1,6 +1,6 @@
 export const BUILDINGS = [
   {
-    x: -24,
+    x: -26.5,
     z: -10,
     width: 10,
     depth: 10,
@@ -20,7 +20,7 @@ export const BUILDINGS = [
     type: "shelter",
   },
   {
-    x: 24,
+    x: 26.5,
     z: -9,
     width: 9,
     depth: 8,
@@ -30,7 +30,7 @@ export const BUILDINGS = [
     type: "workshop",
   },
   {
-    x: -24,
+    x: -26.5,
     z: 16,
     width: 9,
     depth: 9,
@@ -40,8 +40,8 @@ export const BUILDINGS = [
     type: "home",
   },
   {
-    x: 24,
-    z: 19,
+    x: 26,
+    z: 24,
     width: 12,
     depth: 9,
     height: 5.3,
@@ -70,7 +70,7 @@ export const BUILDINGS = [
     type: "flats",
   },
   {
-    x: -24,
+    x: -26.5,
     z: -25,
     width: 10,
     depth: 10,
@@ -128,6 +128,66 @@ export const BUILDINGS = [
     color: 0xb6aa85,
     name: "MEDICAL TENT",
     type: "military-medical",
+  },
+  {
+    x: -179,
+    z: -14,
+    width: 12,
+    depth: 10,
+    height: 4.2,
+    color: 0xc77c66,
+    name: "CORNER DINER",
+    type: "district-diner",
+  },
+  {
+    x: -157,
+    z: -14,
+    width: 14,
+    depth: 12,
+    height: 4.5,
+    color: 0x83a977,
+    name: "WEST MARKET",
+    type: "district-market",
+  },
+  {
+    x: -135,
+    z: -14,
+    width: 10,
+    depth: 10,
+    height: 4.6,
+    color: 0xbe8b5e,
+    name: "REPAIR GARAGE",
+    type: "district-garage",
+  },
+  {
+    x: -179,
+    z: 15,
+    width: 12,
+    depth: 10,
+    height: 6.7,
+    color: 0xbb7865,
+    name: "BRICK DUPLEX",
+    type: "district-duplex",
+  },
+  {
+    x: -157,
+    z: 15,
+    width: 12,
+    depth: 12,
+    height: 4.5,
+    color: 0x83b9b0,
+    name: "WEST CLINIC",
+    type: "district-clinic",
+  },
+  {
+    x: -135,
+    z: 15,
+    width: 14,
+    depth: 10,
+    height: 9.9,
+    color: 0x819caf,
+    name: "CORNER OFFICES",
+    type: "district-offices",
   },
 ];
 export type Building = (typeof BUILDINGS)[number];
@@ -209,6 +269,35 @@ function createFixtures(index: number): Fixture[] {
     x = b.width / 2,
     z = b.depth / 2;
   switch (b.type) {
+    case "district-diner":
+      return [
+        { kind: "counter", x: 3.8, z: 0, width: 1, depth: 5 },
+        { kind: "bench", x: -3.5, z: -2, width: 2, depth: 0.55 },
+        { kind: "table", x: -3.5, z: -0.7, width: 1.5, depth: 1.2 },
+        { kind: "bench", x: -3.5, z: 1, width: 2, depth: 0.55 },
+        { kind: "kitchen", x: 0, z: -4, width: 3, depth: 0.8 },
+      ];
+    case "district-market":
+      return [
+        { kind: "shelf", x: -5.5, z: 0, width: 1, depth: 6 },
+        { kind: "shelf", x: 5.5, z: 0, width: 1, depth: 6 },
+        { kind: "counter", x: 0, z: -4, width: 3, depth: 0.9 },
+        { kind: "fridge", x: 4.5, z: -4.5, width: 1.4, depth: 0.8 },
+      ];
+    case "district-garage":
+      return [
+        { kind: "workbench", x: -3.5, z: 0, width: 1, depth: 4 },
+        { kind: "rack", x: 3.5, z: 0, width: 1, depth: 4 },
+        { kind: "cabinet", x: -3.8, z: -3.8, width: 0.8, depth: 1 },
+        { kind: "table", x: 0, z: -3.5, width: 2, depth: 1 },
+      ];
+    case "district-clinic":
+      return [
+        { kind: "bed", x: -3.7, z: -2, width: 1.5, depth: 2.3 },
+        { kind: "bed", x: 3.7, z: -2, width: 1.5, depth: 2.3 },
+        { kind: "counter", x: 3.8, z: 3.5, width: 2, depth: 0.8 },
+        { kind: "cabinet", x: -4.8, z: 3.7, width: 0.8, depth: 1 },
+      ];
     case "military-command":
       return [
         { kind: "counter", x: -3, z: -2, width: 4, depth: 0.9 },
@@ -272,11 +361,16 @@ function createFixtures(index: number): Fixture[] {
         { kind: "cabinet", x: -2.8, z: 2.6, width: 0.7, depth: 0.8 },
         { kind: "counter", x: 2.5, z: 2.5, width: 1.8, depth: 0.7 },
       ];
+    case "district-duplex":
+    case "district-offices":
     case "flats":
     case "tenement":
       return Array.from({ length: buildingStories(b) }, (_, floor) => [
         {
-          kind: "bed" as const,
+          kind:
+            b.type === "district-offices"
+              ? ("table" as const)
+              : ("bed" as const),
           x: -3.3,
           z: -3.4,
           width: 1.5,
@@ -372,7 +466,11 @@ function createFixtures(index: number): Fixture[] {
 }
 export const STORY_HEIGHT = 3.2;
 export function buildingStories(b: Building) {
-  return b.type === "flats" ? 2 : b.type === "tenement" ? 3 : 1;
+  return b.type === "flats" || b.type === "district-duplex"
+    ? 2
+    : b.type === "tenement" || b.type === "district-offices"
+      ? 3
+      : 1;
 }
 type Stair = {
   x: number;
@@ -523,6 +621,8 @@ export type Partition = {
 };
 function createPartitions(index: number): Partition[] {
   const b = BUILDINGS[index];
+  if (b.type === "district-clinic")
+    return [{ x: 0.7, z: 1.8, width: 0.18, depth: 3.8, height: 3.1 }];
   if (b.type === "military-command")
     return [{ x: 0.8, z: -2.5, width: 0.18, depth: 4, height: 3.1 }];
   if (buildingStories(b) > 1)

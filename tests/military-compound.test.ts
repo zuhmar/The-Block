@@ -36,12 +36,12 @@ import {
   damageEnemy,
 } from "../apps/client/src/fps/enemy";
 test("expanded world keeps the bridge continuous and reserves the military compound", () => {
-  assert.equal(MAP_SIZE, 256);
+  assert.equal(MAP_SIZE, 384);
   assert(COMPOUND.maxX < MAP_SIZE / 2 - 3);
   assert(!blocked(START, []));
   for (let x = 35; x < 124; x += 0.25)
     assert(!blocked({ x, z: 7 }, []), `bridge/approach ${x}`);
-  assert(blockedTerrain({ x: 127, z: 7 }));
+  assert(blockedTerrain({ x: MAP_SIZE / 2 - 1, z: 7 }));
   assert(!blockedTerrain({ x: 118, z: 60 }));
   assert(blockedTerrain({ x: 47, z: 0 }));
   assert(!blockedTerrain({ x: 48, z: 7 }));
@@ -137,7 +137,7 @@ test("five military models have furnished hollow interiors, working entry hinges
     BUILDINGS.filter((b) => b.type.startsWith("military-")).length,
     5,
   );
-  assert.equal(LOOT.length, 28);
+  assert.equal(LOOT.length, 65);
   for (const [i, b] of BUILDINGS.entries()) {
     if (!b.type.startsWith("military-")) continue;
     const raw = await readFile(
@@ -161,7 +161,7 @@ test("five military models have furnished hollow interiors, working entry hinges
     for (let t = 0; t < 16; t++) animateDoors(0.05, []);
     assert(!buildingBlocked(entry));
   }
-  for (const c of LOOT.slice(21)) {
+  for (const c of LOOT.slice(21, 28)) {
     assert(!blockedTerrain(c));
     assert(!buildingBlocked(c));
     assert(inCompound(c));

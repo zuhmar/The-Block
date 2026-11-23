@@ -1,3 +1,4 @@
+import { preloadStreetFurniture } from "./street-furniture";
 import { preloadLootChests } from "./loot-chests";
 import { preloadWoodBuildings } from "./wood-buildings";
 import { preloadMeshyPlayer } from "./meshy-player";
@@ -11,6 +12,7 @@ void Promise.allSettled([
   preloadMeshyPlayer(),
   preloadWoodBuildings(),
   preloadLootChests(),
+  preloadStreetFurniture(),
 ])
   .catch(() => undefined)
   .then(() => import("./main"));

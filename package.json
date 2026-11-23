@@ -24,7 +24,7 @@
     "assets:image-characters": "blender -b -t 4 --python packages/art-tools/build-image-characters.py",
     "assets:image-npcs": "blender -b -t 4 --python packages/art-tools/build-image-npcs.py",
     "assets:weapons": "blender -b -t 4 --python packages/art-tools/build-weapons.py",
-    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py && blender -b -t 4 --python packages/art-tools/build-jail.py && blender -b -t 4 --python packages/art-tools/build-apartments.py && blender -b -t 4 --python packages/art-tools/build-military.py",
+    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py && blender -b -t 4 --python packages/art-tools/build-jail.py && blender -b -t 4 --python packages/art-tools/build-apartments.py && blender -b -t 4 --python packages/art-tools/build-military.py && blender -b -t 4 --python packages/art-tools/build-town-expansion.py && blender -b -t 4 --python packages/art-tools/build-street-furniture.py",
     "assets:meshy-shadow": "blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py",
     "assets:meshy-lookout": "blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
     "assets:meshy-police": "MESHY_NPC=police blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
@@ -35,7 +35,8 @@
     "assets:loot-chests": "blender -b -t 4 --python packages/art-tools/build-loot-chests.py",
     "assets:jail": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-jail.py",
     "assets:apartments": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-apartments.py",
-    "assets:military": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-military.py"
+    "assets:military": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-military.py",
+    "assets:town-expansion": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-town-expansion.py && blender -b -t 4 --python packages/art-tools/build-street-furniture.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

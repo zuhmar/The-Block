@@ -1,10 +1,491 @@
 {
+  "jail": {
+    "boxes": [
+      {
+        "x": -14,
+        "z": 0,
+        "y": 0,
+        "width": 0.15,
+        "depth": 24,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": 14,
+        "z": 0,
+        "y": 0,
+        "width": 0.15,
+        "depth": 24,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": -8.1,
+        "z": -12,
+        "y": 0,
+        "width": 11.8,
+        "depth": 0.15,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": 8.1,
+        "z": -12,
+        "y": 0,
+        "width": 11.8,
+        "depth": 0.15,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": -8.1,
+        "z": 12,
+        "y": 0,
+        "width": 11.8,
+        "depth": 0.15,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": 8.1,
+        "z": 12,
+        "y": 0,
+        "width": 11.8,
+        "depth": 0.15,
+        "height": 3,
+        "role": "fence"
+      },
+      {
+        "x": -9.4,
+        "z": 0,
+        "y": 0,
+        "width": 0.6,
+        "depth": 2,
+        "height": 0.6,
+        "role": "bench"
+      },
+      {
+        "x": 9.4,
+        "z": 0,
+        "y": 0,
+        "width": 0.6,
+        "depth": 2,
+        "height": 0.6,
+        "role": "bench"
+      },
+      {
+        "x": 5.5,
+        "z": 10.5,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 3.3,
+        "role": "hoop"
+      },
+      {
+        "x": -12.85,
+        "z": -10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -12.85,
+        "z": -8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -10.15,
+        "z": -10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -10.15,
+        "z": -8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -12.95,
+        "z": -9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -10.05,
+        "z": -9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -11.5,
+        "z": -10.95,
+        "y": 3.2,
+        "width": 3,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -12.65,
+        "z": -8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -10.35,
+        "z": -8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -12.85,
+        "z": 8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -12.85,
+        "z": 10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -10.15,
+        "z": 8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -10.15,
+        "z": 10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": -12.95,
+        "z": 9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -10.05,
+        "z": 9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -11.5,
+        "z": 10.95,
+        "y": 3.2,
+        "width": 3,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -12.65,
+        "z": 8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": -10.35,
+        "z": 8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 10.15,
+        "z": -10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 10.15,
+        "z": -8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 12.85,
+        "z": -10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 12.85,
+        "z": -8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 10.05,
+        "z": -9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 12.95,
+        "z": -9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 11.5,
+        "z": -10.95,
+        "y": 3.2,
+        "width": 3,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 10.35,
+        "z": -8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 12.65,
+        "z": -8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 10.15,
+        "z": 8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 10.15,
+        "z": 10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 12.85,
+        "z": 8.15,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 12.85,
+        "z": 10.85,
+        "y": 0,
+        "width": 0.16,
+        "depth": 0.16,
+        "height": 6,
+        "role": "post"
+      },
+      {
+        "x": 10.05,
+        "z": 9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 12.95,
+        "z": 9.5,
+        "y": 3.2,
+        "width": 0.1,
+        "depth": 3,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 11.5,
+        "z": 10.95,
+        "y": 3.2,
+        "width": 3,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 10.35,
+        "z": 8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      },
+      {
+        "x": 12.65,
+        "z": 8.05,
+        "y": 3.2,
+        "width": 0.7,
+        "depth": 0.1,
+        "height": 1,
+        "role": "rail"
+      }
+    ],
+    "towers": [
+      {
+        "x": -11.5,
+        "z": -9.5,
+        "width": 3,
+        "depth": 3,
+        "y": 3.2,
+        "front": -1
+      },
+      {
+        "x": -11.5,
+        "z": 9.5,
+        "width": 3,
+        "depth": 3,
+        "y": 3.2,
+        "front": 1
+      },
+      {
+        "x": 11.5,
+        "z": -9.5,
+        "width": 3,
+        "depth": 3,
+        "y": 3.2,
+        "front": -1
+      },
+      {
+        "x": 11.5,
+        "z": 9.5,
+        "width": 3,
+        "depth": 3,
+        "y": 3.2,
+        "front": 1
+      }
+    ],
+    "stairs": [
+      {
+        "x": -11.5,
+        "startZ": -2.5,
+        "direction": -1,
+        "run": 5.5,
+        "width": 1.4,
+        "y": 0,
+        "rise": 3.2
+      },
+      {
+        "x": -11.5,
+        "startZ": 2.5,
+        "direction": 1,
+        "run": 5.5,
+        "width": 1.4,
+        "y": 0,
+        "rise": 3.2
+      },
+      {
+        "x": 11.5,
+        "startZ": -2.5,
+        "direction": -1,
+        "run": 5.5,
+        "width": 1.4,
+        "y": 0,
+        "rise": 3.2
+      },
+      {
+        "x": 11.5,
+        "startZ": 2.5,
+        "direction": 1,
+        "run": 5.5,
+        "width": 1.4,
+        "y": 0,
+        "rise": 3.2
+      }
+    ]
+  },
   "doorWidth": 1.6,
   "openingWidth": 1.8,
   "wall": 0.22,
   "buildings": [
     {
-      "x": -24,
+      "x": -26.5,
       "z": -10,
       "width": 10,
       "depth": 10,
@@ -122,7 +603,7 @@
       "partitions": []
     },
     {
-      "x": 24,
+      "x": 26.5,
       "z": -9,
       "width": 9,
       "depth": 8,
@@ -167,7 +648,7 @@
       "partitions": []
     },
     {
-      "x": -24,
+      "x": -26.5,
       "z": 16,
       "width": 9,
       "depth": 9,
@@ -241,8 +722,8 @@
       ]
     },
     {
-      "x": 24,
-      "z": 19,
+      "x": 26,
+      "z": 24,
       "width": 12,
       "depth": 9,
       "height": 5.3,
@@ -592,7 +1073,7 @@
       ]
     },
     {
-      "x": -24,
+      "x": -26.5,
       "z": -25,
       "width": 10,
       "depth": 10,
@@ -1126,6 +1607,666 @@
         }
       ],
       "partitions": []
+    },
+    {
+      "x": -179,
+      "z": -14,
+      "width": 12,
+      "depth": 10,
+      "height": 4.2,
+      "color": 13073510,
+      "name": "CORNER DINER",
+      "type": "district-diner",
+      "front": 1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "counter",
+          "x": 3.8,
+          "z": 0,
+          "width": 1,
+          "depth": 5
+        },
+        {
+          "kind": "bench",
+          "x": -3.5,
+          "z": -2,
+          "width": 2,
+          "depth": 0.55
+        },
+        {
+          "kind": "table",
+          "x": -3.5,
+          "z": -0.7,
+          "width": 1.5,
+          "depth": 1.2
+        },
+        {
+          "kind": "bench",
+          "x": -3.5,
+          "z": 1,
+          "width": 2,
+          "depth": 0.55
+        },
+        {
+          "kind": "kitchen",
+          "x": 0,
+          "z": -4,
+          "width": 3,
+          "depth": 0.8
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": -157,
+      "z": -14,
+      "width": 14,
+      "depth": 12,
+      "height": 4.5,
+      "color": 8628599,
+      "name": "WEST MARKET",
+      "type": "district-market",
+      "front": 1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "shelf",
+          "x": -5.5,
+          "z": 0,
+          "width": 1,
+          "depth": 6
+        },
+        {
+          "kind": "shelf",
+          "x": 5.5,
+          "z": 0,
+          "width": 1,
+          "depth": 6
+        },
+        {
+          "kind": "counter",
+          "x": 0,
+          "z": -4,
+          "width": 3,
+          "depth": 0.9
+        },
+        {
+          "kind": "fridge",
+          "x": 4.5,
+          "z": -4.5,
+          "width": 1.4,
+          "depth": 0.8
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": -135,
+      "z": -14,
+      "width": 10,
+      "depth": 10,
+      "height": 4.6,
+      "color": 12487518,
+      "name": "REPAIR GARAGE",
+      "type": "district-garage",
+      "front": 1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "workbench",
+          "x": -3.5,
+          "z": 0,
+          "width": 1,
+          "depth": 4
+        },
+        {
+          "kind": "rack",
+          "x": 3.5,
+          "z": 0,
+          "width": 1,
+          "depth": 4
+        },
+        {
+          "kind": "cabinet",
+          "x": -3.8,
+          "z": -3.8,
+          "width": 0.8,
+          "depth": 1
+        },
+        {
+          "kind": "table",
+          "x": 0,
+          "z": -3.5,
+          "width": 2,
+          "depth": 1
+        }
+      ],
+      "partitions": []
+    },
+    {
+      "x": -179,
+      "z": 15,
+      "width": 12,
+      "depth": 10,
+      "height": 6.7,
+      "color": 12286053,
+      "name": "BRICK DUPLEX",
+      "type": "district-duplex",
+      "front": -1,
+      "stories": 2,
+      "slabs": [
+        {
+          "x": -1.1399999999999997,
+          "z": 0,
+          "width": 9.48,
+          "depth": 9.76,
+          "y": 3.2
+        },
+        {
+          "x": 5.79,
+          "z": 0,
+          "width": 0.17999999999999972,
+          "depth": 9.76,
+          "y": 3.2
+        },
+        {
+          "x": 4.65,
+          "z": -4.14,
+          "width": 2.1,
+          "depth": 1.48,
+          "y": 3.2
+        },
+        {
+          "x": 4.65,
+          "z": 3.74,
+          "width": 2.1,
+          "depth": 2.28,
+          "y": 3.2
+        }
+      ],
+      "stairs": [
+        {
+          "x": 4.65,
+          "startZ": -3.4,
+          "run": 6,
+          "width": 1.8,
+          "y": 0
+        }
+      ],
+      "fixtures": [
+        {
+          "kind": "bed",
+          "x": -3.3,
+          "z": -3.4,
+          "width": 1.5,
+          "depth": 2.3,
+          "y": 0
+        },
+        {
+          "kind": "table",
+          "x": -3.2,
+          "z": 3.5,
+          "width": 1.2,
+          "depth": 0.8,
+          "y": 0
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.35,
+          "z": 4,
+          "width": 0.8,
+          "depth": 1,
+          "y": 0
+        },
+        {
+          "kind": "bench",
+          "x": 1.4,
+          "z": 0,
+          "width": 1.2,
+          "depth": 0.5,
+          "y": 0
+        },
+        {
+          "kind": "bed",
+          "x": -3.3,
+          "z": -3.4,
+          "width": 1.5,
+          "depth": 2.3,
+          "y": 3.2
+        },
+        {
+          "kind": "table",
+          "x": -3.2,
+          "z": 3.5,
+          "width": 1.2,
+          "depth": 0.8,
+          "y": 3.2
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.35,
+          "z": 4,
+          "width": 0.8,
+          "depth": 1,
+          "y": 3.2
+        },
+        {
+          "kind": "bench",
+          "x": 1.4,
+          "z": 0,
+          "width": 1.2,
+          "depth": 0.5,
+          "y": 3.2
+        }
+      ],
+      "partitions": [
+        {
+          "x": -1.3,
+          "z": -4,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 0,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 4,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -3.59,
+          "z": 0,
+          "y": 0,
+          "width": 4.58,
+          "depth": 0.16,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": -4,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 0,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 4,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -3.59,
+          "z": 0,
+          "y": 3.2,
+          "width": 4.58,
+          "depth": 0.16,
+          "height": 3.02
+        }
+      ]
+    },
+    {
+      "x": -157,
+      "z": 15,
+      "width": 12,
+      "depth": 12,
+      "height": 4.5,
+      "color": 8632752,
+      "name": "WEST CLINIC",
+      "type": "district-clinic",
+      "front": -1,
+      "stories": 1,
+      "slabs": [],
+      "stairs": [],
+      "fixtures": [
+        {
+          "kind": "bed",
+          "x": -3.7,
+          "z": -2,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "bed",
+          "x": 3.7,
+          "z": -2,
+          "width": 1.5,
+          "depth": 2.3
+        },
+        {
+          "kind": "counter",
+          "x": 3.8,
+          "z": 3.5,
+          "width": 2,
+          "depth": 0.8
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.8,
+          "z": 3.7,
+          "width": 0.8,
+          "depth": 1
+        }
+      ],
+      "partitions": [
+        {
+          "x": 0.7,
+          "z": 1.8,
+          "width": 0.18,
+          "depth": 3.8,
+          "height": 3.1
+        }
+      ]
+    },
+    {
+      "x": -135,
+      "z": 15,
+      "width": 14,
+      "depth": 10,
+      "height": 9.9,
+      "color": 8494255,
+      "name": "CORNER OFFICES",
+      "type": "district-offices",
+      "front": -1,
+      "stories": 3,
+      "slabs": [
+        {
+          "x": -1.1399999999999997,
+          "z": 0,
+          "width": 11.48,
+          "depth": 9.76,
+          "y": 3.2
+        },
+        {
+          "x": 6.79,
+          "z": 0,
+          "width": 0.17999999999999972,
+          "depth": 9.76,
+          "y": 3.2
+        },
+        {
+          "x": 5.65,
+          "z": -4.14,
+          "width": 2.1,
+          "depth": 1.48,
+          "y": 3.2
+        },
+        {
+          "x": 5.65,
+          "z": 3.74,
+          "width": 2.1,
+          "depth": 2.28,
+          "y": 3.2
+        },
+        {
+          "x": -1.1399999999999997,
+          "z": 0,
+          "width": 11.48,
+          "depth": 9.76,
+          "y": 6.4
+        },
+        {
+          "x": 6.79,
+          "z": 0,
+          "width": 0.17999999999999972,
+          "depth": 9.76,
+          "y": 6.4
+        },
+        {
+          "x": 5.65,
+          "z": -4.14,
+          "width": 2.1,
+          "depth": 1.48,
+          "y": 6.4
+        },
+        {
+          "x": 5.65,
+          "z": 3.74,
+          "width": 2.1,
+          "depth": 2.28,
+          "y": 6.4
+        }
+      ],
+      "stairs": [
+        {
+          "x": 5.65,
+          "startZ": -3.4,
+          "run": 6,
+          "width": 1.8,
+          "y": 0
+        },
+        {
+          "x": 5.65,
+          "startZ": -3.4,
+          "run": 6,
+          "width": 1.8,
+          "y": 3.2
+        }
+      ],
+      "fixtures": [
+        {
+          "kind": "table",
+          "x": -3.3,
+          "z": -3.4,
+          "width": 1.5,
+          "depth": 2.3,
+          "y": 0
+        },
+        {
+          "kind": "table",
+          "x": -3.2,
+          "z": 3.5,
+          "width": 1.2,
+          "depth": 0.8,
+          "y": 0
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.35,
+          "z": 4,
+          "width": 0.8,
+          "depth": 1,
+          "y": 0
+        },
+        {
+          "kind": "bench",
+          "x": 1.4,
+          "z": 0,
+          "width": 1.2,
+          "depth": 0.5,
+          "y": 0
+        },
+        {
+          "kind": "table",
+          "x": -3.3,
+          "z": -3.4,
+          "width": 1.5,
+          "depth": 2.3,
+          "y": 3.2
+        },
+        {
+          "kind": "table",
+          "x": -3.2,
+          "z": 3.5,
+          "width": 1.2,
+          "depth": 0.8,
+          "y": 3.2
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.35,
+          "z": 4,
+          "width": 0.8,
+          "depth": 1,
+          "y": 3.2
+        },
+        {
+          "kind": "bench",
+          "x": 1.4,
+          "z": 0,
+          "width": 1.2,
+          "depth": 0.5,
+          "y": 3.2
+        },
+        {
+          "kind": "table",
+          "x": -3.3,
+          "z": -3.4,
+          "width": 1.5,
+          "depth": 2.3,
+          "y": 6.4
+        },
+        {
+          "kind": "table",
+          "x": -3.2,
+          "z": 3.5,
+          "width": 1.2,
+          "depth": 0.8,
+          "y": 6.4
+        },
+        {
+          "kind": "cabinet",
+          "x": -4.35,
+          "z": 4,
+          "width": 0.8,
+          "depth": 1,
+          "y": 6.4
+        },
+        {
+          "kind": "bench",
+          "x": 1.4,
+          "z": 0,
+          "width": 1.2,
+          "depth": 0.5,
+          "y": 6.4
+        }
+      ],
+      "partitions": [
+        {
+          "x": -1.3,
+          "z": -4,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 0,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 4,
+          "y": 0,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -4.09,
+          "z": 0,
+          "y": 0,
+          "width": 5.58,
+          "depth": 0.16,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": -4,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 0,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 4,
+          "y": 3.2,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -4.09,
+          "z": 0,
+          "y": 3.2,
+          "width": 5.58,
+          "depth": 0.16,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": -4,
+          "y": 6.4,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 0,
+          "y": 6.4,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -1.3,
+          "z": 4,
+          "y": 6.4,
+          "width": 0.16,
+          "depth": 2,
+          "height": 3.02
+        },
+        {
+          "x": -4.09,
+          "z": 0,
+          "y": 6.4,
+          "width": 5.58,
+          "depth": 0.16,
+          "height": 3.02
+        }
+      ]
     }
   ]
 }

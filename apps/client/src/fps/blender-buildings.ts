@@ -13,6 +13,31 @@ import {
 } from "./building-layout";
 import { createBuildingModel } from "./building-models";
 const URLS: Record<string, string> = {
+  "district-diner": new URL(
+    "./models/buildings/district-diner.glb",
+    import.meta.url,
+  ).href,
+  "district-market": new URL(
+    "./models/buildings/district-market.glb",
+    import.meta.url,
+  ).href,
+  "district-garage": new URL(
+    "./models/buildings/district-garage.glb",
+    import.meta.url,
+  ).href,
+  "district-duplex": new URL(
+    "./models/buildings/district-duplex.glb",
+    import.meta.url,
+  ).href,
+  "district-clinic": new URL(
+    "./models/buildings/district-clinic.glb",
+    import.meta.url,
+  ).href,
+  "district-offices": new URL(
+    "./models/buildings/district-offices.glb",
+    import.meta.url,
+  ).href,
+
   "military-command": new URL(
     "./models/buildings/military-command.glb",
     import.meta.url,

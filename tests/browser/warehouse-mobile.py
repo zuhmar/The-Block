@@ -44,10 +44,10 @@ with sync_playwright() as p:
    look(math.atan2(-dx,-dz));r=page.locator('#joystick').bounding_box();cx=r['x']+r['width']/2;cy=r['y']+r['height']/2
    touch('touchStart',[{'x':cx,'y':cy-38,'id':1}]);page.wait_for_timeout(max(35,min(650,distance/4.5*1000*.7)));touch('touchEnd',[]);page.wait_for_timeout(60)
   raise AssertionError(('mobile route blocked',goal,state()))
- for waypoint in route(position(),(24,12.5)):go(waypoint)
+ for waypoint in route(position(),(26,17.5)):go(waypoint)
  page.wait_for_function('Number(document.querySelector("#world").dataset.nearestDoor)===4');page.locator('#interact').click();page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.doors)[4]<-1.55')
- go((24,16.7));page.wait_for_function('Number(document.querySelector("#world").dataset.inside)===4');page.screenshot(path='work/warehouse-mobile-interior.png');page.locator('#interact').click();page.wait_for_function('Math.abs(JSON.parse(document.querySelector("#world").dataset.doors)[4])<.01')
- page.locator('#interact').click();page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.doors)[4]<-1.55');go((24,12.5));page.wait_for_function('Number(document.querySelector("#world").dataset.inside)===-1')
+ go((26,21.7));page.wait_for_function('Number(document.querySelector("#world").dataset.inside)===4');page.screenshot(path='work/warehouse-mobile-interior.png');page.locator('#interact').click();page.wait_for_function('Math.abs(JSON.parse(document.querySelector("#world").dataset.doors)[4])<.01')
+ page.locator('#interact').click();page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.doors)[4]<-1.55');go((26,17.5));page.wait_for_function('Number(document.querySelector("#world").dataset.inside)===-1')
  saved=page.evaluate('JSON.parse(localStorage.getItem("street-survival:3d-prototype:v1"))');assert saved['wood']==9876 and any(p['id']=='prior-floor' for p in saved['pieces']),saved
  assert not errors,errors
  Path('work/warehouse-mobile-check.json').write_text(json.dumps({'touchNavigation':True,'warehouseEntryAndExit':True,'touchDoorOpenClose':True,'savePreserved':True,'pageErrors':errors,'scope':'Compiled game, real touch input in software WebGL; not a physical-phone performance benchmark.'},indent=2)+'\n');print('Warehouse phone entry, exit, USE and save preservation passed',flush=True);b.close()

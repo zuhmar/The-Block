@@ -1,0 +1,44 @@
+[
+  {
+    "type": "district-diner",
+    "stories": 1,
+    "rooms": 2,
+    "triangles": 5628,
+    "bytes": 495232
+  },
+  {
+    "type": "district-market",
+    "stories": 1,
+    "rooms": 2,
+    "triangles": 6492,
+    "bytes": 515196
+  },
+  {
+    "type": "district-garage",
+    "stories": 1,
+    "rooms": 2,
+    "triangles": 5844,
+    "bytes": 515308
+  },
+  {
+    "type": "district-duplex",
+    "stories": 2,
+    "rooms": 4,
+    "triangles": 11580,
+    "bytes": 908696
+  },
+  {
+    "type": "district-clinic",
+    "stories": 1,
+    "rooms": 2,
+    "triangles": 4008,
+    "bytes": 351244
+  },
+  {
+    "type": "district-offices",
+    "stories": 3,
+    "rooms": 6,
+    "triangles": 15228,
+    "bytes": 1196124
+  }
+]

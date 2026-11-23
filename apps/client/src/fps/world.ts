@@ -1,3 +1,15 @@
+import { westConnector } from "./west-road";
+import {
+  jailGroundBlocked,
+  jailGroundSurface,
+  jailGroundCeiling,
+} from "./jail-ground-layout";
+import {
+  inWestQuarter,
+  ROAD_BINS,
+  BIN_SPECS,
+  type BinKind,
+} from "./west-quarter";
 import {
   inCompound,
   compoundBlocked,
@@ -27,7 +39,7 @@ export type Piece = Point & {
   doorAngle?: number;
 };
 export type Box = Point & { width: number; depth: number };
-export const MAP_SIZE = 256;
+export const MAP_SIZE = 384;
 export const BUILD_LIMIT = 100;
 export const COST: Record<PieceKind, number> = {
   floor: 8,
@@ -42,20 +54,20 @@ export const ROAD = [
   { x: -60, z: 4 },
   { x: -38, z: 4 },
   { x: -28, z: 0 },
-  { x: -13, z: 0 },
+  { x: -18, z: 0 },
 ];
 export const ROADS = [
   ROAD,
   [
-    { x: -13, z: 0 },
-    { x: -13, z: -12 },
-    { x: 13, z: -12 },
-    { x: 13, z: 12 },
-    { x: -13, z: 12 },
-    { x: -13, z: 0 },
+    { x: -18, z: 0 },
+    { x: -18, z: -15 },
+    { x: 18, z: -15 },
+    { x: 18, z: 15 },
+    { x: -18, z: 15 },
+    { x: -18, z: 0 },
   ],
   [
-    { x: 13, z: 3 },
+    { x: 18, z: 3 },
     { x: 29, z: 3 },
     { x: 37, z: 7 },
     { x: 61, z: 7 },
@@ -63,9 +75,32 @@ export const ROADS = [
     { x: 124, z: 13 },
   ],
 ];
+ROADS.push([
+  { x: -188, z: 0 },
+  { x: -126, z: 0 },
+]);
+export const CITY_RING = ROADS[1];
+export function configureWestRoad(pieces: Piece[]) {
+  const route = westConnector(pieces, TREES, BUILDINGS);
+  ROADS.splice(4);
+  if (route.length > 1) ROADS.push(route);
+}
+export const pavedWidth = (road: Point[]) => (road === CITY_RING ? 5.4 : 9);
+export function pavedRoadDistance(p: Point) {
+  return Math.min(
+    ...ROADS.flatMap((road) =>
+      road
+        .slice(1)
+        .map((b, i) => segmentDistance(p, road[i], b) - pavedWidth(road) / 2),
+    ),
+  );
+}
 export { BUILDINGS } from "./building-layout";
 
 export type Loot = {
+  kind?: "trash";
+  model?: BinKind;
+  reward?: number;
   x: number;
   z: number;
   y?: number;
@@ -78,7 +113,7 @@ export type Loot = {
 };
 export const LOOT: Loot[] = [
   {
-    x: -20,
+    x: -23,
     z: 6,
     width: 0.8,
     depth: 0.7,
@@ -108,8 +143,8 @@ export const LOOT: Loot[] = [
     color: 0x688ca6,
   },
   {
-    x: 33,
-    z: 17,
+    x: 27.5,
+    z: 16.5,
     width: 2.1,
     depth: 0.6,
     height: 0.55,
@@ -118,8 +153,8 @@ export const LOOT: Loot[] = [
     color: 0x8b79a9,
   },
   {
-    x: 33,
-    z: 20,
+    x: 28,
+    z: 12,
     width: 2.2,
     depth: 1,
     height: 0.9,
@@ -130,7 +165,7 @@ export const LOOT: Loot[] = [
 ];
 // Append only: legacy searched indices 0–4 remain stable across this expansion.
 const crateTiers = LOOT.slice(0, 5);
-BUILDINGS.forEach((b, index) => {
+BUILDINGS.slice(0, 13).forEach((b, index) => {
   const stories = buildingStories(b);
   const spots = b.type.startsWith("military-")
     ? [
@@ -200,6 +235,47 @@ LOOT.push(
   { ...crateTiers[3], x: 104, z: 12, y: 0 },
   { ...crateTiers[4], x: 69, z: -19, y: 0 },
 );
+// New entries follow every legacy crate, preserving saved searched indices.
+for (const b of BUILDINGS.slice(13)) {
+  const stories = buildingStories(b);
+  const spots =
+    stories > 1
+      ? Array.from({ length: stories }, (_, floor) =>
+          [-1.5, 1.5].map((z) => ({
+            x: -3.2,
+            z,
+            y: floor * STORY_HEIGHT,
+            tier: floor === stories - 1 ? 5 : 2,
+          })),
+        ).flat()
+      : [{ x: 0, z: 0, y: 0, tier: 2 }];
+  for (const spot of spots)
+    LOOT.push({
+      ...crateTiers[spot.tier - 1],
+      x: b.x + spot.x,
+      z: b.z + spot.z,
+      y: spot.y,
+    });
+}
+ROAD_BINS.forEach((p, i) => {
+  const model = (["metal", "wheelie", "litter"] as const)[i % 3];
+  const spec = BIN_SPECS[model];
+  LOOT.push({
+    ...p,
+    ...spec,
+    kind: "trash",
+    model,
+    tier: 0,
+    name:
+      model === "wheelie"
+        ? "Wheelie bin"
+        : model === "metal"
+          ? "Metal trash can"
+          : "Street litter bin",
+    color: model === "wheelie" ? 0x427c61 : 0x637c90,
+  });
+});
+export const lootReward = (c: Loot) => c.reward ?? 20 + c.tier * 25;
 export const riverX = (z: number) => 47 + Math.sin(z * 0.055) * 3;
 export function segmentDistance(p: Point, a: Point, b: Point) {
   const dx = b.x - a.x,
@@ -224,7 +300,9 @@ export function inBox(p: Point, b: Box, radius = 0) {
   );
 }
 export const inTown = (p: Point) =>
-  (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) || inCompound(p, 1);
+  (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) ||
+  inCompound(p, 1) ||
+  inWestQuarter(p);
 export const onBridge = (p: Point) =>
   Math.abs(p.z - 7) < 3 && p.x > 39 && p.x < 54;
 export function blockedTerrain(p: Point, radius = 0.32) {
@@ -247,7 +325,17 @@ const outerTrees = Array.from({ length: 280 }, (_, i) => ({
   depth: 0.65,
   scale: 0.8 + (i % 5) * 0.12,
 })).filter((p) => Math.max(Math.abs(p.x), Math.abs(p.z)) > 65);
-export const TREES = [...legacyTrees, ...outerTrees].filter(
+export const TREES = [
+  ...legacyTrees,
+  ...outerTrees,
+  ...Array.from({ length: 330 }, (_, i) => ({
+    x: Math.sin(i * 97.3 + 16) * 185,
+    z: Math.sin(i * 233.7 + 19) * 185,
+    width: 0.65,
+    depth: 0.65,
+    scale: 0.8 + (i % 5) * 0.12,
+  })).filter((p) => Math.max(Math.abs(p.x), Math.abs(p.z)) > 129),
+].filter(
   (p) =>
     !inTown(p) &&
     roadDistance(p) > 7 &&
@@ -292,6 +380,7 @@ export function blocked(
 ) {
   return (
     blockedTerrain(p) ||
+    jailGroundBlocked(p, footHeight) ||
     compoundBlocked(p, 0.32, footHeight) ||
     buildingBlocked({ ...p, y: footHeight }, 0.32, ignoreBuildingDoors) ||
     LOOT.some(
@@ -515,6 +604,7 @@ export function platformTop(p: Omit<Piece, "id">, pieces: Piece[]) {
 export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   let height = Math.max(
     buildingSurface(p, maxHeight),
+    jailGroundSurface(p, maxHeight),
     compoundSurface(p, maxHeight),
   );
   for (const piece of pieces)
@@ -528,7 +618,7 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   return height;
 }
 export function ceilingHeight(p: Point, pieces: Piece[], feet: number) {
-  let ceiling = buildingCeiling(p, feet);
+  let ceiling = Math.min(buildingCeiling(p, feet), jailGroundCeiling(p, feet));
   for (const s of pieces)
     if (s.kind === "floor" && inBox(p, { ...s, width: 2, depth: 2 }, 0.25)) {
       const base = pieceBase(s, pieces);

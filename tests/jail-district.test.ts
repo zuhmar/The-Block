@@ -13,7 +13,7 @@ import {
 } from "../apps/client/src/fps/building-layout";
 import {
   LOOT,
-  roadDistance,
+  pavedRoadDistance,
   START,
   blocked,
   readSave,
@@ -28,16 +28,17 @@ test("central jail, surrounding city and loot have clear road and walking envelo
     for (let x = -b.width / 2; x <= b.width / 2; x += 0.5)
       for (let z = -b.depth / 2; z <= b.depth / 2; z += 0.5)
         assert(
-          roadDistance({ x: b.x + x, z: b.z + z }) > 4.5,
+          pavedRoadDistance({ x: b.x + x, z: b.z + z }) > 0,
           `${b.name} overlaps street/sidewalk`,
         );
   }
   for (const l of LOOT) {
+    if (l.kind === "trash") continue;
     assert(!buildingBlocked(l), `loot T${l.tier} intersects building`);
     for (const x of [-l.width / 2, l.width / 2])
       for (const z of [-l.depth / 2, l.depth / 2])
         assert(
-          roadDistance({ x: l.x + x, z: l.z + z }) >= 4.5,
+          pavedRoadDistance({ x: l.x + x, z: l.z + z }) >= 0,
           `loot T${l.tier} overlaps pavement`,
         );
   }

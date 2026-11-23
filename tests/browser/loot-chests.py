@@ -14,7 +14,7 @@ with sync_playwright() as p:
   page.locator('#start').tap() if mobile else page.locator('#start').click()
   page.wait_for_function('document.querySelector("#world").dataset.lootModels!==undefined')
   def state():return page.locator('#world').evaluate('(c)=>({...c.dataset})')
-  assert state()['lootProxyCount']=='5',state()
+  assert state()['lootProxyCount']=='65',state()
   def saved():return page.evaluate('JSON.parse(localStorage.getItem("'+KEY+'"))')
   assert all(v.endswith(':fallback' if fallback else ':meshy') for v in state()['lootModels'].split(',')),state()['lootModels']
   def look(yaw):
@@ -24,15 +24,15 @@ with sync_playwright() as p:
    page.evaluate('(x)=>document.dispatchEvent(new MouseEvent("mousemove",{movementX:x,movementY:0}))',-delta/.0024)
   # Use real WASD on desktop to approach the small chest from spawn.
   if not mobile:
-   for goal in [(-10,17),(-20,9),(-20,6)]:
+   for goal in [(0,15.5),(-18,15.5),(-18,4),(-23,4),(-23,5)]:
     for step in range(180):
      x,z=map(float,state()['position'].split(','));dx,dz=goal[0]-x,goal[1]-z
      if math.hypot(dx,dz)<.22:break
-     if goal==(-20,6) and z<6.85:break
+     if goal==(-23,5) and z>5.15:break
      look(math.atan2(-dx,-dz));old=state()['position'];page.keyboard.down('w');page.wait_for_function('(old)=>document.querySelector("#world").dataset.position!==old',arg=old);page.keyboard.up('w')
     else:raise AssertionError(('movement stuck',state()))
-   look(0);page.keyboard.down('w');page.wait_for_timeout(450);page.keyboard.up('w')
-   x,z=map(float,state()['position'].split(','));assert 6.6<z<7,(x,z)
+   look(0);page.keyboard.down('s');page.wait_for_timeout(450);page.keyboard.up('s')
+   x,z=map(float,state()['position'].split(','));assert 4.9<z<5.4,(x,z)
    page.keyboard.press('e');page.wait_for_function('JSON.parse(localStorage.getItem("'+KEY+'")).opened.includes(0)')
    assert saved()['wood']==8810,saved()
    page.keyboard.press('e');assert saved()['wood']==8810

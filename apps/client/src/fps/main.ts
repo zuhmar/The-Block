@@ -1,3 +1,5 @@
+import { inWestQuarter } from "./west-quarter";
+import { binModel, jailGroundModel } from "./street-furniture";
 import {
   COMPOUND,
   COMPOUND_BARRIERS,
@@ -46,6 +48,10 @@ import {
   LOOT,
   TREES,
   ROADS,
+  CITY_RING,
+  configureWestRoad,
+  pavedWidth,
+  lootReward,
   START,
   MAP_SIZE,
   BUILD_LIMIT,
@@ -80,7 +86,7 @@ $("#app").innerHTML = `
   <div id="weapon-status"><span id="ammo"></span><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -93,6 +99,7 @@ try {
 } catch {
   saveAvailable = false;
 }
+configureWestRoad(save.pieces);
 function persist() {
   try {
     localStorage.setItem(
@@ -286,8 +293,8 @@ function ribbon(
   scene.add(new THREE.Mesh(geo, material(color)));
 }
 for (const ROAD of ROADS) {
-  ribbon(ROAD, 9, 0.035, 0xbfc0aa);
-  ribbon(ROAD, 6, 0.055, 0x515c60);
+  ribbon(ROAD, pavedWidth(ROAD), 0.035, 0xbfc0aa);
+  ribbon(ROAD, ROAD === CITY_RING ? 3.6 : 6, 0.055, 0x515c60);
   for (let i = 1; i < ROAD.length; i++) {
     const a = ROAD[i - 1],
       b = ROAD[i],
@@ -412,15 +419,13 @@ for (const [x, z] of [
   box(scene, x + 0.5, 4.45, z, 1.15, 0.12, 0.15, 0x56655d);
   box(scene, x + 1, 4.3, z, 0.5, 0.16, 0.3, 0xe5dfb8);
 }
-for (const x of [-10, 10]) {
-  box(scene, x, 0.55, -3.8, 2, 0.15, 0.6, 0x8f7557);
-  for (const dx of [-0.7, 0.7])
-    box(scene, x + dx, 0.25, -3.8, 0.1, 0.55, 0.5, 0x56655d);
-}
+const jailGrounds = jailGroundModel();
+scene.add(jailGrounds.root, jailGrounds.proxy);
 // Keep cheap shot-cover boxes separate from the detailed visual meshes.
 const lootMeshes: THREE.Group[] = [];
 LOOT.forEach((c, index) => {
-  const visual = lootChestModel(c.tier);
+  const visual =
+    c.kind === "trash" ? binModel(c.model!) : lootChestModel(c.tier);
   const g = new THREE.Group();
   g.position.set(c.x, c.y ?? 0, c.z);
   g.userData.loot = index;
@@ -464,6 +469,7 @@ heading.rotation.y = Math.PI;
 scene.add(heading);
 for (const x of [9, 15]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
 const shotObstacles: THREE.Object3D[] = [
+  jailGrounds.proxy,
   trunks,
   crowns,
   rocks,
@@ -1384,15 +1390,14 @@ function interact() {
     );
   }
   const i = nearestLoot();
-  if (i < 0) return toast("Move closer to a marked supply crate");
-  if (save.opened.includes(i))
-    return toast("This supply crate has been searched");
-  const wood = 20 + LOOT[i].tier * 25;
+  if (i < 0) return toast("Move closer to a crate or trash can");
+  if (save.opened.includes(i)) return toast("This container has been searched");
+  const wood = lootReward(LOOT[i]);
   save.wood += wood;
   save.opened.push(i);
   persist();
   updateHud();
-  toast(`T${LOOT[i].tier} supply crate · +${wood} wood`);
+  toast(`${LOOT[i].name} · +${wood} wood`);
 }
 function jump() {
   if (
@@ -1742,11 +1747,13 @@ function updateHud() {
       ? BUILDINGS[inside].name
       : inCompound(player, 1)
         ? "FORT EAST"
-        : inTown(player)
-          ? "JAIL DISTRICT"
-          : roadDistance(player) < 5
-            ? "OUTBOUND ROAD"
-            : "OPEN MEADOW";
+        : inWestQuarter(player)
+          ? "WEST QUARTER"
+          : inTown(player)
+            ? "JAIL DISTRICT"
+            : roadDistance(player) < 5
+              ? "OUTBOUND ROAD"
+              : "OPEN MEADOW";
   const floorLabel =
     inside >= 0 && buildingStories(BUILDINGS[inside]) > 1
       ? `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
@@ -1780,7 +1787,9 @@ function updateHud() {
         : near >= 0
           ? save.opened.includes(near)
             ? "SEARCHED"
-            : "E / USE · Search supplies"
+            : LOOT[near].kind === "trash"
+              ? "E / USE · Search trash"
+              : "E / USE · Search supplies"
           : p
             ? "Build mode → Dismantle to remove"
             : "";
