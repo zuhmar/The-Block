@@ -1,0 +1,38 @@
+{
+  "validation": {
+    "fullSuiteTestsPassed": 158,
+    "finalFocusedTestsPassed": 18,
+    "lint": "passed",
+    "productionBuild": "passed"
+  },
+  "desktop": {
+    "floorPlacedOnWallTop": true,
+    "sameCellDifferentHeight": true,
+    "upperFloorHeight": 3.1799999999999997,
+    "supportRemovalBlocked": true,
+    "walkUnderWithoutTeleporting": true,
+    "jumpStopsAtCeiling": {
+      "max": 1.2799999999999998,
+      "landed": true
+    },
+    "upperFloorDismantleRefund": true,
+    "legacySavePreserved": true,
+    "pageErrors": []
+  },
+  "phone": {
+    "touchWallTopFloorPlacement": true,
+    "previewMatchesSavedHeight": true,
+    "upperFloorHeight": 3.1799999999999997,
+    "elevationRestoredAfterReload": true,
+    "oldSaveAndWoodPreserved": true,
+    "pageErrors": [],
+    "scope": "Compiled game with real touch events in software WebGL; not a physical-phone FPS benchmark."
+  },
+  "notes": [
+    "Floors snap to wall/doorway tops at matching 2m cells.",
+    "Optional piece elevation persists in existing version-1 saves; legacy piece IDs and wood retained.",
+    "Height-aware movement and ceiling collision prevent teleportation through upper floors.",
+    "Story-aware support, occupancy, door interaction and dismantling preserve structural dependencies.",
+    "Tests use compiled production assets and actual mouse/keyboard/touch input; no writable game hooks."
+  ]
+}

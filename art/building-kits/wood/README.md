@@ -9,3 +9,9 @@ Existing floor, wall, doorway and storage saves retain their IDs, coordinates an
 Static art is instanced by geometry/material. Dynamic doors animate separately. Shooting, cover checks and dismantling use lightweight proxy geometry rather than the detailed imported meshes. Dependency checks require doors to be removed before their frames, and attached pieces before supporting floors/foundations; dismantling refunds the original cost. Missing art uses matching procedural fallbacks. The 100-piece budget remains in place.
 
 This is the initial wood kit. The other reference-sheet component types and stone/metal tiers are not introduced by this integration.
+
+## Second stories
+
+Select Floor and aim at the upper half of a placed wall or doorway: the preview snaps to that wall's top and the supporting cell beneath it. Elevated floors save their absolute bottom elevation in optional `y`; old pieces without `y` retain their existing automatic ground/foundation height. Floors at different elevations may share the same horizontal cell. Walls, doorways, doors and storage can use elevated floors as supports.
+
+Collision uses the player's foot elevation: lower walls do not block an upper story, an upper floor does not lift someone standing beneath it, and its underside stops a jump. Supporting walls cannot be dismantled before the floors above them, and base changes that would move supports away from an existing upper floor are rejected. This adds story construction and collision; it does not introduce stair or ladder models.

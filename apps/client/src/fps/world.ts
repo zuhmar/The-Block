@@ -1,5 +1,5 @@
 import { buildingBlocked } from "./building-layout";
-export type Point = { x: number; z: number };
+export type Point = { x: number; z: number; y?: number };
 export type PieceKind =
   | "floor"
   | "wall"
@@ -161,14 +161,27 @@ export function pieceBox(p: Piece): Box {
             : 2,
   };
 }
-export function blocked(p: Point, pieces: Piece[]) {
+export function blocked(p: Point, pieces: Piece[], footHeight = p.y ?? 0) {
   return (
     blockedTerrain(p) ||
     buildingBlocked(p, 0.32) ||
     LOOT.some((b) => inBox(p, b, 0.32)) ||
     TREES.some((t) => inBox(p, t, 0.32)) ||
     pieces.some((s) => {
-      if (isPlatform(s)) return false;
+      const bottom = pieceBase(s, pieces),
+        top =
+          bottom +
+          (s.kind === "floor"
+            ? 0.18
+            : s.kind === "foundation"
+              ? 0.5
+              : s.kind === "storage"
+                ? 1
+                : 2.5);
+      if (bottom >= footHeight + 1.9 - 0.01 || top <= footHeight + 0.02)
+        return false;
+      if (isPlatform(s))
+        return top > footHeight + 0.75 && inBox(p, pieceBox(s), 0.32);
       if (s.kind === "door") return playerDoorBlocks(p, s, 0.32);
       if (s.kind !== "doorway") return inBox(p, pieceBox(s), 0.32);
       return [-0.78, 0.78].some((offset) =>
@@ -186,13 +199,19 @@ export function blocked(p: Point, pieces: Piece[]) {
     })
   );
 }
-export function movePlayer(p: Point, dx: number, dz: number, pieces: Piece[]) {
+export function movePlayer(
+  p: Point,
+  dx: number,
+  dz: number,
+  pieces: Piece[],
+  footHeight = p.y ?? 0,
+) {
   const steps = Math.max(1, Math.ceil(Math.hypot(dx, dz) / 0.15));
   let x = p.x,
     z = p.z;
   for (let i = 0; i < steps; i++) {
-    if (!blocked({ x: x + dx / steps, z }, pieces)) x += dx / steps;
-    if (!blocked({ x, z: z + dz / steps }, pieces)) z += dz / steps;
+    if (!blocked({ x: x + dx / steps, z }, pieces, footHeight)) x += dx / steps;
+    if (!blocked({ x, z: z + dz / steps }, pieces, footHeight)) z += dz / steps;
   }
   return { x, z };
 }
@@ -219,25 +238,66 @@ export function placementReason(
   pieces: Piece[],
   wood: number,
 ) {
+  if (
+    piece.y !== undefined &&
+    (!Number.isFinite(piece.y) || piece.y < 0 || piece.y > 40)
+  )
+    return "Building height limit reached";
   if (pieces.length >= BUILD_LIMIT) return "Build limit reached · 100 pieces";
   if (wood < COST[piece.kind]) return "Not enough wood";
   if (Math.hypot(piece.x - player.x, piece.z - player.z) > 8)
     return "Move closer · building reach is 8 m";
   if (piece.kind === "door") {
-    if (!pieces.some((p) => p.kind === "doorway" && sameEdge(p, piece)))
+    if (!pieces.some((p) => p.kind === "doorway" && sameEdge(p, piece, pieces)))
       return "Place a door in a doorway";
-    if (playerDoorBlocks(player, { ...piece, id: "preview", open: false }, 0.4))
+    if (
+      (player.y ?? 0) + 1.9 > pieceBase(piece, pieces) &&
+      (player.y ?? 0) < pieceBase(piece, pieces) + 2.1 &&
+      playerDoorBlocks(player, { ...piece, id: "preview", open: false }, 0.4)
+    )
       return "Step out of the doorway";
   } else if (piece.kind === "wall" || piece.kind === "doorway") {
     const supported = pieces.some(
       (p) =>
         isPlatform(p) &&
+        (piece.y === undefined
+          ? p.y === undefined
+          : Math.abs(platformTop(p, pieces) - piece.y) < 0.01) &&
         (piece.rotation % 2 === 0
           ? Math.abs(p.x - piece.x) < 0.01 && Math.abs(p.z - piece.z) === 1
           : Math.abs(p.z - piece.z) < 0.01 && Math.abs(p.x - piece.x) === 1),
     );
     if (!supported) return "Place walls and doorways along a floor edge";
   } else if (isPlatform(piece)) {
+    if (piece.y === undefined) {
+      const next = [...pieces, { ...piece, id: "support-preview" }];
+      const shifted = pieces.some(
+        (w) =>
+          (w.kind === "wall" || w.kind === "doorway") &&
+          Math.abs(pieceBase(w, pieces) - pieceBase(w, next)) > 0.01 &&
+          pieces.some(
+            (f) =>
+              f.kind === "floor" &&
+              f.y !== undefined &&
+              adjacentEdge(w, f) &&
+              Math.abs(f.y - pieceBase(w, pieces) - 2.5) < 0.01,
+          ),
+      );
+      if (shifted) return "Remove upper floors before raising their supports";
+    }
+    if (piece.kind === "foundation" && piece.y !== undefined && piece.y !== 0)
+      return "Place foundations on the ground";
+    if (
+      piece.kind === "floor" &&
+      piece.y !== undefined &&
+      !pieces.some(
+        (p) =>
+          (p.kind === "wall" || p.kind === "doorway") &&
+          adjacentEdge(p, piece) &&
+          Math.abs(pieceBase(p, pieces) + 2.5 - piece.y!) < 0.01,
+      )
+    )
+      return "Place upper floors on a wall top";
     for (const dx of [-1, 0, 1])
       for (const dz of [-1, 0, 1]) {
         const p = { x: piece.x + dx, z: piece.z + dz };
@@ -247,7 +307,15 @@ export function placementReason(
         if (TREES.some((t) => inBox(p, t, 0.6))) return "Keep clear of trees";
       }
   } else if (
-    !pieces.some((p) => isPlatform(p) && p.x === piece.x && p.z === piece.z)
+    !pieces.some(
+      (p) =>
+        isPlatform(p) &&
+        p.x === piece.x &&
+        p.z === piece.z &&
+        (piece.y === undefined
+          ? p.y === undefined
+          : Math.abs(platformTop(p, pieces) - piece.y) < 0.01),
+    )
   )
     return "Place storage on a floor";
   if (
@@ -256,6 +324,7 @@ export function placementReason(
         p.kind === piece.kind &&
         p.x === piece.x &&
         p.z === piece.z &&
+        Math.abs(pieceBase(p, pieces) - pieceBase(piece, pieces)) < 0.01 &&
         ((piece.kind !== "wall" &&
           piece.kind !== "doorway" &&
           piece.kind !== "door") ||
@@ -270,7 +339,8 @@ export function placementReason(
         (p.kind === "wall" || p.kind === "doorway") &&
         p.x === piece.x &&
         p.z === piece.z &&
-        p.rotation % 2 === piece.rotation % 2,
+        p.rotation % 2 === piece.rotation % 2 &&
+        Math.abs(pieceBase(p, pieces) - pieceBase(piece, pieces)) < 0.01,
     )
   )
     return "This edge is occupied";
@@ -278,6 +348,7 @@ export function placementReason(
     !isPlatform(piece) &&
     piece.kind !== "doorway" &&
     piece.kind !== "door" &&
+    Math.abs(pieceBase(piece, pieces) - (player.y ?? 0)) < 1.9 &&
     inBox(player, pieceBox({ ...piece, id: "preview" }), 0.4)
   )
     return "Step out of the placement area";
@@ -286,45 +357,107 @@ export function placementReason(
 export function isPlatform(p: Pick<Piece, "kind">) {
   return p.kind === "floor" || p.kind === "foundation";
 }
-export function sameEdge(a: Omit<Piece, "id">, b: Omit<Piece, "id">) {
-  return a.x === b.x && a.z === b.z && a.rotation % 2 === b.rotation % 2;
+export function adjacentEdge(edge: Omit<Piece, "id">, tile: Point) {
+  return edge.rotation % 2 === 0
+    ? Math.abs(edge.x - tile.x) < 0.01 && Math.abs(edge.z - tile.z) === 1
+    : Math.abs(edge.z - tile.z) < 0.01 && Math.abs(edge.x - tile.x) === 1;
 }
-export function surfaceHeight(p: Point, pieces: Piece[]) {
+export function sameEdge(
+  a: Omit<Piece, "id">,
+  b: Omit<Piece, "id">,
+  pieces: Piece[] = [],
+) {
+  return (
+    a.x === b.x &&
+    a.z === b.z &&
+    a.rotation % 2 === b.rotation % 2 &&
+    Math.abs(pieceBase(a, pieces) - pieceBase(b, pieces)) < 0.01
+  );
+}
+export function platformTop(p: Omit<Piece, "id">, pieces: Piece[]) {
+  return pieceBase(p, pieces) + (p.kind === "foundation" ? 0.5 : 0.18);
+}
+export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   let height = 0;
   for (const piece of pieces)
     if (
       isPlatform(piece) &&
       inBox(p, { ...piece, width: 2, depth: 2 }, 0.025)
     ) {
-      const foundation = pieces.some(
-        (s) => s.kind === "foundation" && s.x === piece.x && s.z === piece.z,
-      );
-      height = Math.max(
-        height,
-        piece.kind === "foundation" ? 0.5 : (foundation ? 0.5 : 0) + 0.18,
-      );
+      const top = platformTop(piece, pieces);
+      if (top <= maxHeight + 0.001) height = Math.max(height, top);
     }
   return height;
 }
-export function pieceBase(p: Omit<Piece, "id">, pieces: Piece[]) {
+export function ceilingHeight(p: Point, pieces: Piece[], feet: number) {
+  let ceiling = Infinity;
+  for (const s of pieces)
+    if (s.kind === "floor" && inBox(p, { ...s, width: 2, depth: 2 }, 0.25)) {
+      const base = pieceBase(s, pieces);
+      if (base >= feet + 1.9 - 0.01) ceiling = Math.min(ceiling, base);
+    }
+  return ceiling;
+}
+export function pieceBase(p: Omit<Piece, "id">, pieces: Piece[]): number {
+  if (p.y !== undefined) return p.y;
   if (p.kind === "foundation") return 0;
   if (p.kind === "floor")
     return pieces.some(
-      (s) => s.kind === "foundation" && s.x === p.x && s.z === p.z,
+      (s) =>
+        s.kind === "foundation" &&
+        s.y === undefined &&
+        s.x === p.x &&
+        s.z === p.z,
     )
       ? 0.5
       : 0;
-  if (p.kind === "storage") return surfaceHeight(p, pieces);
+  if (p.kind === "storage") return surfaceHeight(p, pieces, 0.75);
   let h = 0.15;
   for (const s of pieces)
-    if (
-      isPlatform(s) &&
-      (p.rotation % 2 === 0
-        ? Math.abs(s.x - p.x) < 0.01 && Math.abs(s.z - p.z) === 1
-        : Math.abs(s.z - p.z) < 0.01 && Math.abs(s.x - p.x) === 1)
-    )
-      h = Math.max(h, surfaceHeight(s, pieces));
+    if (isPlatform(s) && s.y === undefined && adjacentEdge(p, s))
+      h = Math.max(h, platformTop(s, pieces));
   return h;
+}
+/** Infer a story from the actual surface under the crosshair, preserving legacy ground pieces. */
+export function snapOnStructure(
+  point: Point,
+  kind: PieceKind,
+  rotation: number,
+  hit: Piece,
+  pieces: Piece[],
+): Omit<Piece, "id"> {
+  const candidate = snapPiece(point, kind, rotation);
+  if (kind === "floor" && (hit.kind === "wall" || hit.kind === "doorway")) {
+    const supporting = pieces.filter(
+      (p) =>
+        isPlatform(p) &&
+        adjacentEdge(hit, p) &&
+        Math.abs(platformTop(p, pieces) - pieceBase(hit, pieces)) < 0.01,
+    );
+    const tile = supporting.sort(
+      (a, b) =>
+        Math.hypot(a.x - point.x, a.z - point.z) -
+        Math.hypot(b.x - point.x, b.z - point.z),
+    )[0];
+    if (tile) {
+      candidate.x = tile.x;
+      candidate.z = tile.z;
+      candidate.y = pieceBase(hit, pieces) + 2.5;
+    }
+  } else if (
+    isPlatform(hit) &&
+    hit.y !== undefined &&
+    (kind === "wall" || kind === "doorway" || kind === "storage")
+  )
+    candidate.y = platformTop(hit, pieces);
+  else if (kind === "door" && hit.kind === "doorway") {
+    candidate.x = hit.x;
+    candidate.z = hit.z;
+    candidate.rotation =
+      rotation % 2 === hit.rotation % 2 ? rotation : hit.rotation;
+    if (hit.y !== undefined) candidate.y = pieceBase(hit, pieces);
+  }
+  return candidate;
 }
 export function playerDoorBlocks(
   p: Point,
@@ -341,7 +474,12 @@ export function playerDoorBlocks(
     localZ = Math.sin(angle) * x + Math.cos(angle) * z;
   return Math.abs(localX) < 0.54 + radius && Math.abs(localZ) < 0.05 + radius;
 }
-export function advancePlayerDoor(door: Piece, dt: number, occupants: Point[]) {
+export function advancePlayerDoor(
+  door: Piece,
+  dt: number,
+  occupants: Point[],
+  pieces: Piece[] = [],
+) {
   const current = door.doorAngle ?? (door.open ? -Math.PI / 2 : 0),
     target = door.open ? -Math.PI / 2 : 0;
   const next =
@@ -351,13 +489,17 @@ export function advancePlayerDoor(door: Piece, dt: number, occupants: Point[]) {
   const steps = Math.max(1, Math.ceil(Math.abs(next - current) / 0.04));
   for (let i = 1; i <= steps; i++)
     if (
-      occupants.some((p) =>
-        playerDoorBlocks(
-          p,
-          door,
-          0.34,
-          current + ((next - current) * i) / steps,
-        ),
+      occupants.some(
+        (p) =>
+          (p.y === undefined ||
+            (p.y + 1.9 > pieceBase(door, pieces) &&
+              p.y < pieceBase(door, pieces) + 2.1)) &&
+          playerDoorBlocks(
+            p,
+            door,
+            0.34,
+            current + ((next - current) * i) / steps,
+          ),
       )
     ) {
       door.doorAngle = current;
@@ -366,21 +508,36 @@ export function advancePlayerDoor(door: Piece, dt: number, occupants: Point[]) {
   door.doorAngle = next;
 }
 export function canRemove(piece: Piece, pieces: Piece[]) {
-  if (piece.kind === "doorway")
-    return !pieces.some((p) => p.kind === "door" && sameEdge(piece, p));
+  if (
+    piece.kind === "doorway" &&
+    pieces.some((p) => p.kind === "door" && sameEdge(piece, p, pieces))
+  )
+    return false;
+  if (piece.kind === "wall" || piece.kind === "doorway")
+    return !pieces.some(
+      (p) =>
+        p.kind === "floor" &&
+        p.y !== undefined &&
+        adjacentEdge(piece, p) &&
+        Math.abs(pieceBase(piece, pieces) + 2.5 - p.y) < 0.01,
+    );
   if (!isPlatform(piece)) return true;
+  const top = platformTop(piece, pieces);
   return !pieces.some(
     (p) =>
       p.id !== piece.id &&
       ((piece.kind === "foundation" &&
         p.kind === "floor" &&
+        p.y === undefined &&
         p.x === piece.x &&
         p.z === piece.z) ||
-        (p.kind === "storage" && p.x === piece.x && p.z === piece.z) ||
+        (p.kind === "storage" &&
+          p.x === piece.x &&
+          p.z === piece.z &&
+          Math.abs(pieceBase(p, pieces) - top) < 0.01) ||
         ((p.kind === "wall" || p.kind === "doorway") &&
-          (p.rotation % 2 === 0
-            ? p.x === piece.x && Math.abs(p.z - piece.z) === 1
-            : p.z === piece.z && Math.abs(p.x - piece.x) === 1))),
+          adjacentEdge(p, piece) &&
+          Math.abs(pieceBase(p, pieces) - top) < 0.01)),
   );
 }
 export type Save = {
@@ -413,6 +570,7 @@ export function readSave(raw: string | null): Save {
         !Object.hasOwn(COST, p.kind) ||
         !Number.isFinite(p.x) ||
         !Number.isFinite(p.z) ||
+        (p.y !== undefined && (!Number.isFinite(p.y) || p.y < 0 || p.y > 40)) ||
         Math.abs(p.x) > 60 ||
         Math.abs(p.z) > 60 ||
         !Number.isInteger(p.rotation) ||
@@ -433,6 +591,7 @@ export function readSave(raw: string | null): Save {
         x: p.x,
         z: p.z,
         rotation: p.rotation,
+        ...(p.y !== undefined ? { y: p.y } : {}),
         ...(p.kind === "door" ? { open: !!p.open } : {}),
       })),
       opened: s.opened.filter(

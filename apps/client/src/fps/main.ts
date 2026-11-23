@@ -50,6 +50,8 @@ import {
   readSave,
   pieceBase,
   surfaceHeight,
+  ceilingHeight,
+  snapOnStructure,
   advancePlayerDoor,
   type Piece,
   type PieceKind,
@@ -789,7 +791,11 @@ function enemyFrame(dt: number) {
       flash: enemyFlash,
       aim: enemyAim,
     } = unit;
-    const enemySurface = surfaceHeight(enemy, save.pieces);
+    const enemySurface = surfaceHeight(
+      enemy,
+      save.pieces,
+      enemyActor.root.position.y + 0.75,
+    );
     const from = new THREE.Vector3(enemy.x, enemySurface + 1.4, enemy.z),
       to = new THREE.Vector3(player.x, 1.1 + vertical, player.z);
     const visible =
@@ -832,7 +838,7 @@ function enemyFrame(dt: number) {
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
     enemyActor.root.position.set(
       enemy.x,
-      surfaceHeight(enemy, save.pieces),
+      surfaceHeight(enemy, save.pieces, enemyActor.root.position.y + 0.75),
       enemy.z,
     );
     enemyActor.root.rotation.y = enemy.yaw;
@@ -846,7 +852,7 @@ function enemyFrame(dt: number) {
     }
     unit.hitbox.position.set(
       enemy.x,
-      surfaceHeight(enemy, save.pieces),
+      surfaceHeight(enemy, save.pieces, enemyActor.root.position.y + 0.75),
       enemy.z,
     );
     unit.hitbox.rotation.y = enemy.yaw;
@@ -1092,7 +1098,12 @@ function place() {
   if (!playing || !build) return;
   updatePreview();
   if (!candidate) return;
-  reason = placementReason(candidate, player, save.pieces, save.wood);
+  reason = placementReason(
+    candidate,
+    { ...player, y: vertical },
+    save.pieces,
+    save.wood,
+  );
   if (reason) return toast(reason);
   const p = { ...candidate, id: crypto.randomUUID() };
   save.pieces.push(p);
@@ -1182,6 +1193,7 @@ function nearestBuiltDoor() {
     distance = 2.4;
   for (const p of save.pieces) {
     if (p.kind !== "door") continue;
+    if (Math.abs(pieceBase(p, save.pieces) - vertical) > 1.5) continue;
     const d = Math.hypot(player.x - p.x, player.z - p.z);
     if (d >= distance) continue;
     const target = new THREE.Vector3(p.x, pieceBase(p, save.pieces) + 1.1, p.z),
@@ -1235,7 +1247,10 @@ function interact() {
   toast(`T${LOOT[i].tier} supply crate · +${wood} wood`);
 }
 function jump() {
-  if (playing && vertical <= surfaceHeight(player, save.pieces) + 0.001)
+  if (
+    playing &&
+    vertical <= surfaceHeight(player, save.pieces, vertical + 0.02) + 0.001
+  )
     verticalSpeed = 4.8;
 }
 function requestReload() {
@@ -1564,6 +1579,15 @@ function updateHud() {
   $("#health").textContent = "HEALTH " + health;
   $("#wood").textContent = `WOOD ${save.wood.toLocaleString()}`;
   $("#budget").textContent = `${save.pieces.length} / ${BUILD_LIMIT}`;
+  canvas.dataset.buildLevels = JSON.stringify(
+    save.pieces.map((p) => ({
+      id: p.id,
+      kind: p.kind,
+      x: p.x,
+      z: p.z,
+      y: pieceBase(p, save.pieces),
+    })),
+  );
   const inside = containingBuilding(player);
   $("#zone").textContent =
     inside >= 0
@@ -1594,7 +1618,7 @@ function updateHud() {
             ? "YOUR " + p.kind.toUpperCase()
             : "";
   $("#hint-text").textContent = build
-    ? "Aim down · 1–6 select · R rotate · Click / PLACE to build"
+    ? "Aim at wall tops for upper floors · 1–6 select · R rotate"
     : built
       ? "E / USE · " + (built.open ? "Close door" : "Open door")
       : door >= 0
@@ -1613,32 +1637,51 @@ function updatePreview() {
     return;
   }
   aimRay();
-  const hit = raycaster.ray.intersectPlane(ground, hitPoint);
-  if (hit) {
-    const platformHit = raycaster
-      .intersectObjects(construction.children, true)
-      .find((h) => {
-        const p = save.pieces.find((s) => s.id === h.object.userData.pieceId);
-        return (
-          p &&
-          (p.kind === "floor" || p.kind === "foundation") &&
-          h.face &&
-          Math.abs(h.face.normal.y) > 0.9
-        );
-      });
-    if (
-      platformHit &&
-      platformHit.distance < camera.position.distanceTo(hitPoint)
-    )
-      hitPoint.copy(platformHit.point);
-  }
+  const groundHit = raycaster.ray.intersectPlane(ground, hitPoint);
+  const hits = raycaster.intersectObjects(construction.children, true);
+  const first = hits[0],
+    firstPiece =
+      first && save.pieces.find((p) => p.id === first.object.userData.pieceId);
+  const wallTop =
+    selected === "floor" &&
+    firstPiece &&
+    (firstPiece.kind === "wall" || firstPiece.kind === "doorway") &&
+    first.point.y >= pieceBase(firstPiece, save.pieces) + 1.25
+      ? first
+      : undefined;
+  const doorway =
+    selected === "door" && firstPiece?.kind === "doorway" ? first : undefined;
+  const platform = hits.find((h) => {
+    const p = save.pieces.find((p) => p.id === h.object.userData.pieceId);
+    return (
+      p &&
+      (p.kind === "floor" || p.kind === "foundation") &&
+      h.face &&
+      (h.face.normal.y > 0.9 ||
+        (p.y !== undefined &&
+          selected !== "floor" &&
+          selected !== "foundation"))
+    );
+  });
+  const chosen = wallTop ?? doorway ?? platform;
+  const hit = chosen?.point ?? groundHit;
   if (!hit || hit.distanceTo(camera.position) > 11) {
     candidate = undefined;
-    reason = "Look down at nearby ground";
+    reason = "Aim at ground, a floor, or the upper half of a wall";
     if (preview) preview.visible = false;
   } else {
-    candidate = snapPiece({ x: hit.x, z: hit.z }, selected, rotation);
-    reason = placementReason(candidate, player, save.pieces, save.wood);
+    const target =
+      chosen &&
+      save.pieces.find((p) => p.id === chosen.object.userData.pieceId);
+    candidate = target
+      ? snapOnStructure(hit, selected, rotation, target, save.pieces)
+      : snapPiece(hit, selected, rotation);
+    reason = placementReason(
+      candidate,
+      { ...player, y: vertical },
+      save.pieces,
+      save.wood,
+    );
     if (!preview) {
       preview = pieceModel(candidate, true);
       scene.add(preview);
@@ -1702,11 +1745,15 @@ function frame(now: number) {
       (-Math.sin(yaw) * forward + Math.cos(yaw) * right) * speed * dt,
       (-Math.cos(yaw) * forward - Math.sin(yaw) * right) * speed * dt,
       save.pieces,
+      vertical,
     );
-    const surface = surfaceHeight(player, save.pieces);
+    const surface = surfaceHeight(player, save.pieces, vertical + 0.75);
     if (vertical > surface || verticalSpeed > 0) {
       verticalSpeed -= 12 * dt;
-      vertical = Math.max(surface, vertical + verticalSpeed * dt);
+      const ceiling = ceilingHeight(player, save.pieces, vertical) - 1.9;
+      const next = vertical + verticalSpeed * dt;
+      vertical = Math.max(surface, Math.min(next, ceiling));
+      if (next > ceiling) verticalSpeed = Math.min(0, verticalSpeed);
       if (vertical === surface) verticalSpeed = 0;
     } else {
       vertical = surface;
@@ -1714,10 +1761,17 @@ function frame(now: number) {
     }
     for (const p of save.pieces)
       if (p.kind === "door") {
-        advancePlayerDoor(p, dt, [
-          player,
-          ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
-        ]);
+        advancePlayerDoor(
+          p,
+          dt,
+          [
+            { ...player, y: vertical },
+            ...enemies
+              .filter((u) => u.enemy.health > 0)
+              .map((u) => ({ ...u.enemy, y: u.actor.root.position.y })),
+          ],
+          save.pieces,
+        );
         const rig = builtDoors.get(p.id);
         if (rig) {
           rig.hinge.rotation.y = p.doorAngle ?? 0;
@@ -1749,7 +1803,8 @@ function frame(now: number) {
       dt,
       shotSerial,
       running: run || keys.has("ShiftLeft") || keys.has("ShiftRight"),
-      jumping: vertical > surfaceHeight(player, save.pieces) + 0.01,
+      jumping:
+        vertical > surfaceHeight(player, save.pieces, vertical + 0.02) + 0.01,
       punch: punchRemaining > 0 ? 1 - punchRemaining / MELEE.duration : 0,
       side: punchSerial % 2 ? -1 : 1,
       reload: loadout.reload
