@@ -1,0 +1,505 @@
+@font-face {
+  font-family: Barlow;
+  src: url("/assets/theme/Barlow-Regular.woff");
+}
+@font-face {
+  font-family: Barlow;
+  src: url("/assets/theme/Barlow-SemiBold.woff");
+  font-weight: 600 900;
+}
+@font-face {
+  font-family: Condensed;
+  src: url("/assets/theme/BarlowCondensed-Bold.woff");
+  font-weight: 700;
+}
+:root {
+  color-scheme: dark;
+  font:
+    14px Barlow,
+    Arial,
+    sans-serif;
+  color: #f3eadb;
+  background: #14171d;
+  --amber: #f1b15f;
+  --line: #414249;
+  --muted: #a5a6ab;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+}
+button,
+input,
+select,
+a {
+  font: inherit;
+}
+button,
+a {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  background: #272c35;
+  color: #eee5d8;
+  border-radius: 5px;
+  padding: 7px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+button:hover,
+a:hover {
+  background: #373b42;
+  border-color: #8d7758;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+button.active,
+button.primary {
+  background: #e6a453;
+  color: #191919;
+  border-color: #f4bd77;
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+input,
+select {
+  min-width: 0;
+  background: #11161c;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 8px;
+  color: inherit;
+}
+input[type="checkbox"] {
+  accent-color: var(--amber);
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+#app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(120deg, #242a33, #15191f);
+}
+.brand {
+  min-width: 220px;
+  display: grid;
+  gap: 2px;
+}
+.brand b {
+  font:
+    700 23px Condensed,
+    Arial;
+  letter-spacing: 1px;
+}
+.brand small {
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  color: var(--amber);
+}
+#project {
+  width: 220px;
+}
+#status {
+  font-size: 12px;
+  color: var(--muted);
+  margin-right: auto;
+  max-width: 130px;
+}
+nav {
+  display: flex;
+  gap: 5px;
+  padding: 8px 12px;
+  overflow: auto;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.divider {
+  border-left: 1px solid var(--line);
+  margin: 3px 4px;
+}
+.workspace {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+aside {
+  width: 230px;
+  flex-shrink: 0;
+  padding: 14px;
+  overflow: auto;
+  background: #1c2129;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#properties-panel {
+  width: 250px;
+  border-left: 1px solid var(--line);
+  border-right: 0;
+}
+.panel-title {
+  font: 700 15px Condensed;
+  letter-spacing: 1.6px;
+  color: var(--amber);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px 0 7px;
+}
+.panel-title button {
+  display: none;
+}
+.new-controls {
+  display: flex;
+  gap: 5px;
+}
+.new-controls button {
+  flex: 1;
+  font-size: 12px;
+  padding: 6px;
+}
+#asset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 80px;
+}
+.asset {
+  text-align: left;
+  white-space: normal;
+  display: grid;
+  gap: 3px;
+  min-height: 49px;
+  line-height: 1.2;
+}
+.asset small {
+  font-size: 11px;
+  opacity: 0.7;
+}
+.asset strong {
+  font-weight: 600;
+}
+main {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.settings {
+  display: flex;
+  gap: 12px;
+  padding: 9px 12px;
+  background: #20252d;
+  border-bottom: 1px solid var(--line);
+  overflow: auto;
+  flex-shrink: 0;
+  align-items: center;
+}
+.settings label {
+  white-space: nowrap;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.settings input[type="number"] {
+  width: 58px;
+}
+.settings select {
+  padding: 6px;
+}
+#viewport {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #799ba3;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.viewport-label {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  pointer-events: none;
+  display: grid;
+  gap: 4px;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+}
+.viewport-label b {
+  font: 700 19px Condensed;
+  letter-spacing: 1.5px;
+}
+.viewport-label span {
+  font-size: 12px;
+}
+footer {
+  padding: 9px 14px;
+  color: #b7b8bf;
+  font-size: 12px;
+  border-top: 1px solid var(--line);
+  background: #1a1e25;
+  min-height: 34px;
+}
+.quiet {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+#inspector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#inspector p {
+  margin: 0 0 8px;
+}
+.field {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.field input,
+.field select {
+  width: 100%;
+}
+.field input[type="color"] {
+  height: 35px;
+  padding: 3px;
+}
+.check {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 13px;
+  min-height: 29px;
+}
+#layers {
+  display: grid;
+}
+#toast {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  background: #151b24ed;
+  border: 1px solid #a27a47;
+  padding: 12px 16px;
+  border-radius: 7px;
+  box-shadow: 0 8px 30px #0004;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  line-height: 1.4;
+}
+#toast.show {
+  opacity: 1;
+}
+dialog {
+  background: #20252d;
+  border: 1px solid #9d7d51;
+  border-radius: 12px;
+  color: #f3eadb;
+  max-width: 650px;
+  width: 90%;
+  max-height: 85dvh;
+  line-height: 1.55;
+  padding: 28px;
+}
+dialog::backdrop {
+  background: #080b10ba;
+}
+dialog h1 {
+  font: 700 30px Condensed;
+  margin: 0;
+}
+dialog li {
+  margin-bottom: 9px;
+}
+#catalog-toggle,
+#properties-toggle {
+  display: none;
+}
+@media (max-width: 1200px) {
+  header {
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 9px;
+  }
+  .brand {
+    min-width: 185px;
+  }
+  .brand b {
+    font-size: 20px;
+  }
+  .brand small {
+    font-size: 9px;
+  }
+  #project {
+    width: 190px;
+  }
+  #status {
+    max-width: none;
+    flex: 1;
+    font-size: 11px;
+  }
+  header button,
+  header a {
+    min-height: 33px;
+    font-size: 12px;
+    padding: 7px;
+  }
+  aside {
+    width: 205px;
+  }
+  #properties-panel {
+    width: 225px;
+  }
+  .field {
+    grid-template-columns: 1fr 95px;
+  }
+}
+@media (max-width: 900px) {
+  #catalog-toggle,
+  #properties-toggle {
+    display: block;
+  }
+  header {
+    gap: 6px;
+  }
+  .brand {
+    min-width: 170px;
+  }
+  #project {
+    flex: 1;
+    width: 150px;
+  }
+  #status {
+    min-width: 100%;
+    order: 2;
+  }
+  header a {
+    margin-left: auto;
+  }
+  aside {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    top: 150px;
+    bottom: 34px;
+    width: 260px;
+    box-shadow: 8px 0 30px #0007;
+  }
+  aside.open {
+    display: flex;
+  }
+  #properties-panel {
+    right: 0;
+    width: 270px;
+  }
+  .panel-title button {
+    display: block;
+    min-height: 32px;
+    padding: 3px 10px;
+  }
+  nav {
+    padding: 7px;
+  }
+  .settings {
+    padding: 7px;
+    gap: 10px;
+  }
+  .settings label {
+    font-size: 11px;
+  }
+  button {
+    min-height: 40px;
+  }
+  footer {
+    font-size: 10px;
+    padding: 9px;
+  }
+  .viewport-label {
+    left: 10px;
+    top: 10px;
+  }
+  #toast {
+    font-size: 12px;
+  }
+  .brand small {
+    letter-spacing: 1px;
+  }
+}
+@media (max-width: 480px) {
+  header {
+    padding: 7px;
+  }
+  .brand b {
+    font-size: 18px;
+  }
+  .brand {
+    min-width: 150px;
+  }
+  #project {
+    width: 110px;
+    min-width: 100px;
+  }
+  header button,
+  header a {
+    padding: 7px 8px;
+    font-size: 11px;
+    min-height: 35px;
+  }
+  #status {
+    font-size: 10px;
+  }
+  nav button {
+    font-size: 12px;
+  }
+  aside {
+    top: 161px;
+    bottom: 33px;
+    max-width: 85vw;
+  }
+  .viewport-label b {
+    font-size: 16px;
+  }
+}
+#asset-list {
+  flex-shrink: 0;
+}
+aside > .quiet {
+  flex-shrink: 0;
+}

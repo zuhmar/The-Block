@@ -8,6 +8,10 @@ export default defineConfig(() => {
     publicDir: "static",
     build: {
       rollupOptions: {
+        input: {
+          index: resolve(import.meta.dirname, "index.html"),
+          editor: resolve(import.meta.dirname, "editor.html"),
+        },
         output: {
           manualChunks: { three: ["three"] },
         },

@@ -85,3 +85,7 @@ Sound effects: original weapon, movement, gathering, building and interaction au
 Player crafting: build a **Crafting bench (7)** or **Furnace (8)** on your floors. Use E / USE nearby to smelt ore with wood fuel, make gunpowder and craft ammunition. Jobs and uncollected outputs save with the station. See [recipes and station behavior](docs/crafting-stations.md).
 
 Visual theme: original illustrated Street Survival menu/loading artwork, self-hosted Barlow typography, charcoal panels and amber buttons shared across inventory, crafting and the HUD. Controls and sound settings remain available in the menu. See [UI theme and artwork](docs/ui-theme.md).
+
+## Standalone map editor
+
+Open [`/editor.html`](https://the-block-tau-eight.vercel.app/editor.html) to arrange buildings, props, terrain, roads and spawn markers outside the game. It has its own local draft, transform tools, layers, undo/redo and complete ZIP backups with imported GLBs. Exported layouts do not change the playable world or player saves automatically. See [map editor workflow and controls](docs/map-editor.md).
