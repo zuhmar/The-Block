@@ -41,7 +41,7 @@ export const ENEMY_SPAWN = { x: -14, z: 33 };
 export type Enemy = Point & {
   kind: EnemyKind;
   health: number;
-  state: "patrol" | "chase" | "aim" | "down";
+  state: "patrol" | "chase" | "aim" | "down" | "reload";
   timer: number;
   target: Point;
   yaw: number;
@@ -50,6 +50,9 @@ export type Enemy = Point & {
   waypoint?: number;
   route?: Point[];
   stuckFor?: number;
+  magazine?: number;
+  reloadRemaining?: number;
+  burst?: { remaining: number; next: number; target: Point };
 };
 export const newEnemy = (
   kind: EnemyKind = "lookout",
@@ -75,13 +78,16 @@ export const newEnemy = (
   return {
     kind,
     ...spawn,
-    health: ENEMY_TYPES[kind].health,
+    health: patrol?.combat?.health ?? ENEMY_TYPES[kind].health,
     state: "patrol",
     timer: 0,
     target: { ...spawn },
     yaw: 0,
     shots: 0,
     ...(patrol ? { patrol, waypoint: 1, route: [] } : {}),
+    magazine: patrol?.combat?.magazine,
+    reloadRemaining: 0,
+    burst: undefined,
   };
 };
 /** A small cached grid is used only when a guard must rejoin its patrol after combat. */
@@ -264,7 +270,8 @@ export function updateEnemy(
   dt: number,
   visible: boolean,
 ): Point | undefined {
-  const tuning = ENEMY_TYPES[enemy.kind];
+  const profile = enemy.patrol?.combat;
+  const tuning = profile ?? ENEMY_TYPES[enemy.kind];
   dt = Math.min(0.1, Math.max(0, dt));
   if (enemy.health <= 0) {
     enemy.state = "down";
@@ -273,8 +280,24 @@ export function updateEnemy(
       Object.assign(enemy, newEnemy(enemy.kind, pieces, enemy.patrol));
     return;
   }
+  if (profile && (enemy.reloadRemaining ?? 0) > 0) {
+    enemy.state = "reload";
+    enemy.reloadRemaining = Math.max(0, enemy.reloadRemaining! - dt);
+    if (!enemy.reloadRemaining) {
+      enemy.magazine = profile.magazine;
+      enemy.state = "chase";
+    }
+    return;
+  }
+  if (profile && enemy.magazine === 0) {
+    enemy.burst = undefined;
+    enemy.reloadRemaining = profile.reload;
+    enemy.state = "reload";
+    return;
+  }
   const distance = Math.hypot(player.x - enemy.x, player.z - enemy.z);
   if (distance > 23 || !visible) {
+    enemy.burst = undefined;
     const returning = enemy.state !== "patrol";
     enemy.state = "patrol";
     enemy.timer = 0;
@@ -282,10 +305,35 @@ export function updateEnemy(
     return;
   }
   enemy.yaw = Math.atan2(enemy.x - player.x, enemy.z - player.z);
+  if (profile && enemy.burst) {
+    enemy.burst.next -= dt;
+    if (enemy.burst.next <= 0) {
+      const target = { ...enemy.burst.target };
+      enemy.shots++;
+      enemy.magazine!--;
+      enemy.burst.remaining--;
+      enemy.burst.next += profile.interval;
+      if (!enemy.burst.remaining) {
+        enemy.burst = undefined;
+        enemy.timer = profile.cooldown;
+      }
+      return target;
+    }
+    return;
+  }
   if (enemy.state === "aim") {
     enemy.timer -= dt;
     if (enemy.timer <= 1e-6) {
       enemy.shots++;
+      if (profile) {
+        enemy.magazine!--;
+        if (profile.burst > 1)
+          enemy.burst = {
+            remaining: profile.burst - 1,
+            next: profile.interval,
+            target: { ...enemy.target },
+          };
+      }
       enemy.timer = tuning.cooldown;
       enemy.state = "chase";
       return { ...enemy.target };

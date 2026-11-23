@@ -48,7 +48,8 @@
     "assets:sounds": "python packages/art-tools/build-sounds.py",
     "assets:crafting": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-crafting.py && python packages/art-tools/pack-crafting.py",
     "assets:player-storage": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-player-storage.py",
-    "assets:north-lab": "tsx packages/art-tools/export-north-lab.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-north-lab.py"
+    "assets:north-lab": "tsx packages/art-tools/export-north-lab.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-north-lab.py",
+    "assets:lab-npcs": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/animate-lab-npcs.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

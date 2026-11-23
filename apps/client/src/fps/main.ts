@@ -1,3 +1,10 @@
+import type { EnemyKind } from "./enemy";
+import { labEncounters, type LabNpcModel, type LabTier } from "./lab-enemies";
+import {
+  loadLabNpc,
+  warmLabNpcModels,
+  type LabAnimationState,
+} from "./lab-npc-image";
 import { NORTH_LAB, inNorthLab, isNorthBuilding } from "./north-lab-layout";
 import { northLabModel } from "./north-lab-model";
 import { buildingEnabled } from "./building-layout";
@@ -1050,7 +1057,14 @@ const body = createPlayerBody();
 scene.add(body.root);
 let muzzle = viewModel.flash;
 const muzzlePosition = new THREE.Vector3();
-const encounters = [
+const encounters: {
+  id: string;
+  kind: EnemyKind;
+  patrol: PatrolSpec | undefined;
+  labModel?: LabNpcModel;
+  labTier?: LabTier;
+  weapon?: "pistol" | "rifle" | "lmg";
+}[] = [
   ...NPC_KINDS.map((kind) => ({
     id: kind + "-town",
     kind,
@@ -1061,54 +1075,70 @@ const encounters = [
     kind: "swat" as const,
     patrol,
   })),
+  ...labEncounters(),
 ];
-const enemies = encounters.map(({ kind, patrol, id }) => {
-  const enemy = newEnemy(kind, save.pieces, patrol),
-    actor = createNpc(kind, (text, w, h) =>
-      sign(text, w, h, "#ffffff", "#202735"),
-    ),
-    weapon = createWeapon(kind === "swat" ? "rifle" : "pistol");
-  actor.arms[1].rotation.x = 1;
-  weapon.root.position.set(0.24, 1.07, -0.44);
-  actor.root.add(weapon.root);
-  scene.add(actor.root);
-  actor.root.position.set(enemy.x, 0, enemy.z);
-  const flash = new THREE.Mesh(
-    new THREE.ConeGeometry(0.04, 0.13, 5),
-    new THREE.MeshBasicMaterial({ color: 0xffa45d }),
-  );
-  flash.rotation.x = -Math.PI / 2;
-  weapon.muzzle.add(flash);
-  flash.visible = false;
-  const aim = new THREE.Line(
-    new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({
-      color: 0xe8866a,
-      transparent: true,
-      opacity: 0.5,
-    }),
-  );
-  scene.add(aim);
-  aim.frustumCulled = false;
-  aim.visible = false;
-  const hitbox = createNpcHitbox();
-  scene.add(hitbox);
-  return {
-    id,
-    patrol,
-    enemy,
-    actor,
-    weapon,
-    flash,
-    aim,
-    hitbox,
-    flashTime: 0,
-    moving: false,
-    imageRig: undefined as Awaited<ReturnType<typeof loadNpcImage>> | undefined,
-    imageLoading: false,
-    retryImageAfter: 0,
-  };
-});
+const enemies = encounters.map(
+  ({ kind, patrol, id, labModel, labTier, weapon: chosenWeapon }) => {
+    const enemy = newEnemy(kind, save.pieces, patrol),
+      actor = createNpc(kind, (text, w, h) =>
+        sign(text, w, h, "#ffffff", "#202735"),
+      ),
+      weaponKind = chosenWeapon ?? (kind === "swat" ? "rifle" : "pistol"),
+      weapon = createWeapon(weaponKind);
+    actor.arms[1].rotation.x = 1;
+    weapon.root.position.set(0.24, 1.07, -0.44);
+    actor.root.add(weapon.root);
+    scene.add(actor.root);
+    actor.root.position.set(enemy.x, 0, enemy.z);
+    actor.root.visible = false;
+    const flash = new THREE.Mesh(
+      new THREE.ConeGeometry(0.04, 0.13, 5),
+      new THREE.MeshBasicMaterial({ color: 0xffa45d }),
+    );
+    flash.rotation.x = -Math.PI / 2;
+    weapon.muzzle.add(flash);
+    flash.visible = false;
+    const aim = new THREE.Line(
+      new THREE.BufferGeometry(),
+      new THREE.LineBasicMaterial({
+        color: 0xe8866a,
+        transparent: true,
+        opacity: 0.5,
+      }),
+    );
+    scene.add(aim);
+    aim.frustumCulled = false;
+    aim.visible = false;
+    const hitbox = createNpcHitbox();
+    scene.add(hitbox);
+    hitbox.position.set(enemy.x, 0, enemy.z);
+    hitbox.updateMatrixWorld(true);
+    return {
+      id,
+      patrol,
+      labModel,
+      labTier,
+      weaponKind,
+      previousHealth: enemy.health,
+      enemy,
+      actor,
+      weapon,
+      flash,
+      aim,
+      hitbox,
+      flashTime: 0,
+      moving: false,
+      imageRig: undefined as
+        | (
+            | Awaited<ReturnType<typeof loadNpcImage>>
+            | Awaited<ReturnType<typeof loadLabNpc>>
+          )
+        | undefined,
+      imageLoading: false,
+      retryImageAfter: 0,
+    };
+  },
+);
 const enemy = enemies[0].enemy; // Retain the original easy-enemy read-only diagnostic.
 const bulletGeometry = new THREE.SphereGeometry(0.045, 5, 3),
   bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffc176 });
@@ -1160,6 +1190,11 @@ function respawn() {
 }
 $("#respawn").addEventListener("click", respawn);
 function enemyFrame(dt: number) {
+  if (
+    NORTH_LAB.enabled &&
+    Math.hypot(player.x - NORTH_LAB.x, player.z - NORTH_LAB.z) < 130
+  )
+    warmLabNpcModels();
   for (const unit of enemies) {
     const {
       enemy,
@@ -1168,6 +1203,16 @@ function enemyFrame(dt: number) {
       flash: enemyFlash,
       aim: enemyAim,
     } = unit;
+    if (
+      unit.labModel &&
+      Math.hypot(enemy.x - player.x, enemy.z - player.z) > 65
+    ) {
+      enemyActor.root.visible = false;
+      enemyAim.visible = false;
+      enemyFlash.visible = false;
+      if (enemy.health <= 0) updateEnemy(enemy, player, save.pieces, dt, false);
+      continue;
+    }
     const enemySurface = surfaceHeight(
       enemy,
       save.pieces,
@@ -1185,7 +1230,9 @@ function enemyFrame(dt: number) {
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38
     ) {
       unit.imageLoading = true;
-      void loadNpcImage(enemy.kind)
+      void (
+        unit.labModel ? loadLabNpc(unit.labModel) : loadNpcImage(enemy.kind)
+      )
         .then((model) => {
           enemyWeapon.root.removeFromParent();
           const oldMeshes: THREE.Mesh[] = [];
@@ -1202,7 +1249,8 @@ function enemyFrame(dt: number) {
           else enemyActor.root.add(enemyWeapon.root);
           unit.imageRig = model;
         })
-        .catch(() => {
+        .catch((error: unknown) => {
+          console.warn("NPC model could not load", unit.id, error);
           unit.retryImageAfter = clock + 10;
         })
         .finally(() => {
@@ -1213,7 +1261,7 @@ function enemyFrame(dt: number) {
       beforeZ = enemy.z;
     const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
     enemyActor.root.visible =
-      enemy.health > 0 &&
+      (enemy.health > 0 || (!!unit.labModel && enemy.timer < 1.3)) &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
     enemyActor.root.position.set(
       enemy.x,
@@ -1223,11 +1271,28 @@ function enemyFrame(dt: number) {
     enemyActor.root.rotation.y = enemy.yaw;
     const moving = Math.hypot(enemy.x - beforeX, enemy.z - beforeZ) > 0.0001;
     unit.moving = moving;
-    if (unit.imageRig) unit.imageRig.animate(moving, dt, Boolean(shot));
-    else {
+    if (unit.imageRig) {
+      if (unit.labModel)
+        (
+          unit.imageRig.animate as (
+            moving: boolean,
+            dt: number,
+            shot: boolean,
+            state: LabAnimationState,
+          ) => void
+        )(moving, dt, Boolean(shot), {
+          reloading: enemy.state === "reload",
+          down: enemy.health <= 0,
+          hit: enemy.health < unit.previousHealth && enemy.health > 0,
+          running: moving && enemy.state !== "patrol",
+        });
+      else unit.imageRig.animate(moving, dt, Boolean(shot));
+    } else {
       enemyActor.legs[0].rotation.x = moving ? Math.sin(clock * 8) * 0.3 : 0;
       enemyActor.legs[1].rotation.x = -enemyActor.legs[0].rotation.x;
     }
+    unit.previousHealth = enemy.health;
+    enemyWeapon.root.visible = enemy.health > 0;
     unit.hitbox.position.set(
       enemy.x,
       surfaceHeight(enemy, save.pieces, enemyActor.root.position.y + 0.75),
@@ -1250,17 +1315,17 @@ function enemyFrame(dt: number) {
         .sub(muzzlePoint)
         .normalize();
       const mesh =
-        bulletModel(enemy.kind === "swat" ? "rifle" : "pistol") ??
+        bulletModel(unit.weaponKind) ??
         new THREE.Mesh(bulletGeometry, bulletMaterial);
       mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
-      playAt(enemy.kind === "swat" ? "rifle" : "pistol", enemy, 0.65);
+      playAt(unit.weaponKind, enemy, 0.65);
       mesh.position.copy(muzzlePoint);
       scene.add(mesh);
       enemyBullets.push({
         mesh,
         velocity: direction.multiplyScalar(18),
         life: 2,
-        damage: ENEMY_TYPES[enemy.kind].damage,
+        damage: enemy.patrol?.combat?.damage ?? ENEMY_TYPES[enemy.kind].damage,
       });
       unit.flashTime = 0.07;
     }
@@ -1302,7 +1367,12 @@ function enemyFrame(dt: number) {
     );
   const warning = nearby[0]?.enemy;
   const status = warning
-    ? ENEMY_TYPES[warning.kind].name.toUpperCase() +
+    ? (nearby[0].labTier
+        ? { easy: "Lab worker", medium: "Lab security", hard: "Lab enforcer" }[
+            nearby[0].labTier!
+          ]
+        : ENEMY_TYPES[warning.kind].name
+      ).toUpperCase() +
       (warning.state === "aim" ? " AIMING · MOVE OR FIND COVER" : " NEARBY")
     : "";
   if ($("#enemy-status").textContent !== status)
@@ -2386,7 +2456,10 @@ $("#reset").addEventListener("click", () => {
   health = 100;
   resetDoors();
   for (const unit of enemies)
-    Object.assign(unit.enemy, newEnemy(unit.enemy.kind, save.pieces));
+    Object.assign(
+      unit.enemy,
+      newEnemy(unit.enemy.kind, save.pieces, unit.patrol),
+    );
   clearBullets();
   rebuildConstruction();
   player = { ...START };
@@ -3832,6 +3905,13 @@ function frame(now: number) {
       id: u.id,
       moving: u.moving,
       kind: u.enemy.kind,
+      labTier: u.labTier,
+      model: u.labModel,
+      weapon: u.weaponKind,
+      magazine: u.enemy.magazine,
+      reloadRemaining: u.enemy.reloadRemaining,
+      animation: u.imageRig?.root.userData.labAnimation,
+      handAttached: u.weapon.root.userData.labHandAttached,
       visual: u.imageRig ? "blender" : u.imageLoading ? "loading" : "fallback",
       x: u.enemy.x,
       z: u.enemy.z,

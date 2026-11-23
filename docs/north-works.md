@@ -27,3 +27,11 @@ The standalone editor includes all seven building prefabs plus **North Works · 
 Regenerate with `pnpm assets:north-lab`. The script exports the shared layout, then builds original Blender geometry using the project's existing glossy prop helpers. Editable scenes are under `art/buildings/north-lab`; building GLBs are in the existing FPS model catalog, and the yard GLB and manifest are under `apps/client/static/assets/north-lab`.
 
 Validation covers shoreline bounds, old-building and loot identities, both entrances, all seven room approaches, prop/building clearance, road detours, saved-base conflicts, door hinges, roof/interior metadata and geometry budgets. Rendering hides the distant district and reuses material batches; collision boxes share the authored layout.
+
+## Lab guards
+
+North Works now has 15 distinct patrols: ten teal workers with pistols, four amber security guards with assault rifles, and one crimson enforcer with an LMG. Workers cover rooms and loading areas; security covers the entrance, service gate and logistics corridor; the enforcer patrols the inner yard. Patrols follow the compound when it relocates to protect saved bases and are omitted if no safe compound site exists.
+
+These use the original Meshy characters with new editable Blender skeletons and Idle, Walk, Run, Aim, Fire, Reload, Hit and Death clips. Weapons attach to the right hand. Pistols fire single shots, ARs fire three-round bursts, and the LMG fires six-round bursts. Magazine sizes are 12/30/60, with visible timed reloads. All retain the existing line-of-sight checks, damage and 30-second respawn flow. Models are cached once per tier and loaded on approach; distant lab AI sleeps to limit work on phones.
+
+Validation: the full game suite passed, along with focused tests for clear patrol segments, burst fire/cover/reload/respawn and independently animated skinned clones. Desktop and phone-layout browser fixtures at the compound entrance confirmed the exact roster, nearby Blender model hydration, hand attachment and live AR fire without missing assets or page errors. Three.js previews exercised all three rigs through locomotion, firing, reload, death and revival. Browser fixtures are local only; physical phone frame rates were not benchmarked.

@@ -1,3 +1,4 @@
+import type { EnemyCombat } from "./enemy-combat";
 /** Authored world reservations, fence collisions and outside patrol circuits. */
 export const COMPOUND = { minX: 64, maxX: 112, minZ: -21, maxZ: 35 };
 export function inCompound(p: { x: number; z: number }, margin = 0) {
@@ -29,6 +30,7 @@ export function compoundBlocked(
   );
 }
 export type PatrolSpec = {
+  combat?: EnemyCombat;
   id: string;
   points: readonly { x: number; z: number }[];
   bounds: typeof COMPOUND;

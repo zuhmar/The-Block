@@ -13,3 +13,5 @@ Each file contains one mesh/material and an embedded base-color texture, with no
 The corresponding `*-preview.png` files are Meshy's model previews and were visually inspected. `inspection.json` records measured geometry, file hashes and reference-image hashes. `meshy-tasks.json` records generation settings, request UUIDs and task IDs so follow-up work can reuse these tasks without regenerating the models. Source artwork lives under `art/ai/north-lab-npcs`.
 
 The three generations consumed 45 Meshy credits total (175 before, 130 after). Only GLB downloads were requested. Expiring download URLs are intentionally not stored in the repository.
+
+Animated integration is now available in `art/characters/north-lab`: editable Blender rigs plus optimized runtime GLBs under `apps/client/src/fps/models/north-lab-npcs`. These original downloads remain unmodified. See the animation source README and `pnpm assets:lab-npcs`.
