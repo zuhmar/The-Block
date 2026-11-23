@@ -1,0 +1,44 @@
+{
+  "source": "AI-generated character lineup; separate sprites extracted without redesign",
+  "sprites": [
+    {
+      "name": "easy-worker",
+      "file": "art/ai/north-lab-npcs/easy-worker.png",
+      "width": 512,
+      "height": 1024,
+      "alpha": true,
+      "alphaMinimum": 0,
+      "alphaMaximum": 254,
+      "sourceColumns": [
+        95,
+        456
+      ]
+    },
+    {
+      "name": "medium-security",
+      "file": "art/ai/north-lab-npcs/medium-security.png",
+      "width": 512,
+      "height": 1024,
+      "alpha": true,
+      "alphaMinimum": 0,
+      "alphaMaximum": 254,
+      "sourceColumns": [
+        532,
+        947
+      ]
+    },
+    {
+      "name": "hard-enforcer",
+      "file": "art/ai/north-lab-npcs/hard-enforcer.png",
+      "width": 512,
+      "height": 1024,
+      "alpha": true,
+      "alphaMinimum": 0,
+      "alphaMaximum": 254,
+      "sourceColumns": [
+        997,
+        1474
+      ]
+    }
+  ]
+}
