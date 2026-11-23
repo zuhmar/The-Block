@@ -1,5 +1,10 @@
+import { ammoFor, isBulletAmmo, BULLET_AMMO, LOOT_AMMO } from "./ammo";
+import { bulletModel, rocketModel, ammoSources } from "./ammo-models";
+import { advanceInventoryReload } from "./ammo-loadout";
 import {
   migrateInventory,
+  ensureStarterAmmo,
+  itemIcon,
   countItem,
   roomFor,
   addItem,
@@ -59,7 +64,6 @@ import {
   newWeaponState,
   spendRound,
   beginReload,
-  advanceReload,
   cancelReload,
   MELEE,
 } from "./weapon-state";
@@ -148,7 +152,7 @@ $("#app").innerHTML = `
       "",
     )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button><button id="gather" hidden>GATHER</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
-  <div id="weapon-status"><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
+  <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
 <div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
@@ -166,6 +170,7 @@ try {
   saveAvailable = false;
 }
 save.inventory ??= migrateInventory(save.wood, save.resources);
+ensureStarterAmmo(save.inventory);
 function inventory() {
   return save.inventory!;
 }
@@ -957,7 +962,7 @@ const enemy = enemies[0].enemy; // Retain the original easy-enemy read-only diag
 const bulletGeometry = new THREE.SphereGeometry(0.045, 5, 3),
   bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xffc176 });
 const enemyBullets: {
-  mesh: THREE.Mesh;
+  mesh: THREE.Object3D;
   velocity: THREE.Vector3;
   life: number;
   damage: number;
@@ -1093,7 +1098,10 @@ function enemyFrame(dt: number) {
       const direction = new THREE.Vector3(shot.x, 1.1 + vertical, shot.z)
         .sub(muzzlePoint)
         .normalize();
-      const mesh = new THREE.Mesh(bulletGeometry, bulletMaterial);
+      const mesh =
+        bulletModel(enemy.kind === "swat" ? "rifle" : "pistol") ??
+        new THREE.Mesh(bulletGeometry, bulletMaterial);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
       mesh.position.copy(muzzlePoint);
       scene.add(mesh);
       enemyBullets.push({
@@ -1155,6 +1163,11 @@ function enemyFrame(dt: number) {
   }
 }
 
+const bulletVisuals: {
+  model: THREE.Object3D;
+  velocity: THREE.Vector3;
+  remaining: number;
+}[] = [];
 const tracerGeometry = new THREE.BufferGeometry().setFromPoints([
   new THREE.Vector3(),
   new THREE.Vector3(),
@@ -1331,7 +1344,7 @@ function spawnExplosive(
   const rig = weaponRigs.get(kind);
   const visual: THREE.Object3D =
     kind === "rocket"
-      ? new THREE.Group()
+      ? (rocketModel() ?? new THREE.Group())
       : (rig?.gun.root.clone(true) ?? new THREE.Group());
   visual.position.copy(position);
   visual.quaternion.identity();
@@ -1341,7 +1354,7 @@ function spawnExplosive(
     if (o instanceof THREE.Mesh && o.geometry instanceof THREE.ConeGeometry)
       o.visible = false;
   });
-  if (kind === "rocket") {
+  if (kind === "rocket" && !visual.userData.ammoSource) {
     const body = new THREE.Mesh(
       new THREE.CylinderGeometry(0.055, 0.055, 0.42, 12),
       new THREE.MeshStandardMaterial({ color: 0x677b43, roughness: 0.35 }),
@@ -1361,8 +1374,15 @@ function spawnExplosive(
     );
     visual.userData.ownedProjectile = true;
   }
+  if (kind === "rocket" && visual.userData.ammoSource)
+    visual.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      velocity.clone().normalize(),
+    );
   if (kind === "c4" && normal)
     visual.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+  if (kind === "rocket")
+    canvas.dataset.rocketModelSource = visual.userData.ammoSource ?? "fallback";
   scene.add(visual);
   projectileModels.set(p.id, visual);
   reconcileEquipment();
@@ -1880,8 +1900,8 @@ function closeInventory() {
   updateHud();
   playing = resumeAfterInventory && health > 0;
   lastFrame = performance.now();
+  $("#inventory-button").focus();
   if (playing && !touch) captureMouse();
-  else $("#inventory-button").focus();
 }
 function nearestDrop() {
   let result: WorldDrop | undefined;
@@ -2205,13 +2225,24 @@ function interact() {
   if (i < 0) return toast("Move closer to a crate or trash can");
   if (save.opened.includes(i)) return toast("This container has been searched");
   const wood = lootReward(LOOT[i]);
-  if (roomFor(inventory(), "wood") < wood)
+  const ammo = BULLET_AMMO[i % BULLET_AMMO.length],
+    rounds = LOOT_AMMO[ammo];
+  const rewards = structuredClone(inventory());
+  if (
+    addItem(rewards, "wood", wood) !== wood ||
+    addItem(rewards, ammo, rounds) !== rounds
+  )
     return toast("Inventory full · make room before searching");
-  addItem(inventory(), "wood", wood);
+  storeCurrentGun();
+  // Preserve the current magazine value while committing the preflighted reward.
+  const gun = rewards.slots.find((item) => item?.id === equippedItemId);
+  if (gun && tool !== "hands" && isGun(tool))
+    gun.magazine = loadout.rounds[tool];
+  save.inventory = rewards;
   save.opened.push(i);
   persist();
   updateHud();
-  toast(`${LOOT[i].name} · +${wood} wood`);
+  toast(`${LOOT[i].name} · +${wood} wood · +${rounds} ${itemName(ammo)}`);
 }
 function jump() {
   if (
@@ -2233,6 +2264,9 @@ function requestReload() {
     reloadRequested = true;
     return;
   }
+  const ammo = ammoFor(tool);
+  if (ammo && !countItem(inventory(), ammo))
+    return toast("No " + itemName(ammo) + " carried");
   if (beginReload(loadout, tool)) {
     setAim(false);
     recoilRemaining = 0;
@@ -2280,7 +2314,13 @@ function fire() {
   if (build) return place();
   if (harvestAction) return;
   const held = selectedItem(inventory());
-  if (held && (isResource(held.kind) || held.kind === "rockets")) return;
+  if (
+    held &&
+    (isResource(held.kind) ||
+      isBulletAmmo(held.kind) ||
+      held.kind === "rockets")
+  )
+    return;
   if (tool === "hands") {
     if (held && isHarvestTool(held.kind) && !nearestResource()) {
       if (!harvestAction)
@@ -2339,6 +2379,20 @@ function fire() {
   );
   tracer.geometry.setFromPoints([start, end]);
   tracer.visible = true;
+  const flying = bulletModel(tool);
+  if (flying) {
+    const direction = end.clone().sub(start).normalize();
+    flying.position.copy(start);
+    flying.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+    canvas.dataset.lastBulletSource = "blender";
+    scene.add(flying);
+    bulletVisuals.push({
+      model: flying,
+      velocity: direction.multiplyScalar(100),
+      remaining: start.distanceTo(end),
+    });
+    if (bulletVisuals.length > 32) scene.remove(bulletVisuals.shift()!.model);
+  }
   const hitEnemy =
     hits[0] &&
     enemies.find(
@@ -2605,6 +2659,11 @@ function updateHud() {
       `C4 · ${projectiles.filter((p) => p.kind === "c4").length} placed`;
   $("#weapon-status").hidden =
     (unarmed || build) && !projectiles.some((p) => p.kind === "c4");
+  const ammoIcon = $<HTMLImageElement>("#ammo-icon"),
+    ammoKind = tool !== "hands" ? ammoFor(tool) : undefined;
+  ammoIcon.hidden = !ammoKind || build;
+  if (ammoKind && ammoIcon.getAttribute("src") !== itemIcon(ammoKind))
+    ammoIcon.src = itemIcon(ammoKind);
   if (tool !== "hands") {
     $("#ammo").textContent = loadout.reload
       ? "RELOADING " + Math.ceil(loadout.reload.remaining * 10) / 10 + "s"
@@ -2615,7 +2674,7 @@ function updateHud() {
           ? " · " + countItem(inventory(), "rockets") + " rockets carried"
           : tool === "grenade" || tool === "c4"
             ? " · " + (selectedItem(inventory())?.quantity ?? 0) + " carried"
-            : " · ∞ reserve");
+            : " · " + countItem(inventory(), ammoFor(tool)!) + " reserve");
     if (tool === "grenade" || tool === "c4")
       $("#ammo").textContent =
         (selectedItem(inventory())?.quantity ?? 0) +
@@ -2624,7 +2683,9 @@ function updateHud() {
         " carried";
     $("#reload").toggleAttribute(
       "disabled",
-      !!loadout.reload || loadout.rounds[tool] === WEAPONS[tool].magazineSize,
+      !!loadout.reload ||
+        loadout.rounds[tool] === WEAPONS[tool].magazineSize ||
+        (!!ammoKind && countItem(inventory(), ammoKind) === 0),
     );
   }
   $("#health").textContent = "HEALTH " + health;
@@ -2894,6 +2955,19 @@ function frame(now: number) {
           rig.proxy.updateMatrixWorld(true);
         }
       }
+    for (let i = bulletVisuals.length - 1; i >= 0; i--) {
+      const b = bulletVisuals[i],
+        travel = Math.min(b.remaining, b.velocity.length() * dt);
+      b.model.position.addScaledVector(
+        b.velocity,
+        travel / b.velocity.length(),
+      );
+      b.remaining -= travel;
+      if (b.remaining <= 0) {
+        scene.remove(b.model);
+        bulletVisuals.splice(i, 1);
+      }
+    }
     enemyFrame(dt);
     updateExplosives(dt);
     camera.position.set(
@@ -2904,7 +2978,7 @@ function frame(now: number) {
     camera.rotation.set(pitch, yaw, 0);
     updateHarvest(dt);
     nature.update(player, dt, camera);
-    if (advanceReload(loadout, dt)) {
+    if (advanceInventoryReload(loadout, inventory(), dt)) {
       persist();
       updateHud();
     }
@@ -2961,7 +3035,12 @@ function frame(now: number) {
     }
     const carried = selectedItem(inventory());
     heldResource.root.visible =
-      !!carried && isResource(carried.kind) && !harvestAction && !build;
+      !!carried &&
+      (isResource(carried.kind) ||
+        isBulletAmmo(carried.kind) ||
+        carried.kind === "rockets") &&
+      !harvestAction &&
+      !build;
     if (heldResource.root.visible) {
       viewModel.root.visible = false;
       heldResource.animate(carried!.kind, clock, length > 0.1, dt);
@@ -3037,6 +3116,7 @@ function frame(now: number) {
     heldResource.root.userData.itemSource ?? "",
   );
   canvas.dataset.inventoryOpen = String(inventoryOpen);
+  canvas.dataset.ammoModels = JSON.stringify(ammoSources());
   canvas.dataset.nearestDrop = nearestDrop()?.id ?? "";
   canvas.dataset.harborSource = harbor.source;
   canvas.dataset.harborRoad = JSON.stringify(

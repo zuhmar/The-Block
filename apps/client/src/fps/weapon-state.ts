@@ -29,14 +29,22 @@ export function beginReload(state: WeaponState, kind: WeaponKind) {
   state.reload = { kind, remaining: duration, duration };
   return true;
 }
-export function advanceReload(state: WeaponState, dt: number) {
+export function advanceReload(
+  state: WeaponState,
+  dt: number,
+  available = Infinity,
+) {
   if (!state.reload) return false;
   state.reload.remaining = Math.max(
     0,
     state.reload.remaining - Math.max(0, dt),
   );
   if (state.reload.remaining > 0) return false;
-  state.rounds[state.reload.kind] = WEAPONS[state.reload.kind].magazineSize;
+  const kind = state.reload.kind;
+  state.rounds[kind] += Math.min(
+    WEAPONS[kind].magazineSize - state.rounds[kind],
+    Math.max(0, Math.floor(available)),
+  );
   state.reload = undefined;
   return true;
 }

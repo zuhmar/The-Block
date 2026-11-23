@@ -1,0 +1,62 @@
+{
+  "sourceReference": "art/ai/ammo/reference.png",
+  "sourceSHA256": "9aef156d91e94c4d0e03404f5fbb929400ccc9e0959fcd30e67058dffe3806ac",
+  "units": "metres",
+  "upAxis": "Y",
+  "models": [
+    {
+      "id": "pistol",
+      "file": "ammo-pistol.glb",
+      "icon": "ammo-pistol.png",
+      "bytes": 30628,
+      "height": 0.431,
+      "triangles": 916,
+      "meshes": 3
+    },
+    {
+      "id": "smg",
+      "file": "ammo-smg.glb",
+      "icon": "ammo-smg.png",
+      "bytes": 82572,
+      "height": 0.431,
+      "triangles": 2748,
+      "meshes": 3
+    },
+    {
+      "id": "rifle",
+      "file": "ammo-rifle.glb",
+      "icon": "ammo-rifle.png",
+      "bytes": 30624,
+      "height": 0.661,
+      "triangles": 916,
+      "meshes": 3
+    },
+    {
+      "id": "sniper",
+      "file": "ammo-sniper.glb",
+      "icon": "ammo-sniper.png",
+      "bytes": 30624,
+      "height": 0.861,
+      "triangles": 916,
+      "meshes": 3
+    },
+    {
+      "id": "lmg",
+      "file": "ammo-lmg.glb",
+      "icon": "ammo-lmg.png",
+      "bytes": 198700,
+      "height": 0.661,
+      "triangles": 4136,
+      "meshes": 3
+    },
+    {
+      "id": "rockets",
+      "file": "ammo-rockets.glb",
+      "icon": "ammo-rockets.png",
+      "bytes": 33812,
+      "height": 0.87,
+      "triangles": 932,
+      "meshes": 3
+    }
+  ]
+}

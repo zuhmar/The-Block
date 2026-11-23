@@ -1531,3 +1531,6 @@ h1 em {
     min-height: 40px;
   }
 }
+
+#ammo-icon { width: 25px; height: 32px; object-fit: contain; flex-shrink: 0; }
+#ammo-icon[hidden] { display: none; }

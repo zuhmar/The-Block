@@ -1,7 +1,9 @@
+import { BULLET_AMMO, isBulletAmmo, ammoModelKind, STARTER_AMMO } from "./ammo";
 import { WEAPONS, type WeaponKind, type Tool } from "./weapons";
 export const CARRY_SLOTS = 20,
   HOTBAR_SLOTS = 5;
 export const ITEM_KINDS = [
+  ...BULLET_AMMO,
   "wood",
   "rock",
   "sulfur",
@@ -25,10 +27,15 @@ export const isResource = (k: ItemKind) =>
 export const isGun = (k: ItemKind) =>
   ["pistol", "smg", "rifle", "sniper", "lmg", "rocket"].includes(k);
 export const stackLimit = (k: ItemKind) =>
-  isResource(k) ? 500 : isGun(k) || isHarvestTool(k) ? 1 : 5;
+  isResource(k) || isBulletAmmo(k) ? 500 : isGun(k) || isHarvestTool(k) ? 1 : 5;
 export const itemName = (k: ItemKind) =>
   (
     ({
+      "pistol-ammo": "Pistol rounds",
+      "smg-ammo": "SMG rounds",
+      "rifle-ammo": "Rifle rounds",
+      "sniper-ammo": "Sniper rounds",
+      "lmg-ammo": "LMG rounds",
       wood: "Wood",
       rock: "Rock",
       sulfur: "Sulfur",
@@ -39,13 +46,15 @@ export const itemName = (k: ItemKind) =>
     }) as Partial<Record<ItemKind, string>>
   )[k] ?? WEAPONS[k as WeaponKind].name;
 export const itemIcon = (k: ItemKind) =>
-  isHarvestTool(k)
-    ? `/assets/harvest-tools/${k}-preview.png`
-    : isResource(k)
-      ? `/assets/resource-items/item-${k}.png`
-      : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
+  ammoModelKind(k)
+    ? `/assets/ammo/ammo-${ammoModelKind(k)}.png`
+    : isHarvestTool(k)
+      ? `/assets/harvest-tools/${k}-preview.png`
+      : isResource(k)
+        ? `/assets/resource-items/item-${k}.png`
+        : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
 export const itemTool = (k: ItemKind): Tool =>
-  isResource(k) || isHarvestTool(k) || k === "rockets"
+  isResource(k) || isHarvestTool(k) || isBulletAmmo(k) || k === "rockets"
     ? "hands"
     : (k as WeaponKind);
 export type ItemStack = {
@@ -57,6 +66,7 @@ export type ItemStack = {
 export type WorldDrop = ItemStack & { x: number; z: number; y: number };
 export type Inventory = {
   version: 1;
+  ammoVersion?: 1;
   sequence: number;
   slots: (ItemStack | null)[];
   hotbar: (string | null)[];
@@ -284,6 +294,17 @@ export function pickupDrop(inv: Inventory, id: string) {
   if (!d.quantity) inv.drops.splice(i, 1);
   return n;
 }
+/** Grant the new ammunition once; preserve full existing inventories through reserve overflow. */
+export function ensureStarterAmmo(inv: Inventory) {
+  if (inv.ammoVersion === 1) return false;
+  for (const kind of BULLET_AMMO) {
+    const amount = STARTER_AMMO[kind],
+      added = addItem(inv, kind, amount);
+    reserveItems(inv, kind, amount - added);
+  }
+  inv.ammoVersion = 1;
+  return true;
+}
 export function migrateInventory(
   wood: number,
   resources?: { rock: number; sulfur: number; metal: number },
@@ -316,6 +337,7 @@ export function migrateInventory(
     ["pistol", "axe", "pickaxe", "grenade", "c4"] as const
   ).entries())
     inv.hotbar[i] = inv.slots.find((s) => s?.kind === kind)!.id;
+  ensureStarterAmmo(inv);
   return inv;
 }
 export function readInventory(value: unknown): Inventory | undefined {
@@ -371,6 +393,7 @@ export function readInventory(value: unknown): Inventory | undefined {
         : {}),
     };
   };
+  if (v.ammoVersion === 1) inv.ammoVersion = 1;
   inv.slots = Array.from({ length: 20 }, (_, i) => parse(v.slots[i]));
   inv.reserve = v.reserve.map(parse).filter((s): s is ItemStack => !!s);
   for (const d of v.drops) {

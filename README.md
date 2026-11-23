@@ -77,3 +77,5 @@ python tests/browser/fps-prototype.py
 The full automated suite retains legacy backend checks, which require local PostgreSQL (`docker compose up -d --wait db`). The new pure 3D world tests and browser check do not require a database. Browser measurements use software WebGL and do not establish physical-phone frame rate. A small FPS readout is visible in game for device checks.
 
 For the preserved 2D system, see [the archived README](docs/LEGACY_2D_README.md). `pnpm dev:legacy` starts the preserved backend and asset pipeline, but the frontend entry now points to the 3D prototype.
+
+Ammunition: five bullet types stack to 500 and reload matching guns from carried supplies. Rockets stack to five. Blender models, icons and editable sources: [`/assets/ammo/street-survival-ammo.zip`](https://the-block-tau-eight.vercel.app/assets/ammo/street-survival-ammo.zip). See [inventory details](docs/fps-inventory.md).

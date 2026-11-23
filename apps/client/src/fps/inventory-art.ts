@@ -1,3 +1,5 @@
+import { ammoModel } from "./ammo-models";
+import { isBulletAmmo } from "./ammo";
 import * as THREE from "three";
 import { isResource, type ItemKind, type WorldDrop } from "./inventory";
 import { createPlayerViewRig } from "./meshy-player";
@@ -15,7 +17,7 @@ export async function preloadInventoryArt() {
   );
 }
 function resourceModel(kind: ItemKind) {
-  return models.get(kind)?.clone(true);
+  return models.get(kind)?.clone(true) ?? ammoModel(kind);
 }
 export function createDroppedItems() {
   const root = new THREE.Group(),
@@ -70,7 +72,18 @@ export function createHeldResource() {
   holder.quaternion.copy(rig.gun.root.quaternion);
   rig.gun.root.parent!.add(holder);
   const resources = new Map<string, THREE.Group>();
-  for (const k of ["wood", "rock", "sulfur", "metal"] as ItemKind[]) {
+  for (const k of [
+    "wood",
+    "rock",
+    "sulfur",
+    "metal",
+    "pistol-ammo",
+    "smg-ammo",
+    "rifle-ammo",
+    "sniper-ammo",
+    "lmg-ammo",
+    "rockets",
+  ] as ItemKind[]) {
     const m = resourceModel(k);
     if (m) {
       m.position.y = -0.07;
@@ -96,7 +109,10 @@ export function createHeldResource() {
       rig.gun.root.visible = false;
       for (const [k, m] of resources) m.visible = k === kind;
       rig.root.userData.itemSource =
-        resources.has(kind) && isResource(kind) ? "blender" : "none";
+        resources.has(kind) &&
+        (isResource(kind) || isBulletAmmo(kind) || kind === "rockets")
+          ? "blender"
+          : "none";
     },
   };
 }

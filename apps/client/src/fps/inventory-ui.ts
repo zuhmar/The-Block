@@ -37,7 +37,7 @@ export function createInventoryDialog(options: Options) {
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "inventory-title");
-  overlay.innerHTML = `<div class="inventory-card"><header class="inventory-heading"><div><span class="eyebrow">YOUR LOADOUT</span><h2 id="inventory-title">INVENTORY <small id="inventory-capacity"></small></h2></div><button id="inventory-close" aria-label="Close inventory">CLOSE ×</button></header><div class="inventory-body"><aside class="inventory-player"><canvas id="inventory-player-canvas" aria-label="Your black stick figure character"></canvas><div><b>YOUR SURVIVOR</b><span id="inventory-health"></span><p>Black stick figure</p><small id="inventory-equipped"></small></div></aside><section class="inventory-bag"><p class="inventory-help" id="inventory-help">Select an item, then a hand slot. Drag items to move or swap.</p><div id="inventory-grid" aria-label="20 carried item slots"></div><div class="inventory-details"><div><strong id="inventory-item-name">Select an item</strong><span id="inventory-item-info">Resources ×500 · Explosives ×5 · Guns ×1</span></div><div class="inventory-actions"><button id="inventory-move">MOVE</button><button id="inventory-split">SPLIT</button><button id="inventory-store">STORE</button><button id="inventory-drop">DROP</button><button id="inventory-unbind">UNBIND</button></div></div><div class="inventory-hotbar-heading"><b>HAND SLOTS</b><button id="inventory-hands">EMPTY HANDS <small>H</small></button></div><div id="inventory-hotbar" aria-label="5 hand slots"></div></section></div><section class="inventory-reserve"><div><b>STARTER RESERVE</b><span id="inventory-reserve-note"></span></div><div id="inventory-reserve-items"></div><small>Reserve supplies stay at the town spawn. Only carried items can be used away from it.</small></section><p class="inventory-feedback" id="inventory-feedback" role="status" aria-live="polite"></p></div>`;
+  overlay.innerHTML = `<div class="inventory-card"><header class="inventory-heading"><div><span class="eyebrow">YOUR LOADOUT</span><h2 id="inventory-title">INVENTORY <small id="inventory-capacity"></small></h2></div><button id="inventory-close" aria-label="Close inventory">CLOSE ×</button></header><div class="inventory-body"><aside class="inventory-player"><canvas id="inventory-player-canvas" aria-label="Your black stick figure character"></canvas><div><b>YOUR SURVIVOR</b><span id="inventory-health"></span><p>Black stick figure</p><small id="inventory-equipped"></small></div></aside><section class="inventory-bag"><p class="inventory-help" id="inventory-help">Select an item, then a hand slot. Drag items to move or swap.</p><div id="inventory-grid" aria-label="20 carried item slots"></div><div class="inventory-details"><div><strong id="inventory-item-name">Select an item</strong><span id="inventory-item-info">Resources / bullets ×500 · Explosives ×5 · Guns ×1</span></div><div class="inventory-actions"><button id="inventory-move">MOVE</button><button id="inventory-split">SPLIT</button><button id="inventory-store">STORE</button><button id="inventory-drop">DROP</button><button id="inventory-unbind">UNBIND</button></div></div><div class="inventory-hotbar-heading"><b>HAND SLOTS</b><button id="inventory-hands">EMPTY HANDS <small>H</small></button></div><div id="inventory-hotbar" aria-label="5 hand slots"></div></section></div><section class="inventory-reserve"><div><b>STARTER RESERVE</b><span id="inventory-reserve-note"></span></div><div id="inventory-reserve-items"></div><small>Reserve supplies stay at the town spawn. Only carried items can be used away from it.</small></section><p class="inventory-feedback" id="inventory-feedback" role="status" aria-live="polite"></p></div>`;
   document.body.append(overlay);
   const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
     overlay.querySelector<T>(q)!;
@@ -160,7 +160,7 @@ export function createInventoryDialog(options: Options) {
       : "Select an item";
     $("#inventory-item-info").textContent = s
       ? `${s.quantity} / ${stackLimit(s.kind)} per slot${isGun(s.kind) ? " · " + s.magazine + " loaded" : ""}`
-      : "Resources ×500 · Explosives ×5 · Guns ×1";
+      : "Resources / bullets ×500 · Explosives ×5 · Guns ×1";
     for (const id of ["move", "drop"])
       $<HTMLButtonElement>("#inventory-" + id).disabled = !s;
     $<HTMLButtonElement>("#inventory-split").disabled =
@@ -237,6 +237,7 @@ export function createInventoryDialog(options: Options) {
     }
   });
   overlay.addEventListener("keydown", (e) => {
+    if (overlay.hidden) return;
     if (e.code === "Escape") {
       e.preventDefault();
       e.stopPropagation();
