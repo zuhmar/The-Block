@@ -36,7 +36,7 @@ import {
   damageEnemy,
 } from "../apps/client/src/fps/enemy";
 test("expanded world keeps the bridge continuous and reserves the military compound", () => {
-  assert.equal(MAP_SIZE, 384);
+  assert.equal(MAP_SIZE, 640);
   assert(COMPOUND.maxX < MAP_SIZE / 2 - 3);
   assert(!blocked(START, []));
   for (let x = 35; x < 124; x += 0.25)
@@ -137,7 +137,7 @@ test("five military models have furnished hollow interiors, working entry hinges
     BUILDINGS.filter((b) => b.type.startsWith("military-")).length,
     5,
   );
-  assert.equal(LOOT.length, 65);
+  assert.equal(LOOT.length, 70);
   for (const [i, b] of BUILDINGS.entries()) {
     if (!b.type.startsWith("military-")) continue;
     const raw = await readFile(

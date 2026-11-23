@@ -1,0 +1,13 @@
+# Southern harbor and island coast
+
+The first-person world now spans 640 × 640 metres. An irregular island shoreline and surrounding ocean replace the old square ground and boundary-rock row. All previously buildable points in the 384-metre world remain dry; existing buildings, bridge, player construction, wood, gathered resources and searched-crate indices retain their coordinates and values.
+
+South Harbor occupies X −120…2, Z 195…275. Follow the new southern road from the jail district to the cargo yard at −60 E / 207 S. The new road resolves around saved bases, trees and permanent buildings on load. If a base completely seals the route, that road is omitted rather than crossing or moving the base; the harbor remains reachable through the countryside.
+
+The original Blender environment includes twelve corrugated shipping containers with short/long and stacked variants, a cargo apron, three finger piers with wider ends, a quay, a lattice dock crane, two moored workboats, a forklift, strapped pallet cargo, drums, bollards, railings, and an open-door port office with desk/radio. The boats are scenery. Five additional searchable supply crates follow all 65 previous loot/bin entries. The HUD identifies South Harbor.
+
+Water keeps the existing no-swimming collision behavior. Shoreline collision uses the same coast function as the rendered island. Dock surfaces explicitly allow walking over water at elevation 0.18 m, with continuous overlap at the quay and pier caps. Railings, containers, cargo, office walls and other solid props use shared layout collision and shot proxies. Construction and gatherable resource spawns exclude the harbor, ocean and road. There are no designated player plots.
+
+`apps/client/src/fps/coast.ts` supplies the shared shore shape; `coast-view.ts` renders the ocean, island, sand/shallow-water bands and instanced water glints. `harbor-layout.ts` supplies decks, containers and solid reservations. The Blender exporter consumes that exact layout through `packages/art-tools/export-harbor.ts`. `harbor-model.ts` loads the resulting self-contained GLB and supplies independent simple shot proxies; the detailed harbor visual is hidden beyond 165 m. No per-frame asset streaming or extra network service is required.
+
+Run `pnpm assets:harbor` to rebuild the editable Blender scene, transparent preview, GLB and manifest. `tests/harbor-coast.test.ts` checks old-land preservation, four-sided water, detours around bases, continuous pier movement and rail collision, save/loot compatibility and GLTFLoader import/geometry budgets. The asset uses 23,808 triangles in eleven material meshes.

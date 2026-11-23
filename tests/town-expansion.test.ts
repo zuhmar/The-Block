@@ -45,7 +45,7 @@ test("prison gates stay open, fences block and all four stairways reach the plat
 test("six distinct new buildings, appended crates and roadside trash preserve old saves", async () => {
   resetDoors();
   assert.equal(BUILDINGS.length, 19);
-  assert.equal(LOOT.length, 65);
+  assert.equal(LOOT.length, 70);
   assert.equal(LOOT.filter((l) => l.kind === "trash").length, 23);
   assert.equal(LOOT[26].x, 104);
   assert.equal(LOOT[27].x, 69);
@@ -148,7 +148,7 @@ test("three original bin models match physical bounds and prison artwork has no 
 
 test("resolved western connector has room for sidewalks beside every building", () => {
   configureWestRoad([]);
-  assert.equal(ROADS.length, 5);
+  assert.equal(ROADS.length, 6);
   for (const b of BUILDINGS)
     for (const x of [-b.width / 2, b.width / 2])
       for (const z of [-b.depth / 2, b.depth / 2])

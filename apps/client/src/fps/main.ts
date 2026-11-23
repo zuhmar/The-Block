@@ -1,3 +1,7 @@
+import { createCoast } from "./coast-view";
+import { coastLimits } from "./coast";
+import { inHarbor } from "./harbor-layout";
+import { harborModel } from "./harbor-model";
 import { createHarvestView } from "./harvest-view";
 import { ResourceWorld } from "./resource-world";
 import { createNatureRenderer } from "./nature-models";
@@ -125,7 +129,7 @@ $("#app").innerHTML = `
   <div id="weapon-status"><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <img src="/assets/weapon-icons/pistol.png" alt=""><b>PISTOL</b></button><button id="smg-tool">3 <img src="/assets/weapon-icons/smg.png" alt=""><b>SMG</b></button><button id="rifle-tool">4 <img src="/assets/weapon-icons/assault-rifle.png" alt=""><b>RIFLE</b></button><button id="sniper-tool">5 <img src="/assets/weapon-icons/sniper.png" alt=""><b>SNIPER</b></button><button id="lmg-tool">6 <img src="/assets/weapon-icons/light-machine-gun.png" alt=""><b>LMG</b></button><button id="rocket-tool">7 <img src="/assets/weapon-icons/rocket-launcher.png" alt=""><b>ROCKET</b></button><button id="grenade-tool">8 <img src="/assets/weapon-icons/grenade.png" alt=""><b>GRENADE</b></button><button id="c4-tool">9 <img src="/assets/weapon-icons/c4.png" alt=""><b>C4</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -271,33 +275,30 @@ function sign(
     new THREE.MeshBasicMaterial({ map: texture }),
   );
 }
-// All terrain shares a single lightweight mesh; scenery uses simple original 3D geometry.
-box(scene, 0, -0.35, 0, MAP_SIZE, 0.6, MAP_SIZE, 0x7f995c);
-const water = new THREE.Mesh(
-  new THREE.PlaneGeometry(13, 150),
-  material(0x5eabba),
-);
-water.rotation.x = -Math.PI / 2;
-water.position.set(48, -0.035, 0);
-scene.add(water);
+const coast = createCoast();
+scene.add(coast.root);
+const harbor = harborModel();
+scene.add(harbor.root, harbor.proxy);
 // River banks follow a gentle curve, rather than a rectangular water strip.
 const waterShape = new THREE.Shape();
-for (let i = 0; i <= MAP_SIZE / 2; i++) {
-  const z = -MAP_SIZE / 2 + i * 2,
-    x = riverX(z) - 3.3;
-  if (i) waterShape.lineTo(x, -z);
-  else waterShape.moveTo(x, -z);
+let riverNorth = -250,
+  riverSouth = 250;
+for (let i = 0; i < 8; i++) {
+  riverNorth = coastLimits(riverX(riverNorth)).north;
+  riverSouth = coastLimits(riverX(riverSouth)).south;
 }
-for (let i = MAP_SIZE / 2; i >= 0; i--) {
-  const z = -MAP_SIZE / 2 + i * 2;
-  waterShape.lineTo(riverX(z) + 3.3, -z);
-}
+const channel = Array.from({ length: 257 }, (_, i) => {
+  const z = riverNorth + ((riverSouth - riverNorth) * i) / 256;
+  return { x: riverX(z), z };
+});
+channel.forEach((p, i) =>
+  i ? waterShape.lineTo(p.x - 3.3, -p.z) : waterShape.moveTo(p.x - 3.3, -p.z),
+);
+for (const p of channel.slice().reverse()) waterShape.lineTo(p.x + 3.3, -p.z);
 waterShape.closePath();
-scene.remove(water);
-water.geometry.dispose();
 const river = new THREE.Mesh(
   new THREE.ShapeGeometry(waterShape),
-  material(0x5eabba),
+  material(0x418caa),
 );
 river.rotation.x = -Math.PI / 2;
 river.position.y = 0.015;
@@ -410,26 +411,6 @@ scene.add(shadow);
 const nature = createNatureRenderer(resourceWorld);
 nature.update(START, 0);
 scene.add(nature.root, nature.cover);
-const dummy = new THREE.Object3D();
-const rocks = new THREE.InstancedMesh(
-  new THREE.IcosahedronGeometry(1, 0),
-  material(0x92978b),
-  38,
-);
-for (let i = 0; i < 38; i++) {
-  const side = i % 4,
-    t = (i / 38) * MAP_SIZE - MAP_SIZE / 2;
-  dummy.position.set(
-    side === 0 ? -MAP_SIZE / 2 + 1 : side === 1 ? MAP_SIZE / 2 - 1 : t,
-    1.2,
-    side === 2 ? -MAP_SIZE / 2 + 1 : side === 3 ? MAP_SIZE / 2 - 1 : t,
-  );
-  dummy.scale.set(2.8 + (i % 3), 2 + (i % 4), 3.3);
-  dummy.rotation.set(0.2 * i, 0.6 * i, 0);
-  dummy.updateMatrix();
-  rocks.setMatrixAt(i, dummy.matrix);
-}
-scene.add(rocks);
 // Street furniture makes the little settlement readable without oversized sprites.
 for (const [x, z] of [
   [-27, 8],
@@ -490,10 +471,17 @@ heading.position.set(12, 3.2, 26);
 heading.rotation.y = Math.PI;
 scene.add(heading);
 for (const x of [9, 15]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
+const portSign = sign("SOUTH HARBOR ↓", 5, 0.7);
+portSign.position.set(-10, 2.8, 35);
+portSign.rotation.y = Math.PI;
+scene.add(portSign);
+const officeSign = sign("SOUTH HARBOR · PORT OFFICE", 3.4, 0.45);
+officeSign.position.set(-111, 2.9, 201.19);
+scene.add(officeSign);
 const shotObstacles: THREE.Object3D[] = [
   jailGrounds.proxy,
   nature.cover,
-  rocks,
+  harbor.proxy,
   ...buildingModels.map((m) => m.shotRoot),
 ];
 // A simple target range supports testing the visible pistol and shot feedback.
@@ -2334,8 +2322,9 @@ function updateHud() {
     })),
   );
   const inside = containingBuilding(player);
-  $("#zone").textContent =
-    inside >= 0
+  $("#zone").textContent = inHarbor(player)
+    ? "SOUTH HARBOR"
+    : inside >= 0
       ? BUILDINGS[inside].name
       : inCompound(player, 1)
         ? "FORT EAST"
@@ -2509,6 +2498,8 @@ function frame(now: number) {
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
   clock += dt;
+  coast.update(clock);
+  harbor.root.visible = Math.hypot(player.x + 60, player.z - 234) < 165;
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
@@ -2685,6 +2676,10 @@ function frame(now: number) {
   canvas.dataset.drawCalls = String(renderer.info.render.calls);
   canvas.dataset.triangles = String(renderer.info.render.triangles);
   canvas.dataset.mapSize = String(MAP_SIZE);
+  canvas.dataset.harborSource = harbor.source;
+  canvas.dataset.harborRoad = JSON.stringify(
+    ROADS.filter((r) => r[r.length - 1]?.z === 207),
+  );
   canvas.dataset.resourceWallet = JSON.stringify({
     wood: save.wood,
     ...save.resources,

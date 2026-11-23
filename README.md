@@ -1,8 +1,10 @@
 # Street Survival — First-person 3D prototype
 
-Street Survival now opens a **256 × 256 meter first-person 3D world** with a jail-centered town and Fort East military compound built with Three.js and TypeScript. This replaces the playable 2D frontend with a fresh, single-player prototype. The old source and online database are preserved; the prototype does not connect to, reset, or migrate that database.
+Street Survival now opens a **640 × 640 meter first-person 3D island world** with a jail-centered town, West Quarter, Fort East military compound and South Harbor built with Three.js and TypeScript. This replaces the playable 2D frontend with a fresh, single-player prototype. The old source and online database are preserved; the prototype does not connect to, reset, or migrate that database.
 
 Live: https://the-block-tau-eight.vercel.app
+
+South Harbor adds shipping containers, walkable docks, a crane, workboats and dockside props. Coastal water surrounds the island while preserving the previous land and saved bases. See [harbor and coast](docs/south-harbor.md).
 
 ## Run
 
@@ -19,10 +21,10 @@ Open http://localhost:5173. No database, account, API key, or external art downl
 - Phone: left joystick moves, drag the world to look, and use the Run, Jump, Use and Fire buttons. Movement and look support simultaneous touches.
 - E / Use searches five supply-crate tiers throughout town buildings and the military compound. The starter inventory has **10,000 wood**.
 - 1 / Hands, 2 / Pistol, 3 / SMG, 4 / Rifle and 5 / Sniper select a visible first-person tool. The pistol has free practice shots. Targets and an armed enemy south of town let you test aiming and local combat.
-- B / Build opens floor, wall, open doorway and storage choices. Aim down at nearby ground and click / Place. R / Rotate changes the edge direction. Floors snap to a two-meter grid; walls and doorways snap along floor edges. Build in open meadows, keeping town, the military compound, roads, water and trees clear. No roofs or designated plots are needed.
+- B / Build opens floor, wall, open doorway and storage choices. Aim down at nearby ground and click / Place. R / Rotate changes the edge direction. Floors snap to a two-meter grid; walls and doorways snap along floor edges. Build in open meadows, keeping towns, the military compound, harbor, roads, water and trees clear. No roofs or designated plots are needed.
 - Aim at your construction and use **Dismantle** to return its wood. Attached walls and storage must be removed before their floor. The budget is **100 pieces**.
 
-Buildings, trees, fences, water and constructed walls block walking. The eastern road crosses the original bridge into **Fort East**, a fenced military compound with command offices, barracks, a supply hangar, field tent and medical tent. The existing jail district and its two- and three-story apartment buildings stay in place. All 13 buildings have furnished, enterable interiors. Approach a door and press **E / USE** to open or close it. Stand clear of its swing; doors stop if a player or NPC is in the way and closed doors block shots. Apartments have stairs, multiple rooms and upper-floor loot. Searching requires a clear view of a nearby container on the same floor. There are **28 loot containers**, with existing searched indices retained. See [multi-story buildings](art/buildings/apartments/README.md) and [Fort East](art/buildings/military/README.md) for the current assets and layout.
+Buildings, trees, fences, water and constructed walls block walking. The eastern road crosses the original bridge into **Fort East**, a fenced military compound with command offices, barracks, a supply hangar, field tent and medical tent. The existing jail district and its two- and three-story apartment buildings stay in place. The 19 town/compound buildings have furnished, enterable interiors; South Harbor also has an open port office. Approach a door and press **E / USE** to open or close it. Stand clear of its swing; doors stop if a player or NPC is in the way and closed doors block shots. Apartments have stairs, multiple rooms and upper-floor loot. Searching requires a clear view of a nearby container on the same floor. There are **70 loot entries**, including 23 roadside bins and five new harbor caches, with existing searched indices retained. See [multi-story buildings](art/buildings/apartments/README.md) and [Fort East](art/buildings/military/README.md) for the current assets and layout.
 
 Construction, wood and searched crates save locally under `street-survival:3d-prototype:v1`. The menu’s reset clears only that local prototype. Your location resets to the town spawn on reload. This is not yet online multiplayer, shared-world persistence, inventory, or survival simulation; those legacy systems are not silently represented as working 3D features.
 

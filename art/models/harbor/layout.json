@@ -1,0 +1,619 @@
+{
+  "bounds": {
+    "minX": -120,
+    "maxX": 2,
+    "minZ": 195,
+    "maxZ": 275
+  },
+  "decks": [
+    {
+      "x": -60,
+      "z": 231,
+      "width": 116,
+      "depth": 6
+    },
+    {
+      "x": -99,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    },
+    {
+      "x": -60,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    },
+    {
+      "x": -21,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    },
+    {
+      "x": -99,
+      "z": 267,
+      "width": 12,
+      "depth": 4
+    },
+    {
+      "x": -60,
+      "z": 267,
+      "width": 12,
+      "depth": 4
+    },
+    {
+      "x": -21,
+      "z": 267,
+      "width": 12,
+      "depth": 4
+    }
+  ],
+  "piers": [
+    {
+      "x": -99,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    },
+    {
+      "x": -60,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    },
+    {
+      "x": -21,
+      "z": 251,
+      "width": 6,
+      "depth": 36
+    }
+  ],
+  "containers": [
+    {
+      "x": -104,
+      "z": 206,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 0
+    },
+    {
+      "x": -104,
+      "z": 219,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1
+    },
+    {
+      "x": -84,
+      "z": 206,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1
+    },
+    {
+      "x": -84,
+      "z": 219,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2
+    },
+    {
+      "x": -35,
+      "z": 206,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2
+    },
+    {
+      "x": -35,
+      "z": 219,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3
+    },
+    {
+      "x": -15,
+      "z": 206,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3
+    },
+    {
+      "x": -15,
+      "z": 219,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 0
+    },
+    {
+      "x": -104,
+      "z": 219,
+      "y": 2.59,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2
+    },
+    {
+      "x": -35,
+      "z": 219,
+      "y": 2.59,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3
+    },
+    {
+      "x": -104,
+      "z": 226,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1
+    },
+    {
+      "x": -15,
+      "z": 226,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3
+    }
+  ],
+  "boxes": [
+    {
+      "x": -104,
+      "z": 206,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 0,
+      "role": "container"
+    },
+    {
+      "x": -104,
+      "z": 219,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1,
+      "role": "container"
+    },
+    {
+      "x": -84,
+      "z": 206,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1,
+      "role": "container"
+    },
+    {
+      "x": -84,
+      "z": 219,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2,
+      "role": "container"
+    },
+    {
+      "x": -35,
+      "z": 206,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2,
+      "role": "container"
+    },
+    {
+      "x": -35,
+      "z": 219,
+      "y": 0,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3,
+      "role": "container"
+    },
+    {
+      "x": -15,
+      "z": 206,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3,
+      "role": "container"
+    },
+    {
+      "x": -15,
+      "z": 219,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 0,
+      "role": "container"
+    },
+    {
+      "x": -104,
+      "z": 219,
+      "y": 2.59,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 2,
+      "role": "container"
+    },
+    {
+      "x": -35,
+      "z": 219,
+      "y": 2.59,
+      "width": 12.2,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3,
+      "role": "container"
+    },
+    {
+      "x": -104,
+      "z": 226,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 1,
+      "role": "container"
+    },
+    {
+      "x": -15,
+      "z": 226,
+      "y": 0,
+      "width": 6.1,
+      "depth": 2.44,
+      "height": 2.59,
+      "color": 3,
+      "role": "container"
+    },
+    {
+      "role": "office wall",
+      "x": -115,
+      "z": 198,
+      "width": 0.2,
+      "depth": 6,
+      "height": 3.4,
+      "y": 0
+    },
+    {
+      "role": "office wall",
+      "x": -107,
+      "z": 198,
+      "width": 0.2,
+      "depth": 6,
+      "height": 3.4,
+      "y": 0
+    },
+    {
+      "role": "office wall",
+      "x": -111,
+      "z": 195,
+      "width": 8,
+      "depth": 0.2,
+      "height": 3.4,
+      "y": 0
+    },
+    {
+      "role": "office entrance",
+      "x": -113.6,
+      "z": 201,
+      "width": 2.8,
+      "depth": 0.2,
+      "height": 3.4,
+      "y": 0
+    },
+    {
+      "role": "office entrance",
+      "x": -108.4,
+      "z": 201,
+      "width": 2.8,
+      "depth": 0.2,
+      "height": 3.4,
+      "y": 0
+    },
+    {
+      "role": "office lintel",
+      "x": -111,
+      "z": 201,
+      "width": 2.4,
+      "depth": 0.2,
+      "height": 1,
+      "y": 2.4
+    },
+    {
+      "role": "office roof",
+      "x": -111,
+      "z": 198,
+      "width": 8.5,
+      "depth": 6.5,
+      "height": 0.25,
+      "y": 3.4
+    },
+    {
+      "role": "office desk",
+      "x": -113,
+      "z": 197,
+      "width": 1.5,
+      "depth": 0.8,
+      "height": 0.9,
+      "y": 0
+    },
+    {
+      "role": "crane support",
+      "x": -95,
+      "z": 230,
+      "width": 0.55,
+      "depth": 0.55,
+      "height": 12,
+      "y": 0
+    },
+    {
+      "role": "crane support",
+      "x": -89,
+      "z": 230,
+      "width": 0.55,
+      "depth": 0.55,
+      "height": 12,
+      "y": 0
+    },
+    {
+      "role": "bollard",
+      "x": -116,
+      "z": 231,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.7,
+      "y": 0.18
+    },
+    {
+      "role": "bollard",
+      "x": -80,
+      "z": 231,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.7,
+      "y": 0.18
+    },
+    {
+      "role": "bollard",
+      "x": -42,
+      "z": 231,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.7,
+      "y": 0.18
+    },
+    {
+      "role": "bollard",
+      "x": -4,
+      "z": 231,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.7,
+      "y": 0.18
+    },
+    {
+      "role": "pallet cargo",
+      "x": -103,
+      "z": 211.5,
+      "width": 1.6,
+      "depth": 1.4,
+      "height": 1.5,
+      "y": 0
+    },
+    {
+      "role": "pallet cargo",
+      "x": -96,
+      "z": 211.5,
+      "width": 1.6,
+      "depth": 1.4,
+      "height": 1.5,
+      "y": 0
+    },
+    {
+      "role": "pallet cargo",
+      "x": -38,
+      "z": 211.5,
+      "width": 1.6,
+      "depth": 1.4,
+      "height": 1.5,
+      "y": 0
+    },
+    {
+      "role": "pallet cargo",
+      "x": -31,
+      "z": 211.5,
+      "width": 1.6,
+      "depth": 1.4,
+      "height": 1.5,
+      "y": 0
+    },
+    {
+      "role": "pallet cargo",
+      "x": -11,
+      "z": 211.5,
+      "width": 1.6,
+      "depth": 1.4,
+      "height": 1.5,
+      "y": 0
+    },
+    {
+      "role": "barrel",
+      "x": -111,
+      "z": 223,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1,
+      "y": 0
+    },
+    {
+      "role": "barrel",
+      "x": -109,
+      "z": 223,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1,
+      "y": 0
+    },
+    {
+      "role": "barrel",
+      "x": -107,
+      "z": 223,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1,
+      "y": 0
+    },
+    {
+      "role": "barrel",
+      "x": -31,
+      "z": 223,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1,
+      "y": 0
+    },
+    {
+      "role": "barrel",
+      "x": -29,
+      "z": 223,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1,
+      "y": 0
+    },
+    {
+      "role": "forklift",
+      "x": -40,
+      "z": 229,
+      "width": 1.8,
+      "depth": 3.2,
+      "height": 2.7,
+      "y": 0
+    },
+    {
+      "role": "workbench",
+      "x": -10,
+      "z": 198,
+      "width": 3,
+      "depth": 1,
+      "height": 0.9,
+      "y": 0
+    },
+    {
+      "role": "dock rail",
+      "x": -101.9,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -96.1,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -99,
+      "z": 269,
+      "width": 12,
+      "depth": 0.12,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -62.9,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -57.1,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -60,
+      "z": 269,
+      "width": 12,
+      "depth": 0.12,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -23.9,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -18.1,
+      "z": 250,
+      "width": 0.12,
+      "depth": 31,
+      "height": 1.05,
+      "y": 0.18
+    },
+    {
+      "role": "dock rail",
+      "x": -21,
+      "z": 269,
+      "width": 12,
+      "depth": 0.12,
+      "height": 1.05,
+      "y": 0.18
+    }
+  ]
+}

@@ -1,3 +1,11 @@
+import { WORLD_SIZE, onIsland } from "./coast";
+import {
+  inHarbor,
+  onDock,
+  harborBlocked,
+  harborSurface,
+} from "./harbor-layout";
+import { harborConnector } from "./harbor-road";
 import {
   readWallet,
   readHarvest,
@@ -54,7 +62,7 @@ export type Piece = Point & {
   health?: number;
 };
 export type Box = Point & { width: number; depth: number };
-export const MAP_SIZE = 384;
+export const MAP_SIZE = WORLD_SIZE;
 export const BUILD_LIMIT = 100;
 export const COST: Record<PieceKind, number> = {
   floor: 8,
@@ -103,6 +111,8 @@ export function configureWestRoad(pieces: Piece[]) {
   const route = westConnector(pieces, TREES, BUILDINGS);
   ROADS.splice(4);
   if (route.length > 1) ROADS.push(route);
+  const harborRoute = harborConnector(pieces, TREES, BUILDINGS);
+  if (harborRoute.length > 1) ROADS.push(harborRoute);
 }
 export const pavedWidth = (road: Point[]) => (road === CITY_RING ? 5.4 : 9);
 export function pavedRoadDistance(p: Point) {
@@ -294,6 +304,15 @@ ROAD_BINS.forEach((p, i) => {
     color: model === "wheelie" ? 0x427c61 : 0x637c90,
   });
 });
+// Append harbor loot after every legacy crate/bin to retain saved searched indices.
+for (const p of [
+  { x: -87, z: 228 },
+  { x: -33, z: 225 },
+  { x: -106, z: 213 },
+  { x: -58.3, z: 266, y: 0.18 },
+  { x: -19.3, z: 266, y: 0.18 },
+])
+  LOOT.push({ ...crateTiers[3], ...p, y: p.y ?? 0 });
 export const lootReward = (c: Loot) => c.reward ?? 20 + c.tier * 25;
 export const riverX = (z: number) => 47 + Math.sin(z * 0.055) * 3;
 export function segmentDistance(p: Point, a: Point, b: Point) {
@@ -321,11 +340,13 @@ export function inBox(p: Point, b: Box, radius = 0) {
 export const inTown = (p: Point) =>
   (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) ||
   inCompound(p, 1) ||
-  inWestQuarter(p);
+  inWestQuarter(p) ||
+  inHarbor(p);
 export const onBridge = (p: Point) =>
   Math.abs(p.z - 7) < 3 && p.x > 39 && p.x < 54;
 export function blockedTerrain(p: Point, radius = 0.32) {
   return (
+    (!onIsland(p, radius) && !onDock(p, radius)) ||
     Math.abs(p.x) > MAP_SIZE / 2 - 3 - radius ||
     Math.abs(p.z) > MAP_SIZE / 2 - 3 - radius ||
     (Math.abs(p.x - riverX(p.z)) < 3.3 + radius && !onBridge(p))
@@ -413,6 +434,7 @@ export function blocked(
   return (
     blockedTerrain(p) ||
     jailGroundBlocked(p, footHeight) ||
+    harborBlocked(p, footHeight) ||
     compoundBlocked(p, 0.32, footHeight) ||
     buildingBlocked({ ...p, y: footHeight }, 0.32, ignoreBuildingDoors) ||
     LOOT.some(
@@ -638,6 +660,7 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
     buildingSurface(p, maxHeight),
     jailGroundSurface(p, maxHeight),
     compoundSurface(p, maxHeight),
+    harborSurface(p, maxHeight),
   );
   for (const piece of pieces)
     if (
