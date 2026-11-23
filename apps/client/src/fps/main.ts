@@ -1,3 +1,11 @@
+import { blastOccluded } from "./explosion-visibility";
+import {
+  advanceProjectile,
+  blastDamage,
+  BLAST,
+  type Projectile,
+  type ChargeKind,
+} from "./explosives";
 import { inWestQuarter } from "./west-quarter";
 import { binModel, jailGroundModel } from "./street-furniture";
 import {
@@ -32,7 +40,14 @@ import {
   STORY_HEIGHT,
   resetDoors,
 } from "./building-layout";
-import { WEAPONS, canShoot, type WeaponKind, type Tool } from "./weapons";
+import {
+  WEAPONS,
+  WEAPON_KINDS,
+  explosiveKind,
+  canShoot,
+  type WeaponKind,
+  type Tool,
+} from "./weapons";
 import {
   newEnemy,
   updateEnemy,
@@ -83,10 +98,10 @@ $("#app").innerHTML = `
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
   <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
-  <div id="weapon-status"><span id="ammo"></span><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
-  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <b>PISTOL</b></button><button id="smg-tool">3 <b>SMG</b></button><button id="rifle-tool">4 <b>RIFLE</b></button><button id="sniper-tool">5 <b>SNIPER</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
+  <div id="weapon-status"><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
+  <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <img src="/assets/weapon-icons/pistol.png" alt=""><b>PISTOL</b></button><button id="smg-tool">3 <img src="/assets/weapon-icons/smg.png" alt=""><b>SMG</b></button><button id="rifle-tool">4 <img src="/assets/weapon-icons/assault-rifle.png" alt=""><b>RIFLE</b></button><button id="sniper-tool">5 <img src="/assets/weapon-icons/sniper.png" alt=""><b>SNIPER</b></button><button id="lmg-tool">6 <img src="/assets/weapon-icons/light-machine-gun.png" alt=""><b>LMG</b></button><button id="rocket-tool">7 <img src="/assets/weapon-icons/rocket-launcher.png" alt=""><b>ROCKET</b></button><button id="grenade-tool">8 <img src="/assets/weapon-icons/grenade.png" alt=""><b>GRENADE</b></button><button id="c4-tool">9 <img src="/assets/weapon-icons/c4.png" alt=""><b>C4</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–5 equip · Q / right mouse aim · R reload<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -908,6 +923,7 @@ function clearBullets() {
 function respawn() {
   health = 100;
   loadout = newWeaponState();
+  clearExplosives();
   punchRemaining = punchCooldown = 0;
   player = { ...START };
   vertical = verticalSpeed = 0;
@@ -1098,6 +1114,304 @@ let lastHitDoor = -1;
 let lastHitBuildPiece = "";
 let lastEmptyNotice = -Infinity;
 let loadout = newWeaponState();
+const lastExplosiveUse: Partial<Record<ChargeKind, number>> = {};
+let detonationRemaining = 0,
+  reloadRequested = false;
+let useRemaining = 0,
+  explosiveLatch = false,
+  projectileSerial = 0,
+  explosionSerial = 0;
+let pendingUse:
+  | { kind: ChargeKind; point?: THREE.Vector3; normal?: THREE.Vector3 }
+  | undefined;
+const projectiles: Projectile[] = [],
+  projectileModels = new Map<number, THREE.Object3D>();
+const blastEffects: { mesh: THREE.Mesh; life: number; radius: number }[] = [];
+const flightRay = new THREE.Raycaster();
+function disposeProjectile(model: THREE.Object3D) {
+  if (model.userData.ownedProjectile)
+    model.traverse((o) => {
+      if (o instanceof THREE.Mesh) {
+        o.geometry.dispose();
+        (o.material as THREE.Material).dispose();
+      }
+    });
+}
+function clearExplosives() {
+  for (const model of projectileModels.values()) {
+    disposeProjectile(model);
+    scene.remove(model);
+  }
+  projectileModels.clear();
+  projectiles.length = 0;
+  pendingUse = undefined;
+  reloadRequested = false;
+  useRemaining = 0;
+  detonationRemaining = 0;
+  explosiveLatch = false;
+  for (const effect of blastEffects) {
+    scene.remove(effect.mesh);
+    effect.mesh.geometry.dispose();
+    (effect.mesh.material as THREE.Material).dispose();
+  }
+  blastEffects.length = 0;
+}
+function explosiveObstacles() {
+  return [
+    ...shotObstacles,
+    ...lootMeshes,
+    ...construction.children,
+    ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.hitbox),
+  ];
+}
+function useExplosive(kind: ChargeKind) {
+  if (
+    explosiveLatch ||
+    !canShoot(kind, performance.now(), lastExplosiveUse[kind] ?? -Infinity)
+  )
+    return;
+  if (projectiles.length >= 8) {
+    explosiveLatch = true;
+    toast("Limit · 8 active explosives");
+    return;
+  }
+  if (loadout.rounds[kind] <= 0) {
+    toast("Empty · R / RELOAD");
+    return;
+  }
+  let point: THREE.Vector3 | undefined, normal: THREE.Vector3 | undefined;
+  if (kind === "c4") {
+    aimRay();
+    const hit = raycaster
+      .intersectObjects([...shotObstacles, ...construction.children], true)
+      .find((h) => h.distance <= 3);
+    if (!hit) {
+      toast("Aim at a nearby wall or ground to place C4");
+      return;
+    }
+    point = hit.point.clone().addScaledVector(raycaster.ray.direction, -0.09);
+    normal = hit.face?.normal
+      .clone()
+      .transformDirection(hit.object.matrixWorld);
+  }
+  explosiveLatch = true;
+  lastExplosiveUse[kind] = performance.now();
+  pendingUse = { kind, point, normal };
+  useRemaining = 0.8;
+  recoilRemaining = 0;
+}
+function spawnExplosive(
+  kind: ChargeKind,
+  point?: THREE.Vector3,
+  normal?: THREE.Vector3,
+) {
+  if (kind === "c4" && point && camera.position.distanceTo(point) > 3.3) {
+    toast("Move closer to place C4");
+    return;
+  }
+  if (!spendRound(loadout, kind)) return;
+  shotSerial++;
+  if (kind === "rocket") {
+    recoilRemaining = 1;
+    flashRemaining = 0.055;
+  }
+  const direction = camera.getWorldDirection(new THREE.Vector3());
+  const start = camera.position.clone().addScaledVector(direction, 0.35);
+  const position = point ?? start,
+    velocity = direction.multiplyScalar(kind === "rocket" ? 32 : 11);
+  if (kind === "grenade") velocity.y += 3.2;
+  const p: Projectile = {
+    id: ++projectileSerial,
+    kind,
+    position: { x: position.x, y: position.y, z: position.z },
+    velocity: { x: velocity.x, y: velocity.y, z: velocity.z },
+    fuse:
+      kind === "rocket"
+        ? WEAPONS.rocket.range / 32
+        : kind === "grenade"
+          ? 3
+          : Infinity,
+    settled: kind === "c4",
+  };
+  projectiles.push(p);
+  const rig = weaponRigs.get(kind);
+  const visual: THREE.Object3D =
+    kind === "rocket"
+      ? new THREE.Group()
+      : (rig?.gun.root.clone(true) ?? new THREE.Group());
+  visual.position.copy(position);
+  visual.quaternion.identity();
+  visual.scale.setScalar(1);
+  visual.visible = true;
+  visual.traverse((o) => {
+    if (o instanceof THREE.Mesh && o.geometry instanceof THREE.ConeGeometry)
+      o.visible = false;
+  });
+  if (kind === "rocket") {
+    const body = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.055, 0.42, 12),
+      new THREE.MeshStandardMaterial({ color: 0x677b43, roughness: 0.35 }),
+    );
+    body.rotation.x = Math.PI / 2;
+    visual.add(body);
+    const nose = new THREE.Mesh(
+      new THREE.ConeGeometry(0.055, 0.15, 12),
+      new THREE.MeshStandardMaterial({ color: 0x333e46 }),
+    );
+    nose.rotation.x = -Math.PI / 2;
+    nose.position.z = -0.28;
+    visual.add(nose);
+    visual.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 0, -1),
+      velocity.clone().normalize(),
+    );
+    visual.userData.ownedProjectile = true;
+  }
+  if (kind === "c4" && normal)
+    visual.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+  scene.add(visual);
+  projectileModels.set(p.id, visual);
+  updateHud();
+}
+function explode(p: Projectile) {
+  explosionSerial++;
+  const center = new THREE.Vector3(p.position.x, p.position.y, p.position.z),
+    spec = BLAST[p.kind];
+  for (const u of enemies) {
+    if (u.enemy.health <= 0) continue;
+    const target = new THREE.Vector3(u.enemy.x, 0.9, u.enemy.z),
+      distance = center.distanceTo(target);
+    let damage = blastDamage(p.kind, distance);
+    if (!damage) continue;
+    if (
+      blastOccluded(center, target, [
+        ...shotObstacles,
+        ...lootMeshes,
+        ...construction.children,
+      ])
+    )
+      damage = 0;
+    if (damage) damageEnemy(u.enemy, damage);
+  }
+  const playerTarget = new THREE.Vector3(player.x, vertical + 1, player.z);
+  let selfDamage = blastDamage(p.kind, center.distanceTo(playerTarget));
+  if (selfDamage) {
+    if (
+      blastOccluded(center, playerTarget, [
+        ...shotObstacles,
+        ...lootMeshes,
+        ...construction.children,
+      ])
+    )
+      selfDamage = 0;
+    health = Math.max(0, health - selfDamage);
+    if (health <= 0) {
+      $("#defeated").hidden = false;
+      resetInput();
+    }
+  }
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 12, 8),
+    new THREE.MeshBasicMaterial({
+      color: 0xffa447,
+      transparent: true,
+      opacity: 0.65,
+      depthWrite: false,
+    }),
+  );
+  mesh.position.copy(center);
+  scene.add(mesh);
+  blastEffects.push({ mesh, life: 0.45, radius: spec.radius });
+  const removed = projectileModels.get(p.id);
+  if (removed) {
+    disposeProjectile(removed);
+    scene.remove(removed);
+  }
+  projectileModels.delete(p.id);
+  const index = projectiles.indexOf(p);
+  if (index >= 0) projectiles.splice(index, 1);
+  toast(p.kind.toUpperCase() + " blast");
+  updateHud();
+}
+function detonateC4() {
+  if (!playing || health <= 0) return;
+  if (projectiles.some((p) => p.kind === "c4")) detonationRemaining = 0.5;
+  for (const p of [...projectiles]) if (p.kind === "c4") explode(p);
+}
+$("#detonate").addEventListener("click", detonateC4);
+function updateExplosives(dt: number) {
+  detonationRemaining = Math.max(0, detonationRemaining - dt);
+  if (useRemaining > 0) {
+    const previous = useRemaining;
+    useRemaining = Math.max(0, useRemaining - dt);
+    if (previous > 0.4 && useRemaining <= 0.4 && pendingUse) {
+      const use = pendingUse;
+      pendingUse = undefined;
+      if (health > 0 && !build && tool === use.kind)
+        spawnExplosive(use.kind, use.point, use.normal);
+    }
+  }
+  if (reloadRequested && useRemaining === 0) {
+    reloadRequested = false;
+    requestReload();
+  }
+  const obstacles = projectiles.some((p) => p.kind !== "c4")
+    ? explosiveObstacles()
+    : [];
+  for (const p of [...projectiles]) {
+    if (
+      advanceProjectile(p, dt, (a, b) => {
+        const start = new THREE.Vector3(a.x, a.y, a.z),
+          end = new THREE.Vector3(b.x, b.y, b.z),
+          delta = end.clone().sub(start),
+          distance = delta.length();
+        if (distance > 0) {
+          flightRay.set(start, delta.normalize());
+          flightRay.far = distance + 0.07;
+          const hit = flightRay.intersectObjects(obstacles, true)[0];
+          if (hit) {
+            const normal = hit.face
+              ? hit.face.normal
+                  .clone()
+                  .transformDirection(hit.object.matrixWorld)
+              : new THREE.Vector3(0, 1, 0);
+            return { point: hit.point, normal };
+          }
+        }
+        const floor =
+          surfaceHeight({ x: b.x, z: b.z }, save.pieces, a.y + 0.1) + 0.08;
+        if (b.y < floor)
+          return {
+            point: { x: b.x, y: floor, z: b.z },
+            normal: { x: 0, y: 1, z: 0 },
+          };
+        return undefined;
+      })
+    ) {
+      explode(p);
+      continue;
+    }
+    const visual = projectileModels.get(p.id);
+    if (visual) {
+      visual.position.set(p.position.x, p.position.y, p.position.z);
+      if (p.kind === "grenade" && !p.settled) visual.rotation.x += dt * 6;
+    }
+  }
+  for (let i = blastEffects.length - 1; i >= 0; i--) {
+    const effect = blastEffects[i];
+    effect.life -= dt;
+    effect.mesh.scale.setScalar((1 - effect.life / 0.45) * effect.radius + 0.2);
+    (effect.mesh.material as THREE.MeshBasicMaterial).opacity =
+      Math.max(0, effect.life / 0.45) * 0.65;
+    if (effect.life <= 0) {
+      scene.remove(effect.mesh);
+      effect.mesh.geometry.dispose();
+      (effect.mesh.material as THREE.Material).dispose();
+      blastEffects.splice(i, 1);
+    }
+  }
+}
+
 let punchRemaining = 0,
   punchCooldown = 0,
   punchLanded = false,
@@ -1112,6 +1426,9 @@ let lastShot = 0,
 function toggleBuild() {
   cancelReload(loadout);
   punchRemaining = 0;
+  pendingUse = undefined;
+  reloadRequested = false;
+  useRemaining = 0;
   build = !build;
   setAim(false);
   $("#build-panel").hidden = !build;
@@ -1123,7 +1440,13 @@ function toggleBuild() {
   updateHud();
 }
 function setAim(value: boolean) {
-  aiming = value && tool !== "hands" && !build && !loadout.reload;
+  aiming =
+    value &&
+    tool !== "hands" &&
+    tool !== "grenade" &&
+    tool !== "c4" &&
+    !build &&
+    !loadout.reload;
   camera.fov = aiming && tool !== "hands" ? WEAPONS[tool].zoom : 72;
   camera.updateProjectionMatrix();
   $("#scope-overlay").hidden = !(aiming && tool === "sniper");
@@ -1132,6 +1455,10 @@ function setAim(value: boolean) {
 function equip(next: Tool) {
   cancelReload(loadout);
   punchRemaining = 0;
+  pendingUse = undefined;
+  reloadRequested = false;
+  useRemaining = 0;
+  explosiveLatch = false;
   if (build) toggleBuild();
   setAim(false);
   firePointer = undefined;
@@ -1152,7 +1479,7 @@ function equip(next: Tool) {
   muzzle = viewModel.flash;
   recoilRemaining = flashRemaining = 0;
   tool = next;
-  for (const name of ["hands", "pistol", "smg", "rifle", "sniper"])
+  for (const name of ["hands", ...WEAPON_KINDS])
     $("#" + (name === "hands" ? "hand" : name) + "-tool").classList.toggle(
       "selected",
       next === name,
@@ -1161,6 +1488,7 @@ function equip(next: Tool) {
 function resetInput() {
   setAim(false);
   keys.clear();
+  explosiveLatch = false;
   firePointer = undefined;
   $("#fire").classList.remove("held");
   joystick.x = joystick.y = 0;
@@ -1199,6 +1527,7 @@ $("#reset").addEventListener("click", () => {
     return;
   save = readSave(null);
   loadout = newWeaponState();
+  clearExplosives();
   punchRemaining = punchCooldown = 0;
   health = 100;
   resetDoors();
@@ -1216,7 +1545,7 @@ $("#reset").addEventListener("click", () => {
 $("#build-tool").addEventListener("click", toggleBuild);
 $("#hand-tool").addEventListener("click", () => equip("hands"));
 $("#pistol-tool").addEventListener("click", () => equip("pistol"));
-for (const kind of ["smg", "rifle", "sniper"] as WeaponKind[])
+for (const kind of WEAPON_KINDS.filter((k) => k !== "pistol"))
   $("#" + kind + "-tool").addEventListener("click", () => equip(kind));
 $("#aim").addEventListener("click", () => setAim(!aiming));
 for (const button of document.querySelectorAll<HTMLButtonElement>(
@@ -1408,6 +1737,10 @@ function jump() {
 }
 function requestReload() {
   if (!playing || health <= 0 || build || tool === "hands") return;
+  if (useRemaining > 0) {
+    reloadRequested = true;
+    return;
+  }
   if (beginReload(loadout, tool)) {
     setAim(false);
     recoilRemaining = 0;
@@ -1454,7 +1787,8 @@ function fire() {
   if (!playing || health <= 0) return;
   if (build) return place();
   if (tool === "hands") return punch();
-  if (loadout.reload) return;
+  if (loadout.reload || useRemaining > 0) return;
+  if (explosiveKind(tool)) return useExplosive(tool as ChargeKind);
   const weapon = WEAPONS[tool];
   const now = performance.now();
   if (!canShoot(tool, now, lastShot)) return;
@@ -1538,11 +1872,16 @@ fireButton.addEventListener("pointermove", (e) => {
   fireLook = { x: e.clientX, y: e.clientY };
 });
 fireButton.addEventListener("click", (e) => {
-  if (e.detail === 0) fire();
+  if (e.detail === 0) {
+    explosiveLatch = false;
+    fire();
+    explosiveLatch = false;
+  }
 });
 function releaseFire(e: PointerEvent) {
   if (e.pointerId !== firePointer) return;
   firePointer = undefined;
+  explosiveLatch = false;
   fireButton.classList.remove("held");
 }
 for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
@@ -1574,6 +1913,7 @@ window.addEventListener("keydown", (e) => {
   if (e.repeat) return;
   if (e.code === "KeyB") toggleBuild();
   if (e.code === "KeyE") interact();
+  if (e.code === "KeyG") detonateC4();
   if (e.code === "KeyR") {
     if (build) {
       rotation = (rotation + 1) % 4;
@@ -1603,6 +1943,12 @@ window.addEventListener("keydown", (e) => {
     if (e.code === "Digit3") equip("smg");
     if (e.code === "Digit4") equip("rifle");
     if (e.code === "Digit5") equip("sniper");
+    if (["Digit6", "Digit7", "Digit8", "Digit9"].includes(e.code))
+      equip(
+        (["lmg", "rocket", "grenade", "c4"] as WeaponKind[])[
+          Number(e.code.slice(-1)) - 6
+        ],
+      );
   }
   if (e.code === "KeyQ") setAim(!aiming);
   if (e.code === "Space") jump();
@@ -1645,6 +1991,7 @@ window.addEventListener("mouseup", (e) => {
   if (touch) return;
   if (e.button === 2) setAim(false);
   if (e.button === 0 && firePointer === -1) {
+    explosiveLatch = false;
     firePointer = undefined;
     fireButton.classList.remove("held");
   }
@@ -1715,8 +2062,26 @@ canvas.addEventListener("webglcontextlost", (e) => {
 });
 function updateHud() {
   const unarmed = tool === "hands";
-  $("#fire").textContent = build ? "PLACE" : unarmed ? "PUNCH" : "FIRE";
-  $("#weapon-status").hidden = unarmed || build;
+  $("#fire").textContent = build
+    ? "PLACE"
+    : unarmed
+      ? "PUNCH"
+      : tool === "grenade"
+        ? "THROW"
+        : tool === "c4"
+          ? "PLACE C4"
+          : "FIRE";
+  $("#detonate").hidden = !projectiles.some((p) => p.kind === "c4");
+  $("#weapon-status").classList.toggle(
+    "has-charges",
+    projectiles.some((p) => p.kind === "c4"),
+  );
+  $("#reload").hidden = unarmed || build;
+  if (unarmed)
+    $("#ammo").textContent =
+      `C4 · ${projectiles.filter((p) => p.kind === "c4").length} placed`;
+  $("#weapon-status").hidden =
+    (unarmed || build) && !projectiles.some((p) => p.kind === "c4");
   if (tool !== "hands") {
     $("#ammo").textContent = loadout.reload
       ? "RELOADING " + Math.ceil(loadout.reload.remaining * 10) / 10 + "s"
@@ -1878,6 +2243,7 @@ function frame(now: number) {
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
+    recoilRemaining = Math.max(0, recoilRemaining - dt * 8);
     animateDoors(dt, [
       { ...player, y: vertical },
       ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
@@ -1944,6 +2310,7 @@ function frame(now: number) {
         }
       }
     enemyFrame(dt);
+    updateExplosives(dt);
     camera.position.set(
       player.x,
       1.65 + vertical + (length > 0.1 ? Math.sin(clock * 9) * 0.025 : 0),
@@ -1965,6 +2332,8 @@ function frame(now: number) {
     const playerAction = {
       dt,
       shotSerial,
+      use: useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
+      detonate: detonationRemaining > 0 ? 1 - detonationRemaining / 0.5 : 0,
       running: run || keys.has("ShiftLeft") || keys.has("ShiftRight"),
       jumping:
         vertical > surfaceHeight(player, save.pieces, vertical + 0.02) + 0.01,
@@ -2034,6 +2403,36 @@ function frame(now: number) {
   canvas.dataset.triangles = String(renderer.info.render.triangles);
   canvas.dataset.mapSize = String(MAP_SIZE);
   canvas.dataset.shots = String(shotSerial);
+  canvas.dataset.projectiles = JSON.stringify(
+    projectiles.map((p) => ({
+      id: p.id,
+      kind: p.kind,
+      ...p.position,
+      fuse: p.fuse,
+      settled: p.settled,
+    })),
+  );
+  canvas.dataset.explosions = String(explosionSerial);
+  canvas.dataset.detonationProgress = String(
+    detonationRemaining > 0 ? 1 - detonationRemaining / 0.5 : 0,
+  );
+  canvas.dataset.usePose = String(viewModel.root.userData.usePose ?? "");
+  canvas.dataset.weaponAction = loadout.reload
+    ? "reload"
+    : detonationRemaining > 0
+      ? "detonate"
+      : useRemaining > 0
+        ? tool === "grenade"
+          ? "throw"
+          : tool === "c4"
+            ? "place"
+            : "launch"
+        : recoilRemaining > 0
+          ? "fire"
+          : "hold";
+  canvas.dataset.useProgress = String(
+    useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
+  );
   canvas.dataset.health = String(health);
   canvas.dataset.enemies = JSON.stringify(
     enemies.map((u) => ({

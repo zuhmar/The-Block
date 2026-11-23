@@ -696,6 +696,8 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
       punch?: number;
       side?: number;
       reload?: number;
+      use?: number;
+      detonate?: number;
       dt?: number;
       shotSerial?: number;
       running?: boolean;
@@ -711,13 +713,21 @@ export function createFirstPersonRig(kind: WeaponKind = "pistol") {
     gun.slide.position.z = recoil * 0.022;
     armed.position.z = recoil * 0.018;
     armed.rotation.x = recoil * 0.035;
+    const use = action.use ?? 0;
+    if (kind === "grenade" || kind === "c4") {
+      gun.root.position.z -= Math.sin(use * Math.PI) * 0.25;
+      gun.root.rotation.x -= Math.sin(use * Math.PI) * 0.6;
+      gun.root.visible = armed.visible && !(use > 0.45 && use < 0.9);
+      armed.rotation.x -= Math.sin(use * Math.PI) * 0.5;
+    }
     const reload = action.reload ?? 0;
     const dip = Math.sin(reload * Math.PI);
     gun.root.position.y = -0.19 + dip * 0.07;
     gun.root.rotation.z = -dip * 0.38;
     gun.root.rotation.x += dip * 0.15;
     armed.position.y = dip * 0.05;
-    armed.rotation.z = -dip * 0.25;
+    armed.rotation.z =
+      -dip * 0.25 - Math.sin((action.detonate ?? 0) * Math.PI) * 0.3;
     support.position.set(-dip * 0.08, -dip * 0.06, dip * 0.08);
     const magazine = gun.root.getObjectByName(kind + "-magazine-group");
     if (magazine) {

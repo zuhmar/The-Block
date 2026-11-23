@@ -1,3 +1,4 @@
+import { animationFamily } from "./weapons";
 import * as THREE from "three";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import { createFirstPersonRig, createWeapon } from "./actor-models";
@@ -34,6 +35,8 @@ export type PlayerAction = {
   punch?: number;
   side?: number;
   reload?: number;
+  use?: number;
+  detonate?: number;
   dt?: number;
   shotSerial?: number;
   running?: boolean;
@@ -53,15 +56,19 @@ export function combatClip(
         : "Punch_Left",
       progress: action.punch || 0,
     };
-  const prefix = {
-    pistol: "Pistol",
-    smg: "SMG",
-    rifle: "Rifle",
-    sniper: "Sniper",
-  }[kind];
+  const prefix = animationFamily(kind);
   if (action.reload)
     return { name: prefix + "_Reload", progress: action.reload };
-  const duration = { pistol: 0.2, smg: 0.1, rifle: 1 / 6, sniper: 0.4 }[kind];
+  const duration = {
+    pistol: 0.2,
+    smg: 0.1,
+    rifle: 1 / 6,
+    sniper: 0.4,
+    lmg: 0.15,
+    rocket: 0.6,
+    grenade: 0.8,
+    c4: 0.8,
+  }[kind];
   if (fireTime < duration)
     return { name: prefix + "_Fire", progress: fireTime / duration };
   return { name: prefix + "_Hold", progress: 0 };
@@ -183,12 +190,7 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
   root.add(model);
   model.rotation.y = Math.PI;
   const animation = animator(model, asset.clips);
-  animation.play(
-    { pistol: "Pistol", smg: "SMG", rifle: "Rifle", sniper: "Sniper" }[kind] +
-      "_Hold",
-    0,
-    0,
-  );
+  animation.play(animationFamily(kind) + "_Hold", 0, 0);
   model.position.set(0.08, -1.38, -0.03);
   root.updateMatrixWorld(true);
   const hand = model.getObjectByName("mixamorigRightHand");
@@ -196,10 +198,14 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
   const gun = createWeapon(kind),
     handPosition = hand.getWorldPosition(new THREE.Vector3()),
     handRotation = hand.getWorldQuaternion(new THREE.Quaternion());
-  const target = handPosition.clone().add(new THREE.Vector3(0, 0.075, -0.1));
+  const target = handPosition
+    .clone()
+    .add(new THREE.Vector3(kind === "c4" ? -0.045 : 0, 0.075, -0.1));
   gun.root.position.copy(hand.worldToLocal(target));
+  const gripPosition = gun.root.position.clone();
   const gripRotation = handRotation.clone().invert();
   gun.root.quaternion.copy(gripRotation);
+  if (kind === "c4") gun.root.scale.setScalar(0.72);
   hand.add(gun.root);
   const flash = new THREE.Mesh(
     new THREE.ConeGeometry(0.035, 0.12, 5),
@@ -209,6 +215,14 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
   flash.position.z = -0.035;
   flash.visible = false;
   gun.muzzle.add(flash);
+  const useBones = [
+    "mixamorigRightArm",
+    "mixamorigRightForeArm",
+    "mixamorigRightHand",
+  ]
+    .map((name) => model.getObjectByName(name))
+    .filter((o): o is THREE.Object3D => !!o);
+  const bonePose = new Map<THREE.Object3D, THREE.Quaternion>();
   let armed = false,
     aspect = 1,
     lastSerial: number | undefined,
@@ -232,8 +246,23 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
     if (lastSerial !== undefined && state.shotSerial !== lastSerial)
       fireTime = 0;
     lastSerial = state.shotSerial;
+    for (const [bone, pose] of bonePose) bone.quaternion.copy(pose);
     const selected = combatClip(armed ? kind : "hands", state, fireTime);
     animation.play(selected.name, 0, selected.progress);
+    for (const bone of useBones) bonePose.set(bone, bone.quaternion.clone());
+    const use = state.use ?? 0;
+    const stroke =
+      kind === "grenade"
+        ? use < 0.3
+          ? Math.sin(((use / 0.3) * Math.PI) / 2) * 0.6
+          : -Math.sin(((use - 0.3) / 0.7) * Math.PI) * 1.1
+        : -Math.sin(use * Math.PI) * 0.4;
+    if (armed && (kind === "grenade" || kind === "c4")) {
+      useBones[0]?.rotateX(stroke);
+      useBones[1]?.rotateZ(-Math.sin(use * Math.PI) * 0.65);
+    }
+    if (armed && state.detonate)
+      useBones[2]?.rotateZ(-Math.sin(state.detonate * Math.PI) * 0.45);
     fireTime += dt;
     const bob = moving
       ? Math.sin(time * (state.running ? 12 : 9)) * 0.005
@@ -249,6 +278,15 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
           -Math.sin(Math.PI * (state.reload || 0)) * 0.28,
         ),
       );
+    const swing = Math.sin(use * Math.PI);
+    if (kind === "grenade" || kind === "c4") {
+      arms.position.z += swing * (kind === "grenade" ? -0.28 : -0.18);
+      arms.rotation.x = swing * (kind === "grenade" ? -0.55 : -0.3);
+      gun.root.visible = armed && !(use > 0.45 && use < 0.9);
+    } else arms.rotation.x = 0;
+    if (kind === "rocket")
+      gun.root.position.z =
+        gripPosition.z + Math.sin((state.reload ?? 0) * Math.PI) * 0.14;
     gun.slide.position.z = recoil * 0.022;
     const magazine = gun.root.getObjectByName(kind + "-magazine-group");
     if (magazine)
@@ -258,6 +296,7 @@ export function createPlayerViewRig(kind: WeaponKind = "pistol") {
             Math.min(1, Math.max(0, ((state.reload || 0) - 0.15) / 0.65)),
         ) * 0.09;
     root.userData.playerClip = selected.name;
+    root.userData.usePose = useBones[0]?.quaternion.toArray().join(",") ?? "";
   }
   equip(false);
   return { root, gun, flash, equip, setAspect, animate };

@@ -2,6 +2,11 @@ import * as THREE from "three";
 import type { WeaponKind } from "./weapons";
 import { disposeReview } from "./street-review";
 export const BLENDER_WEAPON_URLS = {
+  lmg: new URL("./models/weapons/lmg.glb", import.meta.url).href,
+  rocket: new URL("./models/weapons/rocket.glb", import.meta.url).href,
+  grenade: new URL("./models/weapons/grenade.glb", import.meta.url).href,
+  c4: new URL("./models/weapons/c4.glb", import.meta.url).href,
+
   pistol: new URL("./models/weapons/pistol.glb", import.meta.url).href,
   smg: new URL("./models/weapons/smg.glb", import.meta.url).href,
   rifle: new URL("./models/weapons/rifle.glb", import.meta.url).href,

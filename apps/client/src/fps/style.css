@@ -943,3 +943,62 @@ h1 em {
 #meshy-animation {
   width: 100%;
 }
+/* Eight-item loadout: stable targets on touch, sprites share the published atlas style. */
+.tools img {
+  width: 42px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
+.tools {
+  max-width: 78vw;
+}
+.tools button {
+  min-width: 55px;
+  padding: 5px 8px;
+}
+.touch .tools {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.touch footer {
+  height: 147px;
+}
+.touch .tools {
+  bottom: 24px;
+}
+.touch .tools img {
+  width: 38px;
+  height: 19px;
+}
+.touch #joystick,
+.touch .mobile-actions {
+  bottom: 158px;
+}
+#detonate {
+  background: #794334;
+  color: #fff1d6;
+}
+@media (max-width: 1000px) and (pointer: fine) {
+  footer {
+    height: 130px;
+  }
+  .tools {
+    width: 65vw;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    bottom: 24px;
+  }
+  .tools button {
+    min-width: 0;
+  }
+}
+@media (max-width: 1000px) and (pointer: fine) {
+  #weapon-status {
+    bottom: 158px;
+  }
+}
+.touch #weapon-status {
+  flex-wrap: wrap;
+  gap: 6px;
+}

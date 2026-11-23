@@ -43,7 +43,7 @@ export function openActorPreview() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Player and weapon 3D models");
   overlay.innerHTML =
-    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options image-options"><button id="show-meshy">MESHY BASE</button><button id="show-image-base">IMAGE BASE</button><button id="show-street-v2">IMAGE STREET</button><button id="show-image-reinforced">IMAGE MILITARY</button><button id="show-image-armored">IMAGE ARMOR</button></div><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><div id="meshy-motion" class="actor-options" hidden><label>ANIMATION <select id="meshy-animation" aria-label="Meshy animation"></select></label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><a id="image-reference" target="_blank" rel="noopener">FOUR-CHARACTER REFERENCE IMAGE</a><small>Drag to rotate · Lightweight geometry for phones</small></div>';
+    '<div class="actor-card"><div class="actor-heading"><div><span class="eyebrow">ORIGINAL 3D MODELS</span><h2>YOUR SURVIVOR</h2></div><button id="close-actors" aria-label="Close model preview">CLOSE</button></div><canvas id="actor-canvas" aria-label="Rotatable player and weapon models"></canvas><div class="actor-options image-options"><button id="show-meshy">MESHY BASE</button><button id="show-image-base">IMAGE BASE</button><button id="show-street-v2">IMAGE STREET</button><button id="show-image-reinforced">IMAGE MILITARY</button><button id="show-image-armored">IMAGE ARMOR</button></div><div class="actor-options"><button id="show-player" class="selected">BARE BASE</button><button id="show-street">STREET</button><button id="show-reinforced">REINFORCED</button><button id="show-armored">ARMORED</button><button id="show-lookout">LOOKOUT</button><button id="show-police">POLICE</button><button id="show-swat">SWAT</button><button id="show-pistol">PISTOL</button><button id="show-smg">SMG</button><button id="show-rifle">RIFLE</button><button id="show-sniper">SNIPER</button><button id="show-lmg">LMG</button><button id="show-rocket">ROCKET</button><button id="show-grenade">GRENADE</button><button id="show-c4">C4</button></div><div id="clothing-slots" class="actor-options"><label><input type="checkbox" data-slot="headwear" checked> Headwear</label><label><input type="checkbox" data-slot="torso" checked> Torso</label><label><input type="checkbox" data-slot="legs" checked> Legs</label><label><input type="checkbox" data-slot="footwear" checked> Footwear</label></div><div id="review-motion" class="actor-options" hidden><button data-motion="still" class="selected">STILL</button><button data-motion="idle">IDLE</button><button data-motion="walk">WALK</button><button data-motion="grip">HAND GRIP</button></div><div id="meshy-motion" class="actor-options" hidden><label>ANIMATION <select id="meshy-animation" aria-label="Meshy animation"></select></label></div><p id="actor-description">Black stick figure · Rounded limbs · Low-ready pistol</p><a id="image-reference" target="_blank" rel="noopener">FOUR-CHARACTER REFERENCE IMAGE</a><small>Drag to rotate · Lightweight geometry for phones</small></div>';
   document.body.append(overlay);
   overlay.querySelector<HTMLAnchorElement>("#image-reference")!.href =
     IMAGE_REFERENCE_URL;
@@ -93,6 +93,10 @@ export function openActorPreview() {
     smg: createWeapon("smg"),
     rifle: createWeapon("rifle"),
     sniper: createWeapon("sniper"),
+    lmg: createWeapon("lmg"),
+    rocket: createWeapon("rocket"),
+    grenade: createWeapon("grenade"),
+    c4: createWeapon("c4"),
   };
   scene.add(
     ...Object.values(characters).map((c) => c.root),
@@ -298,6 +302,10 @@ export function openActorPreview() {
       "smg",
       "rifle",
       "sniper",
+      "lmg",
+      "rocket",
+      "grenade",
+      "c4",
     ])
       overlay
         .querySelector("#show-" + key)!
@@ -367,6 +375,10 @@ export function openActorPreview() {
     "smg",
     "rifle",
     "sniper",
+    "lmg",
+    "rocket",
+    "grenade",
+    "c4",
   ] as const)
     overlay
       .querySelector("#show-" + kind)!
