@@ -1,0 +1,31 @@
+{
+  "units": "metres",
+  "models": [
+    {
+      "id": "axe",
+      "file": "axe.glb",
+      "sourceReference": "art/ai/harvest-tools/axe.png",
+      "sourceSHA256": "1305af6139c69bac858dfbcc6a2f9a853c689f5d14e3bd95e2a87bb959202ca5",
+      "triangles": 3610,
+      "sizeMetres": {
+        "x": 0.5099,
+        "y": 1.0486,
+        "z": 0.105
+      },
+      "bytes": 180124
+    },
+    {
+      "id": "pickaxe",
+      "file": "pickaxe.glb",
+      "sourceReference": "art/ai/harvest-tools/pickaxe.png",
+      "sourceSHA256": "6e68e6c06c30dcbb585bda64124bc23774563af373a237e16709a9fda80c693d",
+      "triangles": 3322,
+      "sizeMetres": {
+        "x": 0.645,
+        "y": 1.0773,
+        "z": 0.105
+      },
+      "bytes": 175596
+    }
+  ]
+}

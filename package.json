@@ -40,7 +40,8 @@
     "assets:weapon-sprites": "blender -b -t 4 --python packages/art-tools/render-weapon-sprites.py && python packages/art-tools/pack-weapon-sprites.py && pnpm assets:heavy-weapons",
     "assets:heavy-weapons": "blender -b -t 4 --python packages/art-tools/prepare-heavy-weapons.py",
     "assets:nature-sprites": "python packages/art-tools/pack-nature-sprites.py",
-    "assets:nature-models": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-nature-models.py && python packages/art-tools/pack-nature-models.py"
+    "assets:nature-models": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-nature-models.py && python packages/art-tools/pack-nature-models.py",
+    "assets:harvest-tools": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-harvest-tools.py && python packages/art-tools/pack-harvest-tools.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
