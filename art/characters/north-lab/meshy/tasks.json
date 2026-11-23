@@ -1,0 +1,89 @@
+[
+  {
+    "tier": "easy",
+    "riggingTaskId": "01a20a6f-83a9-7300-afbb-bcf8784f78cd",
+    "resource": "rigging",
+    "consumedCredits": 5,
+    "files": [
+      {
+        "file": "easy-rig.glb",
+        "bytes": 3876088,
+        "sha256": "da0bec2403b3f5ca665a59c3a1acbea3ba773af0dea8855c023d3345f21d4563",
+        "clips": ["Armature|clip0|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "easy-walk.glb",
+        "bytes": 3856440,
+        "sha256": "a17aaa632ffc8cafc94e3d082139a9cae1bd05f3935defa1dc39e4f850fd3e88",
+        "clips": ["Armature|walking_man|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "easy-run.glb",
+        "bytes": 3845824,
+        "sha256": "32ecc2f34b2f2e33bca906954283fdc6737513cfc27b1c596cd2eb302e9e064c",
+        "clips": ["Armature|running|baselayer"],
+        "joints": 24
+      }
+    ]
+  },
+  {
+    "tier": "medium",
+    "riggingTaskId": "01a20a6f-bcd5-730a-ab8c-21f88fa9420e",
+    "resource": "rigging",
+    "consumedCredits": 5,
+    "files": [
+      {
+        "file": "medium-rig.glb",
+        "bytes": 3737436,
+        "sha256": "0438df29e7c650304a103879be761b60c491d70c96028aaf973bb3707dcecf4d",
+        "clips": ["Armature|clip0|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "medium-walk.glb",
+        "bytes": 3717828,
+        "sha256": "a4a9e1ef69aa11aed6b753852a8a8e0fd733d3ea3e96eb31f476fa7ab2ba852a",
+        "clips": ["Armature|walking_man|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "medium-run.glb",
+        "bytes": 3707192,
+        "sha256": "75522d5b800e365fd3f7c394c31788d2955e52ddbe2271efa112d65f2f79131d",
+        "clips": ["Armature|running|baselayer"],
+        "joints": 24
+      }
+    ]
+  },
+  {
+    "tier": "hard",
+    "riggingTaskId": "01a20a6f-f751-77b7-a3d1-2eef77b8f5f8",
+    "resource": "rigging",
+    "consumedCredits": 5,
+    "files": [
+      {
+        "file": "hard-rig.glb",
+        "bytes": 3961312,
+        "sha256": "701bdf8527ceb1811adc98063e2e83403276b22a2c89207531ed4d2639d66904",
+        "clips": ["Armature|clip0|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "hard-walk.glb",
+        "bytes": 3941500,
+        "sha256": "8efb7e5e85c244f4c56a361241c69acf8d7ed46bdc532b74885c62bd6ee671d1",
+        "clips": ["Armature|walking_man|baselayer"],
+        "joints": 24
+      },
+      {
+        "file": "hard-run.glb",
+        "bytes": 3930880,
+        "sha256": "7057b70507be7ab2819ae4e36a2fa5b34ab6fc4e902a11ee260ae4fbd9099cdd",
+        "clips": ["Armature|running|baselayer"],
+        "joints": 24
+      }
+    ]
+  }
+]

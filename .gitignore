@@ -7,3 +7,6 @@ node_modules/
 work/
 .pnpm-store/
 .vercel/
+
+# Local Meshy job responses contain expiring signed URLs.
+/meshy_output/
