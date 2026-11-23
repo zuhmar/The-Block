@@ -1,3 +1,4 @@
+import { storageSpec } from "./storage-spec";
 import { isStationKind, STATIONS } from "./crafting";
 import { pieceBase, type Piece } from "./world";
 import {
@@ -29,47 +30,58 @@ function parts(p: Piece, pieces: Piece[]): Part[] {
     y += 0.02;
     yaw += p.doorAngle ?? (p.open ? -Math.PI / 2 : 0);
   }
-  const local = isStationKind(p.kind)
-    ? [
-        {
-          x: 0,
-          y: STATIONS[p.kind].height / 2,
-          width: STATIONS[p.kind].width,
-          height: STATIONS[p.kind].height,
-          depth: STATIONS[p.kind].depth,
-        },
-      ]
-    : p.kind === "doorway"
+  const local =
+    p.kind === "storage"
       ? [
-          { x: -0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
-          { x: 0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
-          { x: 0, y: 2.3, width: 2, height: 0.4, depth: 0.16 },
+          {
+            x: 0,
+            y: storageSpec(p).height / 2,
+            width: storageSpec(p).width,
+            height: storageSpec(p).height,
+            depth: storageSpec(p).depth,
+          },
         ]
-      : p.kind === "door"
-        ? [{ x: 0.54, y: 1.03, width: 1.08, height: 2.06, depth: 0.1 }]
-        : [
+      : isStationKind(p.kind)
+        ? [
             {
               x: 0,
-              y:
-                p.kind === "wall"
-                  ? 1.25
-                  : p.kind === "foundation"
-                    ? 0.25
-                    : p.kind === "floor"
-                      ? 0.09
-                      : 0.6,
-              width: p.kind === "storage" ? 1 : 2,
-              height:
-                p.kind === "wall"
-                  ? 2.5
-                  : p.kind === "foundation"
-                    ? 0.5
-                    : p.kind === "floor"
-                      ? 0.18
-                      : 0.8,
-              depth: p.kind === "wall" ? 0.16 : p.kind === "storage" ? 0.8 : 2,
+              y: STATIONS[p.kind].height / 2,
+              width: STATIONS[p.kind].width,
+              height: STATIONS[p.kind].height,
+              depth: STATIONS[p.kind].depth,
             },
-          ];
+          ]
+        : p.kind === "doorway"
+          ? [
+              { x: -0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
+              { x: 0.78, y: 1.25, width: 0.44, height: 2.5, depth: 0.16 },
+              { x: 0, y: 2.3, width: 2, height: 0.4, depth: 0.16 },
+            ]
+          : p.kind === "door"
+            ? [{ x: 0.54, y: 1.03, width: 1.08, height: 2.06, depth: 0.1 }]
+            : [
+                {
+                  x: 0,
+                  y:
+                    p.kind === "wall"
+                      ? 1.25
+                      : p.kind === "foundation"
+                        ? 0.25
+                        : p.kind === "floor"
+                          ? 0.09
+                          : 0.6,
+                  width: 2,
+                  height:
+                    p.kind === "wall"
+                      ? 2.5
+                      : p.kind === "foundation"
+                        ? 0.5
+                        : p.kind === "floor"
+                          ? 0.18
+                          : 0.8,
+                  depth: p.kind === "wall" ? 0.16 : 2,
+                },
+              ];
   return local.map((b) => ({
     ...b,
     x: x + Math.cos(yaw) * b.x,

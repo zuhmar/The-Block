@@ -22,6 +22,14 @@ Six Blender ammo models and their transparent rendered icons are used in invento
 
 ## Player-built storage
 
-Approach a placed storage chest within 3.2 m on the same floor, with a clear path to it, and press **E** or tap **USE**. Its popup shows your 20 carried slots and the chest's 20 slots. Select an item on either side, choose a full stack, half stack or one item, then **DEPOSIT** or **WITHDRAW**. Transfers accept only what fits and leave the rest at the source. Guns retain their magazine counts; depositing an equipped item clears its hand-slot binding.
+Approach a placed storage chest within 3.2 m on the same floor, with a clear path to it, and press **E** or tap **USE**. Its popup shows your 20 carried slots and the chest’s 20 small-chest slots or 40 large-chest slots. Select an item on either side, choose a full stack, half stack or one item, then **DEPOSIT** or **WITHDRAW**. Transfers accept only what fits and leave the rest at the source. Guns retain their magazine counts; depositing an equipped item clears its hand-slot binding.
 
-Each placed chest saves its contents independently on this device. Existing chests start empty when first opened. A chest containing items cannot be dismantled; withdraw its contents first. Chest capacity uses the same stack limits as the bag: resources and bullets 500, explosives 5, guns/tools 1. Escape or CLOSE returns to the game.
+Each placed chest saves its contents independently on this device. Chests placed before storage was added start empty; previously saved contents are preserved. A chest containing items cannot be dismantled; withdraw its contents first. Chest capacity uses the same stack limits as the bag: resources and bullets 500, explosives 5, guns/tools 1. Escape or CLOSE returns to the game.
+
+### Small and large chests; stacking
+
+Under **BUILD → storage**, choose **Small chest** (20 slots, 5 wood) or **Large chest** (40 slots, 15 wood). On desktop, press **V** to switch sizes while building storage; on a phone, tap the size buttons. Material multipliers still apply. Both use the new original glossy amber-wood sprites and matching Blender meshes, with reinforced flat lids. Existing placed chests remain small, preserving their contents.
+
+Aim at a chest's **top surface** to snap another chest onto it. Matching sizes stack, and a small chest fits on a large one. A large chest cannot balance on a small chest; the entire base must fit, including when rotated. The preview rejects unsupported heights, occupied lids and collisions with surrounding walls or floors. Aim at each chest and press E / USE to open that particular container. Remove upper chests before dismantling their support, and empty each chest before dismantling it. Stacks retain their exact elevations and independent contents after reload.
+
+Standing on a chest uses its actual top surface. Upper containers still require a clear line of sight and normal interaction reach; move to higher ground for tall stacks. The overall construction budget remains 100 pieces.

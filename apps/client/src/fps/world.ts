@@ -1,3 +1,4 @@
+import { storageSpec, storageSize, type StorageSize } from "./storage-spec";
 import { readStorage, type StorageSlots } from "./storage";
 import {
   isStationKind,
@@ -72,6 +73,7 @@ export type Piece = Point & {
   health?: number;
   job?: ProductionJob;
   contents?: StorageSlots;
+  storageSize?: StorageSize;
 };
 export type Box = Point & { width: number; depth: number };
 export const MAP_SIZE = WORLD_SIZE;
@@ -86,8 +88,10 @@ export const COST: Record<PieceKind, number> = {
   workbench: 100,
   furnace: 50,
 };
-export const pieceCost = (p: Pick<Piece, "kind" | "material">) =>
-  COST[p.kind] *
+export const pieceCost = (
+  p: Pick<Piece, "kind" | "material" | "storageSize">,
+) =>
+  (p.kind === "storage" ? storageSpec(p).wood : COST[p.kind]) *
   (isStationKind(p.kind)
     ? 1
     : STRUCTURE_MATERIALS[structureMaterial(p)].costMultiplier);
@@ -414,40 +418,27 @@ function resourceBlocked(p: Point, feet = 0, build = false, radius = 0.32) {
 }
 export function pieceBox(p: Piece): Box {
   const odd = p.rotation % 2 === 1;
-  if (isStationKind(p.kind)) {
-    const station = STATIONS[p.kind];
+  if (p.kind === "storage") {
+    const spec = storageSpec(p);
     return {
       ...p,
-      width: odd ? station.depth : station.width,
-      depth: odd ? station.width : station.depth,
+      width: odd ? spec.depth : spec.width,
+      depth: odd ? spec.width : spec.depth,
     };
   }
+  if (isStationKind(p.kind)) {
+    const spec = STATIONS[p.kind];
+    return {
+      ...p,
+      width: odd ? spec.depth : spec.width,
+      depth: odd ? spec.width : spec.depth,
+    };
+  }
+  const edge = p.kind === "wall" || p.kind === "door" || p.kind === "doorway";
   return {
     ...p,
-    width:
-      p.kind === "wall" || p.kind === "door"
-        ? odd
-          ? 0.16
-          : 2
-        : p.kind === "doorway"
-          ? odd
-            ? 0.16
-            : 2
-          : p.kind === "storage"
-            ? 1
-            : 2,
-    depth:
-      p.kind === "wall" || p.kind === "door"
-        ? odd
-          ? 2
-          : 0.16
-        : p.kind === "doorway"
-          ? odd
-            ? 2
-            : 0.16
-          : p.kind === "storage"
-            ? 0.8
-            : 2,
+    width: edge && odd ? 0.16 : 2,
+    depth: edge && !odd ? 0.16 : 2,
   };
 }
 export function blocked(
@@ -480,7 +471,7 @@ export function blocked(
               : isStationKind(s.kind)
                 ? STATIONS[s.kind].height
                 : s.kind === "storage"
-                  ? 1
+                  ? storageSpec(s).height
                   : 2.5);
       if (bottom >= footHeight + 1.9 - 0.01 || top <= footHeight + 0.02)
         return false;
@@ -611,6 +602,9 @@ export function placementReason(
         if (blockedTerrain(p, 0.3)) return "Choose dry, level ground";
         if (resourceBlocked(p, 0, true, 0.6)) return "Keep clear of trees";
       }
+  } else if (piece.kind === "storage") {
+    if (!pieces.some((p) => supportsStorage(p, piece, pieces)))
+      return "Place storage on a floor or a chest lid · keep the whole base supported";
   } else if (
     !pieces.some(
       (p) =>
@@ -625,6 +619,33 @@ export function placementReason(
     return isStationKind(piece.kind)
       ? "Place stations on a floor or foundation"
       : "Place storage on a floor";
+  if (piece.kind === "storage") {
+    const base = pieceBase(piece, pieces),
+      top = base + storageSpec(piece).height,
+      box = pieceBox({ ...piece, id: "preview" });
+    if (
+      pieces.some((p) => {
+        const other = pieceBox(p),
+          bottom = pieceBase(p, pieces),
+          height = isPlatform(p)
+            ? p.kind === "floor"
+              ? 0.18
+              : 0.5
+            : p.kind === "storage"
+              ? storageSpec(p).height
+              : isStationKind(p.kind)
+                ? STATIONS[p.kind].height
+                : 2.5;
+        return (
+          top > bottom + 0.01 &&
+          base < bottom + height - 0.01 &&
+          Math.abs(box.x - other.x) < (box.width + other.width) / 2 - 0.01 &&
+          Math.abs(box.z - other.z) < (box.depth + other.depth) / 2 - 0.01
+        );
+      })
+    )
+      return "This space is occupied · chest would overlap another structure";
+  }
   if (
     (isStationKind(piece.kind) || piece.kind === "storage") &&
     pieces.some(
@@ -704,10 +725,13 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   );
   for (const piece of pieces)
     if (
-      isPlatform(piece) &&
-      inBox(p, { ...piece, width: 2, depth: 2 }, 0.025)
+      (isPlatform(piece) || piece.kind === "storage") &&
+      inBox(p, pieceBox(piece), 0.025)
     ) {
-      const top = platformTop(piece, pieces);
+      const top =
+        piece.kind === "storage"
+          ? pieceBase(piece, pieces) + storageSpec(piece).height
+          : platformTop(piece, pieces);
       if (top <= maxHeight + 0.001) height = Math.max(height, top);
     }
   return height;
@@ -715,7 +739,10 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
 export function ceilingHeight(p: Point, pieces: Piece[], feet: number) {
   let ceiling = Math.min(buildingCeiling(p, feet), jailGroundCeiling(p, feet));
   for (const s of pieces)
-    if (s.kind === "floor" && inBox(p, { ...s, width: 2, depth: 2 }, 0.25)) {
+    if (
+      (s.kind === "floor" || s.kind === "storage") &&
+      inBox(p, pieceBox(s), 0.25)
+    ) {
       const base = pieceBase(s, pieces);
       if (base >= feet + 1.9 - 0.01) ceiling = Math.min(ceiling, base);
     }
@@ -735,12 +762,35 @@ export function pieceBase(p: Omit<Piece, "id">, pieces: Piece[]): number {
       ? 0.5
       : 0;
   if (p.kind === "storage" || isStationKind(p.kind))
-    return surfaceHeight(p, pieces, 0.75);
+    return surfaceHeight(
+      p,
+      pieces.filter((s) => s.kind !== "storage"),
+      0.75,
+    );
   let h = 0.15;
   for (const s of pieces)
     if (isPlatform(s) && s.y === undefined && adjacentEdge(p, s))
       h = Math.max(h, platformTop(s, pieces));
   return h;
+}
+export function supportsStorage(
+  support: Piece,
+  chest: Omit<Piece, "id">,
+  pieces: Piece[],
+) {
+  if (!isPlatform(support) && support.kind !== "storage") return false;
+  const box = pieceBox({ ...chest, id: "preview" }),
+    below = pieceBox(support),
+    base = pieceBase(chest, pieces),
+    top =
+      support.kind === "storage"
+        ? pieceBase(support, pieces) + storageSpec(support).height
+        : platformTop(support, pieces);
+  return (
+    Math.abs(base - top) < 0.01 &&
+    Math.abs(box.x - below.x) + box.width / 2 <= below.width / 2 + 0.005 &&
+    Math.abs(box.z - below.z) + box.depth / 2 <= below.depth / 2 + 0.005
+  );
 }
 /** Infer a story from the actual surface under the crosshair, preserving legacy ground pieces. */
 export function snapOnStructure(
@@ -751,7 +801,14 @@ export function snapOnStructure(
   pieces: Piece[],
 ): Omit<Piece, "id"> {
   const candidate = snapPiece(point, kind, rotation);
-  if (kind === "floor" && (hit.kind === "wall" || hit.kind === "doorway")) {
+  if (kind === "storage" && hit.kind === "storage") {
+    candidate.x = hit.x;
+    candidate.z = hit.z;
+    candidate.y = pieceBase(hit, pieces) + storageSpec(hit).height;
+  } else if (
+    kind === "floor" &&
+    (hit.kind === "wall" || hit.kind === "doorway")
+  ) {
     const supporting = pieces.filter(
       (p) =>
         isPlatform(p) &&
@@ -848,6 +905,16 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
         adjacentEdge(piece, p) &&
         Math.abs(pieceBase(piece, pieces) + 2.5 - p.y) < 0.01,
     );
+  if (
+    piece.kind === "storage" &&
+    pieces.some(
+      (p) =>
+        p.id !== piece.id &&
+        p.kind === "storage" &&
+        supportsStorage(piece, p, pieces),
+    )
+  )
+    return false;
   if (!isPlatform(piece)) return true;
   const top = platformTop(piece, pieces);
   return !pieces.some(
@@ -941,7 +1008,10 @@ export function readSave(raw: string | null): Save {
             : {}),
           ...(p.kind === "door" ? { open: !!p.open } : {}),
           ...(p.kind === "storage"
-            ? { contents: readStorage(p.contents) }
+            ? {
+                storageSize: storageSize(p),
+                contents: readStorage(p.contents, storageSize(p)),
+              }
             : {}),
           ...(readProductionJob(p.kind, p.job)
             ? { job: readProductionJob(p.kind, p.job) }

@@ -1,9 +1,11 @@
+import type { StorageSize } from "./storage-spec";
 import { itemName, type Inventory } from "./inventory";
 import { itemMarkup } from "./inventory-ui";
 import { STORAGE_SLOTS, type StorageSlots } from "./storage";
 import "./storage.css";
 type Options = {
   inventory: () => Inventory;
+  spec: () => { size: StorageSize; name: string; slots: number };
   slots: () => StorageSlots;
   transfer: (side: "bag" | "chest", index: number, quantity: number) => number;
   close: () => void;
@@ -15,7 +17,7 @@ export function createStorageDialog(options: Options) {
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "storage-title");
-  overlay.innerHTML = `<div class="storage-card"><div class="storage-heading"><div><span class="eyebrow">PLAYER-BUILT CONTAINER</span><h2 id="storage-title">STORAGE CHEST</h2></div><button id="storage-close" aria-label="Close storage">CLOSE ×</button></div><p class="storage-guide">Select an item, then deposit or withdraw it. Resources / bullets ×500 · Explosives ×5 · Guns ×1.</p><div class="storage-columns"><section><h3>YOUR INVENTORY <small id="storage-bag-count"></small></h3><div id="storage-bag-grid" class="storage-grid" aria-label="20 carried inventory slots"></div></section><section><h3>CHEST <small id="storage-chest-count"></small></h3><div id="storage-chest-grid" class="storage-grid" aria-label="20 chest storage slots"></div></section></div><div class="storage-controls"><b id="storage-selected">Select an item</b><label>Amount <select id="storage-amount"><option value="all">Full stack</option><option value="half">Half stack</option><option value="one">One item</option></select></label><button id="storage-transfer" class="primary" disabled>TRANSFER</button></div><p id="storage-feedback" role="status" aria-live="polite">Contents save on this device. Empty the chest before dismantling it.</p></div>`;
+  overlay.innerHTML = `<div class="storage-card"><div class="storage-heading"><div><span class="eyebrow">PLAYER-BUILT CONTAINER</span><h2><img id="storage-popup-icon" alt=""><span id="storage-title">STORAGE CHEST</span></h2></div><button id="storage-close" aria-label="Close storage">CLOSE ×</button></div><p class="storage-guide">Select an item, then deposit or withdraw it. Resources / bullets ×500 · Explosives ×5 · Guns ×1.</p><div class="storage-columns"><section><h3>YOUR INVENTORY <small id="storage-bag-count"></small></h3><div id="storage-bag-grid" class="storage-grid" aria-label="20 carried inventory slots"></div></section><section><h3>CHEST <small id="storage-chest-count"></small></h3><div id="storage-chest-grid" class="storage-grid" aria-label="20 chest storage slots"></div></section></div><div class="storage-controls"><b id="storage-selected">Select an item</b><label>Amount <select id="storage-amount"><option value="all">Full stack</option><option value="half">Half stack</option><option value="one">One item</option></select></label><button id="storage-transfer" class="primary" disabled>TRANSFER</button></div><p id="storage-feedback" role="status" aria-live="polite">Contents save on this device. Empty the chest before dismantling it.</p></div>`;
   document.body.append(overlay);
   const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
     overlay.querySelector<T>(q)!;
@@ -25,8 +27,15 @@ export function createStorageDialog(options: Options) {
     bag: [] as HTMLButtonElement[],
     chest: [] as HTMLButtonElement[],
   };
-  for (const side of ["bag", "chest"] as const)
-    for (let i = 0; i < STORAGE_SLOTS; i++) {
+  function ensureCells(side: "bag" | "chest", count: number) {
+    if (cells[side].length === count) return;
+    cells[side] = [];
+    $(`#storage-${side}-grid`).replaceChildren();
+    $(`#storage-${side}-grid`).setAttribute(
+      "aria-label",
+      `${count} ${side === "bag" ? "carried inventory" : "chest storage"} slots`,
+    );
+    for (let i = 0; i < count; i++) {
       const b = document.createElement("button");
       b.className = "inventory-slot";
       b.dataset.index = String(i);
@@ -37,12 +46,18 @@ export function createStorageDialog(options: Options) {
       $(`#storage-${side}-grid`).append(b);
       cells[side].push(b);
     }
+  }
   function slots(side: "bag" | "chest") {
     return side === "bag" ? options.inventory().slots : options.slots();
   }
   function render() {
+    const spec = options.spec();
+    $("#storage-title").textContent = spec.name.toUpperCase();
+    $<HTMLImageElement>("#storage-popup-icon").src =
+      `/assets/player-storage/chest-${spec.size}.png`;
     for (const side of ["bag", "chest"] as const) {
       const list = slots(side);
+      ensureCells(side, side === "bag" ? STORAGE_SLOTS : spec.slots);
       cells[side].forEach((b, i) => {
         const item = list[i];
         b.innerHTML = itemMarkup(item);
@@ -60,7 +75,7 @@ export function createStorageDialog(options: Options) {
         );
       });
       $(`#storage-${side}-count`).textContent =
-        `${list.filter(Boolean).length} / ${STORAGE_SLOTS}`;
+        `${list.filter(Boolean).length} / ${list.length}`;
     }
     const item = selection && slots(selection.side)[selection.index];
     $("#storage-selected").textContent = item

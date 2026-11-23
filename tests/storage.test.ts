@@ -79,3 +79,28 @@ test("legacy placed chests become empty containers; saved contents round trip wi
   assert.equal(legacy.pieces[0].contents?.length, 20);
   assert.equal(legacy.pieces[0].contents?.filter(Boolean).length, 0);
 });
+
+test("large chests retain all 40 slots, including gun state in the second page, through world reload", () => {
+  const contents = emptyStorage("large");
+  contents[39] = { id: "last-gun", kind: "sniper", quantity: 1, magazine: 2 };
+  const raw = {
+    version: 1,
+    wood: 100,
+    pieces: [
+      {
+        id: "large",
+        kind: "storage",
+        storageSize: "large",
+        x: -42,
+        z: 40,
+        rotation: 0,
+        contents,
+      },
+    ],
+    opened: [],
+  };
+  const p = readSave(JSON.stringify(raw)).pieces[0];
+  assert.equal(p.storageSize, "large");
+  assert.equal(p.contents?.length, 40);
+  assert.equal(p.contents?.[39]?.magazine, 2);
+});

@@ -178,3 +178,90 @@
     font-size: 11px;
   }
 }
+.storage-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#storage-popup-icon {
+  width: 64px;
+  height: 45px;
+  object-fit: contain;
+}
+#storage-sizes[hidden] {
+  display: none !important;
+}
+#storage-sizes {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+#storage-sizes button {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #79654b70;
+  background: #171b22;
+  color: #f5ead9;
+  border-radius: 6px;
+}
+#storage-sizes button.selected {
+  border-color: #f2ac56;
+  background: #463628;
+}
+#storage-sizes img {
+  width: 50px;
+  height: 40px;
+  object-fit: contain;
+  grid-row: span 2;
+}
+#storage-sizes b {
+  font-size: 12px;
+}
+#storage-sizes span {
+  font-size: 11px;
+  color: #f2ac56;
+}
+@media (max-width: 650px) {
+  #storage-popup-icon {
+    width: 46px;
+    height: 34px;
+  }
+  .storage-heading h2 {
+    font-size: 22px;
+    gap: 6px;
+  }
+}
+.storage-controls {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: #1c2029;
+  padding-bottom: 10px;
+  box-shadow: 0 -8px 18px #171b2255;
+}
+@media (max-width: 650px) {
+  #storage-sizes button {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 3px;
+  }
+  #storage-sizes img {
+    grid-row: auto;
+    width: 54px;
+    height: 32px;
+  }
+  #storage-sizes b {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  #storage-sizes span {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}

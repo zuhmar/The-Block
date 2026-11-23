@@ -1,3 +1,10 @@
+import {
+  storageSpec,
+  storageSize,
+  STORAGE_SPECS,
+  type StorageSize,
+} from "./storage-spec";
+import { storageModel } from "./storage-models";
 import { emptyStorage, transferStorage } from "./storage";
 import { createStorageDialog } from "./storage-ui";
 import {
@@ -171,12 +178,21 @@ $("#app").innerHTML = `
     )
     .join(
       "",
-    )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door", "workbench", "furnace"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${isStationKind(k) ? `<img src="/assets/crafting/station-${k}.png" alt="">${STATIONS[k].name}` : k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
+    )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door", "workbench", "furnace"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${isStationKind(k) ? `<img src="/assets/crafting/station-${k}.png" alt="">${STATIONS[k].name}` : k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><div id="storage-sizes" hidden aria-label="Storage chest size">${Object.entries(
+    STORAGE_SPECS,
+  )
+    .map(
+      ([size, spec]) =>
+        `<button data-storage-size="${size}" aria-pressed="${size === "small"}"><img src="/assets/player-storage/chest-${size}.png" alt=""><b>${spec.name}</b><span>${spec.slots} slots</span></button>`,
+    )
+    .join(
+      "",
+    )}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button><button id="gather" hidden>GATHER</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">SS</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title"><span>STREET</span><em>SURVIVAL</em></h1><p class="menu-intro">Scavenge. Build. Gear up.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–8 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use BAG for your inventory and BUILD for structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Explore the jail district, open country, West Quarter, Fort East and the southern harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
+<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">SS</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title"><span>STREET</span><em>SURVIVAL</em></h1><p class="menu-intro">Scavenge. Build. Gear up.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–8 pieces · R rotate · V chest size · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use BAG for your inventory and BUILD for structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Explore the jail district, open country, West Quarter, Fort East and the southern harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -786,9 +802,11 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
   const tier = structureMaterial(p);
   const imported = isStationKind(p.kind)
     ? stationModel(p.kind)
-    : tier === "wood"
-      ? woodBuildingModel(p.kind)
-      : undefined;
+    : p.kind === "storage"
+      ? storageModel(p)
+      : tier === "wood"
+        ? woodBuildingModel(p.kind)
+        : undefined;
   if (imported) g.add(imported);
   if (!imported && isStationKind(p.kind)) {
     const station = STATIONS[p.kind];
@@ -822,11 +840,30 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
       box(g, x, 1.25, 0, 0.44, 2.5, 0.16, 0xc6b38b);
     box(g, 0, 2.3, 0, 2, 0.4, 0.16, 0x9c8664);
   }
-  if (p.kind === "storage") {
-    box(g, 0, 0.6, 0, 1, 0.8, 0.8, 0x97754c);
-    box(g, 0, 1.02, 0, 1.05, 0.08, 0.85, 0x675844);
-    for (const x of [-0.32, 0.32])
-      box(g, x, 0.6, 0.42, 0.08, 0.8, 0.05, 0xcfb78b);
+  if (!imported && p.kind === "storage") {
+    const spec = storageSpec(p);
+    box(
+      g,
+      0,
+      spec.height / 2,
+      0,
+      spec.width,
+      spec.height,
+      spec.depth,
+      0xcc792b,
+    );
+    box(g, 0, spec.height - 0.04, 0, spec.width, 0.08, spec.depth, 0xb56523);
+    for (const x of [-spec.width * 0.29, spec.width * 0.29])
+      box(
+        g,
+        x,
+        spec.height / 2,
+        spec.depth / 2 + 0.006,
+        0.075,
+        spec.height,
+        0.015,
+        0x393a45,
+      );
   }
   if (tier !== "wood" && !isStationKind(p.kind))
     g.traverse((o) => {
@@ -892,7 +929,10 @@ function buildProxy(p: Piece) {
       station.height,
       station.depth,
     );
-  } else part(0, 0.6, 0, 1, 0.8, 0.8);
+  } else {
+    const spec = storageSpec(p);
+    part(0, spec.height / 2, 0, spec.width, spec.height, spec.depth);
+  }
   return root;
 }
 function rebuildConstruction() {
@@ -956,6 +996,7 @@ let preview: THREE.Group | undefined,
   build = false,
   tool: Tool = "hands";
 let buildMaterial: StructureMaterial = "wood";
+let buildStorageSize: StorageSize = "small";
 let candidate: Omit<Piece, "id"> | undefined,
   reason = "";
 let player = { ...START },
@@ -2015,15 +2056,18 @@ function reachableStation(piece: Piece) {
   if (
     (!isStationKind(piece.kind) && piece.kind !== "storage") ||
     Math.hypot(piece.x - player.x, piece.z - player.z) > 3.2 ||
-    Math.abs(pieceBase(piece, save.pieces) - vertical) > 1.1
+    (piece.kind !== "storage" &&
+      Math.abs(pieceBase(piece, save.pieces) - vertical) > 1.1)
   )
     return false;
   const origin = new THREE.Vector3(player.x, vertical + 1.65, player.z),
     target = new THREE.Vector3(
       piece.x,
-      pieceBase(piece, save.pieces) + 0.8,
+      pieceBase(piece, save.pieces) +
+        (piece.kind === "storage" ? storageSpec(piece).height / 2 : 0.8),
       piece.z,
     );
+  if (piece.kind === "storage" && origin.distanceTo(target) > 3.6) return false;
   coverRay.set(origin, target.clone().sub(origin).normalize());
   coverRay.far = origin.distanceTo(target) - 0.05;
   return !coverRay
@@ -2031,24 +2075,44 @@ function reachableStation(piece: Piece) {
     .some((hit) => hit.object.userData.pieceId !== piece.id);
 }
 function nearestStation() {
-  return save.pieces
-    .filter(
-      (p) =>
-        (isStationKind(p.kind) || p.kind === "storage") && reachableStation(p),
-    )
-    .sort(
-      (a, b) =>
-        Math.hypot(a.x - player.x, a.z - player.z) -
-        Math.hypot(b.x - player.x, b.z - player.z),
-    )[0];
+  const nearby = save.pieces.filter(
+    (p) =>
+      (isStationKind(p.kind) || p.kind === "storage") && reachableStation(p),
+  );
+  if (!nearby.length) return;
+  const aimed = aimedPiece();
+  if (aimed && nearby.includes(aimed)) return aimed;
+  return nearby.sort(
+    (a, b) =>
+      Math.hypot(
+        a.x - player.x,
+        a.z - player.z,
+        pieceBase(a, save.pieces) +
+          (a.kind === "storage" ? storageSpec(a).height / 2 : 0.8) -
+          vertical -
+          1.65,
+      ) -
+      Math.hypot(
+        b.x - player.x,
+        b.z - player.z,
+        pieceBase(b, save.pieces) +
+          (b.kind === "storage" ? storageSpec(b).height / 2 : 0.8) -
+          vertical -
+          1.65,
+      ),
+  )[0];
 }
 const storageDialog = createStorageDialog({
   inventory,
+  spec: () => {
+    const p = save.pieces.find((p) => p.id === stationId);
+    return { size: storageSize(p ?? {}), ...storageSpec(p ?? {}) };
+  },
   slots: () => {
     const p = save.pieces.find(
       (p) => p.id === stationId && p.kind === "storage",
     );
-    return p ? (p.contents ??= emptyStorage()) : emptyStorage();
+    return p ? (p.contents ??= emptyStorage(storageSize(p))) : emptyStorage();
   },
   close: () => closeStation(),
   transfer(side, index, quantity) {
@@ -2057,7 +2121,7 @@ const storageDialog = createStorageDialog({
     );
     if (!stationOpen || !p || !reachableStation(p)) return 0;
     storeCurrentGun();
-    p.contents ??= emptyStorage();
+    p.contents ??= emptyStorage(storageSize(p));
     const n =
       side === "bag"
         ? transferStorage(inventory().slots, p.contents, index, quantity)
@@ -2334,6 +2398,15 @@ for (const button of document.querySelectorAll<HTMLButtonElement>(
     rebuildPreview();
     updateHud();
   });
+for (const button of document.querySelectorAll<HTMLButtonElement>(
+  "[data-storage-size]",
+))
+  button.onclick = () => {
+    buildStorageSize = button.dataset.storageSize as StorageSize;
+    rebuildPreview();
+    updateHud();
+    updatePreview();
+  };
 function rebuildPreview() {
   if (preview) scene.remove(preview);
   preview = undefined;
@@ -2889,6 +2962,11 @@ window.addEventListener("keydown", (e) => {
   keys.add(e.code);
   if (e.repeat) return;
   if (e.code === "KeyB") toggleBuild();
+  if (e.code === "KeyV" && build && selected === "storage") {
+    buildStorageSize = buildStorageSize === "small" ? "large" : "small";
+    rebuildPreview();
+    updateHud();
+  }
   if (e.code === "KeyT" && build && !isStationKind(selected)) {
     const tiers = Object.keys(STRUCTURE_MATERIALS) as StructureMaterial[];
     selectBuildMaterial(
@@ -3149,10 +3227,19 @@ function updateHud() {
             ([k, n]) => `${n} ${itemName(k as Parameters<typeof itemName>[0])}`,
           )
           .join(" · ")}`
-      : `${pieceCost({ kind: b.dataset.piece as PieceKind, material: buildMaterial })} wood`;
+      : `${pieceCost({ kind: b.dataset.piece as PieceKind, material: buildMaterial, storageSize: buildStorageSize })} wood`;
   }
 
   $("#build-materials").hidden = isStationKind(selected);
+  $("#storage-sizes").hidden = selected !== "storage";
+  for (const b of document.querySelectorAll<HTMLButtonElement>(
+    "[data-storage-size]",
+  )) {
+    const active = b.dataset.storageSize === buildStorageSize;
+    b.classList.toggle("selected", active);
+    b.setAttribute("aria-pressed", String(active));
+  }
+
   const near = nearestLoot(),
     door = nearestDoor(),
     built = nearestBuiltDoor(),
@@ -3222,13 +3309,13 @@ function updateHud() {
   if (station) {
     $("#hint-title").textContent = (
       station.kind === "storage"
-        ? "Storage chest"
+        ? storageSpec(station).name
         : STATIONS[station.kind as keyof typeof STATIONS].name
     ).toUpperCase();
     $("#hint-text").textContent =
       "E / USE · " +
       (station.kind === "storage"
-        ? "Open storage · 20 slots"
+        ? `Open storage · ${storageSpec(station).slots} slots`
         : station.job
           ? station.job.remaining === 0
             ? "Collect output"
@@ -3261,6 +3348,13 @@ function updatePreview() {
       : undefined;
   const doorway =
     selected === "door" && firstPiece?.kind === "doorway" ? first : undefined;
+  const chestTop =
+    selected === "storage" &&
+    firstPiece?.kind === "storage" &&
+    first.face &&
+    first.face.normal.y > 0.9
+      ? first
+      : undefined;
   const platform = hits.find((h) => {
     const p = save.pieces.find((p) => p.id === h.object.userData.pieceId);
     return (
@@ -3273,11 +3367,11 @@ function updatePreview() {
           selected !== "foundation"))
     );
   });
-  const chosen = wallTop ?? doorway ?? platform;
+  const chosen = chestTop ?? wallTop ?? doorway ?? platform;
   const hit = chosen?.point ?? groundHit;
   if (!hit || hit.distanceTo(camera.position) > 11) {
     candidate = undefined;
-    reason = "Aim at ground, a floor, or the upper half of a wall";
+    reason = "Aim at ground, a floor, a chest lid, or a wall top";
     if (preview) preview.visible = false;
   } else {
     const target =
@@ -3286,6 +3380,7 @@ function updatePreview() {
     candidate = target
       ? snapOnStructure(hit, selected, rotation, target, save.pieces)
       : snapPiece(hit, selected, rotation);
+    if (selected === "storage") candidate.storageSize = buildStorageSize;
     candidate.material = isStationKind(selected)
       ? STATIONS[selected].material
       : buildMaterial;
@@ -3324,7 +3419,7 @@ function updatePreview() {
   }
   $("#placement").textContent =
     reason ||
-    `${STRUCTURE_MATERIALS[buildMaterial].name} ${selected.toUpperCase()} · ${pieceCost({ kind: selected, material: buildMaterial })} wood · Ready to place`;
+    `${STRUCTURE_MATERIALS[buildMaterial].name} ${selected.toUpperCase()} · ${pieceCost({ kind: selected, material: buildMaterial, storageSize: buildStorageSize })} wood · Ready to place`;
   $<HTMLButtonElement>("#place").disabled = !!reason;
 }
 const interiorFrustum = new THREE.Frustum(),

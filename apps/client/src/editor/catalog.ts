@@ -194,6 +194,14 @@ for (const [id, name, primitive, layer, behavior, scale] of [
   ],
 ] as [string, string, string, Layer, Behavior, [number, number, number]][])
   CATALOG.push({ id, name, primitive, layer, behavior, scale });
+for (const size of ["small", "large"] as const)
+  CATALOG.push({
+    id: "player-storage:" + size,
+    name: (size === "small" ? "Small" : "Large") + " player storage chest",
+    layer: "Props",
+    behavior: "solid",
+    url: `/assets/player-storage/chest-${size}.glb`,
+  });
 export const KNOWN_ASSETS = new Set(CATALOG.map((a) => a.id));
 export function newMap(current = true): MapDocument {
   const objects: MapDocument["objects"] = [];

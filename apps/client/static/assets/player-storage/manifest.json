@@ -1,0 +1,22 @@
+[
+  {
+    "size": "small",
+    "width": 1,
+    "depth": 0.8,
+    "height": 0.8,
+    "triangles": 5508,
+    "reference": "art/ai/player-storage/chest-small-reference.png",
+    "sourceSHA256": "5d5c442c085a6efe3e41ba55b3c02ecbe3f9d8d3a4f3a97038c2ce0a34ea6183",
+    "glbBytes": 277772
+  },
+  {
+    "size": "large",
+    "width": 1.8,
+    "depth": 1,
+    "height": 0.95,
+    "triangles": 7344,
+    "reference": "art/ai/player-storage/chest-large-reference.png",
+    "sourceSHA256": "4fd60bb2b715500478368f5150ece7eb8e48ee08a770dc0c26aa3ce784dc5686",
+    "glbBytes": 356828
+  }
+]
