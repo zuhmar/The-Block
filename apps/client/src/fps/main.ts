@@ -150,6 +150,7 @@ import {
   type PieceKind,
 } from "./world";
 import "./style.css";
+import "./theme.css";
 const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
   document.querySelector<T>(q)!;
 $("#app").innerHTML = `
@@ -173,7 +174,7 @@ $("#app").innerHTML = `
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter to the west. Harbor to the south.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>20 CARRY SLOTS</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / hold to gather · 1–5 hand slots · I / Tab inventory · H empty hands · Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–8 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Hold CHOP / MINE near resources. Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">SS</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title"><span>STREET</span><em>SURVIVAL</em></h1><p class="menu-intro">Scavenge. Build. Gear up.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>B build · 1–8 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use BAG for your inventory and BUILD for structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Explore the jail district, open country, West Quarter, Fort East and the southern harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -2202,7 +2203,8 @@ function pause() {
   canvas.dataset.audio = JSON.stringify(sound.diagnostics());
   resetInput();
   $("#menu").hidden = false;
-  $("#start").innerHTML = "RESUME EXPLORING <span>↗</span>";
+  $("#start").innerHTML = 'RESUME EXPLORING <span aria-hidden="true">↗</span>';
+  $("#start").focus();
   if (document.pointerLockElement) document.exitPointerLock();
 }
 function captureMouse() {
@@ -2226,9 +2228,28 @@ function start() {
   else toast("Explore the town. Build beyond the streets.");
 }
 $("#start").addEventListener("click", start);
+$("#menu").addEventListener("keydown", (e) => {
+  if (e.code !== "Tab" || $("#menu").hidden) return;
+  const controls = [
+      ...$("#menu").querySelectorAll<HTMLElement>(
+        "button:not(:disabled),input:not(:disabled),summary",
+      ),
+    ],
+    first = controls[0],
+    last = controls.at(-1);
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last?.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first?.focus();
+  }
+});
+
 $("#view-models").addEventListener("click", () => {
   pause();
   openActorPreview();
+  document.querySelector<HTMLButtonElement>("#close-actors")?.focus();
 });
 $("#pause-button").addEventListener("click", pause);
 $("#reset").addEventListener("click", () => {
@@ -2798,7 +2819,7 @@ window.addEventListener("keydown", (e) => {
     }
     if (e.code !== "KeyM") return;
   }
-  if (e.code === "KeyI" || (e.code === "Tab" && !inventoryOpen)) {
+  if (e.code === "KeyI" || (e.code === "Tab" && !inventoryOpen && playing)) {
     e.preventDefault();
     if (!e.repeat) {
       if (inventoryOpen) closeInventory();
@@ -2816,6 +2837,7 @@ window.addEventListener("keydown", (e) => {
   }
   if (inventoryOpen) return;
   if (e.target instanceof HTMLInputElement) return;
+  if (!playing) return;
   if (
     [
       "Space",
@@ -2827,7 +2849,6 @@ window.addEventListener("keydown", (e) => {
     ].includes(e.code)
   )
     e.preventDefault();
-  if (!playing) return;
   keys.add(e.code);
   if (e.repeat) return;
   if (e.code === "KeyB") toggleBuild();

@@ -11,9 +11,10 @@ import { preloadWoodBuildings } from "./wood-buildings";
 import { preloadMeshyPlayer } from "./meshy-player";
 import { preloadBlenderBuildings } from "./blender-buildings";
 import "./style.css";
+import "./theme.css";
 const app = document.querySelector<HTMLElement>("#app")!;
 app.innerHTML =
-  '<div class="overlay"><div class="menu-card"><span class="eyebrow">STREET SURVIVAL</span><h2 role="status">Loading town…</h2></div></div>';
+  '<div id="loading-screen" class="overlay"><div class="menu-card loading-card"><span class="eyebrow">WELCOME TO THE BLOCK</span><h2>STREET <em>SURVIVAL</em></h2><p role="status">Preparing the streets…</p><div class="loading-track" aria-hidden="true"><i></i></div><small>Scavenge. Build. Survive.</small></div></div>';
 void preloadSoundFiles();
 void Promise.allSettled([
   preloadBlenderBuildings(),
