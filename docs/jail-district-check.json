@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "phone": false,
+      "loadedSixBuildings": true,
+      "doorCollisionAndOpen": true,
+      "enteredHoldingCellAndExited": true,
+      "savePreserved": true,
+      "errors": []
+    },
+    {
+      "phone": true,
+      "loadedSixBuildings": true,
+      "doorCollisionAndOpen": true,
+      "enteredHoldingCellAndExited": true,
+      "savePreserved": true,
+      "errors": []
+    }
+  ],
+  "scope": "Software WebGL browser tests, not physical phone performance.",
+  "layoutChecks": [
+    "Jail at world center",
+    "Six buildings clear road and sidewalk envelopes",
+    "Five loot footprints clear road pavement and building walls",
+    "Holding-cell passages and shared collision match",
+    "Existing save format and structures retained"
+  ],
+  "art": {
+    "triangles": 13460,
+    "bytes": 919008,
+    "cells": 3,
+    "openingWidth": 1.8,
+    "dimensions": [
+      16,
+      14,
+      5.5
+    ]
+  },
+  "browserBuildNote": "Keyboard and phone touch entry/cell/exit verified; final unit checks additionally cover removal of a shelter spur and relocation of a crate away from pavement.",
+  "checks": {
+    "testsPassed": 162,
+    "lint": true,
+    "typecheck": true,
+    "productionBuild": true,
+    "finalCompiledPhoneSmoke": true
+  }
+}

@@ -24,15 +24,15 @@ with sync_playwright() as p:
    page.evaluate('(x)=>document.dispatchEvent(new MouseEvent("mousemove",{movementX:x,movementY:0}))',-delta/.0024)
   # Use real WASD on desktop to approach the small chest from spawn.
   if not mobile:
-   for goal in [(-6,11),(-6,8)]:
+   for goal in [(-10,17),(-20,9),(-20,6)]:
     for step in range(180):
      x,z=map(float,state()['position'].split(','));dx,dz=goal[0]-x,goal[1]-z
      if math.hypot(dx,dz)<.22:break
-     if goal==(-6,8) and z<8.85:break
+     if goal==(-20,6) and z<6.85:break
      look(math.atan2(-dx,-dz));old=state()['position'];page.keyboard.down('w');page.wait_for_function('(old)=>document.querySelector("#world").dataset.position!==old',arg=old);page.keyboard.up('w')
     else:raise AssertionError(('movement stuck',state()))
    look(0);page.keyboard.down('w');page.wait_for_timeout(450);page.keyboard.up('w')
-   x,z=map(float,state()['position'].split(','));assert 8.6<z<9,(x,z)
+   x,z=map(float,state()['position'].split(','));assert 6.6<z<7,(x,z)
    page.keyboard.press('e');page.wait_for_function('JSON.parse(localStorage.getItem("'+KEY+'")).opened.includes(0)')
    assert saved()['wood']==8810,saved()
    page.keyboard.press('e');assert saved()['wood']==8810

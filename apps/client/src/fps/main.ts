@@ -36,7 +36,7 @@ import {
   BUILDINGS,
   LOOT,
   TREES,
-  ROAD,
+  ROADS,
   START,
   MAP_SIZE,
   BUILD_LIMIT,
@@ -276,25 +276,27 @@ function ribbon(
   geo.computeVertexNormals();
   scene.add(new THREE.Mesh(geo, material(color)));
 }
-ribbon(ROAD, 9, 0.035, 0xbfc0aa);
-ribbon(ROAD, 6, 0.055, 0x515c60);
-for (let i = 1; i < ROAD.length; i++) {
-  const a = ROAD[i - 1],
-    b = ROAD[i],
-    d = Math.hypot(b.x - a.x, b.z - a.z),
-    angle = -Math.atan2(b.z - a.z, b.x - a.x);
-  for (let t = 1; t < d; t += 4) {
-    const mark = box(
-      scene,
-      a.x + ((b.x - a.x) * t) / d,
-      0.067,
-      a.z + ((b.z - a.z) * t) / d,
-      1.8,
-      0.018,
-      0.09,
-      0xdcd5b0,
-    );
-    mark.rotation.y = angle;
+for (const ROAD of ROADS) {
+  ribbon(ROAD, 9, 0.035, 0xbfc0aa);
+  ribbon(ROAD, 6, 0.055, 0x515c60);
+  for (let i = 1; i < ROAD.length; i++) {
+    const a = ROAD[i - 1],
+      b = ROAD[i],
+      d = Math.hypot(b.x - a.x, b.z - a.z),
+      angle = -Math.atan2(b.z - a.z, b.x - a.x);
+    for (let t = 1; t < d; t += 4) {
+      const mark = box(
+        scene,
+        a.x + ((b.x - a.x) * t) / d,
+        0.067,
+        a.z + ((b.z - a.z) * t) / d,
+        1.8,
+        0.018,
+        0.09,
+        0xdcd5b0,
+      );
+      mark.rotation.y = angle;
+    }
   }
 }
 // Bridge has a continuous road deck with visible rails on both sides.
@@ -394,14 +396,14 @@ scene.add(rocks);
 for (const [x, z] of [
   [-27, 8],
   [29, 2],
-  [-9, -5],
-  [10, 7],
+  [-10, -9],
+  [10, 9],
 ]) {
   cylinder(scene, x, 2.2, z, 0.09, 4.4, 0x56655d);
   box(scene, x + 0.5, 4.45, z, 1.15, 0.12, 0.15, 0x56655d);
   box(scene, x + 1, 4.3, z, 0.5, 0.16, 0.3, 0xe5dfb8);
 }
-for (const x of [-3, 9]) {
+for (const x of [-10, 10]) {
   box(scene, x, 0.55, -3.8, 2, 0.15, 0.6, 0x8f7557);
   for (const dx of [-0.7, 0.7])
     box(scene, x + dx, 0.25, -3.8, 0.1, 0.55, 0.5, 0x56655d);
@@ -447,7 +449,7 @@ LOOT.forEach((c, index) => {
       );
   }
 });
-const heading = sign("THE BLOCK  /  COUNTRYSIDE →", 7, 0.8);
+const heading = sign("JAIL DISTRICT  /  COUNTRYSIDE →", 7, 0.8);
 heading.position.set(0, 3.2, 26);
 heading.rotation.y = Math.PI;
 scene.add(heading);
@@ -1597,7 +1599,7 @@ function updateHud() {
     inside >= 0
       ? BUILDINGS[inside].name
       : inTown(player)
-        ? "THE BLOCK"
+        ? "JAIL DISTRICT"
         : roadDistance(player) < 5
           ? "OUTBOUND ROAD"
           : "OPEN MEADOW";

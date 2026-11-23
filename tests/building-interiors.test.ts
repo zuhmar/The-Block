@@ -116,7 +116,7 @@ test("building geometry has hollow rooms, named animated doors, furniture and re
 });
 
 test("all five reusable building GLBs load furnished rooms and both door animation clips", async () => {
-  for (const building of BUILDINGS) {
+  for (const building of BUILDINGS.filter((b) => b.type !== "jail")) {
     const bytes = await readFile(
       "art/models/buildings/" + building.type + ".glb",
     );

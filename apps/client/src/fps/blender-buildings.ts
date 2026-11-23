@@ -10,6 +10,7 @@ import {
 } from "./building-layout";
 import { createBuildingModel } from "./building-models";
 const URLS: Record<string, string> = {
+  jail: new URL("./models/buildings/jail.glb", import.meta.url).href,
   store: new URL("./models/buildings/store.glb", import.meta.url).href,
   shelter: new URL("./models/buildings/shelter.glb", import.meta.url).href,
   workshop: new URL("./models/buildings/workshop.glb", import.meta.url).href,

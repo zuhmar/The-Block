@@ -24,7 +24,7 @@
     "assets:image-characters": "blender -b -t 4 --python packages/art-tools/build-image-characters.py",
     "assets:image-npcs": "blender -b -t 4 --python packages/art-tools/build-image-npcs.py",
     "assets:weapons": "blender -b -t 4 --python packages/art-tools/build-weapons.py",
-    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py",
+    "assets:blender-buildings": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-blender-buildings.py && blender -b -t 4 --python packages/art-tools/build-jail.py",
     "assets:meshy-shadow": "blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py",
     "assets:meshy-lookout": "blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
     "assets:meshy-police": "MESHY_NPC=police blender -b -t 4 --python packages/art-tools/animate-meshy-lookout.py",
@@ -32,7 +32,8 @@
     "assets:meshy-outfits": "MESHY_PLAYER_TIER=street blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py && MESHY_PLAYER_TIER=reinforced blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py && MESHY_PLAYER_TIER=armored blender -b -t 4 --python packages/art-tools/animate-meshy-shadow.py",
     "assets:meshy-warehouse": "blender -b -t 4 --python packages/art-tools/build-meshy-warehouse.py",
     "assets:wood-kit": "blender -b -t 4 --python packages/art-tools/build-wood-kit.py",
-    "assets:loot-chests": "blender -b -t 4 --python packages/art-tools/build-loot-chests.py"
+    "assets:loot-chests": "blender -b -t 4 --python packages/art-tools/build-loot-chests.py",
+    "assets:jail": "tsx packages/art-tools/export-building-layout.ts && blender -b -t 4 --python packages/art-tools/build-jail.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

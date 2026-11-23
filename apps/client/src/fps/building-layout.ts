@@ -1,6 +1,6 @@
 export const BUILDINGS = [
   {
-    x: -13,
+    x: -24,
     z: -10,
     width: 10,
     depth: 10,
@@ -10,8 +10,8 @@ export const BUILDINGS = [
     type: "store",
   },
   {
-    x: 3,
-    z: -12,
+    x: 0,
+    z: -24,
     width: 12,
     depth: 12,
     height: 5.2,
@@ -20,8 +20,8 @@ export const BUILDINGS = [
     type: "shelter",
   },
   {
-    x: 19,
-    z: -8,
+    x: 24,
+    z: -9,
     width: 9,
     depth: 8,
     height: 4.2,
@@ -30,8 +30,8 @@ export const BUILDINGS = [
     type: "workshop",
   },
   {
-    x: -19,
-    z: 14,
+    x: -24,
+    z: 16,
     width: 9,
     depth: 9,
     height: 4.6,
@@ -40,7 +40,7 @@ export const BUILDINGS = [
     type: "home",
   },
   {
-    x: 18,
+    x: 24,
     z: 19,
     width: 12,
     depth: 9,
@@ -48,6 +48,16 @@ export const BUILDINGS = [
     color: 0x6f93a2,
     name: "WAREHOUSE",
     type: "warehouse",
+  },
+  {
+    x: 0,
+    z: 0,
+    width: 16,
+    depth: 14,
+    height: 5.5,
+    color: 0xa6b4bb,
+    name: "CENTRAL JAIL",
+    type: "jail",
   },
 ];
 export type Building = (typeof BUILDINGS)[number];
@@ -77,7 +87,7 @@ export const DOOR_WIDTH = 1.6,
   WALL = 0.22;
 export const doorAngles = BUILDINGS.map(() => 0);
 export const doorTargets = BUILDINGS.map(() => false);
-export const frontOf = (b: Building) => (b.z < 0 ? 1 : -1);
+export const frontOf = (b: Building) => (b.type === "jail" || b.z < 0 ? 1 : -1);
 export const doorPosition = (index: number) => {
   const b = BUILDINGS[index],
     a = doorAngles[index];
@@ -127,6 +137,19 @@ function createFixtures(index: number): Fixture[] {
     x = b.width / 2,
     z = b.depth / 2;
   switch (b.type) {
+    case "jail":
+      return [
+        ...[-5.3, 0, 5.3].map((at) => ({
+          kind: "bed" as const,
+          x: at,
+          z: -5,
+          width: 1.5,
+          depth: 2.3,
+        })),
+        { kind: "bench", x: -4.8, z: 3.7, width: 3, depth: 0.6 },
+        { kind: "counter", x: 4.7, z: 3.2, width: 3, depth: 0.9 },
+        { kind: "cabinet", x: 6.8, z: 5.4, width: 0.8, depth: 1 },
+      ];
     case "store":
       return [
         { kind: "shelf", x: -x + 1.05, z: 0, width: 1.1, depth: 4.8 },
@@ -180,6 +203,25 @@ export const FURNITURE = BUILDINGS.map((_, i) => createFixtures(i));
 export const fixtures = (index: number) => FURNITURE[index];
 export function partitions(index: number) {
   const b = BUILDINGS[index];
+  if (b.type === "jail")
+    return [
+      ...[-2.65, 2.65].map((x) => ({
+        x,
+        z: -3.7,
+        width: 0.18,
+        depth: 6.4,
+        height: 3.1,
+      })),
+      ...[-5.3, 0, 5.3].flatMap((x) =>
+        [-1, 1].map((side) => ({
+          x: x + side * 1.65,
+          z: -0.5,
+          width: 2,
+          depth: 0.12,
+          height: 2.8,
+        })),
+      ),
+    ];
   return b.type === "home"
     ? [
         { x: 0.9, z: -2.7, width: 0.16, depth: 3, height: 3.2 },

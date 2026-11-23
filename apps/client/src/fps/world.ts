@@ -28,18 +28,33 @@ export const COST: Record<PieceKind, number> = {
 export const START = { x: 0, z: 14 };
 export const ROAD = [
   { x: -60, z: 4 },
-  { x: -36, z: 4 },
-  { x: -18, z: 0 },
-  { x: 8, z: 0 },
-  { x: 28, z: 7 },
-  { x: 61, z: 7 },
+  { x: -38, z: 4 },
+  { x: -28, z: 0 },
+  { x: -13, z: 0 },
+];
+export const ROADS = [
+  ROAD,
+  [
+    { x: -13, z: 0 },
+    { x: -13, z: -12 },
+    { x: 13, z: -12 },
+    { x: 13, z: 12 },
+    { x: -13, z: 12 },
+    { x: -13, z: 0 },
+  ],
+  [
+    { x: 13, z: 3 },
+    { x: 29, z: 3 },
+    { x: 37, z: 7 },
+    { x: 61, z: 7 },
+  ],
 ];
 export { BUILDINGS } from "./building-layout";
 
 export const LOOT = [
   {
-    x: -6,
-    z: 8,
+    x: -20,
+    z: 6,
     width: 0.8,
     depth: 0.7,
     height: 0.7,
@@ -48,8 +63,8 @@ export const LOOT = [
     color: 0xb78a55,
   },
   {
-    x: -6,
-    z: -4,
+    x: -24,
+    z: -17,
     width: 1.1,
     depth: 0.85,
     height: 0.9,
@@ -58,8 +73,8 @@ export const LOOT = [
     color: 0x779789,
   },
   {
-    x: 13,
-    z: -3,
+    x: 24,
+    z: -2,
     width: 1.25,
     depth: 1,
     height: 1.05,
@@ -68,7 +83,7 @@ export const LOOT = [
     color: 0x688ca6,
   },
   {
-    x: 26,
+    x: 33,
     z: 17,
     width: 2.1,
     depth: 0.6,
@@ -78,7 +93,7 @@ export const LOOT = [
     color: 0x8b79a9,
   },
   {
-    x: 26,
+    x: 33,
     z: 20,
     width: 2.2,
     depth: 1,
@@ -100,7 +115,9 @@ export function segmentDistance(p: Point, a: Point, b: Point) {
 }
 export function roadDistance(p: Point) {
   return Math.min(
-    ...ROAD.slice(1).map((b, i) => segmentDistance(p, ROAD[i], b)),
+    ...ROADS.flatMap((road) =>
+      road.slice(1).map((b, i) => segmentDistance(p, road[i], b)),
+    ),
   );
 }
 export function inBox(p: Point, b: Box, radius = 0) {
@@ -110,7 +127,7 @@ export function inBox(p: Point, b: Box, radius = 0) {
   );
 }
 export const inTown = (p: Point) =>
-  p.x > -29 && p.x < 31 && p.z > -23 && p.z < 29;
+  p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29;
 export const onBridge = (p: Point) => Math.abs(p.z - 7) < 4 && p.x > 39;
 export function blockedTerrain(p: Point, radius = 0.32) {
   return (
