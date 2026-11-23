@@ -1,0 +1,146 @@
+[
+  {
+    "id": "pistol",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      135,
+      27,
+      375,
+      232
+    ],
+    "sha256": "fb7534c3617bfe98d4979db8773069e20146cb0f73e715f1dbf91bea174c6167"
+  },
+  {
+    "id": "smg",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      72,
+      22,
+      438,
+      225
+    ],
+    "sha256": "f65dff8f665115b6d62962733086f5b626d84cf6fed061489f3675725fabde09"
+  },
+  {
+    "id": "assault-rifle",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      46,
+      44,
+      465,
+      210
+    ],
+    "sha256": "4714a7441175ef0e2772428f24cff4e9fdc0b9c0c013745398230b39e4063df8"
+  },
+  {
+    "id": "sniper",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      46,
+      71,
+      465,
+      196
+    ],
+    "sha256": "262107d2909182f0b6a43937081bcf25d20c0412c3854a9c5eae6c3c929afb75"
+  },
+  {
+    "id": "light-machine-gun",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      45,
+      56,
+      455,
+      209
+    ],
+    "sha256": "02f13ce2e2bfa30ceb616b100706c760be3b5644dc33e8ba0219d578b2c333d7"
+  },
+  {
+    "id": "rocket-launcher",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      49,
+      38,
+      463,
+      220
+    ],
+    "sha256": "bddb8b0965dc0c666b25e38ac439aca151deb3c27d1f125c4cebbf29d8787fcc"
+  },
+  {
+    "id": "grenade",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      195,
+      37,
+      319,
+      223
+    ],
+    "sha256": "70ba0f09f951aefe9f4934305096b7ea249fbcdf5a2f956c5acc90e382d3da57"
+  },
+  {
+    "id": "c4",
+    "dimensions": [
+      512,
+      256
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "contentBounds": [
+      127,
+      22,
+      380,
+      229
+    ],
+    "sha256": "edd5f1ff9b7105d3340729b33286fec34b4f0b37e600e25a397fd801a869a5cd"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "pistol",
+    "image": "pistol.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "apps/client/src/fps/models/weapons/pistol.glb",
+    "source": "existing Blender model",
+    "triangles": 5360
+  },
+  {
+    "id": "smg",
+    "image": "smg.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "apps/client/src/fps/models/weapons/smg.glb",
+    "source": "existing Blender model",
+    "triangles": 9220
+  },
+  {
+    "id": "assault-rifle",
+    "image": "assault-rifle.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "apps/client/src/fps/models/weapons/rifle.glb",
+    "source": "existing Blender model",
+    "triangles": 9220
+  },
+  {
+    "id": "sniper",
+    "image": "sniper.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "apps/client/src/fps/models/weapons/sniper.glb",
+    "source": "existing Blender model",
+    "triangles": 11640
+  },
+  {
+    "id": "light-machine-gun",
+    "image": "light-machine-gun.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "art/weapons/sprites/models/light-machine-gun.glb",
+    "source": "new decorative Blender prop",
+    "triangles": 3368
+  },
+  {
+    "id": "rocket-launcher",
+    "image": "rocket-launcher.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "art/weapons/sprites/models/rocket-launcher.glb",
+    "source": "new decorative Blender prop",
+    "triangles": 2144
+  },
+  {
+    "id": "grenade",
+    "image": "grenade.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "art/weapons/sprites/models/grenade.glb",
+    "source": "new decorative Blender prop",
+    "triangles": 3656
+  },
+  {
+    "id": "c4",
+    "image": "c4.png",
+    "width": 512,
+    "height": 256,
+    "sourceModel": "art/weapons/sprites/models/c4.glb",
+    "source": "new decorative Blender prop",
+    "triangles": 1504
+  }
+]
