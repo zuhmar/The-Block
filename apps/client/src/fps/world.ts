@@ -1,3 +1,10 @@
+import {
+  structureMaterial,
+  structureHealth,
+  maxStructureHealth,
+  STRUCTURE_MATERIALS,
+  type StructureMaterial,
+} from "./structure-health";
 import { westConnector } from "./west-road";
 import {
   jailGroundBlocked,
@@ -37,6 +44,8 @@ export type Piece = Point & {
   rotation: number;
   open?: boolean;
   doorAngle?: number;
+  material?: StructureMaterial;
+  health?: number;
 };
 export type Box = Point & { width: number; depth: number };
 export const MAP_SIZE = 384;
@@ -49,6 +58,10 @@ export const COST: Record<PieceKind, number> = {
   doorway: 4,
   storage: 5,
 };
+export const pieceCost = (p: Pick<Piece, "kind" | "material">) =>
+  COST[p.kind] * STRUCTURE_MATERIALS[structureMaterial(p)].costMultiplier;
+export const dismantleRefund = (p: Piece) =>
+  Math.floor((pieceCost(p) * structureHealth(p)) / maxStructureHealth(p));
 export const START = { x: 0, z: 14 };
 export const ROAD = [
   { x: -60, z: 4 },
@@ -467,7 +480,7 @@ export function placementReason(
   )
     return "Building height limit reached";
   if (pieces.length >= BUILD_LIMIT) return "Build limit reached · 100 pieces";
-  if (wood < COST[piece.kind]) return "Not enough wood";
+  if (wood < pieceCost(piece)) return "Not enough wood";
   if (Math.hypot(piece.x - player.x, piece.z - player.z) > 8)
     return "Move closer · building reach is 8 m";
   if (piece.kind === "door") {
@@ -813,15 +826,23 @@ export function readSave(raw: string | null): Save {
     return {
       version: 1,
       wood: s.wood,
-      pieces: s.pieces.map((p: Piece) => ({
-        id: p.id,
-        kind: p.kind,
-        x: p.x,
-        z: p.z,
-        rotation: p.rotation,
-        ...(p.y !== undefined ? { y: p.y } : {}),
-        ...(p.kind === "door" ? { open: !!p.open } : {}),
-      })),
+      pieces: s.pieces
+        .filter((p: Piece) => p.health !== 0)
+        .map((p: Piece) => ({
+          id: p.id,
+          kind: p.kind,
+          x: p.x,
+          z: p.z,
+          rotation: p.rotation,
+          ...(p.y !== undefined ? { y: p.y } : {}),
+          ...(p.material !== undefined
+            ? { material: structureMaterial(p) }
+            : {}),
+          ...(p.health !== undefined
+            ? { health: Math.max(1, structureHealth(p)) }
+            : {}),
+          ...(p.kind === "door" ? { open: !!p.open } : {}),
+        })),
       opened: s.opened.filter(
         (n: unknown) =>
           Number.isInteger(n) && Number(n) >= 0 && Number(n) < LOOT.length,

@@ -1002,3 +1002,43 @@ h1 em {
   flex-wrap: wrap;
   gap: 6px;
 }
+#build-materials {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 10px;
+}
+#build-materials button {
+  min-width: 0;
+  padding: 7px 3px;
+  font-size: 11px;
+}
+#build-materials small {
+  display: block;
+  font-size: 9px;
+  margin-top: 3px;
+  opacity: 0.8;
+}
+#build-materials .selected {
+  background: #c9b36e;
+  color: #24352c;
+}
+#structure-health-label {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+  color: #e9d8a4;
+}
+#structure-health-bar {
+  width: 150px;
+  height: 9px;
+  margin-top: 4px;
+}
+#structure-health-label[hidden],
+#structure-health-bar[hidden] {
+  display: none;
+}
+.touch #build-materials button {
+  padding: 5px 1px;
+  font-size: 10px;
+}

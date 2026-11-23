@@ -13,6 +13,7 @@ export type Projectile = {
   velocity: V3;
   fuse: number;
   settled: boolean;
+  attachedPieceId?: string;
 };
 export type Impact = { point: V3; normal: V3 };
 export function blastDamage(kind: ChargeKind, distance: number) {

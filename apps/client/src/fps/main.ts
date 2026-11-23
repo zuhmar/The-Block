@@ -1,3 +1,11 @@
+import { damageStructuresWithC4 } from "./structure-damage";
+import {
+  STRUCTURE_MATERIALS,
+  structureMaterial,
+  structureHealth,
+  maxStructureHealth,
+  type StructureMaterial,
+} from "./structure-health";
 import { blastOccluded } from "./explosion-visibility";
 import {
   advanceProjectile,
@@ -71,6 +79,8 @@ import {
   MAP_SIZE,
   BUILD_LIMIT,
   COST,
+  pieceCost,
+  dismantleRefund,
   riverX,
   roadDistance,
   inTown,
@@ -95,13 +105,22 @@ $("#app").innerHTML = `
 <div id="hud" hidden>
   <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="pause-button" aria-label="Pause game">||</button></header>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
-  <div id="hint"><b id="hint-title"></b><span id="hint-text"></span></div>
-  <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
+  <div id="hint"><b id="hint-title"></b><span id="hint-text"></span><span id="structure-health-label" hidden></span><meter id="structure-health-bar" min="0" max="100" value="100" aria-label="Structure health" hidden></meter></div>
+  <div id="build-panel" hidden><div class="panel-heading"><b>BUILD YOUR PLACE</b><span id="budget"></span></div><div id="build-materials" aria-label="Building material">${Object.entries(
+    STRUCTURE_MATERIALS,
+  )
+    .map(
+      ([key, tier]) =>
+        `<button data-build-material="${key}" class="${key === "wood" ? "selected" : ""}" aria-pressed="${key === "wood"}">${tier.name}<small>${tier.maxHealth} HP</small></button>`,
+    )
+    .join(
+      "",
+    )}</div><div id="pieces">${(["floor", "wall", "doorway", "storage", "foundation", "door"] as PieceKind[]).map((k, i) => `<button data-piece="${k}"><small>0${i + 1}</small><b>${k}</b><span>${COST[k]} wood</span></button>`).join("")}</div><p id="placement"></p><div class="build-actions"><button id="rotate">↻ Rotate</button><button id="remove">Dismantle</button><button id="place">Place piece</button></div></div>
   <div id="mobile-controls"><div id="joystick" aria-label="Movement joystick"><div id="stick"></div><span>MOVE</span></div><div class="mobile-actions"><button id="aim">AIM</button><button id="run" aria-label="Toggle sprint">RUN</button><button id="interact">USE</button><button id="jump">JUMP</button><button id="fire">FIRE</button></div><span id="look-help">DRAG RIGHT SIDE TO LOOK</span></div>
   <div id="weapon-status"><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span></div><div class="tools"><button id="hand-tool" class="selected">1 <b>HANDS</b></button><button id="pistol-tool">2 <img src="/assets/weapon-icons/pistol.png" alt=""><b>PISTOL</b></button><button id="smg-tool">3 <img src="/assets/weapon-icons/smg.png" alt=""><b>SMG</b></button><button id="rifle-tool">4 <img src="/assets/weapon-icons/assault-rifle.png" alt=""><b>RIFLE</b></button><button id="sniper-tool">5 <img src="/assets/weapon-icons/sniper.png" alt=""><b>SNIPER</b></button><button id="lmg-tool">6 <img src="/assets/weapon-icons/light-machine-gun.png" alt=""><b>LMG</b></button><button id="rocket-tool">7 <img src="/assets/weapon-icons/rocket-launcher.png" alt=""><b>ROCKET</b></button><button id="grenade-tool">8 <img src="/assets/weapon-icons/grenade.png" alt=""><b>GRENADE</b></button><button id="c4-tool">9 <img src="/assets/weapon-icons/c4.png" alt=""><b>C4</b></button><button id="build-tool">B <b>BUILD</b></button></div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
+<div id="menu" class="overlay"><div class="menu-card"><span class="eyebrow">A NEW PERSPECTIVE</span><h1>STREET<br><em>SURVIVAL</em></h1><p>Jail district. Open country.<br>Military compound across the river.<br>West Quarter along the western road.</p><div class="menu-tags"><span>${MAP_SIZE} × ${MAP_SIZE} m</span><span>3D WORLD</span><span>10,000 WOOD</span></div><button id="start" class="primary">ENTER THE BLOCK <span>↗</span></button><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search · 1–9 equip · Q / right mouse aim · R reload · G detonate C4<br>B build · 1–6 pieces · R rotate · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use the buttons to search, build, and equip.</p><p class="controls encounter-guide">MILITARY COMPOUND · Follow the eastern road across the bridge · Roaming SWAT patrols</p><small class="save-note">Single-player prototype · Building saves on this device.<br>Your previous online characters and world are preserved separately.</small><button id="view-models">VIEW PLAYER & WEAPONS</button><button id="reset">Reset local prototype</button></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU WERE SHOT DOWN</h2><p>Your buildings and wood are safe.</p><button id="respawn" class="primary">RESPAWN AT THE BLOCK</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -661,7 +680,8 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
   const g = new THREE.Group();
   g.position.set(p.x, pieceBase(p, save.pieces), p.z);
   g.rotation.y = (p.rotation * Math.PI) / 2;
-  const imported = woodBuildingModel(p.kind);
+  const tier = structureMaterial(p);
+  const imported = tier === "wood" ? woodBuildingModel(p.kind) : undefined;
   if (imported) g.add(imported);
   if (!imported && p.kind === "foundation")
     box(g, 0, 0.25, 0, 2, 0.5, 2, 0xb78b4e);
@@ -674,7 +694,7 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
   }
   if (!imported && p.kind === "wall") {
     box(g, 0, 1.25, 0, 2, 2.5, 0.16, 0xc6b38b);
-    for (const x of [-0.9, 0, 0.9])
+    for (const x of tier === "stone" ? [] : [-0.9, 0, 0.9])
       box(g, x, 1.25, 0.1, 0.08, 2.5, 0.06, 0x8d795c);
   }
   if (!imported && p.kind === "doorway") {
@@ -688,6 +708,15 @@ function pieceModel(p: Omit<Piece, "id">, preview = false) {
     for (const x of [-0.32, 0.32])
       box(g, x, 0.6, 0.42, 0.08, 0.8, 0.05, 0xcfb78b);
   }
+  if (tier !== "wood")
+    g.traverse((o) => {
+      if (o instanceof THREE.Mesh)
+        o.material = material(STRUCTURE_MATERIALS[tier].color);
+    });
+  if (tier === "stone" && p.kind === "wall")
+    for (const z of [-0.087, 0.087])
+      for (const y of [0.5, 1, 1.5, 2])
+        box(g, 0, y, z, 1.97, 0.018, 0.012, 0x4f5958);
   if (preview)
     g.traverse((o) => {
       if (o instanceof THREE.Mesh) o.material = previewMaterial;
@@ -703,6 +732,7 @@ const builtDoors = new Map<
 const buildProxyMaterial = new THREE.MeshBasicMaterial();
 function buildProxy(p: Piece) {
   const root = new THREE.Group();
+  root.userData.pieceId = p.id;
   root.position.set(p.x, pieceBase(p, save.pieces), p.z);
   root.rotation.y = (p.rotation * Math.PI) / 2;
   function part(
@@ -795,6 +825,7 @@ let preview: THREE.Group | undefined,
   rotation = 0,
   build = false,
   tool: Tool = "hands";
+let buildMaterial: StructureMaterial = "wood";
 let candidate: Omit<Piece, "id"> | undefined,
   reason = "";
 let player = { ...START },
@@ -1122,7 +1153,12 @@ let useRemaining = 0,
   projectileSerial = 0,
   explosionSerial = 0;
 let pendingUse:
-  | { kind: ChargeKind; point?: THREE.Vector3; normal?: THREE.Vector3 }
+  | {
+      kind: ChargeKind;
+      point?: THREE.Vector3;
+      normal?: THREE.Vector3;
+      attachedPieceId?: string;
+    }
   | undefined;
 const projectiles: Projectile[] = [],
   projectileModels = new Map<number, THREE.Object3D>();
@@ -1179,7 +1215,9 @@ function useExplosive(kind: ChargeKind) {
     toast("Empty · R / RELOAD");
     return;
   }
-  let point: THREE.Vector3 | undefined, normal: THREE.Vector3 | undefined;
+  let point: THREE.Vector3 | undefined,
+    normal: THREE.Vector3 | undefined,
+    attachedPieceId: string | undefined;
   if (kind === "c4") {
     aimRay();
     const hit = raycaster
@@ -1189,6 +1227,7 @@ function useExplosive(kind: ChargeKind) {
       toast("Aim at a nearby wall or ground to place C4");
       return;
     }
+    attachedPieceId = hit.object.userData.pieceId;
     point = hit.point.clone().addScaledVector(raycaster.ray.direction, -0.09);
     normal = hit.face?.normal
       .clone()
@@ -1196,7 +1235,7 @@ function useExplosive(kind: ChargeKind) {
   }
   explosiveLatch = true;
   lastExplosiveUse[kind] = performance.now();
-  pendingUse = { kind, point, normal };
+  pendingUse = { kind, point, normal, attachedPieceId };
   useRemaining = 0.8;
   recoilRemaining = 0;
 }
@@ -1204,6 +1243,7 @@ function spawnExplosive(
   kind: ChargeKind,
   point?: THREE.Vector3,
   normal?: THREE.Vector3,
+  attachedPieceId?: string,
 ) {
   if (kind === "c4" && point && camera.position.distanceTo(point) > 3.3) {
     toast("Move closer to place C4");
@@ -1232,6 +1272,7 @@ function spawnExplosive(
           ? 3
           : Infinity,
     settled: kind === "c4",
+    ...(attachedPieceId ? { attachedPieceId } : {}),
   };
   projectiles.push(p);
   const rig = weaponRigs.get(kind);
@@ -1310,6 +1351,30 @@ function explode(p: Projectile) {
       resetInput();
     }
   }
+  if (p.kind === "c4") {
+    const damage = damageStructuresWithC4(
+      save.pieces,
+      p.position,
+      p.attachedPieceId,
+      (piece, target) =>
+        !blastOccluded(
+          center,
+          new THREE.Vector3(target.x, target.y, target.z),
+          [
+            ...shotObstacles,
+            ...lootMeshes,
+            ...construction.children.filter(
+              (root) => root.userData.pieceId !== piece.id,
+            ),
+          ],
+        ),
+    );
+    if (damage.damaged.length) {
+      save.pieces = damage.pieces;
+      rebuildConstruction();
+      persist();
+    }
+  }
   const mesh = new THREE.Mesh(
     new THREE.SphereGeometry(1, 12, 8),
     new THREE.MeshBasicMaterial({
@@ -1348,7 +1413,7 @@ function updateExplosives(dt: number) {
       const use = pendingUse;
       pendingUse = undefined;
       if (health > 0 && !build && tool === use.kind)
-        spawnExplosive(use.kind, use.point, use.normal);
+        spawnExplosive(use.kind, use.point, use.normal, use.attachedPieceId);
     }
   }
   if (reloadRequested && useRemaining === 0) {
@@ -1560,6 +1625,25 @@ function rebuildPreview() {
   if (preview) scene.remove(preview);
   preview = undefined;
 }
+function selectBuildMaterial(next: StructureMaterial) {
+  buildMaterial = next;
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    "[data-build-material]",
+  )) {
+    const active = button.dataset.buildMaterial === next;
+    button.classList.toggle("selected", active);
+    button.setAttribute("aria-pressed", String(active));
+  }
+  rebuildPreview();
+  updateHud();
+  updatePreview();
+}
+for (const button of document.querySelectorAll<HTMLButtonElement>(
+  "[data-build-material]",
+))
+  button.addEventListener("click", () =>
+    selectBuildMaterial(button.dataset.buildMaterial as StructureMaterial),
+  );
 $("#rotate").addEventListener("click", () => {
   rotation = (rotation + 1) % 4;
   rebuildPreview();
@@ -1575,9 +1659,13 @@ function place() {
     save.wood,
   );
   if (reason) return toast(reason);
-  const p = { ...candidate, id: crypto.randomUUID() };
+  const p = {
+    ...candidate,
+    id: crypto.randomUUID(),
+    health: maxStructureHealth(candidate),
+  };
   save.pieces.push(p);
-  save.wood -= COST[p.kind];
+  save.wood -= pieceCost(p);
   rebuildConstruction();
   persist();
   updateHud();
@@ -1596,6 +1684,13 @@ function aimedPiece() {
   aimRay();
   const hits = raycaster.intersectObjects(construction.children, true);
   const hit = hits.find((h) => h.distance < 8);
+  if (hit) {
+    const cover = raycaster.intersectObjects(
+      [...shotObstacles, ...lootMeshes],
+      true,
+    )[0];
+    if (cover && cover.distance < hit.distance - 0.03) return undefined;
+  }
   return hit
     ? save.pieces.find(
         (p) =>
@@ -1613,7 +1708,7 @@ function remove() {
     return toast("Remove attached doors, walls, floors or storage first");
   save.pieces = save.pieces.filter((s) => s.id !== p.id);
   rebuildConstruction();
-  save.wood += COST[p.kind];
+  save.wood += dismantleRefund(p);
   persist();
   updateHud();
   toast("Piece removed · wood returned");
@@ -1912,6 +2007,12 @@ window.addEventListener("keydown", (e) => {
   keys.add(e.code);
   if (e.repeat) return;
   if (e.code === "KeyB") toggleBuild();
+  if (e.code === "KeyT" && build) {
+    const tiers = Object.keys(STRUCTURE_MATERIALS) as StructureMaterial[];
+    selectBuildMaterial(
+      tiers[(tiers.indexOf(buildMaterial) + 1) % tiers.length],
+    );
+  }
   if (e.code === "KeyE") interact();
   if (e.code === "KeyG") detonateC4();
   if (e.code === "KeyR") {
@@ -2126,8 +2227,14 @@ function updateHud() {
   $("#coordinates").textContent =
     `${floorLabel}${Math.round(player.x)} E · ${Math.round(player.z)} S`;
   $("#fps").textContent = `${fps} FPS`;
-  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-piece]"))
+  for (const b of document.querySelectorAll<HTMLButtonElement>(
+    "[data-piece]",
+  )) {
     b.classList.toggle("selected", b.dataset.piece === selected);
+    b.querySelector("span")!.textContent =
+      `${pieceCost({ kind: b.dataset.piece as PieceKind, material: buildMaterial })} wood`;
+  }
+
   const near = nearestLoot(),
     door = nearestDoor(),
     built = nearestBuiltDoor(),
@@ -2135,7 +2242,7 @@ function updateHud() {
   $("#hint-title").textContent = build
     ? "BUILD MODE"
     : built
-      ? "YOUR WOOD DOOR"
+      ? `YOUR ${structureMaterial(built).toUpperCase()} DOOR`
       : door >= 0
         ? BUILDINGS[door].name + " DOOR"
         : near >= 0
@@ -2144,7 +2251,7 @@ function updateHud() {
             ? "YOUR " + p.kind.toUpperCase()
             : "";
   $("#hint-text").textContent = build
-    ? "Aim at wall tops for upper floors · 1–6 select · R rotate"
+    ? "T material · 1–6 pieces · R rotate · Aim at wall tops for upper floors"
     : built
       ? "E / USE · " + (built.open ? "Close door" : "Open door")
       : door >= 0
@@ -2158,6 +2265,21 @@ function updateHud() {
           : p
             ? "Build mode → Dismantle to remove"
             : "";
+  const inspected = built ?? p;
+  $("#structure-health-label").hidden = !inspected;
+  $("#structure-health-bar").hidden = !inspected;
+  if (inspected) {
+    const hp = structureHealth(inspected),
+      max = maxStructureHealth(inspected);
+    $("#structure-health-label").textContent =
+      `${STRUCTURE_MATERIALS[structureMaterial(inspected)].name} ${inspected.kind} · ${hp} / ${max} HP`;
+    const meter = $<HTMLMeterElement>("#structure-health-bar");
+    meter.max = max;
+    meter.low = max * 0.33;
+    meter.high = max * 0.66;
+    meter.optimum = max;
+    meter.value = hp;
+  }
 }
 function updatePreview() {
   if (!build || !playing) {
@@ -2204,6 +2326,7 @@ function updatePreview() {
     candidate = target
       ? snapOnStructure(hit, selected, rotation, target, save.pieces)
       : snapPiece(hit, selected, rotation);
+    candidate.material = buildMaterial;
     reason = placementReason(
       candidate,
       { ...player, y: vertical },
@@ -2230,7 +2353,7 @@ function updatePreview() {
   }
   $("#placement").textContent =
     reason ||
-    `${selected.toUpperCase()} · ${COST[selected]} wood · Ready to place`;
+    `${STRUCTURE_MATERIALS[buildMaterial].name} ${selected.toUpperCase()} · ${pieceCost({ kind: selected, material: buildMaterial })} wood · Ready to place`;
   $<HTMLButtonElement>("#place").disabled = !!reason;
 }
 const interiorFrustum = new THREE.Frustum(),
@@ -2410,6 +2533,7 @@ function frame(now: number) {
       ...p.position,
       fuse: p.fuse,
       settled: p.settled,
+      attachedPieceId: p.attachedPieceId,
     })),
   );
   canvas.dataset.explosions = String(explosionSerial);
@@ -2490,6 +2614,16 @@ function frame(now: number) {
         angle: p.doorAngle ?? (p.open ? -Math.PI / 2 : 0),
       })),
   );
+  canvas.dataset.structureHealth = JSON.stringify(
+    save.pieces.map((p) => ({
+      id: p.id,
+      kind: p.kind,
+      material: structureMaterial(p),
+      health: structureHealth(p),
+      maxHealth: maxStructureHealth(p),
+    })),
+  );
+  canvas.dataset.buildMaterial = buildMaterial;
   canvas.dataset.buildCandidate = JSON.stringify(candidate ?? null);
   canvas.dataset.equipped = tool;
   canvas.dataset.ammo = JSON.stringify(loadout.rounds);
