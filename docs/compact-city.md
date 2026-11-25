@@ -15,3 +15,7 @@ Migration is idempotent and runs on a clone. If an unusually large legacy base c
 The editor's **Current map** action creates the compact city, separate jail island, bridge, resource yards and housing boundaries. Existing editor drafts remain unchanged until the user chooses to replace them.
 
 Automated checks cover building separation, street traversal, island/channel/bridge collision, clear housing lots, resource density, patrol routes, prefab marker rendering and migration integrity. Browser checks cover rendering, bridge traversal, building entry and the land interface. These checks do not establish physical-phone frame rate or network PvP performance.
+
+## Meshy jail kit
+
+The compact island now uses the prepared Meshy jail grounds and exterior. Its 34m perimeter fits within the existing island. The compound gates open with E / USE near the main gate or pedestrian gate, and the approach barrier lifts with them. Four climbable tower stairways, courtyard props, a hollow gatehouse and the bridge use a shared metre-based plan. The existing jail rooms, main entrance door and save migration stay in place. The map editor includes the assembled perimeter and all 18 standalone prepared components. See `art/building-kits/jail-meshy/README.md` for provenance, reproduction, and the retained single-floor interior limitation.

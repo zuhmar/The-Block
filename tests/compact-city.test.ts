@@ -1,3 +1,4 @@
+import { jailGate } from "../apps/client/src/fps/jail-ground-layout";
 import * as THREE from "three";
 import { primitiveModel } from "../apps/client/src/editor/primitives";
 import test from "node:test";
@@ -41,6 +42,9 @@ import { labEncounters } from "../apps/client/src/fps/lab-enemies";
 test("compact city has connected clear street blocks, a genuinely separated jail island and safe infill housing", () => {
   const undo = configureCompactCity();
   try {
+    assert(blocked({ x: 0, z: -107 }, []), "compound gates begin closed");
+    jailGate.angle = -Math.PI / 2;
+    jailGate.open = true;
     assert.equal(BUILDINGS.length, 36);
     assert.deepEqual(START, { x: 0, z: -110 });
     assert.equal(CITY_PLOTS.length, 12);
@@ -89,6 +93,8 @@ test("compact city has connected clear street blocks, a genuinely separated jail
       );
     }
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
   assert.equal(COMPACT.active, false);
@@ -147,6 +153,8 @@ test("relocated districts retain building-front orientation, loot alignment and 
         .length >= 12,
     );
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
 });
@@ -208,6 +216,8 @@ test("a purchased home migrates intact once, retaining plot identity, health, st
     const restored = readSave(copy);
     assert.equal(restored.survival!.mapVersion, 2);
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
 });
@@ -227,6 +237,8 @@ test("legacy structures stay whole on reserved infill lots, and oversized saves 
     );
     assert.equal(save.survival!.plots.length, 11);
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
   const oversized = readSave(null);
@@ -249,6 +261,8 @@ test("legacy structures stay whole on reserved infill lots, and oversized saves 
       /larger parcel/,
     );
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
   assert.equal(JSON.stringify(oversized), raw);
@@ -276,6 +290,8 @@ test("legacy asymmetric bases preserve the two-metre construction grid", () => {
     assert.equal(save.pieces[0].z % 2, 0);
     assert.equal(save.pieces[1].z - save.pieces[0].z, 1);
   } finally {
+    jailGate.angle = 0;
+    jailGate.open = false;
     undo();
   }
 });

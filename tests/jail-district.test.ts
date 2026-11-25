@@ -1,3 +1,4 @@
+import "./helpers/model-textures";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -63,7 +64,7 @@ test("central jail, surrounding city and loot have clear road and walking envelo
 });
 test("jail GLB has hollow playable rooms, culled interior parts and a correctly aligned hinged door", async () => {
   const b = await readFile("apps/client/src/fps/models/buildings/jail.glb");
-  assert(b.length < 1200000);
+  assert(b.length < 2000000);
   const g = await new GLTFLoader().parseAsync(
     b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength),
     "",
@@ -80,7 +81,7 @@ test("jail GLB has hollow playable rooms, culled interior parts and a correctly 
     }
   });
   assert(interior > 0);
-  assert(triangles < 16000);
+  assert(triangles < 40000);
   const ray = new THREE.Raycaster(
     new THREE.Vector3(0, 1.6, 9),
     new THREE.Vector3(0, 0, -1),

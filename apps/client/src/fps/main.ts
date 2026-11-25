@@ -1,3 +1,8 @@
+import {
+  jailGate,
+  jailGateNearby,
+  animateJailGate,
+} from "./jail-ground-layout";
 import { COMPACT, JAIL_BRIDGE, RESOURCE_PARKS } from "./compact-plan";
 import { configureCompactCity, migrateCompactSave } from "./compact-city";
 import {
@@ -582,12 +587,6 @@ for (const ROAD of ROADS) {
 }
 // The prison's only road connection crosses the water channel.
 if (COMPACT.active) {
-  box(scene, 0, -0.025, -88, 8, 0.05, 32, 0x656d6a);
-  for (const x of [-4.15, 4.15]) {
-    box(scene, x, 0.8, -88, 0.15, 0.15, 32, 0xd8d4bb);
-    for (let z = -104; z <= -72; z += 3)
-      box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
-  }
   for (const park of RESOURCE_PARKS)
     box(
       scene,
@@ -3007,6 +3006,13 @@ function interact() {
     updateHud();
     return toast(built.open ? "Opening wood door" : "Closing wood door");
   }
+  if (jailGateNearby(player, vertical)) {
+    jailGate.open = !jailGate.open;
+    sound.play(jailGate.open ? "door-open" : "door-close", { gain: 0.5 });
+    return toast(
+      jailGate.open ? "Opening compound gates" : "Closing compound gates",
+    );
+  }
   const door = nearestDoor();
   if (door >= 0) {
     toggleDoor(door);
@@ -3648,6 +3654,11 @@ function updateHud() {
           : p
             ? "Build mode → Dismantle to remove"
             : "";
+  if (!build && jailGateNearby(player, vertical)) {
+    $("#hint-title").textContent = "JAIL COMPOUND GATE";
+    $("#hint-text").textContent =
+      "E / USE · " + (jailGate.open ? "Close gates" : "Open gates");
+  }
   const plotSign =
     !build && survival().plots.find((p) => plotSignDistance(p) < 4);
   if (plotSign && !built && door < 0 && near < 0) {
@@ -3828,6 +3839,8 @@ function frame(now: number) {
     housingView.update(survival(), player);
   }
   coast.update(clock);
+  jailGrounds.root.visible =
+    !COMPACT.active || Math.hypot(player.x, player.z + 124) < 155;
   harbor.root.visible =
     Math.hypot(player.x + 60, player.z - (COMPACT.active ? 174 : 234)) < 165;
   northLab.root.visible =
@@ -3843,6 +3856,11 @@ function frame(now: number) {
   needsRender = false;
   if (playing) {
     recoilRemaining = Math.max(0, recoilRemaining - dt * 8);
+    animateJailGate(dt, [
+      player,
+      ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
+    ]);
+    jailGrounds.update();
     animateDoors(dt, [
       { ...player, y: vertical },
       ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
@@ -4210,6 +4228,8 @@ function frame(now: number) {
     useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
   );
   canvas.dataset.health = String(health);
+  canvas.dataset.jailKit = jailGrounds.source;
+  canvas.dataset.jailGate = JSON.stringify(jailGate);
   canvas.dataset.cityLayout = COMPACT.active
     ? "compact-island-city-v2"
     : "legacy-preserved";

@@ -1,0 +1,105 @@
+{
+  "source": "Meshy meshy-t2 / meshy-n1",
+  "sources": {
+    "cellblock": "ee0da50d762aced7b3c2c099f65cbb31397cfc8c3b4369df5d9b4a645e1513db",
+    "entrance": "f5c516dd48417c8d31c68e93b543b4ed527a1ffbf022a6aa6c85b2fe7a4bac39",
+    "corner-wing": "ce9ac4e20e021fdf3855bf61d37e84c2b1ef014ba2167a9c537d351a0d64b9d3",
+    "guard-tower": "9603788ce663fd076045b9f9a3b169bb61265aabf7cfc5fe9b1af78568d86e93",
+    "gatehouse": "e5214aae653f8916b6607f6446df9be6f78b22f6281e2a5db10c6655ffc97bff",
+    "bridge": "09df9bd8fbdc2b459258614f5f0c8fb0bad287764860cce275ed21a6bf19f2a5",
+    "fence-straight": "6931bd8a82996a5a31c29f28476632f884c1840cd77153605e9457c446aaa9f3",
+    "fence-corner": "c6ef04e96784bdf78dcf1b4ae9db57e23005b0ffb298ed3b9a23f8fe644d653c",
+    "vehicle-gate": "0efc6af229db86f252a3aaa717b7a815d5b3734fc7355afe9ca90428f67de92e",
+    "pedestrian-gate": "6504b39bf26a279159280521202448c1897998fa428bb91fc74896ede62e0dff",
+    "barrier-arm": "3b121e76ce36028bebe19dbcc5f13139d3e92bcbdb2e2ee76d549f12b34f603a",
+    "floodlight": "bf44431fbeb43175c982b1d22b46d89b018cdf6a37994bb59508e52ee08e0bce",
+    "basketball-hoop": "d1ff415740af95d0c86db24d76e9c4a26144b1a06a43f1cec0d10acd91c417ec",
+    "bench": "dc43ac6bc43e07fdb990945409344c8b446dcd5531fb725ce28eb36467d88bc2",
+    "picnic-table": "cb5f3989f429c5f23a314a77819ff8ae6ab1cd9589f797d2f6e56c7d9ddc2dea",
+    "pullup-bars": "530c2969c6a7f45b6bfd295a9066b33e67693dd4e82cc9d713e9ac7b9a674ad3",
+    "weight-bench": "6ebd84999f94f5345240c3b9b51ac02d98280ca50dd03b6526b60475ce071d95",
+    "trash-bin": "84dcf0efdc1127f33efcef3b10682567e9d1c8273fe411ef9ce4052829fecfd0"
+  },
+  "exports": {
+    "apps/client/src/fps/models/buildings/jail.glb": {
+      "bytes": 1787872,
+      "triangles": 35493
+    },
+    "apps/client/src/fps/models/jail-kit/cellblock.glb": {
+      "bytes": 339168,
+      "triangles": 7199
+    },
+    "apps/client/src/fps/models/jail-kit/entrance.glb": {
+      "bytes": 202204,
+      "triangles": 5023
+    },
+    "apps/client/src/fps/models/jail-kit/corner-wing.glb": {
+      "bytes": 242424,
+      "triangles": 7078
+    },
+    "apps/client/src/fps/models/jail-kit/guard-tower.glb": {
+      "bytes": 178984,
+      "triangles": 4613
+    },
+    "apps/client/src/fps/models/jail-kit/gatehouse.glb": {
+      "bytes": 65392,
+      "triangles": 1793
+    },
+    "apps/client/src/fps/models/jail-kit/bridge.glb": {
+      "bytes": 91336,
+      "triangles": 1981
+    },
+    "apps/client/src/fps/models/jail-kit/fence-straight.glb": {
+      "bytes": 201240,
+      "triangles": 3638
+    },
+    "apps/client/src/fps/models/jail-kit/fence-corner.glb": {
+      "bytes": 171100,
+      "triangles": 5028
+    },
+    "apps/client/src/fps/models/jail-kit/vehicle-gate.glb": {
+      "bytes": 172404,
+      "triangles": 4768
+    },
+    "apps/client/src/fps/models/jail-kit/pedestrian-gate.glb": {
+      "bytes": 109724,
+      "triangles": 3097
+    },
+    "apps/client/src/fps/models/jail-kit/barrier-arm.glb": {
+      "bytes": 78380,
+      "triangles": 1995
+    },
+    "apps/client/src/fps/models/jail-kit/floodlight.glb": {
+      "bytes": 70392,
+      "triangles": 1939
+    },
+    "apps/client/src/fps/models/jail-kit/basketball-hoop.glb": {
+      "bytes": 129840,
+      "triangles": 3252
+    },
+    "apps/client/src/fps/models/jail-kit/bench.glb": {
+      "bytes": 85832,
+      "triangles": 2539
+    },
+    "apps/client/src/fps/models/jail-kit/picnic-table.glb": {
+      "bytes": 97716,
+      "triangles": 2937
+    },
+    "apps/client/src/fps/models/jail-kit/pullup-bars.glb": {
+      "bytes": 86452,
+      "triangles": 2519
+    },
+    "apps/client/src/fps/models/jail-kit/weight-bench.glb": {
+      "bytes": 140752,
+      "triangles": 4020
+    },
+    "apps/client/src/fps/models/jail-kit/trash-bin.glb": {
+      "bytes": 64752,
+      "triangles": 1743
+    },
+    "apps/client/src/fps/models/street/jail-meshy-grounds.glb": {
+      "bytes": 6450812,
+      "triangles": 116063
+    }
+  }
+}

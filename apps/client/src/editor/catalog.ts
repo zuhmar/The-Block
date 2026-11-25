@@ -35,8 +35,11 @@ export const CATALOG: CatalogAsset[] = [];
 for (const [path, url] of Object.entries(urls)) {
   const key = path.split("/models/")[1];
   if (
-    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse)\//.test(key) ||
+    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit)\//.test(
+      key,
+    ) ||
     key.endsWith("jail-grounds.glb") ||
+    key.endsWith("jail-meshy-grounds.glb") ||
     key.endsWith("meshy-warehouse/warehouse.glb")
   )
     continue;
@@ -46,7 +49,9 @@ for (const [path, url] of Object.entries(urls)) {
       : undefined;
   CATALOG.push({
     id: "model:" + key,
-    name: type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+    name:
+      (key.startsWith("jail-kit/") ? "Jail · " : "") +
+      type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
     layer: b ? "Buildings" : "Props",
     behavior: key.startsWith("loot-chests") ? "loot" : "solid",
     url,
@@ -69,7 +74,7 @@ if (warehouse)
     size: [wb.width, wb.height, wb.depth],
   });
 const jail = Object.entries(urls).find(([p]) =>
-  p.endsWith("/street/jail-grounds.glb"),
+  p.endsWith("/street/jail-meshy-grounds.glb"),
 );
 if (jail)
   CATALOG.push({
@@ -291,7 +296,7 @@ export function newMap(current = true): MapDocument {
           y: 0.01,
         });
       }
-    add("bridge", "Jail island bridge", 0, -88, { scale: [8, 1, 32], y: 0 });
+    // The jail assembly includes its correctly aligned bridge.
     for (const plot of CITY_PLOTS)
       add(
         "housing-plot",

@@ -1,4 +1,9 @@
 import {
+  JAIL_KIT_TOWERS,
+  JAIL_KIT_PROPS,
+  JAIL_KIT_BUILDING_Z,
+} from "./jail-kit-layout";
+import {
   COMPACT,
   CITY_OUTLINE,
   CITY_PLOTS,
@@ -79,6 +84,7 @@ export function configureCompactCity() {
   }
   const buildingCount = BUILDINGS.length,
     lootCount = LOOT.length,
+    oldJailBoxes = JAIL_BOXES.slice(),
     trees = TREES.slice(),
     coast = COASTLINE.slice(),
     roads = ROADS.slice();
@@ -91,7 +97,8 @@ export function configureCompactCity() {
         Math.abs(loot.z - b.z) < b.depth / 2,
     );
     let d = { x: 0, z: 0 };
-    if (b?.type === "jail") d = shifts.jail;
+    if (b?.type === "jail")
+      d = { x: shifts.jail.x, z: shifts.jail.z + JAIL_KIT_BUILDING_Z };
     else if (b?.type.startsWith("military-")) d = shifts.military;
     else if (b?.type.startsWith("district-")) d = shifts.west;
     else if (b?.type.startsWith("north-")) d = shifts.lab;
@@ -104,7 +111,8 @@ export function configureCompactCity() {
   for (const b of BUILDINGS) {
     BUILDING_FRONTS.set(b, frontOf(b));
     let d = { x: 0, z: 0 };
-    if (b.type === "jail") d = shifts.jail;
+    if (b.type === "jail")
+      d = { x: shifts.jail.x, z: shifts.jail.z + JAIL_KIT_BUILDING_Z };
     else if (b.type.startsWith("military-")) d = shifts.military;
     else if (b.type.startsWith("district-")) d = shifts.west;
     else if (b.type.startsWith("north-")) d = shifts.lab;
@@ -127,6 +135,117 @@ export function configureCompactCity() {
   }
   shift(JAIL_OFFSET, shifts.jail);
   bounds(JAIL_GROUNDS, shifts.jail);
+  JAIL_GROUNDS.minX = -17;
+  JAIL_GROUNDS.maxX = 17;
+  JAIL_GROUNDS.minZ = JAIL_OFFSET.z - 17;
+  JAIL_GROUNDS.maxZ = JAIL_OFFSET.z + 17;
+  JAIL_TOWERS.forEach((t, i) =>
+    Object.assign(t, JAIL_KIT_TOWERS[i], {
+      z: JAIL_KIT_TOWERS[i].z + JAIL_OFFSET.z,
+    }),
+  );
+  JAIL_STAIRS.forEach((s, i) => {
+    const t = JAIL_KIT_TOWERS[i];
+    s.x = t.x;
+    s.startZ = JAIL_OFFSET.z + t.front * 7;
+  });
+  const kitBoxes = [
+    ...[-17, 17].map((x) => ({
+      x,
+      z: 0,
+      y: 0,
+      width: 0.15,
+      depth: 34,
+      height: 3,
+      role: "fence",
+    })),
+    { x: 0, z: -17, y: 0, width: 34, depth: 0.15, height: 3, role: "fence" },
+    ...[
+      [-9.5, 15],
+      [4, 4],
+      [12.5, 9],
+    ].map(([x, width]) => ({
+      x,
+      z: 17,
+      y: 0,
+      width,
+      depth: 0.15,
+      height: 3,
+      role: "fence",
+    })),
+    ...JAIL_KIT_PROPS.map((p) => ({ ...p, y: 0, role: "prop" })),
+    ...JAIL_KIT_TOWERS.flatMap((t) => [
+      {
+        x: t.x,
+        z: t.z,
+        y: 0,
+        width: 1.6,
+        depth: 1.6,
+        height: 3.2,
+        role: "shaft",
+      },
+      ...[-1, 1].map((side) => ({
+        x: t.x + side * 1.45,
+        z: t.z,
+        y: 3.2,
+        width: 0.1,
+        depth: 3,
+        height: 2.85,
+        role: "rail",
+      })),
+      {
+        x: t.x,
+        z: t.z + t.front * 1.45,
+        y: 3.2,
+        width: 3,
+        depth: 0.1,
+        height: 2.85,
+        role: "rail",
+      },
+      ...[-1, 1].map((side) => ({
+        x: t.x + side * 1.15,
+        z: t.z - t.front * 1.45,
+        y: 3.2,
+        width: 0.7,
+        depth: 0.1,
+        height: 2.85,
+        role: "rail",
+      })),
+    ]),
+    ...[-8.5, -5.5].map((x) => ({
+      x,
+      z: 15,
+      y: 0,
+      width: 0.16,
+      depth: 3,
+      height: 2.8,
+      role: "gatehouse",
+    })),
+    {
+      x: -7,
+      z: 16.5,
+      y: 0,
+      width: 3,
+      depth: 0.16,
+      height: 2.8,
+      role: "gatehouse",
+    },
+    ...[-8.125, -5.875].map((x) => ({
+      x,
+      z: 13.5,
+      y: 0,
+      width: 0.75,
+      depth: 0.16,
+      height: 2.8,
+      role: "gatehouse",
+    })),
+  ];
+  JAIL_BOXES.splice(
+    0,
+    JAIL_BOXES.length,
+    ...kitBoxes.map((b) => ({ ...b, z: b.z + JAIL_OFFSET.z })),
+  );
+
   shift(START, shifts.jail);
   bounds(COMPOUND, shifts.military);
   COMPOUND_BARRIERS.forEach((b) => shift(b, shifts.military));
@@ -249,6 +368,7 @@ export function configureCompactCity() {
   undo = () => {
     if (!COMPACT.active) return;
     for (const [o, values] of snapshots) Object.assign(o, values);
+    JAIL_BOXES.splice(0, JAIL_BOXES.length, ...oldJailBoxes);
     truncateCityBuildings(buildingCount);
     BUILDINGS.forEach((b) => BUILDING_FRONTS.delete(b));
     LOOT.splice(lootCount);

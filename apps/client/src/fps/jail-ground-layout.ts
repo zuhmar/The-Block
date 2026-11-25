@@ -1,3 +1,5 @@
+import { COMPACT } from "./compact-plan";
+import { JAIL_KIT_GATES, JAIL_KIT_GATEHOUSE } from "./jail-kit-layout";
 export const JAIL_OFFSET = { x: 0, z: 0 };
 /** Permanent prison grounds fit inside the original town's reserved land. */
 export const JAIL_GROUNDS = { minX: -14, maxX: 14, minZ: -12, maxZ: 12 };
@@ -111,8 +113,10 @@ export const JAIL_BOXES: GroundBox[] = [
 ];
 export function inJailGrounds(p: { x: number; z: number }, margin = 0) {
   return (
-    Math.abs(p.x - JAIL_OFFSET.x) <= 14 + margin &&
-    Math.abs(p.z - JAIL_OFFSET.z) <= 12 + margin
+    p.x >= JAIL_GROUNDS.minX - margin &&
+    p.x <= JAIL_GROUNDS.maxX + margin &&
+    p.z >= JAIL_GROUNDS.minZ - margin &&
+    p.z <= JAIL_GROUNDS.maxZ + margin
   );
 }
 function inside(
@@ -131,6 +135,7 @@ export function jailGroundBlocked(
   r = 0.32,
 ) {
   if (!inJailGrounds(p, 1)) return false;
+  if (COMPACT.active && jailGateBlocks(p, jailGate.angle, r, feet)) return true;
   if (
     JAIL_BOXES.some(
       (b) =>
@@ -165,7 +170,12 @@ export function jailGroundSurface(p: { x: number; z: number }, max: number) {
   for (const t of JAIL_TOWERS)
     if (t.y <= max + 0.001 && inside(p, t)) y = Math.max(y, t.y);
   for (const b of JAIL_BOXES)
-    if (b.role === "bench" && b.height <= max + 0.001 && inside(p, b))
+    if (
+      (b.role === "bench" ||
+        (COMPACT.active && b.role === "prop" && b.height <= 1.2)) &&
+      b.height <= max + 0.001 &&
+      inside(p, b)
+    )
       y = Math.max(y, b.height);
   for (const s of JAIL_STAIRS) {
     const progress = ((p.z - s.startZ) * s.direction) / s.run,
@@ -183,6 +193,16 @@ export function jailGroundSurface(p: { x: number; z: number }, max: number) {
 export function jailGroundCeiling(p: { x: number; z: number }, feet: number) {
   if (!inJailGrounds(p)) return Infinity;
   let y = Infinity;
+  if (
+    COMPACT.active &&
+    feet < 2.78 &&
+    inside(p, {
+      ...JAIL_KIT_GATEHOUSE,
+      x: JAIL_OFFSET.x + JAIL_KIT_GATEHOUSE.x,
+      z: JAIL_OFFSET.z + JAIL_KIT_GATEHOUSE.z,
+    })
+  )
+    y = 2.78;
   for (const t of JAIL_TOWERS) {
     if (!inside(p, t, 0.12)) continue;
     if (t.y - 0.18 >= feet + 1.9 - 0.01) y = Math.min(y, t.y - 0.18);
@@ -200,4 +220,51 @@ export function jailGroundCeiling(p: { x: number; z: number }, feet: number) {
       y = Math.min(y, under);
   }
   return y;
+}
+
+export const jailGate = { open: false, angle: 0 };
+export function jailGateBlocks(
+  p: { x: number; z: number },
+  angle = jailGate.angle,
+  radius = 0.32,
+  feet = 0,
+) {
+  if (!COMPACT.active || feet > 3) return false;
+  return JAIL_KIT_GATES.some((g) => {
+    const dx = p.x - JAIL_OFFSET.x - (g.x - g.width / 2),
+      dz = p.z - JAIL_OFFSET.z - g.z;
+    const x = dx * Math.cos(angle) - dz * Math.sin(angle),
+      z = dx * Math.sin(angle) + dz * Math.cos(angle);
+    return x > -radius && x < g.width + radius && Math.abs(z) < 0.09 + radius;
+  });
+}
+export function jailGateNearby(p: { x: number; z: number }, feet = 0) {
+  return (
+    COMPACT.active &&
+    feet < 1 &&
+    JAIL_KIT_GATES.some(
+      (g) =>
+        Math.hypot(p.x - JAIL_OFFSET.x - g.x, p.z - JAIL_OFFSET.z - g.z) < 2.8,
+    )
+  );
+}
+export function animateJailGate(
+  dt: number,
+  occupants: { x: number; z: number }[],
+) {
+  if (!COMPACT.active) return;
+  const goal = jailGate.open ? -Math.PI / 2 : 0;
+  const next =
+    jailGate.angle +
+    Math.sign(goal - jailGate.angle) *
+      Math.min(Math.abs(goal - jailGate.angle), dt * 1.8);
+  // Sample the sweep so a closing leaf cannot pass through an occupant.
+  for (let i = 1; i <= 4; i++)
+    if (
+      occupants.some((p) =>
+        jailGateBlocks(p, jailGate.angle + ((next - jailGate.angle) * i) / 4),
+      )
+    )
+      return;
+  jailGate.angle = next;
 }
