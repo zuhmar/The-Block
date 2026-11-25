@@ -84,5 +84,6 @@
   "actualCredits": 90,
   "creditEvidence": "Balance delta 115 to 25 after six requested generations",
   "balanceAfter": 25,
-  "integratedInGame": false
+  "integratedInGame": true,
+  "runtimeDirectory": "apps/client/static/assets/meshy-nature-v1"
 }

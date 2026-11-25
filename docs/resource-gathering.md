@@ -20,3 +20,9 @@ Wood joins the existing building balance. Rock, sulfur and metal appear in their
 Verification: `pnpm verify` includes resource population/placement, collision removal, fixed/random respawn, base obstruction, wallet/save compatibility, hit cooldown, swing phases and stable proxy identity checks. `tests/nature-models.test.ts` checks all twelve GLB exports through GLTFLoader.
 
 The carried inventory now limits collection to available stack space and requires a carried axe/pickaxe. See [inventory](fps-inventory.md) for capacity, the starter reserve, and resource item handling.
+
+## Meshy visuals
+
+All six gathering kinds now use original reference-based Meshy models, prepared by `pnpm assets:meshy-gathering`. The game and editor share `/assets/meshy-nature-v1/`. Models fit the previous world envelopes and use one material each, instanced rendering, 28m near/distant detail switching and the existing 118m visibility limit. Runtime exports are roughly 250–370KB near and 90–135KB distant, with 1024/512px textures. Harvesting proxies, collision footprints, resource IDs, health, rewards, save formats and tree/node respawn rules are unchanged. Original Meshy downloads and task provenance remain under `art/models/meshy-gathering`.
+
+Integration validation loaded all six Meshy sources in desktop and phone-layout browsers. A local test save confirmed axe and pickaxe swings, wood and rock rewards, removal of depleted models, same-location tree regrowth, relocated rock-node respawn and persistence after reload without page errors. Asset tests check twelve self-contained GLBs, embedded texture limits, source hashes, grounded bounds and lighter distant meshes. Phone-layout emulation is not a physical-device frame-rate benchmark.

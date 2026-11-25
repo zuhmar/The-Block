@@ -108,7 +108,7 @@ for (const kind of [
         : kind === "node-metal"
           ? "metal"
           : "rock",
-    url: `/assets/nature-models/${kind}-lod1.glb`,
+    url: `/assets/meshy-nature-v1/${kind}-lod1.glb`,
   });
 for (const kind of ["workbench", "furnace"])
   CATALOG.push({

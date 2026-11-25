@@ -1,0 +1,197 @@
+{
+  "source": "meshy",
+  "models": [
+    {
+      "id": "tree-broadleaf",
+      "lod": 0,
+      "file": "tree-broadleaf.glb",
+      "source": "meshy",
+      "sourceSHA256": "ec7d130697694965eba1c03533f8e92bc9246d7369ba148701ac33341394e10c",
+      "triangles": 3578,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 6.641,
+        "y": 7.39,
+        "z": 5.802
+      },
+      "textureMax": 1024,
+      "bytes": 341956
+    },
+    {
+      "id": "tree-broadleaf",
+      "lod": 1,
+      "file": "tree-broadleaf-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "ec7d130697694965eba1c03533f8e92bc9246d7369ba148701ac33341394e10c",
+      "triangles": 787,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 6.641,
+        "y": 7.39,
+        "z": 5.802
+      },
+      "textureMax": 512,
+      "bytes": 122488
+    },
+    {
+      "id": "tree-pine",
+      "lod": 0,
+      "file": "tree-pine.glb",
+      "source": "meshy",
+      "sourceSHA256": "42ca2450e3e4745f2c090529a4750e45539e89b56b718466268a6be7fd1c76d6",
+      "triangles": 4286,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 4.511,
+        "y": 7.59,
+        "z": 4.627
+      },
+      "textureMax": 1024,
+      "bytes": 334124
+    },
+    {
+      "id": "tree-pine",
+      "lod": 1,
+      "file": "tree-pine-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "42ca2450e3e4745f2c090529a4750e45539e89b56b718466268a6be7fd1c76d6",
+      "triangles": 942,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 4.511,
+        "y": 7.59,
+        "z": 4.627
+      },
+      "textureMax": 512,
+      "bytes": 124288
+    },
+    {
+      "id": "tree-birch",
+      "lod": 0,
+      "file": "tree-birch.glb",
+      "source": "meshy",
+      "sourceSHA256": "08057c86240a9affdc43e2823268bf90ee015e3a55bbcc845ad934b18ab1af6d",
+      "triangles": 3776,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 5.318,
+        "y": 7.45,
+        "z": 3.729
+      },
+      "textureMax": 1024,
+      "bytes": 377916
+    },
+    {
+      "id": "tree-birch",
+      "lod": 1,
+      "file": "tree-birch-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "08057c86240a9affdc43e2823268bf90ee015e3a55bbcc845ad934b18ab1af6d",
+      "triangles": 830,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 5.318,
+        "y": 7.45,
+        "z": 3.729
+      },
+      "textureMax": 512,
+      "bytes": 137288
+    },
+    {
+      "id": "node-rock",
+      "lod": 0,
+      "file": "node-rock.glb",
+      "source": "meshy",
+      "sourceSHA256": "04c5f5959f40ee81ab64f5728c28b3e1e987b06327759b3dbacfecf582546ac8",
+      "triangles": 2410,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.82,
+        "z": 1.967
+      },
+      "textureMax": 1024,
+      "bytes": 256944
+    },
+    {
+      "id": "node-rock",
+      "lod": 1,
+      "file": "node-rock-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "04c5f5959f40ee81ab64f5728c28b3e1e987b06327759b3dbacfecf582546ac8",
+      "triangles": 530,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.82,
+        "z": 1.967
+      },
+      "textureMax": 512,
+      "bytes": 93456
+    },
+    {
+      "id": "node-sulfur",
+      "lod": 0,
+      "file": "node-sulfur.glb",
+      "source": "meshy",
+      "sourceSHA256": "59fc9fddc191886f2c0623cd0c95a90adf023c2fc54187e7376315208498f8b7",
+      "triangles": 2689,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.896,
+        "z": 1.967
+      },
+      "textureMax": 1024,
+      "bytes": 297092
+    },
+    {
+      "id": "node-sulfur",
+      "lod": 1,
+      "file": "node-sulfur-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "59fc9fddc191886f2c0623cd0c95a90adf023c2fc54187e7376315208498f8b7",
+      "triangles": 591,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.896,
+        "z": 1.967
+      },
+      "textureMax": 512,
+      "bytes": 111252
+    },
+    {
+      "id": "node-metal",
+      "lod": 0,
+      "file": "node-metal.glb",
+      "source": "meshy",
+      "sourceSHA256": "fa595a6f8a97b2a108da932293ecb9b168d7c6f1bb1207e9a6b4d42e7514a09e",
+      "triangles": 2645,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.82,
+        "z": 1.967
+      },
+      "textureMax": 1024,
+      "bytes": 313124
+    },
+    {
+      "id": "node-metal",
+      "lod": 1,
+      "file": "node-metal-lod1.glb",
+      "source": "meshy",
+      "sourceSHA256": "fa595a6f8a97b2a108da932293ecb9b168d7c6f1bb1207e9a6b4d42e7514a09e",
+      "triangles": 581,
+      "drawCalls": 1,
+      "sizeMetres": {
+        "x": 2.551,
+        "y": 1.82,
+        "z": 1.967
+      },
+      "textureMax": 512,
+      "bytes": 113368
+    }
+  ]
+}

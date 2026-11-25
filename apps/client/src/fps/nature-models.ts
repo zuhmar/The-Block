@@ -15,7 +15,7 @@ export async function preloadNatureModels() {
       [0, 1].map(async (lod) => {
         const root = (
           await loader.loadAsync(
-            `/assets/nature-models/${kind}${lod ? "-lod1" : ""}.glb`,
+            `/assets/meshy-nature-v1/${kind}${lod ? "-lod1" : ""}.glb`,
           )
         ).scene;
         root.updateMatrixWorld(true);
@@ -36,8 +36,7 @@ export async function preloadNatureModels() {
 export function natureModelSources() {
   return Object.keys(GATHER_TYPES)
     .map(
-      (kind) =>
-        `${kind}:${templates.has(kind + ":0") ? "blender" : "fallback"}`,
+      (kind) => `${kind}:${templates.has(kind + ":0") ? "meshy" : "fallback"}`,
     )
     .join(",");
 }
