@@ -1,3 +1,4 @@
+export const JAIL_OFFSET = { x: 0, z: 0 };
 /** Permanent prison grounds fit inside the original town's reserved land. */
 export const JAIL_GROUNDS = { minX: -14, maxX: 14, minZ: -12, maxZ: 12 };
 export const JAIL_TOWERS = [-1, 1].flatMap((x) =>
@@ -109,7 +110,10 @@ export const JAIL_BOXES: GroundBox[] = [
   ]),
 ];
 export function inJailGrounds(p: { x: number; z: number }, margin = 0) {
-  return Math.abs(p.x) <= 14 + margin && Math.abs(p.z) <= 12 + margin;
+  return (
+    Math.abs(p.x - JAIL_OFFSET.x) <= 14 + margin &&
+    Math.abs(p.z - JAIL_OFFSET.z) <= 12 + margin
+  );
 }
 function inside(
   p: { x: number; z: number },

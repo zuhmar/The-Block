@@ -1,6 +1,8 @@
+import { COMPACT, compactLand } from "./compact-plan";
 /** Coast stays outside every previously buildable point in the 384m world. */
 export const WORLD_SIZE = 640;
 export function coastLimits(x: number) {
+  if (COMPACT.active) return { north: -80, south: 176 };
   const h =
     250 * Math.pow(Math.max(0, 1 - Math.pow(Math.abs(x) / 250, 6)), 1 / 6);
   const envelope = Math.min(1, h / 60),
@@ -16,6 +18,7 @@ export function coastLimits(x: number) {
   };
 }
 export function onIsland(p: { x: number; z: number }, radius = 0) {
+  if (COMPACT.active) return compactLand(p, radius);
   for (const [dx, dz] of [
     [0, 0],
     [-radius, 0],

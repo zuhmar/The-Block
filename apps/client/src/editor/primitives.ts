@@ -46,6 +46,15 @@ export function primitiveModel(kind: string) {
     root.add(mesh);
     return mesh;
   };
+  if (kind === "jail-island") {
+    cyl(0, 0, 0, 0.5, 0.1, 0xb7b59f, 64);
+    return root;
+  }
+  if (kind === "housing-plot") {
+    for (const x of [-0.5, 0.5]) box(x, 0.04, 0, 0.012, 0.02, 1, 0xd9b95c);
+    for (const z of [-0.5, 0.5]) box(0, 0.04, z, 1, 0.02, 0.012, 0xd9b95c);
+    return root;
+  }
   if (["road", "roadplain", "water", "grass", "dirt", "box"].includes(kind)) {
     const color =
       kind === "water"

@@ -228,12 +228,14 @@ export const DOOR_WIDTH = 1.6,
   WALL = 0.22;
 export const doorAngles = BUILDINGS.map(() => 0);
 export const doorTargets = BUILDINGS.map(() => false);
+export const BUILDING_FRONTS = new WeakMap<object, number>();
 export const frontOf = (b: Building) =>
-  isNorthBuilding(b.type)
+  BUILDING_FRONTS.get(b) ??
+  (isNorthBuilding(b.type)
     ? northFront(b.type)
     : b.type === "jail" || b.z < 0
       ? 1
-      : -1;
+      : -1);
 export const doorPosition = (index: number) => {
   const b = BUILDINGS[index],
     a = doorAngles[index];
@@ -790,4 +792,29 @@ export function containingBuilding(p: BuildingPoint) {
       Math.abs(p.x - b.x) < b.width / 2 - WALL / 2 &&
       Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2,
   );
+}
+
+/** Reuse an existing furnished prefab without changing its dimensions or door orientation. */
+export function copyCityBuilding(
+  source: number,
+  x: number,
+  z: number,
+  name: string,
+) {
+  const template = BUILDINGS[source],
+    b = { ...template, x, z, name };
+  const index = BUILDINGS.push(b) - 1;
+  BUILDING_FRONTS.set(b, frontOf(template));
+  doorAngles.push(0);
+  doorTargets.push(false);
+  FURNITURE.push(structuredClone(FURNITURE[source]));
+  PARTITIONS.push(structuredClone(PARTITIONS[source]));
+  return index;
+}
+export function truncateCityBuildings(length: number) {
+  BUILDINGS.splice(length);
+  doorAngles.splice(length);
+  doorTargets.splice(length);
+  FURNITURE.splice(length);
+  PARTITIONS.splice(length);
 }

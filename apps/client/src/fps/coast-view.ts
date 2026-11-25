@@ -1,3 +1,4 @@
+import { COMPACT, jailOutline } from "./compact-plan";
 import * as THREE from "three";
 import { COASTLINE, WORLD_SIZE, onIsland } from "./coast";
 export function createCoast() {
@@ -9,11 +10,31 @@ export function createCoast() {
   outline.closePath();
   const land = new THREE.Mesh(
     new THREE.ShapeGeometry(outline),
-    new THREE.MeshStandardMaterial({ color: 0x7f995c, roughness: 0.9 }),
+    new THREE.MeshStandardMaterial({
+      color: COMPACT.active ? 0xb2b4a4 : 0x7f995c,
+      roughness: 0.9,
+    }),
   );
   land.rotation.x = -Math.PI / 2;
   land.position.y = -0.05;
-  root.add(land);
+  const terrain = new THREE.Group();
+  terrain.add(land);
+  root.add(terrain);
+  if (COMPACT.active) {
+    const outline = new THREE.Shape();
+    jailOutline().forEach((p, i) =>
+      i ? outline.lineTo(p.x, -p.z) : outline.moveTo(p.x, -p.z),
+    );
+    outline.closePath();
+    const island = new THREE.Mesh(
+      new THREE.ShapeGeometry(outline),
+      new THREE.MeshStandardMaterial({ color: 0xb7b59f, roughness: 0.9 }),
+    );
+    island.rotation.x = -Math.PI / 2;
+    island.position.y = -0.05;
+    terrain.add(island);
+  }
+
   const sea = new THREE.Mesh(
     new THREE.PlaneGeometry(WORLD_SIZE * 5, WORLD_SIZE * 5),
     new THREE.MeshStandardMaterial({
@@ -80,7 +101,7 @@ export function createCoast() {
   root.add(ripples);
   return {
     root,
-    surface: land,
+    surface: terrain,
     update(time: number) {
       (ripples.material as THREE.MeshBasicMaterial).opacity =
         0.18 + Math.sin(time * 0.6) * 0.04;

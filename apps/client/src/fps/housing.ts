@@ -1,3 +1,4 @@
+import { COMPACT, CITY_PLOTS } from "./compact-plan";
 import {
   BUILDINGS,
   LOOT,
@@ -16,6 +17,15 @@ import {
   type SurvivalState,
 } from "./survival-state";
 export function createHousingPlots(pieces: Piece[]): HousingPlot[] {
+  if (COMPACT.active)
+    return CITY_PLOTS.filter(
+      (plot) =>
+        !pieces.some(
+          (p) =>
+            Math.abs(p.x - plot.x) < plot.width / 2 + 2 &&
+            Math.abs(p.z - plot.z) < plot.depth / 2 + 2,
+        ),
+    ).map((p) => ({ ...p }));
   const candidates: { x: number; z: number }[] = [];
   for (let x = -176; x <= 176; x += 8)
     for (let z = -176; z <= 176; z += 8)

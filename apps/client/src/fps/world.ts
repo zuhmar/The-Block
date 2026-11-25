@@ -1,3 +1,4 @@
+import { COMPACT, onCityLand, onJailBridge } from "./compact-plan";
 import { readSurvival, type SurvivalState } from "./survival-state";
 import {
   configureNorthLab,
@@ -137,6 +138,7 @@ ROADS.push([
 ]);
 export const CITY_RING = ROADS[1];
 export function configureWestRoad(pieces: Piece[]) {
+  if (COMPACT.active) return;
   configureNorthLab(pieces);
   const route = westConnector(pieces, TREES, BUILDINGS);
   ROADS.splice(4);
@@ -147,7 +149,15 @@ export function configureWestRoad(pieces: Piece[]) {
   if (NORTH_ROAD.length > 1) ROADS.push(NORTH_ROAD);
 }
 export const pavedWidth = (road: Point[]) =>
-  road === CITY_RING ? 5.4 : road === NORTH_ROAD ? 6 : 9;
+  COMPACT.active
+    ? road === CITY_RING
+      ? 5.4
+      : 8
+    : road === CITY_RING
+      ? 5.4
+      : road === NORTH_ROAD
+        ? 6
+        : 9;
 export function pavedRoadDistance(p: Point) {
   return Math.min(
     ...ROADS.flatMap((road) =>
@@ -371,19 +381,25 @@ export function inBox(p: Point, b: Box, radius = 0) {
   );
 }
 export const inTown = (p: Point) =>
-  (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) ||
-  inCompound(p, 1) ||
-  inNorthLab(p, 1) ||
-  inWestQuarter(p) ||
-  inHarbor(p);
+  COMPACT.active
+    ? onCityLand(p) || (Math.abs(p.x) < 24 && Math.abs(p.z + 124) < 26)
+    : (p.x > -32 && p.x < 32 && p.z > -32 && p.z < 29) ||
+      inCompound(p, 1) ||
+      inNorthLab(p, 1) ||
+      inWestQuarter(p) ||
+      inHarbor(p);
 export const onBridge = (p: Point) =>
-  Math.abs(p.z - 7) < 3 && p.x > 39 && p.x < 54;
+  COMPACT.active
+    ? onJailBridge(p)
+    : Math.abs(p.z - 7) < 3 && p.x > 39 && p.x < 54;
 export function blockedTerrain(p: Point, radius = 0.32) {
   return (
     (!onIsland(p, radius) && !onDock(p, radius)) ||
     Math.abs(p.x) > MAP_SIZE / 2 - 3 - radius ||
     Math.abs(p.z) > MAP_SIZE / 2 - 3 - radius ||
-    (Math.abs(p.x - riverX(p.z)) < 3.3 + radius && !onBridge(p))
+    (!COMPACT.active &&
+      Math.abs(p.x - riverX(p.z)) < 3.3 + radius &&
+      !onBridge(p))
   );
 }
 // Sparse, deterministic trees; open meadows are deliberately left clear for homes.
@@ -610,7 +626,7 @@ export function placementReason(
     for (const dx of [-1, 0, 1])
       for (const dz of [-1, 0, 1]) {
         const p = { x: piece.x + dx, z: piece.z + dz };
-        if (inTown(p))
+        if (inTown(p) && !COMPACT.active)
           return "Build in the meadows outside towns and compounds";
         if (roadDistance(p) < 5) return "Keep roads and sidewalks clear";
         if (blockedTerrain(p, 0.3)) return "Choose dry, level ground";

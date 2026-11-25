@@ -1,3 +1,4 @@
+import { COMPACT } from "./compact-plan";
 import * as THREE from "three";
 import { HARBOR_BOXES, DECKS } from "./harbor-layout";
 let model: THREE.Group | undefined;
@@ -10,6 +11,7 @@ export function harborModel() {
   const root = model?.clone(true) ?? new THREE.Group(),
     proxy = new THREE.Group();
   root.name = "south-harbor";
+  if (model && COMPACT.active) root.position.z = -60;
   const geometry = new THREE.BoxGeometry(1, 1, 1),
     material = new THREE.MeshStandardMaterial({
       color: 0x627d88,

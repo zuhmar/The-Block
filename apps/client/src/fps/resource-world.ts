@@ -1,3 +1,4 @@
+import { COMPACT, parkSite, RESOURCE_PARKS } from "./compact-plan";
 import { buildingEnabled } from "./building-layout";
 import {
   BUILDINGS,
@@ -115,11 +116,13 @@ export class ResourceWorld {
     this.tick(now, START);
   }
   private staticSite(p: Point, radius: number) {
+    if (COMPACT.active && !parkSite(p, radius)) return false;
     if (blockedTerrain(p, radius + 1) || roadDistance(p) < 4.8 + radius)
       return false;
     for (const dx of [-radius, 0, radius])
       for (const dz of [-radius, 0, radius])
-        if (inTown({ x: p.x + dx, z: p.z + dz })) return false;
+        if (!COMPACT.active && inTown({ x: p.x + dx, z: p.z + dz }))
+          return false;
     return (
       !BUILDINGS.some(
         (b) =>
@@ -176,8 +179,15 @@ export class ResourceWorld {
   }
   private pickNode(r: WorldResource, player?: Point, near?: Point) {
     for (let attempt = 0; attempt < 700; attempt++) {
-      const p =
-        near && attempt < 150
+      const park = COMPACT.active
+        ? RESOURCE_PARKS.find((p) => p.kind === r.kind)
+        : undefined;
+      const p = park
+        ? {
+            x: park.x + (this.random() - 0.5) * (park.width - 4),
+            z: park.z + (this.random() - 0.5) * (park.depth - 4),
+          }
+        : near && attempt < 150
           ? {
               x: near.x + (this.random() - 0.5) * 18,
               z: near.z + (this.random() - 0.5) * 18,

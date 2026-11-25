@@ -13,6 +13,7 @@ export type HousingPlot = {
 export type Lease = { plotId: string; boughtAt: number; paidUntil: number };
 export type SurvivalState = {
   version: 1;
+  mapVersion?: 2;
   cash: number;
   dead: boolean;
   plots: HousingPlot[];
@@ -35,6 +36,7 @@ export function readSurvival(value: unknown): SurvivalState | undefined {
   const v = value as SurvivalState;
   if (v.version !== 1) return;
   const s = newSurvival();
+  if (v.mapVersion === 2) s.mapVersion = 2;
   s.cash = integer(v.cash) ? Math.min(1000000, v.cash) : 0;
   s.dead = v.dead === true;
   const ids = new Set<string>();

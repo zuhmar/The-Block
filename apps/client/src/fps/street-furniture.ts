@@ -1,5 +1,10 @@
 import * as THREE from "three";
-import { JAIL_BOXES, JAIL_TOWERS, JAIL_STAIRS } from "./jail-ground-layout";
+import {
+  JAIL_BOXES,
+  JAIL_TOWERS,
+  JAIL_STAIRS,
+  JAIL_OFFSET,
+} from "./jail-ground-layout";
 import type { BinKind } from "./west-quarter";
 const urls = {
   metal: new URL("./models/street/bin-metal.glb", import.meta.url).href,
@@ -58,5 +63,6 @@ export function jailGroundModel() {
         0.2,
         s.run / 20,
       );
+  if (loaded.has("jail")) root.position.set(JAIL_OFFSET.x, 0, JAIL_OFFSET.z);
   return { root, proxy };
 }

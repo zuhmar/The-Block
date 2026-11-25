@@ -215,7 +215,11 @@ export function loadBlenderBuilding(
   const b = BUILDINGS[index],
     proxy = createBuildingShotProxy(index);
   try {
-    const root = loaded.get(index);
+    const root =
+      loaded.get(index) ??
+      loaded
+        .get(BUILDINGS.findIndex((other) => other.type === b.type))
+        ?.clone(true);
     if (!root) throw Error("Building asset unavailable");
     const door = root.getObjectByName(b.type + "-door-hinge");
     if (!door) throw Error("Missing animated building door");

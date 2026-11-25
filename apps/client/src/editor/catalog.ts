@@ -1,13 +1,12 @@
 /// <reference types="vite/client" />
+import { configureCompactCity } from "../fps/compact-city";
+import { CITY_PLOTS, RESOURCE_PARKS, JAIL_ISLAND } from "../fps/compact-plan";
+import { START } from "../fps/world";
+import { ENEMY_TYPES } from "../fps/enemy";
+import { COMPOUND_PATROLS } from "../fps/military-compound";
+import { labEncounters } from "../fps/lab-enemies";
 import { NORTH_LAB } from "../fps/north-lab-layout";
-import {
-  BUILDINGS,
-  ROADS,
-  pavedWidth,
-  LOOT,
-  riverX,
-  configureWestRoad,
-} from "../fps/world";
+import { BUILDINGS, ROADS, pavedWidth, LOOT } from "../fps/world";
 import { COASTLINE } from "../fps/coast";
 import { ResourceWorld } from "../fps/resource-world";
 import {
@@ -129,6 +128,22 @@ for (const [id, name, primitive, layer, behavior, scale] of [
     [10, 0.08, 10],
   ],
   ["sidewalk", "Sidewalk", "box", "Terrain", "decoration", [2, 0.15, 12]],
+  [
+    "jail-island",
+    "Jail island ground",
+    "jail-island",
+    "Terrain",
+    "decoration",
+    [48, 1, 52],
+  ],
+  [
+    "housing-plot",
+    "Housing plot boundary",
+    "housing-plot",
+    "Terrain",
+    "decoration",
+    [16, 1, 16],
+  ],
   ["water", "Water patch", "water", "Terrain", "decoration", [12, 0.1, 12]],
   ["grass", "Grass patch", "grass", "Terrain", "decoration", [12, 0.15, 12]],
   ["dirt", "Dirt path", "dirt", "Terrain", "decoration", [3, 0.08, 12]],
@@ -241,7 +256,7 @@ export function newMap(current = true): MapDocument {
     );
   };
   if (current) {
-    configureWestRoad([]);
+    configureCompactCity();
     add(
       "assembly:north-lab-yard",
       "North Works · yard",
@@ -258,8 +273,12 @@ export function newMap(current = true): MapDocument {
         b.z,
       ),
     );
-    add("assembly:jail", "Jail fence & towers", 0, 0);
-    add("assembly:harbor", "South harbor assembly", -60, 234);
+    add("assembly:jail", "Jail fence & towers", JAIL_ISLAND.x, JAIL_ISLAND.z);
+    add("jail-island", "Jail island ground", JAIL_ISLAND.x, JAIL_ISLAND.z, {
+      scale: [JAIL_ISLAND.rx * 2, 1, JAIL_ISLAND.rz * 2],
+      y: -0.1,
+    });
+    add("assembly:harbor", "South harbor assembly", -60, 174);
     for (const [r, road] of ROADS.entries())
       for (let i = 1; i < road.length; i++) {
         const a = road[i - 1],
@@ -272,19 +291,23 @@ export function newMap(current = true): MapDocument {
           y: 0.01,
         });
       }
-    for (let z = -232; z < 233; z += 16) {
-      const x = riverX(z);
-      add("water", "Eastern river", x, z, {
-        scale: [7.5, 0.1, 17],
-        y: -0.025,
-        yaw: (Math.atan2(riverX(z + 8) - riverX(z - 8), 16) * 180) / Math.PI,
-      });
-    }
-    add("bridge", "Eastern road bridge", 47, 7, {
-      yaw: 90,
-      scale: [10, 1, 34],
-      y: 0.1,
-    });
+    add("bridge", "Jail island bridge", 0, -88, { scale: [8, 1, 32], y: 0 });
+    for (const plot of CITY_PLOTS)
+      add(
+        "housing-plot",
+        plot.id + " · $" + plot.price + " / $" + plot.daily + " daily",
+        plot.x,
+        plot.z,
+        { scale: [plot.width, 1, plot.depth] },
+      );
+    for (const park of RESOURCE_PARKS)
+      add(
+        park.kind === "tree" ? "grass" : "dirt",
+        park.kind === "tree" ? "City pocket park" : "Resource yard",
+        park.x,
+        park.z,
+        { scale: [park.width, 0.1, park.depth], y: -0.02 },
+      );
     LOOT.forEach((l) =>
       add(
         l.kind === "trash"
@@ -319,27 +342,38 @@ export function newMap(current = true): MapDocument {
         respawn: t.kind.startsWith("tree") ? 120 : 45,
       }),
     );
-    add("spawn-player", "Town start", 0, 14);
-    for (const [i, p] of [
-      [-14, 33],
-      [-32, -30],
-      [32, -32],
-      [68, 0],
-      [90, -18],
-      [72, 30],
-      [96, 14],
-    ].entries())
+    add("spawn-player", "Jail release", START.x, START.z);
+    for (const [kind, spec] of Object.entries(ENEMY_TYPES))
       add(
-        i === 0 ? "spawn-easy" : i === 1 ? "spawn-police" : "spawn-swat",
-        "NPC spawn " + (i + 1),
-        p[0],
-        p[1],
+        kind === "lookout"
+          ? "spawn-easy"
+          : kind === "police"
+            ? "spawn-police"
+            : "spawn-swat",
+        kind + " patrol",
+        spec.spawn.x,
+        spec.spawn.z,
+      );
+    for (const patrol of COMPOUND_PATROLS)
+      add("spawn-swat", patrol.id, patrol.points[0].x, patrol.points[0].z);
+    for (const guard of labEncounters())
+      add(
+        guard.labTier === "easy"
+          ? "spawn-easy"
+          : guard.labTier === "medium"
+            ? "spawn-police"
+            : "spawn-swat",
+        guard.id,
+        guard.patrol.points[0].x,
+        guard.patrol.points[0].z,
       );
   }
   return {
     format: "street-survival-map",
     version: 1,
-    name: current ? "Street Survival · current map" : "Untitled island",
+    name: current
+      ? "Street Survival · compact city & jail island"
+      : "Untitled island",
     worldSize: 640,
     coast: COASTLINE.filter((_, i) => i % 16 === 0).map((p) => ({ ...p })),
     objects,

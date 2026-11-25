@@ -1,3 +1,5 @@
+import { COMPACT, JAIL_BRIDGE, RESOURCE_PARKS } from "./compact-plan";
+import { configureCompactCity, migrateCompactSave } from "./compact-city";
 import {
   newSurvival,
   settleUpkeep,
@@ -127,6 +129,7 @@ import {
   doorPosition,
   animateDoors,
   toggleDoor,
+  frontOf,
   containingBuilding,
   buildingStories,
   STORY_HEIGHT,
@@ -215,7 +218,7 @@ $("#app").innerHTML = `
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span><span id="cash-count"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">SS</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title"><span>STREET</span><em>SURVIVAL</em></h1><p class="menu-intro">Get out of jail. Loot. Craft. Survive.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>H land / upkeep / tools · B build · 1–8 pieces · R rotate · V chest size · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use LAND for plots, upkeep and tool crafting. BAG opens inventory; BUILD places structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Explore the jail district, open country, West Quarter, Fort East and the southern harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
+<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">SS</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title"><span>STREET</span><em>SURVIVAL</em></h1><p class="menu-intro">Get out of jail. Loot. Craft. Survive.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>H land / upkeep / tools · B build · 1–8 pieces · R rotate · V chest size · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use LAND for plots, upkeep and tool crafting. BAG opens inventory; BUILD places structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Leave jail across the bridge. Explore connected city blocks, the military block, laboratory and harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card"><h2>YOU DIED</h2><p>Your carried items and cash are dropped where you died. Your home and upkeep remain.</p><button id="respawn" class="primary">RELEASE FROM JAIL</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
@@ -278,6 +281,12 @@ try {
   const raw = localStorage.getItem(SAVE_KEY);
   hadSavedGame = !!raw;
   save = readSave(raw);
+  if (
+    raw &&
+    save.survival?.mapVersion !== 2 &&
+    !localStorage.getItem("street-survival:pre-compact-city:v1")
+  )
+    localStorage.setItem("street-survival:pre-compact-city:v1", raw);
 } catch {
   saveAvailable = false;
 }
@@ -303,7 +312,18 @@ function syncCarry() {
   };
 }
 syncCarry();
-configureWestRoad(save.pieces);
+let legacyMapPreserved = false;
+const restoreLegacy = configureCompactCity();
+try {
+  const migrated = structuredClone(save);
+  migrateCompactSave(migrated);
+  save = migrated;
+} catch {
+  legacyMapPreserved = true;
+  restoreLegacy();
+  configureWestRoad(save.pieces);
+}
+
 if (!survival().plots.length)
   survival().plots = createHousingPlots(save.pieces);
 for (const id of settleUpkeep(survival(), Date.now()).cleared) {
@@ -500,6 +520,7 @@ const river = new THREE.Mesh(
 );
 river.rotation.x = -Math.PI / 2;
 river.position.y = 0.015;
+river.visible = !COMPACT.active;
 scene.add(river);
 function ribbon(
   points: readonly { x: number; z: number }[],
@@ -559,12 +580,32 @@ for (const ROAD of ROADS) {
     }
   }
 }
-// Bridge has a continuous road deck with visible rails on both sides.
-box(scene, 47, 0.05, 7, 13, 0.12, 6, 0x656d6a);
-for (const z of [3.8, 10.2]) {
-  box(scene, 47, 0.8, z, 13, 0.15, 0.12, 0xd8d4bb);
-  for (let x = 41; x <= 53; x += 2)
-    box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
+// The prison's only road connection crosses the water channel.
+if (COMPACT.active) {
+  box(scene, 0, -0.025, -88, 8, 0.05, 32, 0x656d6a);
+  for (const x of [-4.15, 4.15]) {
+    box(scene, x, 0.8, -88, 0.15, 0.15, 32, 0xd8d4bb);
+    for (let z = -104; z <= -72; z += 3)
+      box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
+  }
+  for (const park of RESOURCE_PARKS)
+    box(
+      scene,
+      park.x,
+      -0.015,
+      park.z,
+      park.width,
+      0.025,
+      park.depth,
+      park.kind === "tree" ? 0x779358 : 0x8b8980,
+    );
+} else {
+  box(scene, 47, 0.05, 7, 13, 0.12, 6, 0x656d6a);
+  for (const z of [3.8, 10.2]) {
+    box(scene, 47, 0.8, z, 13, 0.15, 0.12, 0xd8d4bb);
+    for (let x = 41; x <= 53; x += 2)
+      box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
+  }
 }
 const buildingModels = BUILDINGS.map((b, index) => {
   const model = loadBlenderBuilding(index, boxGeo, sign);
@@ -669,17 +710,33 @@ LOOT.forEach((c, index) => {
       );
   }
 });
-const heading = sign("JAIL DISTRICT  /  COUNTRYSIDE →", 7, 0.8);
-heading.position.set(12, 3.2, 26);
+const heading = sign(
+  COMPACT.active
+    ? "JAIL ISLAND / CITY BLOCKS →"
+    : "JAIL DISTRICT / COUNTRYSIDE →",
+  7,
+  0.8,
+);
+heading.position.set(COMPACT.active ? 6 : 12, 3.2, COMPACT.active ? -74 : 26);
 heading.rotation.y = Math.PI;
 scene.add(heading);
-for (const x of [9, 15]) box(scene, x, 1.5, 26, 0.1, 3, 0.1, 0x6b796a);
+for (const x of [9, 15])
+  box(
+    scene,
+    COMPACT.active ? x - 6 : x,
+    1.5,
+    COMPACT.active ? -74 : 26,
+    0.1,
+    3,
+    0.1,
+    0x6b796a,
+  );
 const portSign = sign("SOUTH HARBOR ↓", 5, 0.7);
 portSign.position.set(-10, 2.8, 35);
 portSign.rotation.y = Math.PI;
 scene.add(portSign);
 const officeSign = sign("SOUTH HARBOR · PORT OFFICE", 3.4, 0.45);
-officeSign.position.set(-111, 2.9, 201.19);
+officeSign.position.set(-111, 2.9, COMPACT.active ? 141.19 : 201.19);
 scene.add(officeSign);
 const shotObstacles: THREE.Object3D[] = [
   jailGrounds.proxy,
@@ -693,7 +750,7 @@ const shotObstacles: THREE.Object3D[] = [
 ];
 // A simple target range supports testing the visible pistol and shot feedback.
 const targets: THREE.Object3D[] = [];
-for (const x of [-7, -3, 1]) {
+for (const x of COMPACT.active ? [] : [-7, -3, 1]) {
   cylinder(scene, x, 1.1, 36, 0.06, 2.2, 0x7d725b);
   const target = cylinder(scene, x, 2, 36, 0.55, 0.12, 0xc7b99a, 16);
   target.rotation.x = Math.PI / 2;
@@ -765,33 +822,37 @@ for (const barrier of COMPOUND_BARRIERS) {
       0x43534f,
     );
 }
-for (const x of [64, 112]) {
-  for (const z of [3, 11]) box(scene, x, 2.2, z, 0.3, 4.4, 0.3, 0x43534f);
-  box(scene, x, 4.3, 7, 0.35, 0.25, 8.4, 0x43534f);
+for (const sourceX of [64, 112]) {
+  const x = sourceX + (COMPACT.active ? -176 : 0),
+    z = COMPACT.active ? -33 : 7;
+  for (const dz of [-4, 4]) box(scene, x, 2.2, z + dz, 0.3, 4.4, 0.3, 0x43534f);
+  box(scene, x, 4.3, z, 0.35, 0.25, 8.4, 0x43534f);
   const marker = sign(
-    x === 64 ? "FORT EAST · MILITARY" : "COMPOUND EXIT",
+    sourceX === 64 ? "MILITARY BLOCK" : "COMPOUND EXIT",
     5,
     0.65,
     "#eee8cd",
     "#3e5140",
   );
-  marker.position.set(x - 0.22, 3.75, 7);
+  marker.position.set(x - 0.22, 3.75, z);
   marker.rotation.y = -Math.PI / 2;
   scene.add(marker);
 }
-for (const [x, z] of [
+for (const [oldX, oldZ] of [
   [65, -20],
   [111, -20],
   [65, 34],
   [111, 34],
 ]) {
+  const x = oldX + (COMPACT.active ? -176 : 0),
+    z = oldZ + (COMPACT.active ? -40 : 0);
   box(scene, x, 2.5, z, 0.14, 5, 0.14, 0x4f6259);
   box(scene, x, 5, z, 0.8, 0.2, 0.5, 0xe0d6ae);
 }
 for (const b of BUILDINGS.filter((b) => b.type.startsWith("military-"))) {
-  const front = b.z < 0 ? 1 : -1,
+  const front = frontOf(b),
     start = b.z + (front * b.depth) / 2,
-    end = front > 0 ? 2.5 : 11.5;
+    end = (front > 0 ? 2.5 : 11.5) + (COMPACT.active ? -40 : 0);
   box(
     scene,
     b.x,
@@ -1063,7 +1124,7 @@ let buildStorageSize: StorageSize = "small";
 let candidate: Omit<Piece, "id"> | undefined,
   reason = "";
 let player = { ...START },
-  yaw = 0,
+  yaw = COMPACT.active ? Math.PI : 0,
   pitch = -0.03,
   playing = false,
   inventoryOpen = false,
@@ -1221,6 +1282,8 @@ function respawn() {
   clearExplosives();
   punchRemaining = punchCooldown = 0;
   player = { ...START };
+  yaw = COMPACT.active ? Math.PI : 0;
+  pitch = -0.03;
   vertical = verticalSpeed = 0;
   for (const unit of enemies)
     Object.assign(
@@ -2593,6 +2656,10 @@ function start() {
   if (!touch) captureMouse();
   if (!saveAvailable)
     toast("Storage unavailable · progress lasts for this session");
+  else if (legacyMapPreserved)
+    toast(
+      "Original map preserved · your existing base needs a larger city parcel",
+    );
   else toast("Explore the town. Buy land and keep its upkeep paid.");
 }
 $("#start").addEventListener("click", start);
@@ -2631,6 +2698,7 @@ $("#reset").addEventListener("click", () => {
   save.resources = { rock: 0, sulfur: 0, metal: 0 };
   save.wood = 0;
   save.survival = newSurvival();
+  if (COMPACT.active) save.survival.mapVersion = 2;
   save.survival.plots = createHousingPlots([]);
   save.inventory = emptyInventory();
   save.inventory.ammoVersion = 1;
@@ -2656,7 +2724,7 @@ $("#reset").addEventListener("click", () => {
   clearBullets();
   rebuildConstruction();
   player = { ...START };
-  yaw = 0;
+  yaw = COMPACT.active ? Math.PI : 0;
   pitch = -0.03;
   persist();
   updateHud();
@@ -3510,7 +3578,11 @@ function updateHud() {
           : inWestQuarter(player)
             ? "WEST QUARTER"
             : inTown(player)
-              ? "JAIL DISTRICT"
+              ? COMPACT.active
+                ? player.z < -96
+                  ? "JAIL ISLAND"
+                  : "THE BLOCK"
+                : "JAIL DISTRICT"
               : roadDistance(player) < 5
                 ? "OUTBOUND ROAD"
                 : "OPEN MEADOW";
@@ -3756,14 +3828,15 @@ function frame(now: number) {
     housingView.update(survival(), player);
   }
   coast.update(clock);
-  harbor.root.visible = Math.hypot(player.x + 60, player.z - 234) < 165;
+  harbor.root.visible =
+    Math.hypot(player.x + 60, player.z - (COMPACT.active ? 174 : 234)) < 165;
   northLab.root.visible =
     NORTH_LAB.enabled &&
     Math.hypot(player.x - NORTH_LAB.x, player.z - NORTH_LAB.z) < 170;
   BUILDINGS.forEach((b, i) => {
-    if (isNorthBuilding(b.type))
+    if (COMPACT.active || isNorthBuilding(b.type))
       buildingModels[i].root.visible =
-        buildingEnabled(b) && Math.hypot(player.x - b.x, player.z - b.z) < 155;
+        buildingEnabled(b) && Math.hypot(player.x - b.x, player.z - b.z) < 145;
   });
   if (playing || stationOpen) tickProduction(productionDt, now);
   if (!playing && !needsRender) return;
@@ -3775,6 +3848,7 @@ function frame(now: number) {
       ...enemies.filter((u) => u.enemy.health > 0).map((u) => u.enemy),
     ]);
     buildingModels.forEach((model, i) => {
+      if (COMPACT.active && !model.root.visible) return;
       model.door.rotation.y = doorAngles[i];
       model.door.updateMatrixWorld(true);
       model.shotDoor.rotation.y = doorAngles[i];
@@ -4136,6 +4210,10 @@ function frame(now: number) {
     useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
   );
   canvas.dataset.health = String(health);
+  canvas.dataset.cityLayout = COMPACT.active
+    ? "compact-island-city-v2"
+    : "legacy-preserved";
+  canvas.dataset.jailBridge = JSON.stringify(JAIL_BRIDGE);
   canvas.dataset.housing = JSON.stringify({
     ...survival(),
     status: leaseStatus(survival(), Date.now()),

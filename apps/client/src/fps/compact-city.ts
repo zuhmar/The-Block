@@ -1,0 +1,368 @@
+import {
+  COMPACT,
+  CITY_OUTLINE,
+  CITY_PLOTS,
+  RESOURCE_PARKS,
+  denseOutline,
+} from "./compact-plan";
+import {
+  BUILDINGS,
+  BUILDING_FRONTS,
+  frontOf,
+  copyCityBuilding,
+  truncateCityBuildings,
+} from "./building-layout";
+import {
+  ROADS,
+  CITY_RING,
+  LOOT,
+  TREES,
+  START,
+  pieceBox,
+  blockedTerrain,
+  roadDistance,
+  type Piece,
+  type Save,
+} from "./world";
+import { COASTLINE } from "./coast";
+import {
+  JAIL_BOXES,
+  JAIL_TOWERS,
+  JAIL_STAIRS,
+  JAIL_GROUNDS,
+  JAIL_OFFSET,
+} from "./jail-ground-layout";
+import {
+  COMPOUND,
+  COMPOUND_BARRIERS,
+  COMPOUND_PATROLS,
+} from "./military-compound";
+import { WEST_QUARTER, ROAD_BINS } from "./west-quarter";
+import { NORTH_LAB } from "./north-lab-layout";
+import {
+  HARBOR,
+  HARBOR_ENTRY,
+  PIERS,
+  DECKS,
+  CONTAINERS,
+  HARBOR_BOXES,
+} from "./harbor-layout";
+import { newSurvival, inPlot } from "./survival-state";
+const shifts = {
+  jail: { x: 0, z: -124 },
+  military: { x: -176, z: -40 },
+  west: { x: 68, z: 40 },
+  lab: { x: 168, z: 170 },
+  harbor: { x: 0, z: -60 },
+};
+let undo: (() => void) | undefined;
+export function configureCompactCity() {
+  if (COMPACT.active) return undo!;
+  const snapshots = new Map<object, Record<string, unknown>>();
+  function remember(o: object) {
+    if (!snapshots.has(o)) snapshots.set(o, { ...o });
+  }
+  function shift(o: { x: number; z: number }, d: { x: number; z: number }) {
+    remember(o);
+    o.x += d.x;
+    o.z += d.z;
+  }
+  function bounds(
+    o: { minX: number; maxX: number; minZ: number; maxZ: number },
+    d: { x: number; z: number },
+  ) {
+    remember(o);
+    o.minX += d.x;
+    o.maxX += d.x;
+    o.minZ += d.z;
+    o.maxZ += d.z;
+  }
+  const buildingCount = BUILDINGS.length,
+    lootCount = LOOT.length,
+    trees = TREES.slice(),
+    coast = COASTLINE.slice(),
+    roads = ROADS.slice();
+  const oldBuildings = BUILDINGS.map((b) => ({ ...b }));
+  // Move containers with the building that owns their position, retaining saved loot indices.
+  for (const loot of LOOT) {
+    const b = oldBuildings.find(
+      (b) =>
+        Math.abs(loot.x - b.x) < b.width / 2 &&
+        Math.abs(loot.z - b.z) < b.depth / 2,
+    );
+    let d = { x: 0, z: 0 };
+    if (b?.type === "jail") d = shifts.jail;
+    else if (b?.type.startsWith("military-")) d = shifts.military;
+    else if (b?.type.startsWith("district-")) d = shifts.west;
+    else if (b?.type.startsWith("north-")) d = shifts.lab;
+    else if (loot.z > 190) d = shifts.harbor;
+    else if (loot.x > 60 && loot.x < 116 && loot.z > -24 && loot.z < 38)
+      d = shifts.military;
+    else if (loot.x < -125 && loot.z > -30 && loot.z < 32) d = shifts.west;
+    shift(loot, d);
+  }
+  for (const b of BUILDINGS) {
+    BUILDING_FRONTS.set(b, frontOf(b));
+    let d = { x: 0, z: 0 };
+    if (b.type === "jail") d = shifts.jail;
+    else if (b.type.startsWith("military-")) d = shifts.military;
+    else if (b.type.startsWith("district-")) d = shifts.west;
+    else if (b.type.startsWith("north-")) d = shifts.lab;
+    else if (b.type === "warehouse") d = { x: -60, z: 4 };
+    else if (b.type === "workshop") d = { x: -60.5, z: -29 };
+    // The central warehouse and workshop also keep their indoor loot aligned.
+    if (b.type === "warehouse" || b.type === "workshop")
+      for (const l of LOOT)
+        if (
+          Math.abs(l.x - b.x) < b.width / 2 &&
+          Math.abs(l.z - b.z) < b.depth / 2
+        )
+          shift(l, d);
+    shift(b, d);
+  }
+  for (const o of [...JAIL_BOXES, ...JAIL_TOWERS]) shift(o, shifts.jail);
+  for (const s of JAIL_STAIRS) {
+    remember(s);
+    s.startZ += shifts.jail.z;
+  }
+  shift(JAIL_OFFSET, shifts.jail);
+  bounds(JAIL_GROUNDS, shifts.jail);
+  shift(START, shifts.jail);
+  bounds(COMPOUND, shifts.military);
+  COMPOUND_BARRIERS.forEach((b) => shift(b, shifts.military));
+  COMPOUND_PATROLS.forEach((p) =>
+    p.points.forEach((q) => shift(q, shifts.military)),
+  );
+  bounds(WEST_QUARTER, shifts.west);
+  ROAD_BINS.filter((p) => p.x < -125).forEach((p) => shift(p, shifts.west));
+  shift(NORTH_LAB, shifts.lab);
+  remember(NORTH_LAB);
+  NORTH_LAB.enabled = true;
+  bounds(HARBOR, shifts.harbor);
+  shift(HARBOR_ENTRY, shifts.harbor);
+  const seen = new Set<object>();
+  for (const b of [...PIERS, ...DECKS, ...CONTAINERS, ...HARBOR_BOXES])
+    if (!seen.has(b)) {
+      seen.add(b);
+      shift(b, shifts.harbor);
+    }
+  ROADS.splice(
+    0,
+    ROADS.length,
+    [
+      { x: 0, z: -110 },
+      { x: 0, z: -74 },
+      { x: 18, z: -74 },
+    ],
+    ...[-128, -48, 18, 154].map((x) => [
+      { x, z: -74 },
+      { x, z: 168 },
+    ]),
+    ...[-74, 40, 80, 124, 168].map((z) => [
+      { x: -152, z },
+      { x: 154, z },
+    ]),
+    [
+      { x: -128, z: -33 },
+      { x: -48, z: -33 },
+    ],
+    CITY_RING,
+    [
+      { x: 88, z: 32 },
+      { x: 88, z: 40 },
+    ],
+    [
+      { x: -60, z: 124 },
+      { x: -60, z: 147 },
+    ],
+  );
+  COMPACT.active = true;
+  COASTLINE.splice(0, COASTLINE.length, ...denseOutline(CITY_OUTLINE));
+  // Reuse furnished buildings to fill street blocks, leaving mixed residential lots between them.
+  for (const [type, x, z, name] of [
+    ["workshop", -144, -56, "NORTHWEST REPAIRS"],
+    ["flats", -8, 60, "MARKET STREET FLATS"],
+    ["home", 70, 60, "EAST ROW HOUSE"],
+    ["district-clinic", 132, 60, "EASTSIDE CLINIC"],
+    ["tenement", -62, 102, "SOUTH TENEMENTS"],
+    ["district-market", -112, 102, "SOUTH MARKET"],
+    ["home", 12, 102, "CANAL ROW HOUSE"],
+    ["district-duplex", 76, 102, "FOUNDRY DUPLEX"],
+    ["district-offices", 70, 146, "DOCKSIDE OFFICES"],
+    ["home", -144, 146, "PORT ROW HOUSE"],
+  ] as const) {
+    const index = copyCityBuilding(
+      BUILDINGS.findIndex((b) => b.type === type),
+      x,
+      z,
+      name,
+    );
+    const b = BUILDINGS[index];
+    LOOT.push({
+      x: b.x,
+      z: b.z + (frontOf(b) > 0 ? -1 : 1),
+      width: 1.1,
+      depth: 0.85,
+      height: 0.9,
+      tier: 2,
+      name: name + " supplies",
+      color: 0x728b76,
+    });
+  }
+  const desired = [
+    { x: 0, z: 0 },
+    { x: -30, z: 60 },
+    { x: 102, z: 60 },
+    { x: -90, z: 102 },
+    { x: -18, z: 102 },
+    { x: 42, z: 60 },
+    { x: 106, z: 102 },
+    { x: 42, z: 146 },
+    { x: 102, z: 146 },
+    { x: -144, z: 60 },
+    { x: -32, z: -52 },
+    { x: -146, z: -30 },
+  ];
+  CITY_PLOTS.splice(0);
+  for (const c of desired) {
+    const size = CITY_PLOTS.length % 3 === 2 ? 24 : 16;
+    CITY_PLOTS.push({
+      id: "plot-" + (CITY_PLOTS.length + 1),
+      ...c,
+      width: size,
+      depth: size,
+      price: size === 16 ? 300 : 700,
+      daily: size === 16 ? 25 : 60,
+    });
+  }
+  TREES.splice(0);
+  for (const park of RESOURCE_PARKS.filter((p) => p.kind === "tree"))
+    for (const dx of [-6, 0, 6])
+      for (const dz of [-7, 7])
+        TREES.push({
+          x: park.x + dx,
+          z: park.z + dz,
+          width: 0.65,
+          depth: 0.65,
+          scale: 0.8,
+        });
+  undo = () => {
+    if (!COMPACT.active) return;
+    for (const [o, values] of snapshots) Object.assign(o, values);
+    truncateCityBuildings(buildingCount);
+    BUILDINGS.forEach((b) => BUILDING_FRONTS.delete(b));
+    LOOT.splice(lootCount);
+    TREES.splice(0, TREES.length, ...trees);
+    COASTLINE.splice(0, COASTLINE.length, ...coast);
+    ROADS.splice(0, ROADS.length, ...roads);
+    CITY_PLOTS.splice(0);
+    COMPACT.active = false;
+  };
+  return undo;
+}
+export function cityPlotClear(p: (typeof CITY_PLOTS)[number]) {
+  const r = p.width / 2;
+  for (let dx = -r; dx <= r; dx += 2)
+    for (let dz = -r; dz <= r; dz += 2)
+      if (
+        blockedTerrain({ x: p.x + dx, z: p.z + dz }, 0.5) ||
+        roadDistance({ x: p.x + dx, z: p.z + dz }) < 4.5
+      )
+        return false;
+  return (
+    ![...BUILDINGS, ...HARBOR_BOXES, ...COMPOUND_BARRIERS].some(
+      (b) =>
+        Math.abs(b.x - p.x) < b.width / 2 + r + 1 &&
+        Math.abs(b.z - p.z) < b.depth / 2 + r + 1,
+    ) &&
+    !RESOURCE_PARKS.some(
+      (b) =>
+        Math.abs(b.x - p.x) < b.width / 2 + r + 1 &&
+        Math.abs(b.z - p.z) < b.depth / 2 + r + 1,
+    )
+  );
+}
+/** Translate bases as whole groups; never scale, flatten, refund or discard a player's structures. */
+export function migrateCompactSave(save: Save) {
+  save.survival ??= newSurvival();
+  const s = save.survival;
+  if (s.mapVersion === 2) return;
+  const old = s.plots,
+    plots = CITY_PLOTS.map((p) => ({ ...p }));
+  const moved = new Set<string>(),
+    occupied = new Set<string>();
+  const move = (pieces: Piece[], dx: number, dz: number) => {
+    for (const p of pieces) {
+      p.x += dx;
+      p.z += dz;
+      moved.add(p.id);
+    }
+  };
+  for (const oldPlot of old) {
+    const group = save.pieces.filter(
+      (p) => !moved.has(p.id) && inPlot(p, oldPlot),
+    );
+    const target = plots.find((p) => p.id === oldPlot.id);
+    if (!target) throw Error("No matching city plot");
+    if (
+      group.length &&
+      (oldPlot.width > target.width || oldPlot.depth > target.depth)
+    )
+      throw Error("Base exceeds replacement lot");
+    move(group, target.x - oldPlot.x, target.z - oldPlot.z);
+    if (
+      group.length ||
+      s.lease?.plotId === target.id ||
+      s.abandoned.some((a) => a.plotId === target.id)
+    )
+      occupied.add(target.id);
+  }
+  const remaining = save.pieces.filter((p) => !moved.has(p.id));
+  while (remaining.length) {
+    const group = [remaining.shift()!];
+    for (let i = 0; i < group.length; i++)
+      for (let j = remaining.length - 1; j >= 0; j--)
+        if (
+          Math.hypot(group[i].x - remaining[j].x, group[i].z - remaining[j].z) <
+          5
+        )
+          group.push(remaining.splice(j, 1)[0]);
+    const boxes = group.map(pieceBox),
+      minX = Math.min(...boxes.map((p) => p.x - p.width / 2)),
+      maxX = Math.max(...boxes.map((p) => p.x + p.width / 2)),
+      minZ = Math.min(...boxes.map((p) => p.z - p.depth / 2)),
+      maxZ = Math.max(...boxes.map((p) => p.z + p.depth / 2));
+    const candidates = plots.map((p) => ({
+      plot: p,
+      dx: Math.round((p.x - (minX + maxX) / 2) / 2) * 2,
+      dz: Math.round((p.z - (minZ + maxZ) / 2) / 2) * 2,
+    }));
+    const placement = candidates.find(
+      ({ plot: p, dx, dz }) =>
+        !occupied.has(p.id) &&
+        minX + dx >= p.x - p.width / 2 &&
+        maxX + dx <= p.x + p.width / 2 &&
+        minZ + dz >= p.z - p.depth / 2 &&
+        maxZ + dz <= p.z + p.depth / 2,
+    );
+    if (!placement) throw Error("Legacy base needs a larger parcel");
+    const target = placement.plot;
+    move(group, placement.dx, placement.dz);
+    occupied.add(target.id);
+  }
+  // Legacy builds have no new rent assigned. They occupy reserved city parcels outside the sale catalog.
+  s.plots = plots.filter(
+    (p) =>
+      !occupied.has(p.id) ||
+      s.lease?.plotId === p.id ||
+      s.abandoned.some((a) => a.plotId === p.id),
+  );
+  if (save.inventory)
+    for (const [i, d] of save.inventory.drops.entries()) {
+      d.x = 4 + (i % 4) * 0.35;
+      d.z = -70 + (Math.floor(i / 4) % 4) * 0.35;
+      d.y = 0;
+    }
+  save.harvest = undefined;
+  s.mapVersion = 2;
+}

@@ -743,8 +743,28 @@ export class EditorViewport {
     this.render();
   }
   fit() {
-    this.orbit.target.set(0, 0, 0);
-    this.camera.position.set(410, 470, 500);
+    const bounds = new THREE.Box3();
+    for (const o of this.doc().objects) {
+      const b = this.bounds(o);
+      if (b) bounds.union(b);
+    }
+    for (const p of this.doc().coast)
+      bounds.expandByPoint(new THREE.Vector3(p.x, 0, p.z));
+    if (bounds.isEmpty()) return;
+    const center = bounds.getCenter(new THREE.Vector3()),
+      size = bounds.getSize(new THREE.Vector3());
+    const distance =
+      (Math.max(size.z, size.x / this.camera.aspect) /
+        (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)))) *
+      1.12;
+    this.orbit.target.copy(center);
+    this.camera.position
+      .copy(center)
+      .add(
+        new THREE.Vector3(0.5, 1, 0.7)
+          .normalize()
+          .multiplyScalar(Math.max(25, distance)),
+      );
     this.orbit.update();
     this.render();
   }
@@ -780,6 +800,12 @@ export class EditorViewport {
     if (this.frame) return;
     this.frame = requestAnimationFrame(() => {
       this.frame = 0;
+      this.camera.near = THREE.MathUtils.clamp(
+        this.camera.position.distanceTo(this.orbit.target) / 200,
+        0.1,
+        2,
+      );
+      this.camera.updateProjectionMatrix();
       this.renderer.render(this.scene, this.camera);
       this.canvas.dataset.editor = JSON.stringify({
         objects: this.doc().objects.length,
