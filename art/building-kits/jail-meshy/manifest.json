@@ -1,0 +1,621 @@
+{
+  "generator": "Meshy 3D",
+  "geometry": "meshy-t2",
+  "texture": "meshy-n1",
+  "creditsSpent": 270,
+  "status": "generated source kit; not runtime integrated or snap-validated",
+  "items": [
+    {
+      "name": "cellblock",
+      "polycount": 8000,
+      "request_id": "db71955a-e175-4325-8a41-2fd7f7aa909c",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        0,
+        0,
+        555,
+        495
+      ],
+      "task_id": "01a210a4-a1cf-76a0-84a0-2b34407a4b92",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.6876440048217773,
+        1
+      ],
+      "file": "raw/cellblock.glb",
+      "reference": "references/cellblock.png",
+      "preview": "previews/cellblock.png",
+      "sha256": "ee0da50d762aced7b3c2c099f65cbb31397cfc8c3b4369df5d9b4a645e1513db",
+      "bytes": 4577412,
+      "triangles": 7199,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "entrance",
+      "polycount": 6000,
+      "request_id": "fc4cffc2-84bd-4dd6-ae48-530ed03973d9",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        555,
+        0,
+        1005,
+        495
+      ],
+      "task_id": "01a210a4-dff2-73d0-a1a9-d4b51d766a9f",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.8420830070972443,
+        1,
+        0.8137890100479126
+      ],
+      "file": "raw/entrance.glb",
+      "reference": "references/entrance.png",
+      "preview": "previews/entrance.png",
+      "sha256": "f5c516dd48417c8d31c68e93b543b4ed527a1ffbf022a6aa6c85b2fe7a4bac39",
+      "bytes": 3869552,
+      "triangles": 5023,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "corner-wing",
+      "polycount": 8000,
+      "request_id": "9872b059-52df-4052-854e-39fbf3af3138",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        1005,
+        0,
+        1536,
+        495
+      ],
+      "task_id": "01a210a4-f02d-73f2-9970-5114cb778e71",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.6657119989395142,
+        0.6797010004520416,
+        1
+      ],
+      "file": "raw/corner-wing.glb",
+      "reference": "references/corner-wing.png",
+      "preview": "previews/corner-wing.png",
+      "sha256": "ce9ac4e20e021fdf3855bf61d37e84c2b1ef014ba2167a9c537d351a0d64b9d3",
+      "bytes": 3267516,
+      "triangles": 7078,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "guard-tower",
+      "polycount": 7000,
+      "request_id": "687d8987-4358-4010-87f0-8a48388f7b05",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        0,
+        495,
+        480,
+        1024
+      ],
+      "task_id": "01a210a5-035f-7707-8fa0-190133b66a89",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.5236199796199799,
+        1,
+        0.3959130048751831
+      ],
+      "file": "raw/guard-tower.glb",
+      "reference": "references/guard-tower.png",
+      "preview": "previews/guard-tower.png",
+      "sha256": "9603788ce663fd076045b9f9a3b169bb61265aabf7cfc5fe9b1af78568d86e93",
+      "bytes": 3874264,
+      "triangles": 6837,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "gatehouse",
+      "polycount": 4000,
+      "request_id": "8b2a0834-91d3-433c-ab6d-8e18e53571a2",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        480,
+        495,
+        960,
+        1024
+      ],
+      "task_id": "01a210a5-5afe-728f-a7e5-cffa037032a1",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.825685977935791,
+        1
+      ],
+      "file": "raw/gatehouse.glb",
+      "reference": "references/gatehouse.png",
+      "preview": "previews/gatehouse.png",
+      "sha256": "e5214aae653f8916b6607f6446df9be6f78b22f6281e2a5db10c6655ffc97bff",
+      "bytes": 2801180,
+      "triangles": 3896,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "bridge",
+      "polycount": 4000,
+      "request_id": "3ae65c51-524b-49fb-beb4-926214b16f51",
+      "source": "exec-e591a4be-2070-41af-b6b0-ac16d4e75503.png",
+      "crop": [
+        960,
+        495,
+        1536,
+        1024
+      ],
+      "task_id": "01a210a5-6a50-7247-b810-ac7907c6a438",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.27012699842453003,
+        0.9556949734687805
+      ],
+      "file": "raw/bridge.glb",
+      "reference": "references/bridge.png",
+      "preview": "previews/bridge.png",
+      "sha256": "09df9bd8fbdc2b459258614f5f0c8fb0bad287764860cce275ed21a6bf19f2a5",
+      "bytes": 2968532,
+      "triangles": 3596,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "fence-straight",
+      "polycount": 3000,
+      "request_id": "b6d4442e-976f-43b7-bbb8-a93c08a43947",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        0,
+        0,
+        455,
+        500
+      ],
+      "task_id": "01a210a5-7b3d-7588-b8fa-9d2067b216b8",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.9640490114688873,
+        0.9977760016918182,
+        0.15729199349880219
+      ],
+      "file": "raw/fence-straight.glb",
+      "reference": "references/fence-straight.png",
+      "preview": "previews/fence-straight.png",
+      "sha256": "6931bd8a82996a5a31c29f28476632f884c1840cd77153605e9457c446aaa9f3",
+      "bytes": 3585512,
+      "triangles": 3081,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "fence-corner",
+      "polycount": 4000,
+      "request_id": "e7c351a4-1e10-4c47-be92-ec535389f5e6",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        455,
+        0,
+        910,
+        500
+      ],
+      "task_id": "01a210a5-8b0a-71e8-8a4e-80babcf34058",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.7966099977493286,
+        1,
+        0.7765929996967316
+      ],
+      "file": "raw/fence-corner.glb",
+      "reference": "references/fence-corner.png",
+      "preview": "previews/fence-corner.png",
+      "sha256": "c6ef04e96784bdf78dcf1b4ae9db57e23005b0ffb298ed3b9a23f8fe644d653c",
+      "bytes": 2977440,
+      "triangles": 4098,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "vehicle-gate",
+      "polycount": 5000,
+      "request_id": "0076893b-b4fa-42f4-a5ca-c72d76638903",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        910,
+        0,
+        1536,
+        500
+      ],
+      "task_id": "01a210a5-b96a-7788-90a9-207370bc345d",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.6721550226211548,
+        0.37327800691127777
+      ],
+      "file": "raw/vehicle-gate.glb",
+      "reference": "references/vehicle-gate.png",
+      "preview": "previews/vehicle-gate.png",
+      "sha256": "0efc6af229db86f252a3aaa717b7a815d5b3734fc7355afe9ca90428f67de92e",
+      "bytes": 2546436,
+      "triangles": 4768,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "pedestrian-gate",
+      "polycount": 3000,
+      "request_id": "df0f3eb2-cb3a-4c80-b13a-e2803fe16225",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        0,
+        500,
+        430,
+        1024
+      ],
+      "task_id": "01a210a5-c8fd-7529-a5f0-75ab867d8e0d",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.8174780011177063,
+        0.9996789991855621,
+        0.9287480115890503
+      ],
+      "file": "raw/pedestrian-gate.glb",
+      "reference": "references/pedestrian-gate.png",
+      "preview": "previews/pedestrian-gate.png",
+      "sha256": "6504b39bf26a279159280521202448c1897998fa428bb91fc74896ede62e0dff",
+      "bytes": 2739716,
+      "triangles": 3097,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "barrier-arm",
+      "polycount": 2000,
+      "request_id": "1a41a394-fa83-4d4e-9aea-c604dcb0c8d9",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        430,
+        500,
+        1030,
+        1024
+      ],
+      "task_id": "01a210a5-d968-7363-8ad0-9bdaafee4c82",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.35051700472831726,
+        0.2519509941339493
+      ],
+      "file": "raw/barrier-arm.glb",
+      "reference": "references/barrier-arm.png",
+      "preview": "previews/barrier-arm.png",
+      "sha256": "3b121e76ce36028bebe19dbcc5f13139d3e92bcbdb2e2ee76d549f12b34f603a",
+      "bytes": 1301808,
+      "triangles": 1933,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "floodlight",
+      "polycount": 2000,
+      "request_id": "c4201acc-5039-41cc-8373-ae826d16d162",
+      "source": "exec-55c9043e-8e05-45b2-811c-ef7df4040ddd.png",
+      "crop": [
+        1030,
+        500,
+        1536,
+        1024
+      ],
+      "task_id": "01a210a5-ead8-70f2-bbb2-1743f627f4ba",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.36337099969387054,
+        1,
+        0.14122900366783142
+      ],
+      "file": "raw/floodlight.glb",
+      "reference": "references/floodlight.png",
+      "preview": "previews/floodlight.png",
+      "sha256": "bf44431fbeb43175c982b1d22b46d89b018cdf6a37994bb59508e52ee08e0bce",
+      "bytes": 1924000,
+      "triangles": 1939,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "basketball-hoop",
+      "polycount": 3000,
+      "request_id": "2fa10879-8294-4628-a2c7-45f5c4f61e87",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        0,
+        0,
+        480,
+        525
+      ],
+      "task_id": "01a210a5-fcf7-73e2-b6f7-196f0d15ac50",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.5545969903469086,
+        1,
+        0.4029089957475662
+      ],
+      "file": "raw/basketball-hoop.glb",
+      "reference": "references/basketball-hoop.png",
+      "preview": "previews/basketball-hoop.png",
+      "sha256": "d1ff415740af95d0c86db24d76e9c4a26144b1a06a43f1cec0d10acd91c417ec",
+      "bytes": 2921048,
+      "triangles": 3252,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "bench",
+      "polycount": 2500,
+      "request_id": "eb560dca-1e9c-47fb-a6e9-d8ae64e661f1",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        480,
+        0,
+        1020,
+        525
+      ],
+      "task_id": "01a210a6-38e7-76ef-a4d4-524a6caf419a",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.5710430145263672,
+        0.4120440036058426
+      ],
+      "file": "raw/bench.glb",
+      "reference": "references/bench.png",
+      "preview": "previews/bench.png",
+      "sha256": "dc43ac6bc43e07fdb990945409344c8b446dcd5531fb725ce28eb36467d88bc2",
+      "bytes": 2532596,
+      "triangles": 2539,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "picnic-table",
+      "polycount": 3000,
+      "request_id": "93c9ff25-4c88-47cc-86f5-2ee29c27c279",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        1020,
+        0,
+        1536,
+        525
+      ],
+      "task_id": "01a210a6-4886-74ca-bddf-8e5f84ba7d03",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.5562969744205475,
+        1
+      ],
+      "file": "raw/picnic-table.glb",
+      "reference": "references/picnic-table.png",
+      "preview": "previews/picnic-table.png",
+      "sha256": "cb5f3989f429c5f23a314a77819ff8ae6ab1cd9589f797d2f6e56c7d9ddc2dea",
+      "bytes": 2363016,
+      "triangles": 2937,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "pullup-bars",
+      "polycount": 2500,
+      "request_id": "4c2e97a9-a065-4053-8937-3cb6989dd8ee",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        0,
+        525,
+        510,
+        1024
+      ],
+      "task_id": "01a210a6-58a3-737f-b08c-2898369ed932",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.8282789885997772,
+        1,
+        0.7907319962978363
+      ],
+      "file": "raw/pullup-bars.glb",
+      "reference": "references/pullup-bars.png",
+      "preview": "previews/pullup-bars.png",
+      "sha256": "530c2969c6a7f45b6bfd295a9066b33e67693dd4e82cc9d713e9ac7b9a674ad3",
+      "bytes": 2151292,
+      "triangles": 2519,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "weight-bench",
+      "polycount": 4000,
+      "request_id": "9fdc141d-8118-4a3b-939a-9f908036965d",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        510,
+        525,
+        1050,
+        1024
+      ],
+      "task_id": "01a210a6-69a3-70c7-aad0-c0653f21f38e",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        1,
+        0.6848700046539307,
+        0.8603150248527527
+      ],
+      "file": "raw/weight-bench.glb",
+      "reference": "references/weight-bench.png",
+      "preview": "previews/weight-bench.png",
+      "sha256": "6ebd84999f94f5345240c3b9b51ac02d98280ca50dd03b6526b60475ce071d95",
+      "bytes": 3689020,
+      "triangles": 4020,
+      "materials": 1,
+      "embeddedImages": 1
+    },
+    {
+      "name": "trash-bin",
+      "polycount": 2000,
+      "request_id": "111c62d0-9efe-4e5c-935d-8844d14357be",
+      "source": "exec-576a8bb4-0b24-4191-b4d6-f3603ca18350.png",
+      "crop": [
+        1050,
+        525,
+        1536,
+        1024
+      ],
+      "task_id": "01a210a6-7fa2-766e-a354-2bd48c8d0fb2",
+      "status": "SUCCEEDED",
+      "formats": [
+        "glb",
+        "fbx",
+        "obj",
+        "usdz",
+        "stl"
+      ],
+      "size": [
+        0.6341969966888428,
+        1,
+        0.6277550160884857
+      ],
+      "file": "raw/trash-bin.glb",
+      "reference": "references/trash-bin.png",
+      "preview": "previews/trash-bin.png",
+      "sha256": "84dcf0efdc1127f33efcef3b10682567e9d1c8273fe411ef9ce4052829fecfd0",
+      "bytes": 2912632,
+      "triangles": 1743,
+      "materials": 1,
+      "embeddedImages": 1
+    }
+  ]
+}
