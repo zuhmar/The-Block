@@ -1,5 +1,5 @@
 {
-  "source": "Meshy meshy-t2 / meshy-n1",
+  "source": "Meshy meshy-t2 / meshy-n1 source props with Blender-authored architectural corrections",
   "sources": {
     "cellblock": "ee0da50d762aced7b3c2c099f65cbb31397cfc8c3b4369df5d9b4a645e1513db",
     "entrance": "f5c516dd48417c8d31c68e93b543b4ed527a1ffbf022a6aa6c85b2fe7a4bac39",
@@ -22,84 +22,122 @@
   },
   "exports": {
     "apps/client/src/fps/models/buildings/jail.glb": {
-      "bytes": 1787872,
-      "triangles": 35493
+      "bytes": 439884,
+      "triangles": 3480
     },
     "apps/client/src/fps/models/jail-kit/cellblock.glb": {
-      "bytes": 339168,
+      "bytes": 339176,
       "triangles": 7199
     },
     "apps/client/src/fps/models/jail-kit/entrance.glb": {
-      "bytes": 202204,
+      "bytes": 202228,
       "triangles": 5023
     },
     "apps/client/src/fps/models/jail-kit/corner-wing.glb": {
-      "bytes": 242424,
+      "bytes": 242540,
       "triangles": 7078
     },
     "apps/client/src/fps/models/jail-kit/guard-tower.glb": {
-      "bytes": 178984,
-      "triangles": 4613
+      "bytes": 180020,
+      "triangles": 4669
     },
     "apps/client/src/fps/models/jail-kit/gatehouse.glb": {
-      "bytes": 65392,
-      "triangles": 1793
+      "bytes": 11200,
+      "triangles": 84
     },
     "apps/client/src/fps/models/jail-kit/bridge.glb": {
-      "bytes": 91336,
-      "triangles": 1981
+      "bytes": 14716,
+      "triangles": 108
     },
     "apps/client/src/fps/models/jail-kit/fence-straight.glb": {
-      "bytes": 201240,
-      "triangles": 3638
+      "bytes": 81420,
+      "triangles": 820
     },
     "apps/client/src/fps/models/jail-kit/fence-corner.glb": {
-      "bytes": 171100,
-      "triangles": 5028
+      "bytes": 161320,
+      "triangles": 1640
     },
     "apps/client/src/fps/models/jail-kit/vehicle-gate.glb": {
-      "bytes": 172404,
-      "triangles": 4768
+      "bytes": 30368,
+      "triangles": 240
     },
     "apps/client/src/fps/models/jail-kit/pedestrian-gate.glb": {
-      "bytes": 109724,
-      "triangles": 3097
+      "bytes": 18572,
+      "triangles": 144
     },
     "apps/client/src/fps/models/jail-kit/barrier-arm.glb": {
-      "bytes": 78380,
-      "triangles": 1995
+      "bytes": 77368,
+      "triangles": 2005
     },
     "apps/client/src/fps/models/jail-kit/floodlight.glb": {
-      "bytes": 70392,
+      "bytes": 70424,
       "triangles": 1939
     },
     "apps/client/src/fps/models/jail-kit/basketball-hoop.glb": {
-      "bytes": 129840,
+      "bytes": 129872,
       "triangles": 3252
     },
     "apps/client/src/fps/models/jail-kit/bench.glb": {
-      "bytes": 85832,
+      "bytes": 85896,
       "triangles": 2539
     },
     "apps/client/src/fps/models/jail-kit/picnic-table.glb": {
-      "bytes": 97716,
+      "bytes": 97788,
       "triangles": 2937
     },
     "apps/client/src/fps/models/jail-kit/pullup-bars.glb": {
-      "bytes": 86452,
+      "bytes": 86552,
       "triangles": 2519
     },
     "apps/client/src/fps/models/jail-kit/weight-bench.glb": {
-      "bytes": 140752,
+      "bytes": 140880,
       "triangles": 4020
     },
     "apps/client/src/fps/models/jail-kit/trash-bin.glb": {
-      "bytes": 64752,
+      "bytes": 64772,
       "triangles": 1743
     },
     "apps/client/src/fps/models/street/jail-meshy-grounds.glb": {
-      "bytes": 6450812,
-      "triangles": 116063
+      "bytes": 3329760,
+      "triangles": 41931
     }
-  }
+  },
+  "bridgeModules": [
+    {
+      "x": 0,
+      "z": 24,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "x": 0,
+      "z": 32,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "x": 0,
+      "z": 40,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "x": 0,
+      "z": 48,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  ]
 }

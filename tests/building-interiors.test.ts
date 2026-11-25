@@ -7,6 +7,7 @@ import {
   BUILDINGS,
   fixtures,
   frontOf,
+  buildingDoorOffset,
   doorAngles,
   doorTargets,
   doorBlocksPoint,
@@ -23,7 +24,7 @@ test("every building has an entry blocked by its closed door and a clear passage
   for (let i = 0; i < BUILDINGS.length; i++) {
     const b = BUILDINGS[i],
       front = frontOf(b),
-      entry = { x: b.x, z: b.z + (front * b.depth) / 2 };
+      entry = { x: b.x, z: b.z + buildingDoorOffset(b) };
     assert(buildingBlocked(entry));
     toggleDoor(i);
     for (let t = 0; t < 12; t++) animateDoors(0.05, []);
@@ -68,7 +69,10 @@ test("each building has purpose-specific furniture kept within its walls and cle
     doorAngles[i] = (front * Math.PI) / 2;
     for (let d = 0; d < 1.25; d += 0.2)
       assert(
-        !buildingBlocked({ x: b.x, z: b.z + front * (b.depth / 2 - d) }),
+        !buildingBlocked({
+          x: b.x,
+          z: b.z + buildingDoorOffset(b) - front * d,
+        }),
         b.name,
       );
     resetDoors();

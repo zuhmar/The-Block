@@ -1,4 +1,4 @@
-import { doorBlocksPoint, frontOf } from "./building-layout";
+import { doorBlocksPoint, buildingDoorOffset } from "./building-layout";
 import type { PatrolSpec } from "./military-compound";
 import {
   BUILDINGS,
@@ -120,7 +120,7 @@ function patrolPath(
       b.z - b.depth / 2 > bounds.maxZ
     )
       return;
-    const entry = b.z + (frontOf(b) * b.depth) / 2;
+    const entry = b.z + buildingDoorOffset(b);
     for (let x = Math.floor(b.x) - 2; x <= Math.ceil(b.x) + 2; x++)
       for (let z = Math.floor(entry) - 2; z <= Math.ceil(entry) + 2; z++)
         if (doorBlocksPoint(i, { x, z })) blockedDoors.add(id(x, z));

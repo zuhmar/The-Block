@@ -19,3 +19,6 @@ Automated checks cover building separation, street traversal, island/channel/bri
 ## Meshy jail kit
 
 The compact island now uses the prepared Meshy jail grounds and exterior. Its 34m perimeter fits within the existing island. The compound gates open with E / USE near the main gate or pedestrian gate, and the approach barrier lifts with them. Four climbable tower stairways, courtyard props, a hollow gatehouse and the bridge use a shared metre-based plan. The existing jail rooms, main entrance door and save migration stay in place. The map editor includes the assembled perimeter and all 18 standalone prepared components. See `art/building-kits/jail-meshy/README.md` for provenance, reproduction, and the retained single-floor interior limitation.
+
+
+The jail shell is now a true U shape: roof and rooms cover the rear bar and two side wings while the middle remains outdoors. The recessed main entry and open wing entries share their coordinates with physics and shooting cover. Four equal 8m bridge modules replace the stretched crossing model. Imported jail props use uniform scaling; dimension-critical modules are explicitly modeled or trimmed, never stretched along one axis.

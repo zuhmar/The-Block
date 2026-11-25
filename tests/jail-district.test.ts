@@ -83,10 +83,10 @@ test("jail GLB has hollow playable rooms, culled interior parts and a correctly 
   assert(interior > 0);
   assert(triangles < 40000);
   const ray = new THREE.Raycaster(
-    new THREE.Vector3(0, 1.6, 9),
+    new THREE.Vector3(0, 1.6, 2),
     new THREE.Vector3(0, 0, -1),
     0,
-    3,
+    3.2,
   );
   assert(
     ray.intersectObject(g.scene, true).length > 0,

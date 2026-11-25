@@ -37,3 +37,51 @@ export const JAIL_KIT_GATES = [
   { id: "vehicle", x: 0, z: 17, width: 4 },
   { id: "pedestrian", x: 7, z: 17, width: 2 },
 ] as const;
+
+// Actual U-shaped shell: rear cell block plus two forward wings. The middle stays outdoors.
+export const JAIL_DOOR_Z = -1;
+export const JAIL_BUILDING_WALLS = [
+  ...[-8, 8].map((x) => ({
+    x,
+    z: 0,
+    width: 0.22,
+    depth: 14,
+    height: 5.5,
+    y: 0,
+  })),
+  { x: 0, z: -7, width: 16, depth: 0.22, height: 5.5, y: 0 },
+  ...[-4, 4].map((x) => ({
+    x,
+    z: 3,
+    width: 0.22,
+    depth: 8,
+    height: 5.5,
+    y: 0,
+  })),
+  ...[-1, 1].map((side) => ({
+    x: side * 2.45,
+    z: -1,
+    width: 3.1,
+    depth: 0.22,
+    height: 5.5,
+    y: 0,
+  })),
+  { x: 0, z: -1, width: 1.8, depth: 0.22, height: 2.65, y: 2.85 },
+  ...[-6, 6].flatMap((x) => [
+    ...[-1, 1].map((side) => ({
+      x: x + side * 1.45,
+      z: 7,
+      width: 1.1,
+      depth: 0.22,
+      height: 5.5,
+      y: 0,
+    })),
+    { x, z: 7, width: 1.8, depth: 0.22, height: 2.65, y: 2.85 },
+  ]),
+];
+export const JAIL_BUILDING_SLABS = [
+  { x: 0, z: -4, width: 16, depth: 6 },
+  ...[-6, 6].map((x) => ({ x, z: 3, width: 4, depth: 8 })),
+];
+export const inJailCourtyard = (x: number, z: number) =>
+  Math.abs(x) < 4 && z > -1;

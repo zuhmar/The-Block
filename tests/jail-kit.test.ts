@@ -144,3 +144,87 @@ test("prepared Meshy jail kit embeds textures, has independent gate hinges, and 
   }
   assert(gaps > 8, "chain link has real open gaps");
 });
+
+test("jail roof, interior detection and collision preserve the U-shaped open courtyard", async () => {
+  const {
+    buildingBlocked,
+    containingBuilding,
+    BUILDINGS,
+    doorAngles,
+    resetDoors,
+    buildingDoorOffset,
+  } = await import("../apps/client/src/fps/building-layout");
+  const b = BUILDINGS.find((b) => b.type === "jail")!,
+    index = BUILDINGS.indexOf(b);
+  assert.equal(buildingDoorOffset(b), -1);
+  for (let z = 0; z <= 7; z += 0.5) {
+    assert(
+      !buildingBlocked({ x: b.x, z: b.z + z }),
+      "open courtyard collision",
+    );
+    assert.equal(
+      containingBuilding({ x: b.x, z: b.z + z }),
+      -1,
+      "courtyard is outside",
+    );
+  }
+  assert(buildingBlocked({ x: b.x, z: b.z - 1 }), "recessed entry closed");
+  doorAngles[index] = Math.PI / 2;
+  assert(!buildingBlocked({ x: b.x, z: b.z - 1 }));
+  resetDoors();
+  for (const x of [-6, 6])
+    assert.equal(containingBuilding({ x: b.x + x, z: b.z + 1 }), index);
+  const jail = await load("apps/client/src/fps/models/buildings/jail.glb");
+  jail.scene.updateMatrixWorld(true);
+  const down = (x: number, z: number) =>
+    new THREE.Raycaster(
+      new THREE.Vector3(x, 10, z),
+      new THREE.Vector3(0, -1, 0),
+      0,
+      12,
+    ).intersectObject(jail.scene, true);
+  assert.equal(
+    down(0, 3).length,
+    0,
+    "no roof or floor over the outdoor courtyard",
+  );
+  assert(
+    down(-6, 1).length > 0 && down(6, 1).length > 0 && down(0, -4).length > 0,
+    "both wings and rear block have roofs",
+  );
+});
+test("bridge repeats four unit-scale eight-metre modules instead of stretching one model", async () => {
+  const report = JSON.parse(
+    await readFile(
+      "art/building-kits/jail-meshy/integration-report.json",
+      "utf8",
+    ),
+  );
+  assert.deepEqual(
+    report.bridgeModules.map((m: { z: number }) => m.z),
+    [24, 32, 40, 48],
+  );
+  assert(
+    report.bridgeModules.every((m: { scale: number[] }) =>
+      m.scale.every((v) => v === 1),
+    ),
+  );
+  const bridge = await load("apps/client/src/fps/models/jail-kit/bridge.glb");
+  const size = new THREE.Box3()
+    .setFromObject(bridge.scene)
+    .getSize(new THREE.Vector3());
+  assert(Math.abs(size.x - size.z) < 0.001, "square eight-metre bridge tile");
+  const raw = await load("art/building-kits/jail-meshy/raw/bench.glb");
+  const fitted = await load("apps/client/src/fps/models/jail-kit/bench.glb");
+  const a = new THREE.Box3()
+      .setFromObject(raw.scene)
+      .getSize(new THREE.Vector3()),
+    c = new THREE.Box3()
+      .setFromObject(fitted.scene)
+      .getSize(new THREE.Vector3());
+  assert(
+    Math.abs(c.x / a.x - c.y / a.y) < 0.0001 &&
+      Math.abs(c.y / a.y - c.z / a.z) < 0.0001,
+    "prop proportions survive preparation",
+  );
+});

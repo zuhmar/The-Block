@@ -1,4 +1,9 @@
 import {
+  JAIL_DOOR_Z,
+  JAIL_BUILDING_WALLS,
+  inJailCourtyard,
+} from "./jail-kit-layout";
+import {
   NORTH_BUILDINGS,
   NORTH_LAB,
   isNorthBuilding,
@@ -236,12 +241,14 @@ export const frontOf = (b: Building) =>
     : b.type === "jail" || b.z < 0
       ? 1
       : -1);
+export const buildingDoorOffset = (b: Building) =>
+  b.type === "jail" ? JAIL_DOOR_Z : (frontOf(b) * b.depth) / 2;
 export const doorPosition = (index: number) => {
   const b = BUILDINGS[index],
     a = doorAngles[index];
   return {
     x: b.x - DOOR_WIDTH / 2 + (Math.cos(a) * DOOR_WIDTH) / 2,
-    z: b.z + (frontOf(b) * b.depth) / 2 - (Math.sin(a) * DOOR_WIDTH) / 2,
+    z: b.z + buildingDoorOffset(b) - (Math.sin(a) * DOOR_WIDTH) / 2,
   };
 };
 export function doorBlocksPoint(
@@ -253,7 +260,7 @@ export function doorBlocksPoint(
   if ((p.y ?? 0) > 2.8) return false;
   const b = BUILDINGS[index],
     dx = p.x - (b.x - DOOR_WIDTH / 2),
-    dz = p.z - (b.z + (frontOf(b) * b.depth) / 2);
+    dz = p.z - (b.z + buildingDoorOffset(b));
   const x = dx * Math.cos(angle) - dz * Math.sin(angle),
     z = dx * Math.sin(angle) + dz * Math.cos(angle);
   return x > -radius && x < DOOR_WIDTH + radius && Math.abs(z) < 0.07 + radius;
@@ -429,8 +436,8 @@ function createFixtures(index: number): Fixture[] {
           width: 1.5,
           depth: 2.3,
         })),
-        { kind: "bench", x: -4.8, z: 3.7, width: 3, depth: 0.6 },
-        { kind: "counter", x: 4.7, z: 3.2, width: 3, depth: 0.9 },
+        { kind: "bench", x: -6, z: 3.7, width: 2.2, depth: 0.6 },
+        { kind: "counter", x: 6.6, z: 3.2, width: 1.4, depth: 0.9 },
         { kind: "cabinet", x: 6.8, z: 5.4, width: 0.8, depth: 1 },
       ];
     case "store":
@@ -681,15 +688,15 @@ function createPartitions(index: number): Partition[] {
     return [
       ...[-2.65, 2.65].map((x) => ({
         x,
-        z: -3.7,
+        z: -4,
         width: 0.18,
-        depth: 6.4,
+        depth: 5.8,
         height: 3.1,
       })),
       ...[-5.3, 0, 5.3].flatMap((x) =>
         [-1, 1].map((side) => ({
           x: x + side * 1.65,
-          z: -0.5,
+          z: -2,
           width: 2,
           depth: 0.12,
           height: 2.8,
@@ -722,22 +729,35 @@ export function buildingBlocked(
       front = frontOf(b);
     if (Math.abs(x) > hx + radius + 0.2 || Math.abs(z) > hz + radius + 0.2)
       return false;
-    if (
-      Math.abs(Math.abs(x) - hx) < WALL / 2 + radius &&
-      Math.abs(z) < hz + radius
-    )
-      return true;
-    if (
-      Math.abs(z + front * hz) < WALL / 2 + radius &&
-      Math.abs(x) < hx + radius
-    )
-      return true;
-    if (
-      Math.abs(z - front * hz) < WALL / 2 + radius &&
-      Math.abs(x) < hx + radius &&
-      (feet > 2.8 || Math.abs(x) > DOOR_WIDTH / 2 - radius)
-    )
-      return true;
+    if (b.type === "jail") {
+      if (
+        JAIL_BUILDING_WALLS.some(
+          (w) =>
+            feet + 1.9 > w.y &&
+            feet < w.y + w.height &&
+            Math.abs(x - w.x) < w.width / 2 + radius &&
+            Math.abs(z - w.z) < w.depth / 2 + radius,
+        )
+      )
+        return true;
+    } else {
+      if (
+        Math.abs(Math.abs(x) - hx) < WALL / 2 + radius &&
+        Math.abs(z) < hz + radius
+      )
+        return true;
+      if (
+        Math.abs(z + front * hz) < WALL / 2 + radius &&
+        Math.abs(x) < hx + radius
+      )
+        return true;
+      if (
+        Math.abs(z - front * hz) < WALL / 2 + radius &&
+        Math.abs(x) < hx + radius &&
+        (feet > 2.8 || Math.abs(x) > DOOR_WIDTH / 2 - radius)
+      )
+        return true;
+    }
     if (!ignoreDoors && doorBlocksPoint(i, p, doorAngles[i], radius))
       return true;
     if (
@@ -790,7 +810,8 @@ export function containingBuilding(p: BuildingPoint) {
     (b) =>
       buildingEnabled(b) &&
       Math.abs(p.x - b.x) < b.width / 2 - WALL / 2 &&
-      Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2,
+      Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2 &&
+      !(b.type === "jail" && inJailCourtyard(p.x - b.x, p.z - b.z)),
   );
 }
 

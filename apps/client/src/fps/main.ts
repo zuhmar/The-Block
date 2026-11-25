@@ -135,6 +135,7 @@ import {
   animateDoors,
   toggleDoor,
   frontOf,
+  buildingDoorOffset,
   containingBuilding,
   buildingStories,
   STORY_HEIGHT,
@@ -850,7 +851,7 @@ for (const [oldX, oldZ] of [
 }
 for (const b of BUILDINGS.filter((b) => b.type.startsWith("military-"))) {
   const front = frontOf(b),
-    start = b.z + (front * b.depth) / 2,
+    start = b.z + buildingDoorOffset(b),
     end = (front > 0 ? 2.5 : 11.5) + (COMPACT.active ? -40 : 0);
   box(
     scene,

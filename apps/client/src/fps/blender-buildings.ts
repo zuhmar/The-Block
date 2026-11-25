@@ -1,7 +1,9 @@
+import { JAIL_BUILDING_WALLS, JAIL_BUILDING_SLABS } from "./jail-kit-layout";
 import * as THREE from "three";
 import {
   BUILDINGS,
   frontOf,
+  buildingDoorOffset,
   fixtures,
   partitions,
   buildingSlabs,
@@ -122,32 +124,41 @@ export function createBuildingShotProxy(index: number) {
     parent.add(m);
     return m;
   }
-  for (const x of [-b.width / 2, b.width / 2])
-    box(root, x, b.height / 2, 0, WALL, b.height, b.depth);
-  box(root, 0, b.height / 2, (-front * b.depth) / 2, b.width, b.height, WALL);
-  const sideWidth = (b.width - OPENING_WIDTH) / 2;
-  for (const side of [-1, 1])
+  if (b.type === "jail") {
+    for (const w of JAIL_BUILDING_WALLS)
+      box(root, w.x, w.y + w.height / 2, w.z, w.width, w.height, w.depth);
+    for (const slab of JAIL_BUILDING_SLABS) {
+      box(root, slab.x, 5.55, slab.z, slab.width, 0.15, slab.depth);
+      box(root, slab.x, 0.007, slab.z, slab.width, 0.025, slab.depth);
+    }
+  } else {
+    for (const x of [-b.width / 2, b.width / 2])
+      box(root, x, b.height / 2, 0, WALL, b.height, b.depth);
+    box(root, 0, b.height / 2, (-front * b.depth) / 2, b.width, b.height, WALL);
+    const sideWidth = (b.width - OPENING_WIDTH) / 2;
+    for (const side of [-1, 1])
+      box(
+        root,
+        side * (OPENING_WIDTH / 2 + sideWidth / 2),
+        b.height / 2,
+        (front * b.depth) / 2,
+        sideWidth,
+        b.height,
+        WALL,
+      );
     box(
       root,
-      side * (OPENING_WIDTH / 2 + sideWidth / 2),
-      b.height / 2,
+      0,
+      (b.height + 2.85) / 2,
       (front * b.depth) / 2,
-      sideWidth,
-      b.height,
+      OPENING_WIDTH,
+      b.height - 2.85,
       WALL,
     );
-  box(
-    root,
-    0,
-    (b.height + 2.85) / 2,
-    (front * b.depth) / 2,
-    OPENING_WIDTH,
-    b.height - 2.85,
-    WALL,
-  );
-  box(root, 0, 3.25, 0, b.width, 0.1, b.depth);
-  box(root, 0, 0.007, 0, b.width, 0.025, b.depth);
-  door.position.set(-DOOR_WIDTH / 2, 0, (front * b.depth) / 2);
+    box(root, 0, 3.25, 0, b.width, 0.1, b.depth);
+    box(root, 0, 0.007, 0, b.width, 0.025, b.depth);
+  }
+  door.position.set(-DOOR_WIDTH / 2, 0, buildingDoorOffset(b));
   root.add(door);
   const doorPanel = box(
     door,
@@ -243,7 +254,20 @@ export function loadBlenderBuilding(
       source: "blender",
     };
   } catch {
-    const fallback = createBuildingModel(index, geometry, makeSign);
+    const fallback =
+      b.type === "jail"
+        ? createBuildingShotProxy(index)
+        : createBuildingModel(index, geometry, makeSign);
+    if (b.type === "jail")
+      fallback.root.traverse((o) => {
+        if (o instanceof THREE.Mesh) {
+          o.visible = true;
+          o.material = new THREE.MeshStandardMaterial({
+            color: 0x66788c,
+            roughness: 0.4,
+          });
+        }
+      });
     return {
       ...fallback,
       shotRoot: proxy.root,
