@@ -134,14 +134,33 @@ export class ResourceWorld {
       )
     );
   }
+  private landClear: (p: Point, radius: number) => boolean = () => true;
+  reserveLand(check: (p: Point, radius: number) => boolean, now = Date.now()) {
+    this.landClear = check;
+    let changed = false;
+    for (const r of this.entities)
+      if (r.health > 0 && !check(r, r.kind.startsWith("tree") ? r.canopy : 2)) {
+        r.health = 0;
+        r.respawnAt = now + 10000;
+        r.generation++;
+        changed = true;
+      }
+    if (changed) {
+      this.revision++;
+      this.reindex();
+    }
+  }
   private baseClear(p: Point, radius: number) {
-    return this.pieces().every((piece) => {
-      const b = pieceBox(piece);
-      return (
-        Math.abs(p.x - b.x) > b.width / 2 + radius + 1 ||
-        Math.abs(p.z - b.z) > b.depth / 2 + radius + 1
-      );
-    });
+    return (
+      this.landClear(p, radius) &&
+      this.pieces().every((piece) => {
+        const b = pieceBox(piece);
+        return (
+          Math.abs(p.x - b.x) > b.width / 2 + radius + 1 ||
+          Math.abs(p.z - b.z) > b.depth / 2 + radius + 1
+        );
+      })
+    );
   }
   private nodeSite(p: Point, id: string) {
     return (
@@ -240,6 +259,7 @@ export class ResourceWorld {
   reset(now = Date.now()) {
     const fresh = new ResourceWorld(this.pieces, undefined, now, this.random);
     this.entities = fresh.entities;
+    this.reserveLand(this.landClear, now);
     this.nextTick = now + 1000;
     this.revision++;
     this.reindex();

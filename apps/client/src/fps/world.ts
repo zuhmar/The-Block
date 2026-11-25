@@ -1,3 +1,4 @@
+import { readSurvival, type SurvivalState } from "./survival-state";
 import {
   configureNorthLab,
   inNorthLab,
@@ -949,6 +950,7 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
   );
 }
 export type Save = {
+  survival?: SurvivalState;
   inventory?: Inventory;
   resources?: ResourceWallet;
   harvest?: HarvestSave;
@@ -995,6 +997,9 @@ export function readSave(raw: string | null): Save {
     }
     return {
       version: 1,
+      ...(readSurvival(s.survival)
+        ? { survival: readSurvival(s.survival) }
+        : {}),
       ...(readInventory(s.inventory)
         ? { inventory: readInventory(s.inventory) }
         : {}),

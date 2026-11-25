@@ -3,6 +3,7 @@ import { WEAPONS, type WeaponKind, type Tool } from "./weapons";
 export const CARRY_SLOTS = 20,
   HOTBAR_SLOTS = 5;
 export const ITEM_KINDS = [
+  "cash",
   ...BULLET_AMMO,
   "sulfur-refined",
   "metal-fragments",
@@ -40,40 +41,54 @@ export const isResource = (k: ItemKind) =>
 export const isGun = (k: ItemKind) =>
   ["pistol", "smg", "rifle", "sniper", "lmg", "rocket"].includes(k);
 export const stackLimit = (k: ItemKind) =>
-  isResource(k) || isBulletAmmo(k) ? 500 : isGun(k) || isHarvestTool(k) ? 1 : 5;
+  k === "cash"
+    ? 1000000
+    : isResource(k) || isBulletAmmo(k)
+      ? 500
+      : isGun(k) || isHarvestTool(k)
+        ? 1
+        : 5;
 export const itemName = (k: ItemKind) =>
-  (
-    ({
-      "pistol-ammo": "Pistol rounds",
-      "smg-ammo": "SMG rounds",
-      "rifle-ammo": "Rifle rounds",
-      "sniper-ammo": "Sniper rounds",
-      "lmg-ammo": "LMG rounds",
-      wood: "Wood",
-      rock: "Rock",
-      sulfur: "Sulfur ore",
-      "sulfur-refined": "Refined sulfur",
-      "metal-fragments": "Metal fragments",
-      charcoal: "Charcoal",
-      gunpowder: "Gunpowder",
-      metal: "Metal ore",
-      rockets: "Rockets",
-      axe: "Axe",
-      pickaxe: "Pickaxe",
-    }) as Partial<Record<ItemKind, string>>
-  )[k] ?? WEAPONS[k as WeaponKind].name;
+  k === "cash"
+    ? "Cash"
+    : ((
+        {
+          "pistol-ammo": "Pistol rounds",
+          "smg-ammo": "SMG rounds",
+          "rifle-ammo": "Rifle rounds",
+          "sniper-ammo": "Sniper rounds",
+          "lmg-ammo": "LMG rounds",
+          wood: "Wood",
+          rock: "Rock",
+          sulfur: "Sulfur ore",
+          "sulfur-refined": "Refined sulfur",
+          "metal-fragments": "Metal fragments",
+          charcoal: "Charcoal",
+          gunpowder: "Gunpowder",
+          metal: "Metal ore",
+          rockets: "Rockets",
+          axe: "Axe",
+          pickaxe: "Pickaxe",
+        } as Partial<Record<ItemKind, string>>
+      )[k] ?? WEAPONS[k as WeaponKind].name);
 export const itemIcon = (k: ItemKind) =>
-  ["sulfur-refined", "metal-fragments", "charcoal", "gunpowder"].includes(k)
-    ? `/assets/crafting/item-${k}.png`
-    : ammoModelKind(k)
-      ? `/assets/ammo/ammo-${ammoModelKind(k)}.png`
-      : isHarvestTool(k)
-        ? `/assets/harvest-tools/${k}-preview.png`
-        : isResource(k)
-          ? `/assets/resource-items/item-${k}.png`
-          : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
+  k === "cash"
+    ? "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ctext x='16' y='49' font-size='48' fill='%23d9bd62'%3E$%3C/text%3E%3C/svg%3E"
+    : ["sulfur-refined", "metal-fragments", "charcoal", "gunpowder"].includes(k)
+      ? `/assets/crafting/item-${k}.png`
+      : ammoModelKind(k)
+        ? `/assets/ammo/ammo-${ammoModelKind(k)}.png`
+        : isHarvestTool(k)
+          ? `/assets/harvest-tools/${k}-preview.png`
+          : isResource(k)
+            ? `/assets/resource-items/item-${k}.png`
+            : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
 export const itemTool = (k: ItemKind): Tool =>
-  isResource(k) || isHarvestTool(k) || isBulletAmmo(k) || k === "rockets"
+  isResource(k) ||
+  isHarvestTool(k) ||
+  isBulletAmmo(k) ||
+  k === "cash" ||
+  k === "rockets"
     ? "hands"
     : (k as WeaponKind);
 export type ItemStack = {
@@ -370,7 +385,7 @@ export function readInventory(value: unknown): Inventory | undefined {
     !Array.isArray(v.reserve) ||
     v.reserve.length > 12000 ||
     !Array.isArray(v.drops) ||
-    v.drops.length > 200
+    v.drops.length > 12000
   )
     return;
   const inv = emptyInventory(),

@@ -1,0 +1,117 @@
+.housing-card {
+  width: min(900px, 96vw);
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 24px;
+  background: #18232e;
+  border: 1px solid #b89c58;
+  border-radius: 12px;
+  color: #f1eddf;
+  box-shadow: 0 20px 70px #000a;
+}
+.housing-heading,
+.housing-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.housing-card section {
+  padding: 12px 0;
+  border-top: 1px solid #ffffff20;
+}
+.housing-card h2,
+.housing-card h3 {
+  margin: 8px 0;
+}
+.housing-card p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.housing-card .housing-warning {
+  color: #ebbf86;
+}
+.housing-plots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.housing-plots article {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #ffffff09;
+  border-radius: 8px;
+}
+.housing-plots span {
+  font-size: 12px;
+  color: #c6ccd0;
+}
+.housing-card button {
+  min-height: 44px;
+  padding: 10px;
+  border-radius: 5px;
+}
+.housing-card button:disabled {
+  opacity: 0.5;
+}
+#housing-feedback {
+  min-height: 1.5em;
+  color: #ffd780;
+}
+#housing-button {
+  min-height: 40px;
+}
+#cash-count {
+  font-variant-numeric: tabular-nums;
+}
+#housing-overlay {
+  z-index: 45;
+  pointer-events: auto;
+}
+@media (max-width: 600px) {
+  .housing-card {
+    padding: 14px;
+  }
+  .housing-actions button {
+    flex: 1 1 130px;
+  }
+}
+#hud > header {
+  gap: 8px;
+}
+#hud > header > .brand {
+  margin-right: auto;
+}
+#housing-button {
+  padding: 9px 12px;
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: 1px;
+  pointer-events: auto;
+}
+.touch #hud > header {
+  gap: 6px;
+}
+.touch #housing-button {
+  padding: 8px;
+  font-size: 9px;
+}
+.touch #hud > header > .location {
+  top: 64px;
+  left: 16px;
+  right: 16px;
+  transform: none;
+  pointer-events: none;
+}
+.touch #hud > header > .brand {
+  font-size: 22px;
+}
+.touch #toast {
+  top: 108px;
+}
+.touch #housing-button small {
+  display: none;
+}
