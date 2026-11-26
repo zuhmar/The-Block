@@ -6,14 +6,17 @@
   "geometryModel": "meshy-t2",
   "textureModel": "meshy-n1",
   "gameIntegrated": false,
-  "modelsGeneratedFromCorrectedReferences": false,
+  "modelsGeneratedFromCorrectedReferences": true,
   "budget": {
     "originalEstimate": 135,
     "supersededDraftCreditsSpent": 75,
     "correctedSetCredits": 135,
     "totalIncludingDrafts": 210,
     "additionalBeyondOriginalEstimate": 75,
-    "awaitingApprovalForPaidReruns": true
+    "awaitingApprovalForPaidReruns": false,
+    "correctedSetApproved": true,
+    "correctedSetCreditsSpent": 135,
+    "actualTotalCreditsSpent": 210
   },
   "assets": [
     {
@@ -25,7 +28,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [156, 56, 1100, 1225],
       "targetTriangles": 4000,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "8617fd08-66f7-4caf-b0f2-2911019db897",
+      "taskId": "01a218ec-c787-762c-bcf5-8320e74ae0a4",
+      "taskType": "image-to-3d",
+      "model": "models/retail-shelf.glb",
+      "modelSha256": "192cc0a727c036193dedb3df1aab7f45ba36bba1b8fd0f47d52abd531f9d5a65",
+      "actualTriangles": 4033,
+      "modelPreview": "model-previews/retail-shelf.png"
     },
     {
       "name": "checkout-counter",
@@ -36,7 +46,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [47, 283, 1214, 1082],
       "targetTriangles": 3000,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "9dd1d23e-336d-45b5-a9a8-0768783571a0",
+      "taskId": "01a218ec-db06-71db-ad23-bb447f60744a",
+      "taskType": "image-to-3d",
+      "model": "models/checkout-counter.glb",
+      "modelSha256": "d5fbda04545fd9c6a7cf8b4c4e07e87a400a3af9e0fec81a480840cb79bda75d",
+      "actualTriangles": 3039,
+      "modelPreview": "model-previews/checkout-counter.png"
     },
     {
       "name": "refrigerator",
@@ -47,7 +64,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [109, 59, 1145, 1234],
       "targetTriangles": 3000,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "a3645899-0445-4484-baa2-1abd0332ccbe",
+      "taskId": "01a218ec-f017-7393-9297-f8a599789dc7",
+      "taskType": "image-to-3d",
+      "model": "models/refrigerator.glb",
+      "modelSha256": "280ec8d1b85c65e044129ac217a0161318ef9e83a686cc708facafb8991c31a8",
+      "actualTriangles": 546,
+      "modelPreview": "model-previews/refrigerator.png"
     },
     {
       "name": "stock-boxes",
@@ -58,7 +82,15 @@
       "alphaRange": [0, 255],
       "visibleBounds": [194, 82, 1054, 1185],
       "targetTriangles": 1600,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "22e519ab-3bca-49fa-a70b-01dbab83209e",
+      "taskId": "01a218ed-93b5-7223-88f1-123501266779",
+      "taskType": "image-to-3d",
+      "model": "models/stock-boxes.glb",
+      "modelSha256": "6861c40c7cd452a434d9f17145be90798cbc45a23a4da67821ec9aa0b8536fc3",
+      "actualTriangles": 1780,
+      "modelPreview": "model-previews/stock-boxes.png",
+      "localSurfaceRepair": "carton-surface-repair.json"
     },
     {
       "name": "roof-ac",
@@ -69,7 +101,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [82, 204, 1171, 1119],
       "targetTriangles": 1600,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "e934f61c-db38-4f9b-8703-1c60d1bf39c8",
+      "taskId": "01a218ed-a631-74ec-bec0-683a0f9d1889",
+      "taskType": "image-to-3d",
+      "model": "models/roof-ac.glb",
+      "modelSha256": "e6dc63e475d9e0ae72d5b86ea74c83c4ec49edb5fa41962d0bed9677b7ad7d82",
+      "actualTriangles": 1050,
+      "modelPreview": "model-previews/roof-ac.png"
     },
     {
       "name": "roof-vent",
@@ -80,7 +119,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [173, 78, 1073, 1199],
       "targetTriangles": 1000,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "f2569fe1-a77b-4494-a59a-7ff4e39062cf",
+      "taskId": "01a218ed-b9c0-7613-8578-d29da2454ae3",
+      "taskType": "image-to-3d",
+      "model": "models/roof-vent.glb",
+      "modelSha256": "a8aa5310c974ec63d180af34d7ffd5e3d8f0da63737de186250786547ca27a41",
+      "actualTriangles": 1020,
+      "modelPreview": "model-previews/roof-vent.png"
     },
     {
       "name": "exterior-light",
@@ -91,7 +137,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [93, 171, 1183, 1064],
       "targetTriangles": 800,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "06975b6c-2add-47b9-b049-8a1688316111",
+      "taskId": "01a218ee-a98c-7796-8d63-a4a03447893d",
+      "taskType": "image-to-3d",
+      "model": "models/exterior-light.glb",
+      "modelSha256": "ba40648a253437dc519142b4308287ba4236a1e6a56dbfe338a2d3878b7acc23",
+      "actualTriangles": 878,
+      "modelPreview": "model-previews/exterior-light.png"
     },
     {
       "name": "security-camera",
@@ -102,7 +155,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [123, 167, 1129, 1096],
       "targetTriangles": 800,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "b2c3c179-4ad0-4849-8045-671fd7f9aec8",
+      "taskId": "01a218ee-bccc-75b8-8c11-97d59b58a675",
+      "taskType": "image-to-3d",
+      "model": "models/security-camera.glb",
+      "modelSha256": "93778ebe302dd0cd268b3242aca1bab33b03589d43ef97fcd1881c3b514bd52a",
+      "actualTriangles": 801,
+      "modelPreview": "model-previews/security-camera.png"
     },
     {
       "name": "rain-downpipe",
@@ -113,7 +173,14 @@
       "alphaRange": [0, 255],
       "visibleBounds": [340, 34, 572, 1755],
       "targetTriangles": 600,
-      "status": "reference_ready"
+      "status": "SUCCEEDED",
+      "requestId": "0c6c36df-f34c-4c71-bf6a-2fce4253196e",
+      "taskId": "01a218ee-d4c4-7383-8168-63c3fd60f161",
+      "taskType": "image-to-3d",
+      "model": "models/rain-downpipe.glb",
+      "modelSha256": "ec391a180454e10621d2c416d7e2bbb678bb1d3efb06572c023df61a3ca54e59",
+      "actualTriangles": 572,
+      "modelPreview": "model-previews/rain-downpipe.png"
     }
   ],
   "supersededDrafts": [

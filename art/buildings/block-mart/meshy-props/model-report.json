@@ -1,0 +1,238 @@
+{
+  "source": "Meshy image-to-3D from nine separately generated original-concept-derived sprites",
+  "geometryModel": "meshy-t2",
+  "textureModel": "meshy-n1",
+  "count": 9,
+  "totalTriangles": 13719,
+  "totalBytes": 23864136,
+  "integrationStatus": "Source exports: world scale, pivots, mobile texture optimization and collision integration remain separate work.",
+  "models": [
+    {
+      "name": "retail-shelf",
+      "path": "models/retail-shelf.glb",
+      "taskId": "01a218ec-c787-762c-bcf5-8320e74ae0a4",
+      "reference": "image-references/retail-shelf.png",
+      "referenceSha256": "cb7b112f6b4dc64a94d0b7b47e6e1fa454fa7a769916d069ea22702e55016a68",
+      "sha256": "192cc0a727c036193dedb3df1aab7f45ba36bba1b8fd0f47d52abd531f9d5a65",
+      "bytes": 3864728,
+      "triangles": 4033,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.4496789872646332, -0.5, -0.19770699739456177],
+        "max": [0.4505369961261749, 0.5, 0.19822600483894348],
+        "size": [0.9002159833908081, 1, 0.39593300223350525]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "checkout-counter",
+      "path": "models/checkout-counter.glb",
+      "taskId": "01a218ec-db06-71db-ad23-bb447f60744a",
+      "reference": "image-references/checkout-counter.png",
+      "referenceSha256": "2b5b33c4c6c87037fab9fae0ed8411e84ed78763e9afff3a1486ac0dcfbcca1a",
+      "sha256": "d5fbda04545fd9c6a7cf8b4c4e07e87a400a3af9e0fec81a480840cb79bda75d",
+      "bytes": 3539032,
+      "triangles": 3039,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.5, -0.2808929979801178, -0.30515098571777344],
+        "max": [0.5, 0.27950501441955566, 0.3026520013809204],
+        "size": [1, 0.5603980123996735, 0.6078029870986938]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "refrigerator",
+      "path": "models/refrigerator.glb",
+      "taskId": "01a218ec-f017-7393-9297-f8a599789dc7",
+      "reference": "image-references/refrigerator.png",
+      "referenceSha256": "daa072cba82faa00983b7ff39db5a49e79e4c7a104405a42208f3789ab22b525",
+      "sha256": "280ec8d1b85c65e044129ac217a0161318ef9e83a686cc708facafb8991c31a8",
+      "bytes": 3243688,
+      "triangles": 546,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.4526419937610626, -0.5, -0.2294600009918213],
+        "max": [0.4540649950504303, 0.5, 0.23077000677585602],
+        "size": [0.9067069888114929, 1, 0.4602300077676773]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "stock-boxes",
+      "path": "models/stock-boxes.glb",
+      "taskId": "01a218ed-93b5-7223-88f1-123501266779",
+      "reference": "image-references/stock-boxes.png",
+      "referenceSha256": "744e29c07a0c6d8889e31c3c36ce85ab2762c70b2d63d69b6574be61a547f6db",
+      "sha256": "6861c40c7cd452a434d9f17145be90798cbc45a23a4da67821ec9aa0b8536fc3",
+      "bytes": 2919568,
+      "triangles": 1780,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [
+          -0.40884798765182495, -0.49974900484085083, -0.25174498558044434
+        ],
+        "max": [0.4093180000782013, 0.4989849925041199, 0.2536410093307495],
+        "size": [0.8181659877300262, 0.9987339973449707, 0.5053859949111938]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "roof-ac",
+      "path": "models/roof-ac.glb",
+      "taskId": "01a218ed-a631-74ec-bec0-683a0f9d1889",
+      "reference": "image-references/roof-ac.png",
+      "referenceSha256": "411e101c1bc75423d0aaacecb09fa90ecbdf1a09b5202d7a4b2ecaae9017ad4d",
+      "sha256": "e6dc63e475d9e0ae72d5b86ea74c83c4ec49edb5fa41962d0bed9677b7ad7d82",
+      "bytes": 2186800,
+      "triangles": 1050,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.5, -0.4012329876422882, -0.3779340088367462],
+        "max": [0.5, 0.40084800124168396, 0.368133008480072],
+        "size": [1, 0.8020809888839722, 0.7460670173168182]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "roof-vent",
+      "path": "models/roof-vent.glb",
+      "taskId": "01a218ed-b9c0-7613-8578-d29da2454ae3",
+      "reference": "image-references/roof-vent.png",
+      "referenceSha256": "aaef72e7ceb2fffee35d04f552884e98efb97fecced395188406ef9e13ec6b5e",
+      "sha256": "a8aa5310c974ec63d180af34d7ffd5e3d8f0da63737de186250786547ca27a41",
+      "bytes": 2816020,
+      "triangles": 1020,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.4631800055503845, -0.5, -0.4414309859275818],
+        "max": [0.4611150026321411, 0.49856099486351013, 0.4478830099105835],
+        "size": [0.9242950081825256, 0.9985609948635101, 0.8893139958381653]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "exterior-light",
+      "path": "models/exterior-light.glb",
+      "taskId": "01a218ee-a98c-7796-8d63-a4a03447893d",
+      "reference": "image-references/exterior-light.png",
+      "referenceSha256": "ef2d4eb8910d83d9785fd3ff9bc5438270819547747268927e6065b0930178a1",
+      "sha256": "ba40648a253437dc519142b4308287ba4236a1e6a56dbfe338a2d3878b7acc23",
+      "bytes": 2293592,
+      "triangles": 878,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.5, -0.43368199467658997, -0.35391899943351746],
+        "max": [0.5, 0.4334290027618408, 0.3574469983577728],
+        "size": [1, 0.8671109974384308, 0.7113659977912903]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "security-camera",
+      "path": "models/security-camera.glb",
+      "taskId": "01a218ee-bccc-75b8-8c11-97d59b58a675",
+      "reference": "image-references/security-camera.png",
+      "referenceSha256": "39944808d1c8f73f3fd98e92fb8fc68a7a85901a7a57bce6b1dc0e108399b122",
+      "sha256": "93778ebe302dd0cd268b3242aca1bab33b03589d43ef97fcd1881c3b514bd52a",
+      "bytes": 2076612,
+      "triangles": 801,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.22618000209331512, -0.45955801010131836, -0.5],
+        "max": [0.22624200582504272, 0.4585320055484772, 0.5],
+        "size": [0.45242200791835785, 0.9180900156497955, 1]
+      },
+      "gameIntegrated": false
+    },
+    {
+      "name": "rain-downpipe",
+      "path": "models/rain-downpipe.glb",
+      "taskId": "01a218ee-d4c4-7383-8168-63c3fd60f161",
+      "reference": "image-references/rain-downpipe.png",
+      "referenceSha256": "40c618c366b1cafb8a7009a7c8094ea970d56d8637ad5500ff7a75b4d5f41491",
+      "sha256": "ec391a180454e10621d2c416d7e2bbb678bb1d3efb06572c023df61a3ca54e59",
+      "bytes": 924096,
+      "triangles": 572,
+      "meshes": 1,
+      "materials": 1,
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "png"
+        }
+      ],
+      "sourceBounds": {
+        "min": [-0.07157599925994873, -0.5, -0.04243500158190727],
+        "max": [0.07164499908685684, 0.5, 0.0441179983317852],
+        "size": [0.14322099834680557, 1, 0.08655299991369247]
+      },
+      "gameIntegrated": false
+    }
+  ]
+}

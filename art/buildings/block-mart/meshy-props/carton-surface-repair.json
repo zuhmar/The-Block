@@ -1,0 +1,10 @@
+{
+  "source": "source-models/stock-boxes.glb",
+  "sourceSha256": "3209b195ebc1377c6dccd9be5088d6f6216a634a658100d89d8d6b2968a384a0",
+  "output": "models/stock-boxes.glb",
+  "outputSha256": "6861c40c7cd452a434d9f17145be90798cbc45a23a4da67821ec9aa0b8536fc3",
+  "operation": "Weld coincident seam vertices, recalculate surface orientation, clear malformed imported custom normals, and shade the cardboard faces flat",
+  "positionsWeldTolerance": 1e-5,
+  "meshRegenerated": false,
+  "additionalMeshyCredits": 0
+}
