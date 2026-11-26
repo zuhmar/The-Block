@@ -50,7 +50,7 @@ export function frontageOptions(index: number) {
         b,
         isMart(b) ? martDoorPoint(0, 0) : { x: 0, z: buildingDoorOffset(b) },
       ),
-      nx = isMart(b) ? Math.cos(yaw + Math.PI / 4) : Math.sin(yaw) * frontOf(b),
+      nx = isMart(b) ? Math.cos(yaw - Math.PI / 4) : Math.sin(yaw) * frontOf(b),
       nz = isMart(b) ? Math.sin(Math.PI / 4 - yaw) : Math.cos(yaw) * frontOf(b);
     for (const road of ROADS)
       for (let i = 1; i < road.length; i++) {
