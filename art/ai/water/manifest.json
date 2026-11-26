@@ -1,0 +1,33 @@
+{
+  "style": "original AI glossy cartoon",
+  "assets": [
+    {
+      "name": "water",
+      "file": "water.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": false,
+      "bytes": 9544,
+      "referenceSha256": "69609f287c558e9f6f0dd6037afc3ed22271672e6e9bb2027b6a99fb687e59ac"
+    },
+    {
+      "name": "foam",
+      "file": "foam.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "bytes": 26320,
+      "referenceSha256": "b75a7467c0410fa9136ba51bfcfc0509767b3f466131da553c380fa41157ff04"
+    },
+    {
+      "name": "ripple",
+      "file": "ripple.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true,
+      "bytes": 17420,
+      "referenceSha256": "9248c2d44b34517321c1ca4617aff7c1a8f0a634db969cbc1c093250a6377532"
+    }
+  ],
+  "animation": "two mirrored scrolling water layers, drifting shoreline foam, pooled scale/fade ripple sprites; runtime annular mask suppresses ripple fringe"
+}

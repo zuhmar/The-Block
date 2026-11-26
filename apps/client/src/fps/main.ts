@@ -522,7 +522,7 @@ for (const p of channel.slice().reverse()) waterShape.lineTo(p.x + 3.3, -p.z);
 waterShape.closePath();
 const river = new THREE.Mesh(
   new THREE.ShapeGeometry(waterShape),
-  material(0x418caa),
+  coast.waterMaterial,
 );
 river.rotation.x = -Math.PI / 2;
 river.position.y = 0.015;
@@ -3183,6 +3183,7 @@ function fire() {
       true,
     )
     .filter((hit) => hit.distance <= weapon.range);
+  coast.splashRay(raycaster.ray, hits[0]?.distance ?? weapon.range);
   lastHitDoor = hits[0]?.object.userData.doorIndex ?? -1;
   lastHitBuildPiece = hits[0]?.object.userData.pieceId ?? "";
   const end =
@@ -3839,7 +3840,7 @@ function frame(now: number) {
     settleHousing();
     housingView.update(survival(), player);
   }
-  coast.update(clock);
+  coast.update(clock, playing ? player : undefined);
   jailGrounds.root.visible =
     !COMPACT.active || Math.hypot(player.x, player.z + 124) < 155;
   harbor.root.visible =
@@ -4229,6 +4230,7 @@ function frame(now: number) {
     useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
   );
   canvas.dataset.health = String(health);
+  canvas.dataset.waterEffects = JSON.stringify(coast.waterStats());
   canvas.dataset.jailKit = jailGrounds.source;
   canvas.dataset.jailGate = JSON.stringify(jailGate);
   canvas.dataset.cityLayout = COMPACT.active

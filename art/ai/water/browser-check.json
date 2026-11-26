@@ -1,0 +1,38 @@
+{
+  "desktop": {
+    "textureAssetsLoaded": true,
+    "actualBulletWaterImpact": true,
+    "waterPixelDifference": 3.531960227272727,
+    "waterStats": {
+      "source": "ai-textures",
+      "layers": 2,
+      "drawCalls": 3,
+      "pool": 16,
+      "active": 0,
+      "emitted": 6,
+      "impacts": 2,
+      "time": 14.289300000000093,
+      "foamVertices": 3148
+    }
+  },
+  "phone": {
+    "assetsLoaded": true,
+    "touchGateWorks": true,
+    "viewportFits": true,
+    "waterStats": {
+      "source": "ai-textures",
+      "layers": 2,
+      "drawCalls": 3,
+      "pool": 16,
+      "active": 0,
+      "emitted": 0,
+      "impacts": 0,
+      "time": 0.8444000000000247,
+      "foamVertices": 3148
+    }
+  },
+  "errors": [],
+  "missing": [],
+  "shaderErrors": [],
+  "scope": "Software-rendered browser smoke checks, not a physical-phone FPS benchmark"
+}

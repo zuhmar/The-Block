@@ -51,7 +51,8 @@
     "assets:north-lab": "tsx packages/art-tools/export-north-lab.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-north-lab.py",
     "assets:lab-npcs": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/animate-lab-npcs.py",
     "assets:meshy-gathering": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-meshy-gathering.py",
-    "assets:jail-kit": "tsx packages/art-tools/export-jail-kit.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-jail-meshy.py"
+    "assets:jail-kit": "tsx packages/art-tools/export-jail-kit.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-jail-meshy.py",
+    "assets:water": "tsx packages/art-tools/prepare-water.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
