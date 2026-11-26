@@ -5,7 +5,7 @@
   "count": 9,
   "totalTriangles": 13719,
   "totalBytes": 23864136,
-  "integrationStatus": "Source exports: world scale, pivots, mobile texture optimization and collision integration remain separate work.",
+  "integrationStatus": "Prepared runtime variants are integrated in Block Mart; these measurements refer to the retained Meshy source exports.",
   "models": [
     {
       "name": "retail-shelf",
@@ -30,7 +30,7 @@
         "max": [0.4505369961261749, 0.5, 0.19822600483894348],
         "size": [0.9002159833908081, 1, 0.39593300223350525]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "checkout-counter",
@@ -55,7 +55,7 @@
         "max": [0.5, 0.27950501441955566, 0.3026520013809204],
         "size": [1, 0.5603980123996735, 0.6078029870986938]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "refrigerator",
@@ -80,7 +80,7 @@
         "max": [0.4540649950504303, 0.5, 0.23077000677585602],
         "size": [0.9067069888114929, 1, 0.4602300077676773]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "stock-boxes",
@@ -107,7 +107,7 @@
         "max": [0.4093180000782013, 0.4989849925041199, 0.2536410093307495],
         "size": [0.8181659877300262, 0.9987339973449707, 0.5053859949111938]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "roof-ac",
@@ -132,7 +132,7 @@
         "max": [0.5, 0.40084800124168396, 0.368133008480072],
         "size": [1, 0.8020809888839722, 0.7460670173168182]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "roof-vent",
@@ -157,7 +157,7 @@
         "max": [0.4611150026321411, 0.49856099486351013, 0.4478830099105835],
         "size": [0.9242950081825256, 0.9985609948635101, 0.8893139958381653]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "exterior-light",
@@ -182,7 +182,7 @@
         "max": [0.5, 0.4334290027618408, 0.3574469983577728],
         "size": [1, 0.8671109974384308, 0.7113659977912903]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "security-camera",
@@ -207,7 +207,7 @@
         "max": [0.22624200582504272, 0.4585320055484772, 0.5],
         "size": [0.45242200791835785, 0.9180900156497955, 1]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     },
     {
       "name": "rain-downpipe",
@@ -232,7 +232,7 @@
         "max": [0.07164499908685684, 0.5, 0.0441179983317852],
         "size": [0.14322099834680557, 1, 0.08655299991369247]
       },
-      "gameIntegrated": false
+      "gameIntegrated": true
     }
   ]
 }

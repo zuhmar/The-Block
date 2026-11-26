@@ -93,7 +93,7 @@ for (const asset of manifest.assets) {
       max: bounds.max.toArray(),
       size: size.toArray(),
     },
-    gameIntegrated: false,
+    gameIntegrated: Boolean(manifest.gameIntegrated),
   });
 }
 const report = {
@@ -104,8 +104,9 @@ const report = {
   count: models.length,
   totalTriangles: models.reduce((n, m) => n + m.triangles, 0),
   totalBytes: models.reduce((n, m) => n + m.bytes, 0),
-  integrationStatus:
-    "Source exports: world scale, pivots, mobile texture optimization and collision integration remain separate work.",
+  integrationStatus: manifest.gameIntegrated
+    ? "Prepared runtime variants are integrated in Block Mart; these measurements refer to the retained Meshy source exports."
+    : "Source exports: world scale, pivots, mobile texture optimization and collision integration remain separate work.",
   models,
 };
 await writeFile(

@@ -1,12 +1,13 @@
 """Reference-guided, directly authored Blender Block Mart and reusable architecture/prop kit.
-No paid generation, imported building mesh, nonuniform instance scaling or runtime changes.
+Native architecture with optional existing Meshy props; all placed modules retain unit scale.
 """
-import bpy,bmesh,math,json,random,hashlib,sys,shutil
+import bpy,bmesh,math,json,random,hashlib,sys,shutil,runpy
 from pathlib import Path
 from mathutils import Vector,Matrix
-ROOT=Path('art/buildings/block-mart');PARTS=ROOT/'parts';PARTS.mkdir(parents=True,exist_ok=True)
+BASE=Path('art/buildings/block-mart');MESHY_PROPS='--meshy-props' in sys.argv
+ROOT=BASE/'meshy-props/prepared' if MESHY_PROPS else BASE;PARTS=ROOT/'parts';PARTS.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True);bpy.context.preferences.filepaths.save_version=0
-rng=random.Random(73);sha=hashlib.sha256((ROOT/'references/block-mart.png').read_bytes()).hexdigest()
+rng=random.Random(73);sha=hashlib.sha256((BASE/'references/block-mart.png').read_bytes()).hexdigest()
 M={}
 def linear(h):
  vals=[int(h[i:i+2],16)/255 for i in (0,2,4)];return tuple(v/12.92 if v<=.04045 else ((v+.055)/1.055)**2.4 for v in vals)
@@ -66,7 +67,7 @@ def export(root,path,omit=()):
  bpy.ops.object.select_all(action='DESELECT');objects=[o for o in members(root) if o.get('part') not in omit]
  for o in objects:o.select_set(True)
  bpy.context.view_layer.objects.active=root
- bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_extras=True,export_animations=True,export_animation_mode='NLA_TRACKS',export_frame_range=False)
+ bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_extras=True,export_animations=True,export_animation_mode='NLA_TRACKS',export_frame_range=False,**({'export_image_format':'JPEG','export_jpeg_quality':90,'export_image_quality':90} if MESHY_PROPS else {}))
  return {'bytes':path.stat().st_size,'triangles':sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in objects if o.type=='MESH')}
 
 def batch(root):
@@ -208,7 +209,13 @@ for name,fn in [('display-window',window),('front-glass-door',lambda r:door(r,'f
  part_report[name]['size']=[max(v[k]for v in points)-min(v[k]for v in points)for k in [0,2,1]]
  for o in members(root):o.hide_render=True;o.name='library::'+o.name
 
+meshy_metadata={};meshy_collision={}
+if MESHY_PROPS:
+ prepare=runpy.run_path(str(Path(__file__).with_name('prepare-block-mart-props.py')))['prepare_meshy_modules']
+ meshy_metadata,meshy_collision=prepare(components,part_report,PARTS,export,members)
+
 building=empty('block-mart');building['referenceSha256']=sha;building['units']='metres';building['architecture']='chamfered corner shop with recessed storefront and rear stockroom';building['source']='Directly authored in Blender from approved concept';building['placementScale']='1,1,1'
+building['propSet']='meshy-original-art' if MESHY_PROPS else 'native-blender'
 placed=[];colliders=[];fixtures=[];door_plan=[]
 def place(name,x,z,y=0,tx=1,tz=0,fixture=False):
  template=components[name];old=members(template);mapping={o:o.copy() for o in old}
@@ -302,9 +309,15 @@ text('raised store lettering','BLOCK MART',0,4,-.303,.56,portal)
 # Attached threshold; no arbitrary square ground pad around the asset.
 prism('corner entry step',[(3.2,5.13),(5.13,3.2),(5.63,3.7),(3.7,5.63)],-.08,.035,'cream',building,'shell')
 box('delivery loading step',-3.1,.025,-5.45,1.8,.05,.65,'cream',building)
-for x in [-.3,2.1]:place('retail-shelf',x,.2,fixture=True)
-place('checkout-counter',.3,3.6,fixture=True)
-for x in [.3,2,3.7]:place('refrigerator',x,-4.4,0,-1,0,True)
+if MESHY_PROPS:
+ for x in [-.3,2.1]:
+  for z in [-1.4,.25]:place('retail-shelf',x,z,0,0,-1,True)
+ place('checkout-counter',.3,3.3,fixture=True)
+ for x in [.45,2.8]:place('refrigerator',x,-4.32,0,-1,0,True)
+else:
+ for x in [-.3,2.1]:place('retail-shelf',x,.2,fixture=True)
+ place('checkout-counter',.3,3.6,fixture=True)
+ for x in [.3,2,3.7]:place('refrigerator',x,-4.4,0,-1,0,True)
 for x,z in [(-4.4,-3.7),(-1.8,-3.7),(-4.4,-2)]:place('stock-boxes',x,z,fixture=True)
 place('stock-boxes',-4.4,-5.65)
 # Distinct stepped roof and individually modeled parapet coping.
@@ -320,7 +333,7 @@ place('roof-ac',2,-3.1,4.22,-1,0);place('roof-vent',-2.6,-2.5,4.48)
 place('rain-downpipe',-4.6,5.2,0,-1,0);place('rain-downpipe',-4.6,-5.2)
 for a,b in [((-5.18,-5),(-5.18,5)),((-5,-5.18),(5,-5.18))]:rod('roof rain gutter',(a[0],4.1,a[1]),(b[0],4.1,b[1]),.065,'navy',building,'roof')
 place('exterior-light',-4.4,5.2,3.35,-1,0);place('exterior-light',-3.1,-5.2,2.95)
-place('security-camera',5.2,2.5,3.55,0,1)
+place('security-camera',5.32 if MESHY_PROPS else 5.2,2.5,3.35 if MESHY_PROPS else 3.55,0,1)
 for x,z in [(0,0),(2.4,1),(-3,-3)]:box('ceiling light panel',x,3.98,z,1.3,.055,.45,'light',building,'roof')
 # Record accurate module bounds before static batching removes render-only hierarchy.
 bpy.context.view_layer.update()
@@ -328,13 +341,32 @@ for f in fixtures:
  root=next(r for r in placed if r.name.startswith(f['kind']) and abs(r.location.x-f['x'])<.01 and abs(-r.location.y-f['z'])<.01)
  pts=[o.matrix_world@Vector(v) for o in root.children_recursive if o.type=='MESH' for v in o.bound_box]
  f['bounds']={'min':[min(p.x for p in pts),min(p.z for p in pts),-max(p.y for p in pts)],'max':[max(p.x for p in pts),max(p.z for p in pts),-min(p.y for p in pts)]}
+extras=[]
+if MESHY_PROPS:
+ for f in fixtures:
+  f['collision']=[f['bounds']]
+  if f['kind'] in meshy_collision:
+   f['collision']=[]
+   for boxdata in meshy_collision[f['kind']]:
+    corners=[]
+    for x in [boxdata['min'][0],boxdata['max'][0]]:
+     for z in [boxdata['min'][2],boxdata['max'][2]]:
+      corners.append((f['x']+math.cos(f['yaw'])*x+math.sin(f['yaw'])*z,f['z']-math.sin(f['yaw'])*x+math.cos(f['yaw'])*z))
+    f['collision'].append({'min':[min(v[0]for v in corners),boxdata['min'][1],min(v[1]for v in corners)],'max':[max(v[0]for v in corners),boxdata['max'][1],max(v[1]for v in corners)]})
+ for root in placed:
+  if root.get('module') not in meshy_metadata:continue
+  if any(root.name.startswith(f['kind'])and abs(root.location.x-f['x'])<.01 and abs(-root.location.y-f['z'])<.01 for f in fixtures):continue
+  pts=[o.matrix_world@Vector(v)for o in root.children_recursive if o.type=='MESH'for v in o.bound_box]
+  extras.append({'kind':root['module'],'bounds':{'min':[min(p.x for p in pts),min(p.z for p in pts),-max(p.y for p in pts)],'max':[max(p.x for p in pts),max(p.z for p in pts),-min(p.y for p in pts)]}})
 batch(building)
 bpy.context.scene.frame_set(1)
-full=export(building,ROOT/'block-mart.glb');lod=export(building,ROOT/'block-mart-lod.glb',('brick-detail','product-detail','label-detail','wear-detail'))
+full=export(building,ROOT/'block-mart.glb');lod=export(building,ROOT/'block-mart-lod.glb',('brick-detail','product-detail','label-detail','wear-detail')+(('interior',) if MESHY_PROPS else ()))
 plan={'units':'metres','floor':poly,'wallThickness':.28,'wallHeight':4.1,'doors':door_plan,'walls':colliders,'fixtures':fixtures,'referenceSha256':sha}
+if MESHY_PROPS:plan.update(extras=extras,propSet='meshy-original-art')
 (ROOT/'layout.json').write_text(json.dumps(plan,indent=2)+'\n')
 report={'source':'Direct Blender modeling from approved image','referenceSha256':sha,'full':full,'lod':lod,'parts':part_report,'materials':len(M),'scale':[1,1,1],'gameIntegrated':True}
-runtime=Path('apps/client/src/fps/models/block-mart');runtime.mkdir(parents=True,exist_ok=True)
+if MESHY_PROPS:report.update(meshyProps=meshy_metadata,source='Blender architecture with original-art Meshy props',materials=len({m.name for o in members(building) if o.type=='MESH' for m in o.data.materials}))
+runtime=Path('apps/client/src/fps/models/block-mart')/('meshy' if MESHY_PROPS else '');runtime.mkdir(parents=True,exist_ok=True)
 for name in ['block-mart.glb','block-mart-lod.glb','layout.json']:shutil.copyfile(ROOT/name,runtime/name)
 shutil.copytree(PARTS,runtime/'parts',dirs_exist_ok=True)
 (ROOT/'model-report.json').write_text(json.dumps(report,indent=2)+'\n')
@@ -373,7 +405,7 @@ preview('preview-interior',(0,-.1,26),(0,0,0),13.5,False,('front-door','delivery
 for o in building.children_recursive:o.hide_render=False
 for hinge in hinges:hinge.rotation_euler.z=0
 cam.location=(16,-20,8);cam.rotation_euler=(Vector((0,0,1.9))-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=17
-ref=bpy.data.images.load(str((ROOT/'references/block-mart.png').resolve()));ref.pack()
+ref=bpy.data.images.load(str((BASE/'references/block-mart.png').resolve()));ref.pack()
 ref_empty=empty('Approved Block Mart reference');ref_empty.empty_display_type='IMAGE';ref_empty.data=ref;ref_empty.empty_display_size=12;ref_empty.location=(-15,0,4);ref_empty.hide_render=True
 bpy.ops.wm.save_as_mainfile(filepath=str((ROOT/'block-mart.blend').resolve()),compress=True)
 print(json.dumps(report,indent=2))

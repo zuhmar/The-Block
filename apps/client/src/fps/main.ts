@@ -4344,6 +4344,7 @@ function frame(now: number) {
     buildingModels.map((m) => m.source),
   );
   canvas.dataset.blockMart = JSON.stringify({
+    propSet: buildingModels[0].root.userData.propSet ?? "native-blender",
     state: martState(0),
     near: nearestMartDoor(),
   });

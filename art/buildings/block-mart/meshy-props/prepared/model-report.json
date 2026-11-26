@@ -1,0 +1,275 @@
+{
+  "source": "Blender architecture with original-art Meshy props",
+  "referenceSha256": "e846895966d1d248c32c3c975d3197761a7052d639130a3877d36268c15cbd1b",
+  "full": {
+    "bytes": 3817928,
+    "triangles": 55538
+  },
+  "lod": {
+    "bytes": 972032,
+    "triangles": 16931
+  },
+  "parts": {
+    "display-window": {
+      "bytes": 69000,
+      "triangles": 1236,
+      "size": [
+        6.099999904632568,
+        2.6299998462200165,
+        0.949999988079071
+      ]
+    },
+    "front-glass-door": {
+      "bytes": 60456,
+      "triangles": 1092,
+      "size": [
+        1.899999976158142,
+        2.75,
+        0.3199999928474426
+      ]
+    },
+    "delivery-door": {
+      "bytes": 44072,
+      "triangles": 756,
+      "size": [
+        1.600000023841858,
+        2.6499998569488525,
+        0.3199999928474426
+      ]
+    },
+    "stockroom-door": {
+      "bytes": 44088,
+      "triangles": 756,
+      "size": [
+        1.600000023841858,
+        2.6499998569488525,
+        0.3199999928474426
+      ]
+    },
+    "shop-awning": {
+      "bytes": 14000,
+      "triangles": 192,
+      "size": [
+        6.349999904632568,
+        0.7267945110797882,
+        1.057499960064888
+      ]
+    },
+    "retail-shelf": {
+      "bytes": 403764,
+      "triangles": 4033,
+      "size": [
+        1.5753780007362366,
+        1.75,
+        0.692882776260376
+      ]
+    },
+    "checkout-counter": {
+      "bytes": 263668,
+      "triangles": 3039,
+      "size": [
+        3.0,
+        1.6811940670013428,
+        1.8234091401100159
+      ]
+    },
+    "refrigerator": {
+      "bytes": 188052,
+      "triangles": 546,
+      "size": [
+        2.1307613849639893,
+        2.3499999046325684,
+        1.0815406441688538
+      ]
+    },
+    "stock-boxes": {
+      "bytes": 229852,
+      "triangles": 1780,
+      "size": [
+        0.819203108549118,
+        1.0,
+        0.5060266554355621
+      ]
+    },
+    "roof-ac": {
+      "bytes": 86228,
+      "triangles": 1050,
+      "size": [
+        1.2500001192092896,
+        1.0026012659072876,
+        0.932583749294281
+      ]
+    },
+    "roof-vent": {
+      "bytes": 96216,
+      "triangles": 1020,
+      "size": [
+        0.694220244884491,
+        0.75,
+        0.6679466664791107
+      ]
+    },
+    "exterior-light": {
+      "bytes": 68460,
+      "triangles": 878,
+      "size": [
+        0.6499999761581421,
+        0.5636221170425415,
+        0.46238788962364197
+      ]
+    },
+    "security-camera": {
+      "bytes": 63860,
+      "triangles": 801,
+      "size": [
+        0.2805016487836838,
+        0.5692157745361328,
+        0.6200000047683716
+      ]
+    },
+    "rain-downpipe": {
+      "bytes": 43880,
+      "triangles": 572,
+      "size": [
+        0.5872060656547546,
+        4.099999904632568,
+        0.35486726462841034
+      ]
+    }
+  },
+  "materials": 23,
+  "scale": [
+    1,
+    1,
+    1
+  ],
+  "gameIntegrated": true,
+  "meshyProps": {
+    "retail-shelf": {
+      "sourceSha256": "192cc0a727c036193dedb3df1aab7f45ba36bba1b8fd0f47d52abd531f9d5a65",
+      "sourceDimension": "height",
+      "targetMetres": 1.75,
+      "uniformScale": 1.75,
+      "textureSize": 1024,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        1.5753780007362366,
+        1.75,
+        0.692882776260376
+      ]
+    },
+    "checkout-counter": {
+      "sourceSha256": "d5fbda04545fd9c6a7cf8b4c4e07e87a400a3af9e0fec81a480840cb79bda75d",
+      "sourceDimension": "width",
+      "targetMetres": 3.0,
+      "uniformScale": 3.0,
+      "textureSize": 1024,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        3.0,
+        1.6811940670013428,
+        1.8234091401100159
+      ]
+    },
+    "refrigerator": {
+      "sourceSha256": "280ec8d1b85c65e044129ac217a0161318ef9e83a686cc708facafb8991c31a8",
+      "sourceDimension": "height",
+      "targetMetres": 2.35,
+      "uniformScale": 2.35,
+      "textureSize": 1024,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        2.1307613849639893,
+        2.3499999046325684,
+        1.0815406441688538
+      ]
+    },
+    "stock-boxes": {
+      "sourceSha256": "6861c40c7cd452a434d9f17145be90798cbc45a23a4da67821ec9aa0b8536fc3",
+      "sourceDimension": "height",
+      "targetMetres": 1.0,
+      "uniformScale": 1.0012676074494258,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        0.819203108549118,
+        1.0,
+        0.5060266554355621
+      ]
+    },
+    "roof-ac": {
+      "sourceSha256": "e6dc63e475d9e0ae72d5b86ea74c83c4ec49edb5fa41962d0bed9677b7ad7d82",
+      "sourceDimension": "width",
+      "targetMetres": 1.25,
+      "uniformScale": 1.25,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        1.2500001192092896,
+        1.0026012659072876,
+        0.932583749294281
+      ]
+    },
+    "roof-vent": {
+      "sourceSha256": "a8aa5310c974ec63d180af34d7ffd5e3d8f0da63737de186250786547ca27a41",
+      "sourceDimension": "height",
+      "targetMetres": 0.75,
+      "uniformScale": 0.7510807867260659,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        0.694220244884491,
+        0.75,
+        0.6679466664791107
+      ]
+    },
+    "exterior-light": {
+      "sourceSha256": "ba40648a253437dc519142b4308287ba4236a1e6a56dbfe338a2d3878b7acc23",
+      "sourceDimension": "width",
+      "targetMetres": 0.65,
+      "uniformScale": 0.65,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        0.6499999761581421,
+        0.5636221170425415,
+        0.46238788962364197
+      ]
+    },
+    "security-camera": {
+      "sourceSha256": "93778ebe302dd0cd268b3242aca1bab33b03589d43ef97fcd1881c3b514bd52a",
+      "sourceDimension": "longest",
+      "targetMetres": 0.62,
+      "uniformScale": 0.62,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        0.2805016487836838,
+        0.5692157745361328,
+        0.6200000047683716
+      ]
+    },
+    "rain-downpipe": {
+      "sourceSha256": "ec391a180454e10621d2c416d7e2bbb678bb1d3efb06572c023df61a3ca54e59",
+      "sourceDimension": "height",
+      "targetMetres": 4.1,
+      "uniformScale": 4.1,
+      "textureSize": 512,
+      "runtimeTextureFormat": "JPEG",
+      "runtimeTextureQuality": 90,
+      "preparedSize": [
+        0.5872060656547546,
+        4.099999904632568,
+        0.35486726462841034
+      ]
+    }
+  }
+}

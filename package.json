@@ -53,7 +53,8 @@
     "assets:meshy-gathering": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-meshy-gathering.py",
     "assets:jail-kit": "tsx packages/art-tools/export-jail-kit.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-jail-meshy.py",
     "assets:water": "tsx packages/art-tools/prepare-water.ts",
-    "assets:block-mart": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py"
+    "assets:block-mart": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py",
+    "assets:block-mart-meshy": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py -- --meshy-props"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

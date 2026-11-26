@@ -5,7 +5,7 @@
   "originalConceptSha256": "e846895966d1d248c32c3c975d3197761a7052d639130a3877d36268c15cbd1b",
   "geometryModel": "meshy-t2",
   "textureModel": "meshy-n1",
-  "gameIntegrated": false,
+  "gameIntegrated": true,
   "modelsGeneratedFromCorrectedReferences": true,
   "budget": {
     "originalEstimate": 135,
@@ -35,7 +35,9 @@
       "model": "models/retail-shelf.glb",
       "modelSha256": "192cc0a727c036193dedb3df1aab7f45ba36bba1b8fd0f47d52abd531f9d5a65",
       "actualTriangles": 4033,
-      "modelPreview": "model-previews/retail-shelf.png"
+      "modelPreview": "model-previews/retail-shelf.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/retail-shelf.glb"
     },
     {
       "name": "checkout-counter",
@@ -53,7 +55,9 @@
       "model": "models/checkout-counter.glb",
       "modelSha256": "d5fbda04545fd9c6a7cf8b4c4e07e87a400a3af9e0fec81a480840cb79bda75d",
       "actualTriangles": 3039,
-      "modelPreview": "model-previews/checkout-counter.png"
+      "modelPreview": "model-previews/checkout-counter.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/checkout-counter.glb"
     },
     {
       "name": "refrigerator",
@@ -71,7 +75,9 @@
       "model": "models/refrigerator.glb",
       "modelSha256": "280ec8d1b85c65e044129ac217a0161318ef9e83a686cc708facafb8991c31a8",
       "actualTriangles": 546,
-      "modelPreview": "model-previews/refrigerator.png"
+      "modelPreview": "model-previews/refrigerator.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/refrigerator.glb"
     },
     {
       "name": "stock-boxes",
@@ -90,7 +96,9 @@
       "modelSha256": "6861c40c7cd452a434d9f17145be90798cbc45a23a4da67821ec9aa0b8536fc3",
       "actualTriangles": 1780,
       "modelPreview": "model-previews/stock-boxes.png",
-      "localSurfaceRepair": "carton-surface-repair.json"
+      "localSurfaceRepair": "carton-surface-repair.json",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/stock-boxes.glb"
     },
     {
       "name": "roof-ac",
@@ -108,7 +116,9 @@
       "model": "models/roof-ac.glb",
       "modelSha256": "e6dc63e475d9e0ae72d5b86ea74c83c4ec49edb5fa41962d0bed9677b7ad7d82",
       "actualTriangles": 1050,
-      "modelPreview": "model-previews/roof-ac.png"
+      "modelPreview": "model-previews/roof-ac.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/roof-ac.glb"
     },
     {
       "name": "roof-vent",
@@ -126,7 +136,9 @@
       "model": "models/roof-vent.glb",
       "modelSha256": "a8aa5310c974ec63d180af34d7ffd5e3d8f0da63737de186250786547ca27a41",
       "actualTriangles": 1020,
-      "modelPreview": "model-previews/roof-vent.png"
+      "modelPreview": "model-previews/roof-vent.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/roof-vent.glb"
     },
     {
       "name": "exterior-light",
@@ -144,7 +156,9 @@
       "model": "models/exterior-light.glb",
       "modelSha256": "ba40648a253437dc519142b4308287ba4236a1e6a56dbfe338a2d3878b7acc23",
       "actualTriangles": 878,
-      "modelPreview": "model-previews/exterior-light.png"
+      "modelPreview": "model-previews/exterior-light.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/exterior-light.glb"
     },
     {
       "name": "security-camera",
@@ -162,7 +176,9 @@
       "model": "models/security-camera.glb",
       "modelSha256": "93778ebe302dd0cd268b3242aca1bab33b03589d43ef97fcd1881c3b514bd52a",
       "actualTriangles": 801,
-      "modelPreview": "model-previews/security-camera.png"
+      "modelPreview": "model-previews/security-camera.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/security-camera.glb"
     },
     {
       "name": "rain-downpipe",
@@ -180,7 +196,9 @@
       "model": "models/rain-downpipe.glb",
       "modelSha256": "ec391a180454e10621d2c416d7e2bbb678bb1d3efb06572c023df61a3ca54e59",
       "actualTriangles": 572,
-      "modelPreview": "model-previews/rain-downpipe.png"
+      "modelPreview": "model-previews/rain-downpipe.png",
+      "gameIntegrated": true,
+      "runtimePart": "apps/client/src/fps/models/block-mart/meshy/parts/rain-downpipe.glb"
     }
   ],
   "supersededDrafts": [
@@ -224,5 +242,7 @@
       "status": "SUCCEEDED",
       "usedAsCorrectedModel": false
     }
-  ]
+  ],
+  "preparedDirectory": "prepared",
+  "runtimeDirectory": "apps/client/src/fps/models/block-mart/meshy"
 }

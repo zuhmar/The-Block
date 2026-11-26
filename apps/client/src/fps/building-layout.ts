@@ -775,16 +775,14 @@ export function buildingBlocked(
       hx = b.width / 2,
       hz = b.depth / 2,
       front = frontOf(b);
+    if (isMart(b))
+      return (
+        Math.abs(x) < 7 + radius &&
+        Math.abs(z) < 7 + radius &&
+        martBlocked(i, { x, z, y: feet }, radius, ignoreDoors, doorAngles[i])
+      );
     if (Math.abs(x) > hx + radius + 0.2 || Math.abs(z) > hz + radius + 0.2)
       return false;
-    if (isMart(b))
-      return martBlocked(
-        i,
-        { x, z, y: feet },
-        radius,
-        ignoreDoors,
-        doorAngles[i],
-      );
     if (b.type === "jail") {
       if (
         JAIL_BUILDING_WALLS.some(

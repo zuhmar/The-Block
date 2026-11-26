@@ -1,8 +1,13 @@
 import * as THREE from "three";
-import { martPlan, martGlass, martState } from "./block-mart-layout";
+import {
+  martPlan,
+  martGlass,
+  martState,
+  martFixtureBounds,
+} from "./block-mart-layout";
 const urls = [
-  new URL("./models/block-mart/block-mart.glb", import.meta.url).href,
-  new URL("./models/block-mart/block-mart-lod.glb", import.meta.url).href,
+  new URL("./models/block-mart/meshy/block-mart.glb", import.meta.url).href,
+  new URL("./models/block-mart/meshy/block-mart-lod.glb", import.meta.url).href,
 ];
 const templates: THREE.Group[] = [];
 export async function preloadBlockMart() {
@@ -46,8 +51,8 @@ export function createMartProxy(index: number) {
     );
     mesh.rotation.y = Math.atan2(-dz, dx);
   }
-  for (const f of martPlan.fixtures) {
-    const { min, max } = f.bounds;
+  for (const bounds of martFixtureBounds) {
+    const { min, max } = bounds;
     box(
       (min[0] + max[0]) / 2,
       (min[1] + max[1]) / 2,
@@ -96,6 +101,7 @@ export function createBlockMart(index: number) {
     proxy = createMartProxy(index),
     views = templates.map((t) => t?.clone(true));
   if (!views[0]) {
+    root.userData.propSet = "fallback";
     const fallback = createMartProxy(index);
     fallback.root.traverse((o) => {
       if (o instanceof THREE.Mesh) {
@@ -140,6 +146,7 @@ export function createBlockMart(index: number) {
     });
     hinges.push(doors);
     view.traverse((o) => {
+      if (o.userData.propSet) root.userData.propSet = o.userData.propSet;
       if (
         o instanceof THREE.Mesh &&
         ["interior", "product-detail", "label-detail"].includes(o.userData.part)

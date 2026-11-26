@@ -38,7 +38,9 @@ for (const [path, url] of Object.entries(urls)) {
     !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart)\//.test(
       key,
     ) ||
-    (key.startsWith("block-mart/") && !key.startsWith("block-mart/parts/")) ||
+    (key.startsWith("block-mart/") &&
+      !key.startsWith("block-mart/parts/") &&
+      !key.startsWith("block-mart/meshy/parts/")) ||
     key.endsWith("jail-grounds.glb") ||
     key.endsWith("jail-meshy-grounds.glb") ||
     key.endsWith("meshy-warehouse/warehouse.glb")
@@ -48,10 +50,21 @@ for (const [path, url] of Object.entries(urls)) {
     b = key.startsWith("buildings/")
       ? BUILDINGS.find((b) => b.type === type)
       : undefined;
+  if (
+    key.startsWith("block-mart/meshy/parts/") &&
+    !/\/(retail-shelf|checkout-counter|refrigerator|stock-boxes|roof-ac|roof-vent|exterior-light|security-camera|rain-downpipe)\.glb$/.test(
+      key,
+    )
+  )
+    continue;
   CATALOG.push({
     id: "model:" + key,
     name:
-      (key.startsWith("jail-kit/") ? "Jail · " : "") +
+      (key.startsWith("jail-kit/")
+        ? "Jail · "
+        : key.startsWith("block-mart/meshy/")
+          ? "Block Mart Meshy · "
+          : "") +
       type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
     layer: b ? "Buildings" : "Props",
     behavior: key.startsWith("loot-chests") ? "loot" : "solid",
@@ -61,7 +74,7 @@ for (const [path, url] of Object.entries(urls)) {
   });
 }
 const mart = Object.entries(urls).find(([p]) =>
-  p.endsWith("/block-mart/block-mart.glb"),
+  p.endsWith("/block-mart/meshy/block-mart.glb"),
 );
 if (mart)
   CATALOG.push({

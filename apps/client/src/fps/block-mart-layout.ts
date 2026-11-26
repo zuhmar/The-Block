@@ -1,4 +1,4 @@
-import plan from "./models/block-mart/layout.json";
+import plan from "./models/block-mart/meshy/layout.json";
 import { COMPACT } from "./compact-plan";
 export { plan as martPlan };
 export const isMart = (b: { type: string }) =>
@@ -32,6 +32,11 @@ export const martGlass = [
     interior: false,
   },
 ];
+export const martFixtureBounds = [
+  ...plan.fixtures.flatMap((f) => f.collision),
+  ...plan.extras.map((f) => f.bounds),
+];
+const martWallBounds = [...plan.walls, ...martGlass];
 const states = new Map<number, { angles: number[]; targets: boolean[] }>();
 export function martState(i: number) {
   let s = states.get(i);
@@ -85,7 +90,7 @@ export function martBlocked(
   front: number,
 ) {
   const feet = p.y ?? 0;
-  for (const w of [...plan.walls, ...martGlass]) {
+  for (const w of martWallBounds) {
     if (feet >= w.top || feet + 1.9 <= w.bottom) continue;
     const dx = w.b[0] - w.a[0],
       dz = w.b[1] - w.a[1],
@@ -101,8 +106,8 @@ export function martBlocked(
     )
       return true;
   }
-  for (const f of plan.fixtures) {
-    const { min, max } = f.bounds;
+  for (const bounds of martFixtureBounds) {
+    const { min, max } = bounds;
     if (
       feet < max[1] &&
       feet + 1.9 > min[1] &&

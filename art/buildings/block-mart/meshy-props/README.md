@@ -26,6 +26,12 @@ All nine corrected image-to-3D tasks succeeded using `meshy-t2` smart topology a
 
 The user approved 135 credits for the corrected nine-model set. Five superseded wrong-source drafts had used 75 credits before the source correction; those IDs are retained separately for traceability. Actual total spending was 210 credits, matching the corrected approved budget. There were no further paid reruns or Meshy remesh operations. A local normal repair removed a dark artifact on the upper carton; the original Meshy export is retained in `source-models/stock-boxes.glb`, and `carton-surface-repair.json` records the source/output hashes. Run `blender -b --python-exit-code 1 --python packages/art-tools/repair-block-mart-cartons.py` to reproduce that repair.
 
-## Integration status
+## Game integration
 
-These are source exports in Meshy's normalized coordinates. Metre scale, useful placement pivots, material tuning, mobile texture optimization and collision/placement integration remain separate work. Preserve proportions with uniform scaling when preparing the exports. The existing playable Block Mart, its doors, collision, loot and persistent data remain as previously integrated. The new files live outside the runtime asset tree.
+The compact-city Block Mart now uses all nine prop types. The prepared building, lighter distance model, standalone metre-scale parts, editable Blender scene, collision layout and asset report are in `prepared/`; runtime copies live in `apps/client/src/fps/models/block-mart/meshy/`. The map editor uses the new furnished building and offers the nine props individually.
+
+Every source model is scaled uniformly and baked into its prepared geometry, leaving placed module transforms at unit scale. Shelves are repeated as four modules forming two rows; two drinks cabinets fit along the rear sales wall. The deeper checkout has a clear cross-aisle in front. Counter collision and shooting cover use sampled occupied columns and their actual heights, retaining its opening. Exterior cartons and downpipes also have collision. All three original door hinges, walls and saved loot identities remain intact.
+
+Three larger retail textures are reduced to 1024 × 1024; six smaller utility/carton textures use 512 × 512. Runtime GLBs embed quality-90 JPEG textures. The distance model omits small detail and interior furnishings; it retains the exterior utilities. Raw Meshy exports and the original Blender-only building remain available as source assets.
+
+Rebuild with `pnpm assets:block-mart-meshy`; use `-- --meshy-props --skip-renders` when directly invoking the builder to omit studio renders. The existing native-only asset command still generates the original source variant.
