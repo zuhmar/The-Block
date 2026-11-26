@@ -1,3 +1,9 @@
+import {
+  isCityApartments,
+  apartmentDoors,
+  apartmentDoorState,
+  apartmentDoorPoint,
+} from "./city-apartments-layout";
 import { isMart, martState, martDoorPoint } from "./block-mart-layout";
 import {
   jailGate,
@@ -2979,6 +2985,39 @@ function nearestMartDoor() {
   }
   return nearest;
 }
+function nearestApartmentDoor() {
+  let nearest: { i: number; id: number } | undefined,
+    distance = 2.4;
+  BUILDINGS.forEach((b, i) => {
+    if (!isCityApartments(b)) return;
+    apartmentDoors.forEach((d, id) => {
+      if (Math.abs(vertical - d.y) > 1) return;
+      const p = apartmentDoorPoint(i, id),
+        target = new THREE.Vector3(b.x + p.x, d.y + 1.3, b.z + p.z);
+      const dist = Math.hypot(player.x - target.x, player.z - target.z);
+      if (dist >= distance) return;
+      const from = new THREE.Vector3(player.x, vertical + 1.65, player.z);
+      coverRay.set(from, target.clone().sub(from).normalize());
+      coverRay.far = from.distanceTo(target) + 0.15;
+      const hit = coverRay.intersectObjects(
+        [...shotObstacles, ...construction.children],
+        true,
+      )[0];
+      if (
+        hit &&
+        !(
+          hit.object.userData.doorIndex === i &&
+          hit.object.userData.apartmentDoorId === id
+        ) &&
+        hit.distance < from.distanceTo(target) - 0.1
+      )
+        return;
+      nearest = { i, id };
+      distance = dist;
+    });
+  });
+  return nearest;
+}
 function nearestBuiltDoor() {
   let nearest: Piece | undefined,
     distance = 2.4;
@@ -3047,6 +3086,19 @@ function interact() {
     sound.play(jailGate.open ? "door-open" : "door-close", { gain: 0.5 });
     return toast(
       jailGate.open ? "Opening compound gates" : "Closing compound gates",
+    );
+  }
+  const apartment = nearestApartmentDoor();
+  if (apartment) {
+    const s = apartmentDoorState(apartment.i);
+    s.targets[apartment.id] = !s.targets[apartment.id];
+    sound.play(s.targets[apartment.id] ? "door-open" : "door-close", {
+      gain: 0.5,
+    });
+    updateHud();
+    return toast(
+      (s.targets[apartment.id] ? "Opening " : "Closing ") +
+        apartmentDoors[apartment.id].label,
     );
   }
   const mart = nearestMartDoor();
@@ -3643,7 +3695,9 @@ function updateHud() {
                 : "OPEN MEADOW";
   const floorLabel =
     inside >= 0 && buildingStories(BUILDINGS[inside]) > 1
-      ? `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
+      ? isCityApartments(BUILDINGS[inside]) && vertical >= 9.5
+        ? "ROOFTOP · "
+        : `FLOOR ${Math.min(buildingStories(BUILDINGS[inside]), Math.floor((vertical + 0.1) / STORY_HEIGHT) + 1)} · `
       : "";
   $("#coordinates").textContent =
     `${floorLabel}${Math.round(player.x)} E · ${Math.round(player.z)} S`;
@@ -3715,6 +3769,15 @@ function updateHud() {
     $("#hint-text").textContent =
       "E / USE · " +
       (martState(martDoor.i).targets[martDoor.id] ? "Close door" : "Open door");
+  }
+  const apartmentDoor = nearestApartmentDoor();
+  if (!build && apartmentDoor) {
+    $("#hint-title").textContent = apartmentDoors[apartmentDoor.id].label;
+    $("#hint-text").textContent =
+      "E / USE · " +
+      (apartmentDoorState(apartmentDoor.i).targets[apartmentDoor.id]
+        ? "Close door"
+        : "Open door");
   }
   const plotSign =
     !build && survival().plots.find((p) => plotSignDistance(p) < 4);
@@ -3931,6 +3994,7 @@ function frame(now: number) {
         );
         return;
       }
+      if ("apartment" in model && model.apartment) model.apartment.update();
       if ("additionalDoors" in model)
         for (const hinge of model.additionalDoors) {
           hinge.rotation.y = doorAngles[i];
@@ -4363,6 +4427,14 @@ function frame(now: number) {
   canvas.dataset.doors = JSON.stringify(doorAngles);
   canvas.dataset.lastHitDoor = String(lastHitDoor);
   canvas.dataset.lastHitBuildPiece = lastHitBuildPiece;
+  canvas.dataset.nearestApartmentDoor = JSON.stringify(
+    nearestApartmentDoor() ?? null,
+  );
+  canvas.dataset.apartmentDoors = JSON.stringify(
+    BUILDINGS.flatMap((b, i) =>
+      isCityApartments(b) ? [{ index: i, ...apartmentDoorState(i) }] : [],
+    ),
+  );
   canvas.dataset.nearestDoor = String(nearestDoor());
   canvas.dataset.buildModels = woodBuildingSources();
   canvas.dataset.lootModels = lootChestSources();

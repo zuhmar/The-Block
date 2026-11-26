@@ -1,0 +1,29 @@
+{
+  "assetVersion": "west-court-v1",
+  "footprint": [
+    18,
+    16
+  ],
+  "stories": 3,
+  "apartments": 6,
+  "floorLevels": [
+    0,
+    3.2,
+    6.4
+  ],
+  "roofLevel": 9.6,
+  "individualDoors": 7,
+  "full": {
+    "bytes": 6014296,
+    "triangles": 108110
+  },
+  "lod": {
+    "bytes": 712632,
+    "triangles": 8759
+  },
+  "scale": [
+    1,
+    1,
+    1
+  ]
+}

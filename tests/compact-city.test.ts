@@ -45,7 +45,7 @@ test("compact city has connected clear street blocks, a genuinely separated jail
     assert(blocked({ x: 0, z: -107 }, []), "compound gates begin closed");
     jailGate.angle = -Math.PI / 2;
     jailGate.open = true;
-    assert.equal(BUILDINGS.length, 36);
+    assert.equal(BUILDINGS.length, 37);
     assert.deepEqual(START, { x: 0, z: -110 });
     assert.equal(CITY_PLOTS.length, 12);
     assert.ok(CITY_PLOTS.every(cityPlotClear));

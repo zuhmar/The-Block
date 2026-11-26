@@ -55,7 +55,8 @@
     "assets:water": "tsx packages/art-tools/prepare-water.ts",
     "assets:block-mart": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py",
     "assets:tenement-v2": "tsx packages/art-tools/export-tenement-v2.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-tenement-v2.py",
-    "assets:block-mart-meshy": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py -- --meshy-props"
+    "assets:block-mart-meshy": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py -- --meshy-props",
+    "assets:city-apartments": "tsx packages/art-tools/export-city-apartments.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-city-apartments.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

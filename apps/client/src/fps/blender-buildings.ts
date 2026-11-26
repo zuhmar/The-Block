@@ -1,3 +1,8 @@
+import {
+  isCityApartments,
+  apartmentDoors,
+  apartmentDoorState,
+} from "./city-apartments-layout";
 import { isMart } from "./block-mart-layout";
 import {
   preloadBlockMart,
@@ -95,6 +100,10 @@ const URLS: Record<string, string> = {
   ).href,
 
   flats: new URL("./models/buildings/flats.glb", import.meta.url).href,
+  "city-apartments": new URL(
+    "./models/city-apartments/city-apartments.glb",
+    import.meta.url,
+  ).href,
   tenement: new URL("./models/tenement-v2/tenement.glb", import.meta.url).href,
   jail: new URL("./models/buildings/jail.glb", import.meta.url).href,
   store: new URL("./models/buildings/store.glb", import.meta.url).href,
@@ -163,15 +172,16 @@ export function createBuildingShotProxy(index: number) {
       b.height - 2.85,
       WALL,
     );
-    box(
-      root,
-      0,
-      buildingStories(b) > 1 ? b.height : 3.25,
-      0,
-      b.width,
-      buildingStories(b) > 1 ? 0.18 : 0.1,
-      b.depth,
-    );
+    if (!isCityApartments(b))
+      box(
+        root,
+        0,
+        buildingStories(b) > 1 ? b.height : 3.25,
+        0,
+        b.width,
+        buildingStories(b) > 1 ? 0.18 : 0.1,
+        b.depth,
+      );
     box(root, 0, 0.007, 0, b.width, 0.025, b.depth);
   }
   door.position.set(-DOOR_WIDTH / 2, 0, buildingDoorOffset(b));
@@ -207,29 +217,69 @@ export function createBuildingShotProxy(index: number) {
     box(root, p.x, (p.y ?? 0) + p.height / 2, p.z, p.width, p.height, p.depth);
   for (const slab of buildingSlabs(index))
     box(root, slab.x, slab.y - 0.09, slab.z, slab.width, 0.18, slab.depth);
+  const stairSteps = isCityApartments(b) ? 20 : 16;
   for (const stair of buildingStairs(index))
-    for (let step = 0; step < 16; step++) {
-      const height = ((step + 1) / 16) * STORY_HEIGHT;
+    for (let step = 0; step < stairSteps; step++) {
+      const height = ((step + 1) / stairSteps) * STORY_HEIGHT;
       box(
         root,
         stair.x,
         stair.y + height - 0.1,
-        stair.startZ - (front * (step + 0.5) * stair.run) / 16,
+        stair.startZ - (front * (step + 0.5) * stair.run) / stairSteps,
         stair.width,
         0.2,
-        stair.run / 16,
+        stair.run / stairSteps,
       );
     }
+  const apartmentHinges: THREE.Group[] = [];
+  if (isCityApartments(b)) {
+    apartmentDoors.forEach((d, id) => {
+      const frame = new THREE.Group();
+      frame.position.set(d.x, d.y, d.z);
+      frame.rotation.y = d.yaw;
+      root.add(frame);
+      const hinge = new THREE.Group();
+      frame.add(hinge);
+      apartmentHinges.push(hinge);
+      const panel = box(
+        hinge,
+        d.width / 2,
+        d.height / 2,
+        0,
+        d.width,
+        d.height,
+        0.14,
+        index,
+      );
+      panel.userData.apartmentDoorId = id;
+    });
+    box(root, 7.65, 12.62, -0.8, 2.7, 0.24, 10.85);
+  }
   // Match the bedroom partition from the same source as player collision.
-  return { root, door, doorPanel };
+  return { root, door, doorPanel, apartmentHinges };
 }
 const loaded = new Map<number, THREE.Group>();
 let tenementLod: THREE.Group | undefined;
+let apartmentLod: THREE.Group | undefined;
+let apartmentTemplate: THREE.Group | undefined;
 export async function preloadBlenderBuildings() {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const loader = new GLTFLoader();
   await Promise.allSettled([
     preloadBlockMart(),
+    loader.loadAsync(URLS["city-apartments"]).then((g) => {
+      apartmentTemplate = g.scene;
+    }),
+    loader
+      .loadAsync(
+        new URL(
+          "./models/city-apartments/city-apartments-lod.glb",
+          import.meta.url,
+        ).href,
+      )
+      .then((g) => {
+        apartmentLod = g.scene;
+      }),
     loader
       .loadAsync(
         new URL("./models/tenement-v2/tenement-lod.glb", import.meta.url).href,
@@ -254,6 +304,7 @@ export function loadBlenderBuilding(
   try {
     let root =
       loaded.get(index) ??
+      (isCityApartments(b) ? apartmentTemplate?.clone(true) : undefined) ??
       loaded
         .get(BUILDINGS.findIndex((other) => other.type === b.type))
         ?.clone(true);
@@ -261,14 +312,15 @@ export function loadBlenderBuilding(
     const door = root.getObjectByName(b.type + "-door-hinge");
     if (!door) throw Error("Missing animated building door");
     const additionalDoors: THREE.Object3D[] = [];
-    if (b.type === "tenement") {
+    if (b.type === "tenement" || isCityApartments(b)) {
       let version: string | undefined;
       root.traverse((o) => {
         version ??= o.userData.assetVersion;
       });
-      if (tenementLod) {
-        const low = tenementLod.clone(true),
-          lowDoor = low.getObjectByName("tenement-door-hinge");
+      const lodTemplate = isCityApartments(b) ? apartmentLod : tenementLod;
+      if (lodTemplate) {
+        const low = lodTemplate.clone(true),
+          lowDoor = low.getObjectByName(b.type + "-door-hinge");
         if (lowDoor) {
           const lod = new THREE.LOD();
           lod.addLevel(root, 0);
@@ -281,6 +333,28 @@ export function loadBlenderBuilding(
       }
       root.userData.assetVersion = version;
     }
+    const apartment = isCityApartments(b)
+      ? {
+          update: () => {
+            apartmentDoorState(index).angles.forEach((angle, id) => {
+              const h = root?.getObjectByName("apartment-door-" + id);
+              if (h) h.rotation.y = angle;
+              if ("apartmentHinges" in proxy)
+                proxy.apartmentHinges[id].rotation.y = angle;
+            });
+            root?.updateMatrixWorld(true);
+            proxy.root.updateMatrixWorld(true);
+          },
+        }
+      : undefined;
+    if (apartment)
+      apartmentDoors.forEach((_, id) =>
+        root?.getObjectByName("apartment-door-" + id)?.traverse((o) => {
+          o.userData.dynamicDoor = true;
+          o.userData.doorIndex = index;
+          o.userData.apartmentDoorId = id;
+        }),
+      );
     let doorPanel: THREE.Mesh | undefined;
     root.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
@@ -300,6 +374,7 @@ export function loadBlenderBuilding(
       shotDoor: proxy.door,
       source: "blender",
       additionalDoors,
+      apartment,
       mart: undefined,
     };
   } catch {

@@ -1,3 +1,4 @@
+import { CITY_APARTMENTS } from "./city-apartments-layout";
 import {
   JAIL_KIT_TOWERS,
   JAIL_KIT_PROPS,
@@ -15,6 +16,7 @@ import {
   BUILDING_FRONTS,
   frontOf,
   copyCityBuilding,
+  addCityBuilding,
   truncateCityBuildings,
 } from "./building-layout";
 import {
@@ -336,6 +338,21 @@ export function configureCompactCity() {
       color: 0x728b76,
     });
   }
+  // Append after existing loot, preserving every saved cooldown index.
+  addCityBuilding(CITY_APARTMENTS);
+  for (let floor = 0; floor < 3; floor++)
+    for (const z of [-6, 4.2])
+      LOOT.push({
+        x: CITY_APARTMENTS.x + 2.4,
+        z: CITY_APARTMENTS.z + z,
+        y: floor * 3.2,
+        width: 1.1,
+        depth: 0.85,
+        height: 0.9,
+        tier: floor + 2,
+        name: "West Court apartment supplies",
+        color: 0x728b76,
+      });
   const desired = [
     { x: 0, z: 0 },
     { x: -30, z: 60 },

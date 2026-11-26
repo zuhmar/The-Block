@@ -89,6 +89,19 @@ if (apartment)
     anchor: [0, 0, 0],
     size: [10, 11.22, 10],
   });
+const westCourt = Object.entries(urls).find(([p]) =>
+  p.endsWith("/city-apartments/city-apartments.glb"),
+);
+if (westCourt)
+  CATALOG.push({
+    id: "building:city-apartments",
+    name: "West Court · 6 apartments · roof access",
+    layer: "Buildings",
+    behavior: "solid",
+    url: westCourt[1],
+    anchor: [0, 0, 0],
+    size: [18, 12.74, 16],
+  });
 const mart = Object.entries(urls).find(([p]) =>
   p.endsWith("/block-mart/meshy/block-mart.glb"),
 );
@@ -313,13 +326,15 @@ export function newMap(current = true): MapDocument {
     );
     BUILDINGS.forEach((b) =>
       add(
-        b.type === "tenement"
-          ? "building:tenement-v2"
-          : b.type === "store"
-            ? "building:block-mart"
-            : b.type === "warehouse"
-              ? "building:warehouse"
-              : "model:buildings/" + b.type + ".glb",
+        b.type === "city-apartments"
+          ? "building:city-apartments"
+          : b.type === "tenement"
+            ? "building:tenement-v2"
+            : b.type === "store"
+              ? "building:block-mart"
+              : b.type === "warehouse"
+                ? "building:warehouse"
+                : "model:buildings/" + b.type + ".glb",
         b.name,
         b.x,
         b.z,

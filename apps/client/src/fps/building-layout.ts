@@ -1,4 +1,13 @@
 import {
+  isCityApartments,
+  apartmentFixtures,
+  apartmentPartitions,
+  apartmentDoors,
+  apartmentDoorBlocked,
+  resetApartmentDoors,
+  animateApartmentDoors,
+} from "./city-apartments-layout";
+import {
   isMart,
   martInside,
   martBlocked,
@@ -292,12 +301,19 @@ export function toggleDoor(index: number) {
 }
 export function resetDoors() {
   resetMartDoors();
+  resetApartmentDoors();
   doorAngles.fill(0);
   doorTargets.fill(false);
 }
 export function animateDoors(dt: number, occupants: BuildingPoint[]) {
   for (let i = 0; i < BUILDINGS.length; i++) {
     const b = BUILDINGS[i];
+    if (isCityApartments(b))
+      animateApartmentDoors(
+        i,
+        dt,
+        occupants.map((p) => ({ x: p.x - b.x, z: p.z - b.z, y: p.y })),
+      );
     if (isMart(b))
       animateMartDoors(
         i,
@@ -322,6 +338,7 @@ function createFixtures(index: number): Fixture[] {
   const b = BUILDINGS[index],
     x = b.width / 2,
     z = b.depth / 2;
+  if (isCityApartments(b)) return structuredClone(apartmentFixtures);
   if (isNorthBuilding(b.type)) return northFixtures(b.type);
   switch (b.type) {
     case "district-diner":
@@ -523,7 +540,9 @@ export const STORY_HEIGHT = 3.2;
 export function buildingStories(b: Building) {
   return b.type === "flats" || b.type === "district-duplex"
     ? 2
-    : b.type === "tenement" || b.type === "district-offices"
+    : b.type === "tenement" ||
+        b.type === "district-offices" ||
+        isCityApartments(b)
       ? 3
       : 1;
 }
@@ -541,13 +560,16 @@ export function buildingStairs(index: number): Stair[] {
   const cached = stairCache.get(index);
   if (cached) return cached;
   const b = BUILDINGS[index];
-  const stairs = Array.from({ length: buildingStories(b) - 1 }, (_, floor) => ({
-    x: b.width / 2 - 1.35,
-    startZ: frontOf(b) * 3.4,
-    run: 6,
-    width: 1.8,
-    y: floor * STORY_HEIGHT,
-  }));
+  const stairs = Array.from(
+    { length: buildingStories(b) - (isCityApartments(b) ? 0 : 1) },
+    (_, floor) => ({
+      x: b.width / 2 - 1.35,
+      startZ: frontOf(b) * (isCityApartments(b) ? 4 : 3.4),
+      run: isCityApartments(b) ? 8 : 6,
+      width: 1.8,
+      y: floor * STORY_HEIGHT,
+    }),
+  );
   stairCache.set(index, stairs);
   return stairs;
 }
@@ -566,36 +588,39 @@ export function buildingSlabs(index: number): Slab[] {
     holeRight = stair.x + 1.05;
   const holeMin = Math.min(stair.startZ, stair.startZ - frontOf(b) * stair.run),
     holeMax = Math.max(stair.startZ, stair.startZ - frontOf(b) * stair.run);
-  const slabs = Array.from({ length: buildingStories(b) - 1 }, (_, floor) => [
-    {
-      x: (left + holeLeft) / 2,
-      z: 0,
-      width: holeLeft - left,
-      depth: b.depth - 0.24,
-      y: (floor + 1) * STORY_HEIGHT,
-    },
-    {
-      x: (holeRight + right) / 2,
-      z: 0,
-      width: right - holeRight,
-      depth: b.depth - 0.24,
-      y: (floor + 1) * STORY_HEIGHT,
-    },
-    {
-      x: stair.x,
-      z: (-b.depth / 2 + 0.12 + holeMin) / 2,
-      width: 2.1,
-      depth: holeMin + b.depth / 2 - 0.12,
-      y: (floor + 1) * STORY_HEIGHT,
-    },
-    {
-      x: stair.x,
-      z: (b.depth / 2 - 0.12 + holeMax) / 2,
-      width: 2.1,
-      depth: b.depth / 2 - 0.12 - holeMax,
-      y: (floor + 1) * STORY_HEIGHT,
-    },
-  ]).flat();
+  const slabs = Array.from(
+    { length: buildingStories(b) - (isCityApartments(b) ? 0 : 1) },
+    (_, floor) => [
+      {
+        x: (left + holeLeft) / 2,
+        z: 0,
+        width: holeLeft - left,
+        depth: b.depth - 0.24,
+        y: (floor + 1) * STORY_HEIGHT,
+      },
+      {
+        x: (holeRight + right) / 2,
+        z: 0,
+        width: right - holeRight,
+        depth: b.depth - 0.24,
+        y: (floor + 1) * STORY_HEIGHT,
+      },
+      {
+        x: stair.x,
+        z: (-b.depth / 2 + 0.12 + holeMin) / 2,
+        width: 2.1,
+        depth: holeMin + b.depth / 2 - 0.12,
+        y: (floor + 1) * STORY_HEIGHT,
+      },
+      {
+        x: stair.x,
+        z: (b.depth / 2 - 0.12 + holeMax) / 2,
+        width: 2.1,
+        depth: b.depth / 2 - 0.12 - holeMax,
+        y: (floor + 1) * STORY_HEIGHT,
+      },
+    ],
+  ).flat();
   slabCache.set(index, slabs);
   return slabs;
 }
@@ -661,7 +686,13 @@ export function buildingCeiling(p: BuildingPoint, feet: number) {
       )
         ceiling = Math.min(ceiling, underside);
     }
-    if (within(local, { x: 0, z: 0, width: b.width, depth: b.depth }))
+    if (isCityApartments(b)) {
+      if (
+        within(local, { x: 7.65, z: -0.8, width: 2.5, depth: 10.6 }) &&
+        feet < 12.5
+      )
+        ceiling = Math.min(ceiling, 12.5);
+    } else if (within(local, { x: 0, z: 0, width: b.width, depth: b.depth }))
       ceiling = Math.min(ceiling, b.height - 0.15);
   });
   return ceiling;
@@ -694,6 +725,7 @@ export type Partition = {
 };
 function createPartitions(index: number): Partition[] {
   const b = BUILDINGS[index];
+  if (isCityApartments(b)) return structuredClone(apartmentPartitions);
   if (b.type === "north-main-lab")
     return [
       { x: -8, z: 8.5, width: 0.2, depth: 7, height: 3.5 },
@@ -794,7 +826,7 @@ export function buildingBlocked(
         )
       )
         return true;
-    } else {
+    } else if (!isCityApartments(b) || feet < b.height) {
       if (
         Math.abs(Math.abs(x) - hx) < WALL / 2 + radius &&
         Math.abs(z) < hz + radius
@@ -812,6 +844,14 @@ export function buildingBlocked(
       )
         return true;
     }
+    if (
+      !ignoreDoors &&
+      isCityApartments(b) &&
+      apartmentDoors.some((_, id) =>
+        apartmentDoorBlocked(i, id, { x, z, y: feet }, radius),
+      )
+    )
+      return true;
     if (!ignoreDoors && doorBlocksPoint(i, p, doorAngles[i], radius))
       return true;
     if (
@@ -888,9 +928,24 @@ export function copyCityBuilding(
   return index;
 }
 export function truncateCityBuildings(length: number) {
+  for (const key of stairCache.keys())
+    if (key >= length) stairCache.delete(key);
+  for (const key of slabCache.keys()) if (key >= length) slabCache.delete(key);
+  resetApartmentDoors();
   BUILDINGS.splice(length);
   doorAngles.splice(length);
   doorTargets.splice(length);
   FURNITURE.splice(length);
   PARTITIONS.splice(length);
+}
+
+/** Append a new prefab after legacy building and loot identities have been assigned. */
+export function addCityBuilding(b: Building) {
+  const index = BUILDINGS.push({ ...b }) - 1;
+  BUILDING_FRONTS.set(BUILDINGS[index], 1);
+  doorAngles.push(0);
+  doorTargets.push(false);
+  FURNITURE.push(createFixtures(index));
+  PARTITIONS.push(createPartitions(index));
+  return index;
 }

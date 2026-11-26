@@ -1,0 +1,26 @@
+{
+  "oldTenementsPreserved": [
+    {
+      "index": 7,
+      "version": "tenement-v2"
+    },
+    {
+      "index": 30,
+      "version": "tenement-v2"
+    }
+  ],
+  "newBuildingIndex": 36,
+  "apartmentsEntered": [
+    "102",
+    "101",
+    "202",
+    "201",
+    "302",
+    "301"
+  ],
+  "roofReachedAt": 9.6,
+  "allSevenDoorsWorked": true,
+  "descendedAndExited": true,
+  "errors": [],
+  "missing": []
+}
