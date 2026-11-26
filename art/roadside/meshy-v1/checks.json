@@ -1,0 +1,153 @@
+{
+  "props": [
+    {
+      "name": "tier-1-small",
+      "triangles": 1719,
+      "vertices": 1473,
+      "bytes": 162712,
+      "sha256": "a8e000a079f628af79f955395aeb88d888e45af6e5ff270065136026e610418a",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e99172ab79f553b1f018a3a04889ed94c0c63111adb516108d01d6fd3b131bcc"
+    },
+    {
+      "name": "tier-2-supply",
+      "triangles": 2144,
+      "vertices": 2064,
+      "bytes": 176032,
+      "sha256": "934c49f78a5e17b8f05b6b6902f7212e4c1f97d41bf7d49d8c940ab75adf9d8e",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e64b71e2640873b22c05ffba5e6fef42e583c119ca8e0f665b2b37291e018ccb"
+    },
+    {
+      "name": "tier-3-reinforced",
+      "triangles": 2707,
+      "vertices": 2275,
+      "bytes": 198524,
+      "sha256": "742a34fc140869d94f10219feca1eaf08b60d8b8e56dbcad895cff51f5768ae2",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "efdbb5f145bdbb67f033f8b25774c48af86671815be44373601759e3a633428a"
+    },
+    {
+      "name": "tier-4-long",
+      "triangles": 2306,
+      "vertices": 1777,
+      "bytes": 139768,
+      "sha256": "6c6ece75df1c3881216e0d33cb582f9079383c8f279cd7941bf0535001d6eb3a",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "727fbc3a76396a0b9509c856ce6ded27c87fa227224db6f3f443df7f47269864"
+    },
+    {
+      "name": "tier-5-heavy",
+      "triangles": 2664,
+      "vertices": 2297,
+      "bytes": 190520,
+      "sha256": "5fc835d9cccd79bbb627794e4dd4c9529e4a52abd65ce35c9c906a5e4671377e",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "d5688aa7b212f57b473155dc077c934c162897fcb58b19dfc7934692059a190d"
+    },
+    {
+      "name": "trash-can-metal",
+      "triangles": 1985,
+      "vertices": 1573,
+      "bytes": 155876,
+      "sha256": "6a566eabe916d232e6bcf4c38f15fc23c0de26d163c93ab5e4edb7770c94bf23",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "b487f361b4b97d9507819c9f08ea0d87bc55efe5e74b18e2b35c73440085cf85"
+    },
+    {
+      "name": "wheelie-bin",
+      "triangles": 2099,
+      "vertices": 1684,
+      "bytes": 136056,
+      "sha256": "2a842f2a749a478b5bb82b2c6377bd08a1d7279d00b8c706229012947dbc8e12",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e30569fdec2cf039f963191faafd3bdcb116e8cd8308cc7cb77d4b3e117b4934"
+    },
+    {
+      "name": "litter-basket",
+      "triangles": 2162,
+      "vertices": 1798,
+      "bytes": 147968,
+      "sha256": "e03216125e77ef7fa465573c3927e3ccb99c1ed7088ccbecc363c06ebe4c6016",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "a34d061db5db2aa21490da4d600d0e7d30bc961d7c881c6d15ecfb3021603f52"
+    },
+    {
+      "name": "dumpster",
+      "triangles": 3161,
+      "vertices": 2425,
+      "bytes": 182432,
+      "sha256": "90349b4e7753cf9f428414e145b9944a56e660f341c9a4202279df68f784beb8",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "f6a968c882161ca6ad3e5e5d7c33c789db0c6c3ab52042c9bdfee25a4157d4ce"
+    }
+  ],
+  "totalTriangles": 20947,
+  "totalModelBytes": 1489888,
+  "allSelfContained": true,
+  "pendingModels": 3,
+  "scope": "Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game."
+}

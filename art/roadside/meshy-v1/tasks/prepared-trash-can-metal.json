@@ -1,0 +1,15 @@
+{
+  "name": "trash-can-metal",
+  "modelPath": "models/trash-can-metal.glb",
+  "spritePath": "sprites/trash-can-metal.png",
+  "sourceSha256": "95ee714ce6ae54fce7e4ca64ddbf754aa27765ecb9912d5d1c19a718f97bef70",
+  "uniformSourceScale": 0.9,
+  "width": 0.65149,
+  "height": 0.9,
+  "depth": 0.595933,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-341c-742d-a193-636aa7bc75db",
+  "referenceTaskId": "01a21a3c-ae51-75db-aec8-f5cc9515fd79"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "litter-basket",
+  "modelPath": "models/litter-basket.glb",
+  "spritePath": "sprites/litter-basket.png",
+  "sourceSha256": "9e5b06ab39bf0e7cab00d9a34342ab11beb719c4fbde5f315cbd512b86401097",
+  "uniformSourceScale": 0.9,
+  "width": 0.581468,
+  "height": 0.9,
+  "depth": 0.582517,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-6895-72f4-b592-17f79d8e611a",
+  "referenceTaskId": "01a21a3c-c6a7-70fe-b018-7fc1d030f978"
+}

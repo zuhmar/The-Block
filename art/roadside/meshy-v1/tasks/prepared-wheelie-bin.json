@@ -1,0 +1,15 @@
+{
+  "name": "wheelie-bin",
+  "modelPath": "models/wheelie-bin.glb",
+  "spritePath": "sprites/wheelie-bin.png",
+  "sourceSha256": "cdc3622d3ed070e9314f6f87ce48cd7ff13f8539d6e5203ba0eaf140871bfbbf",
+  "uniformSourceScale": 1.1,
+  "width": 0.580324,
+  "height": 1.1,
+  "depth": 0.570315,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-4f77-7463-be9f-664b52eb0063",
+  "referenceTaskId": "01a21a3c-ba8d-75a8-a5c2-0ffc2bba3aa1"
+}

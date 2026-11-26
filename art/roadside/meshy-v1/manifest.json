@@ -1,0 +1,487 @@
+{
+  "version": 1,
+  "purpose": "Street Survival roadside world-prop art; five searchable crate tiers and seven matching street props",
+  "geometryModel": "meshy-t2",
+  "textureModel": "meshy-n1",
+  "referenceCost": 9,
+  "texturedModelCost": 15,
+  "plannedCredits": 288,
+  "balanceBefore": 351,
+  "props": [
+    {
+      "name": "tier-1-small",
+      "label": "Small roadside supply crate",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. small squat golden-brown wooden supply crate, stout square silhouette, thick wooden lid, two charcoal metal bands, one large orange latch, simple bright teal lozenge plate on the front, no words",
+      "longest": 0.8,
+      "targetPolycount": 1800,
+      "referenceRequestId": "2079731b-0388-401d-8108-35791249ea35",
+      "modelRequestId": "1c831403-2ef1-49a3-b187-85cbbf5c4a58",
+      "referenceTaskId": "01a21a3c-6c66-71fa-b54e-0cd79ad6db25",
+      "modelTaskId": "01a21a3d-dd9c-7280-8c0f-f2c28c7f4340",
+      "status": "complete",
+      "sourceImagePixelsSha256": "b29ae6ce20ba5e214d8cbf5f2fbab4bd87fe0c38582ed842f075479417e5fe3e",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/tier-1-small.glb",
+      "spritePath": "sprites/tier-1-small.png",
+      "sourceSha256": "f245401fe92d33b5e2301a2d3ee8ecf7b19997314ab5709fd4d2f59be07bd675",
+      "uniformSourceScale": 0.8,
+      "width": 0.778871,
+      "height": 0.799736,
+      "depth": 0.8,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.9735889732837677,
+        0.999669998884201,
+        1
+      ],
+      "referencePath": "references/tier-1-small.png",
+      "previewPath": "previews/tier-1-small.png",
+      "checks": {
+        "name": "tier-1-small",
+        "triangles": 1719,
+        "vertices": 1473,
+        "bytes": 162712,
+        "sha256": "a8e000a079f628af79f955395aeb88d888e45af6e5ff270065136026e610418a",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "e99172ab79f553b1f018a3a04889ed94c0c63111adb516108d01d6fd3b131bcc"
+      }
+    },
+    {
+      "name": "tier-2-supply",
+      "label": "Roadside supply crate",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. medium sage-green painted timber supply crate, taller rectangular silhouette, dark olive metal edge strips, two broad pale brass corner protectors, one large amber latch, simple bright teal lozenge plate on the front, no words",
+      "longest": 1.1,
+      "targetPolycount": 2200,
+      "referenceRequestId": "bbab66da-8435-47eb-8e98-aaff171b2376",
+      "modelRequestId": "61b8bcf1-364a-4fd5-b867-849fa3153119",
+      "referenceTaskId": "01a21a3c-78ba-7292-b4a3-49ac7343d312",
+      "modelTaskId": "01a21a3d-f135-73de-9d57-849921ae069c",
+      "status": "complete",
+      "sourceImagePixelsSha256": "948989086ac2d3d17a0d77028a15a178c885c749e243120e8349e108a8267488",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/tier-2-supply.glb",
+      "spritePath": "sprites/tier-2-supply.png",
+      "sourceSha256": "c7567864e81754417f6b996746a899a0a351852c92316297f74d14943a6efb3b",
+      "uniformSourceScale": 1.1,
+      "width": 0.68972,
+      "height": 1.1,
+      "depth": 0.589411,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.627018004655838,
+        1,
+        0.5358279943466187
+      ],
+      "referencePath": "references/tier-2-supply.png",
+      "previewPath": "previews/tier-2-supply.png",
+      "checks": {
+        "name": "tier-2-supply",
+        "triangles": 2144,
+        "vertices": 2064,
+        "bytes": 176032,
+        "sha256": "934c49f78a5e17b8f05b6b6902f7212e4c1f97d41bf7d49d8c940ab75adf9d8e",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "e64b71e2640873b22c05ffba5e6fef42e583c119ca8e0f665b2b37291e018ccb"
+      }
+    },
+    {
+      "name": "tier-3-reinforced",
+      "label": "Reinforced roadside cache",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. large chunky slate-blue reinforced metal supply crate, cube-like rectangular silhouette, bevelled protective corners, recessed handles, two sturdy dark charcoal ribs, large amber central latch, simple bright teal lozenge plate on the front, no words",
+      "longest": 1.25,
+      "targetPolycount": 2600,
+      "referenceRequestId": "bfb2b7b9-eba2-44cb-92b7-0b6fb32bfcff",
+      "modelRequestId": "ec6610d9-395b-4357-8609-52d9c3021a37",
+      "referenceTaskId": "01a21a3c-8660-76e3-a22f-71ac5f61be5d",
+      "modelTaskId": "01a21a3e-00fd-771f-9c92-6b6240400e63",
+      "status": "complete",
+      "sourceImagePixelsSha256": "8f65a995ef6e21091c091e9cf99b9b4c5d5144de013d77d39fb2edec9541e2e8",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/tier-3-reinforced.glb",
+      "spritePath": "sprites/tier-3-reinforced.png",
+      "sourceSha256": "8dc957ee7e71661a809a7988feab62d8d088583e83c17a15cc852f845e331867",
+      "uniformSourceScale": 1.25,
+      "width": 1.25,
+      "height": 1.074065,
+      "depth": 0.989902,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        1,
+        0.859252005815506,
+        0.791922003030777
+      ],
+      "referencePath": "references/tier-3-reinforced.png",
+      "previewPath": "previews/tier-3-reinforced.png",
+      "checks": {
+        "name": "tier-3-reinforced",
+        "triangles": 2707,
+        "vertices": 2275,
+        "bytes": 198524,
+        "sha256": "742a34fc140869d94f10219feca1eaf08b60d8b8e56dbcad895cff51f5768ae2",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "efdbb5f145bdbb67f033f8b25774c48af86671815be44373601759e3a633428a"
+      }
+    },
+    {
+      "name": "tier-4-long",
+      "label": "Long roadside weapon case",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. skinny long low purple-grey hard-shell weapon supply case, very elongated horizontal rectangular silhouette roughly four times wider than tall, dark charcoal corner guards, two pale brass clasps, simple bright teal lozenge plate on the front, closed lid, no weapons, no words",
+      "longest": 2.1,
+      "targetPolycount": 2400,
+      "referenceRequestId": "f1a178b3-a6ab-44b9-84d3-9bae606ca5ab",
+      "modelRequestId": "9858605c-668b-4c7e-8298-0eab1ea55c43",
+      "referenceTaskId": "01a21a3c-9334-7171-ab14-078d56b0ad1d",
+      "modelTaskId": "01a21a3e-1139-75ef-8ba5-de37de9bf2d2",
+      "status": "complete",
+      "sourceImagePixelsSha256": "105a6ce6e8e26cb6b8f14dfe5d56aa1e0401c436a6674583e9af22a29ec02eb7",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/tier-4-long.glb",
+      "spritePath": "sprites/tier-4-long.png",
+      "sourceSha256": "0cc6e9eed8380b8598138486abaa3a10fc2857ee438feb1a08f00d9f847eee69",
+      "uniformSourceScale": 2.1,
+      "width": 2.1,
+      "height": 0.34578,
+      "depth": 0.451191,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        1,
+        0.16465699672698975,
+        0.21485300362110138
+      ],
+      "referencePath": "references/tier-4-long.png",
+      "previewPath": "previews/tier-4-long.png",
+      "checks": {
+        "name": "tier-4-long",
+        "triangles": 2306,
+        "vertices": 1777,
+        "bytes": 139768,
+        "sha256": "6c6ece75df1c3881216e0d33cb582f9079383c8f279cd7941bf0535001d6eb3a",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "727fbc3a76396a0b9509c856ce6ded27c87fa227224db6f3f443df7f47269864"
+      }
+    },
+    {
+      "name": "tier-5-heavy",
+      "label": "Heavy roadside supply case",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. thick long heavy mustard-gold armored supply case, long broad rectangular silhouette roughly two and a half times wider than tall, thick charcoal protective ribs, pale brass clasps, recessed side carrying handles, simple bright teal lozenge plate on the front, closed lid, no weapons, no words",
+      "longest": 2.2,
+      "targetPolycount": 2800,
+      "referenceRequestId": "e8fa1da8-7e4a-4303-aa0b-62064a46fccd",
+      "modelRequestId": "8d60ef73-90fa-4b73-9963-853e29b55c68",
+      "referenceTaskId": "01a21a3c-9f66-71e0-9736-8124acf12b1e",
+      "modelTaskId": "01a21a3e-23fc-75e8-b2ae-58b71cd1eaf4",
+      "status": "complete",
+      "sourceImagePixelsSha256": "ba7a211b2bd3f8d35d9f154588a664f538694f00e03d915e2c8be95bc5cfeccf",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/tier-5-heavy.glb",
+      "spritePath": "sprites/tier-5-heavy.png",
+      "sourceSha256": "43d5caf9577934346bacc5563dd0d52813fd423dd79b4978ce09de6887337705",
+      "uniformSourceScale": 2.2,
+      "width": 2.2,
+      "height": 0.735392,
+      "depth": 0.945824,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        1,
+        0.3342689871788025,
+        0.4299200028181076
+      ],
+      "referencePath": "references/tier-5-heavy.png",
+      "previewPath": "previews/tier-5-heavy.png",
+      "checks": {
+        "name": "tier-5-heavy",
+        "triangles": 2664,
+        "vertices": 2297,
+        "bytes": 190520,
+        "sha256": "5fc835d9cccd79bbb627794e4dd4c9529e4a52abd65ce35c9c906a5e4671377e",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "d5688aa7b212f57b473155dc077c934c162897fcb58b19dfc7934692059a190d"
+      }
+    },
+    {
+      "name": "trash-can-metal",
+      "label": "Metal trash can",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one cylindrical galvanized dark grey metal street trash can, softly rounded vertical corrugations, two side handles, closed domed removable lid with a stout top handle, tiny teal lozenge plate on front for loot readability, no loose trash, no words",
+      "longest": 0.9,
+      "targetPolycount": 1800,
+      "referenceRequestId": "b9902693-311a-4de2-aee9-9fc77ad7941f",
+      "modelRequestId": "3e7def7f-8d51-480c-b024-74df04378c98",
+      "referenceTaskId": "01a21a3c-ae51-75db-aec8-f5cc9515fd79",
+      "modelTaskId": "01a21a3e-341c-742d-a193-636aa7bc75db",
+      "status": "complete",
+      "sourceImagePixelsSha256": "37a1ac835bbd97198db7fa1ae3beef6e9f95f493c6b3672078cb0c4f0b2c0cc6",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/trash-can-metal.glb",
+      "spritePath": "sprites/trash-can-metal.png",
+      "sourceSha256": "95ee714ce6ae54fce7e4ca64ddbf754aa27765ecb9912d5d1c19a718f97bef70",
+      "uniformSourceScale": 0.9,
+      "width": 0.65149,
+      "height": 0.9,
+      "depth": 0.595933,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.7238779962062836,
+        1,
+        0.6621479988098145
+      ],
+      "referencePath": "references/trash-can-metal.png",
+      "previewPath": "previews/trash-can-metal.png",
+      "checks": {
+        "name": "trash-can-metal",
+        "triangles": 1985,
+        "vertices": 1573,
+        "bytes": 155876,
+        "sha256": "6a566eabe916d232e6bcf4c38f15fc23c0de26d163c93ab5e4edb7770c94bf23",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "b487f361b4b97d9507819c9f08ea0d87bc55efe5e74b18e2b35c73440085cf85"
+      }
+    },
+    {
+      "name": "wheelie-bin",
+      "label": "Wheelie bin",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one green municipal wheelie rubbish bin, tall tapered rectangular plastic body, closed hinged lid, two chunky black rear wheels, broad rear handle, tiny teal lozenge plate on front for loot readability, no loose trash, no words",
+      "longest": 1.1,
+      "targetPolycount": 2000,
+      "referenceRequestId": "3ba0209e-00bb-44c6-bbb2-9e07f5649e21",
+      "modelRequestId": "dc34f582-c117-4742-a5ab-75cef5d74816",
+      "referenceTaskId": "01a21a3c-ba8d-75a8-a5c2-0ffc2bba3aa1",
+      "modelTaskId": "01a21a3e-4f77-7463-be9f-664b52eb0063",
+      "status": "complete",
+      "sourceImagePixelsSha256": "f33d2c669afd3c8a717df7d1749f79fdcbb0bc0303f0ed9d14369423f11f6281",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/wheelie-bin.glb",
+      "spritePath": "sprites/wheelie-bin.png",
+      "sourceSha256": "cdc3622d3ed070e9314f6f87ce48cd7ff13f8539d6e5203ba0eaf140871bfbbf",
+      "uniformSourceScale": 1.1,
+      "width": 0.580324,
+      "height": 1.1,
+      "depth": 0.570315,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.5275669991970062,
+        1,
+        0.5184680223464966
+      ],
+      "referencePath": "references/wheelie-bin.png",
+      "previewPath": "previews/wheelie-bin.png",
+      "checks": {
+        "name": "wheelie-bin",
+        "triangles": 2099,
+        "vertices": 1684,
+        "bytes": 136056,
+        "sha256": "2a842f2a749a478b5bb82b2c6377bd08a1d7279d00b8c706229012947dbc8e12",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "e30569fdec2cf039f963191faafd3bdcb116e8cd8308cc7cb77d4b3e117b4934"
+      }
+    },
+    {
+      "name": "litter-basket",
+      "label": "Street litter basket",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one freestanding charcoal-blue municipal street litter basket, cylindrical metal body with simple broad vertical slats and a dark inset closed base, wide open round rim with visible dark empty interior, two small yellow side brackets, tiny teal lozenge plate on front for loot readability, no loose trash, no words",
+      "longest": 0.9,
+      "targetPolycount": 2000,
+      "referenceRequestId": "0f29e108-3e7e-4f49-82eb-9ca04f70c0e1",
+      "modelRequestId": "9a452a66-8b2d-4578-9924-00b655995f78",
+      "referenceTaskId": "01a21a3c-c6a7-70fe-b018-7fc1d030f978",
+      "modelTaskId": "01a21a3e-6895-72f4-b592-17f79d8e611a",
+      "status": "complete",
+      "sourceImagePixelsSha256": "07f1f477786145335f182f9105b9f03aaed2c8286d1f4a0afef5e167b8502037",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/litter-basket.glb",
+      "spritePath": "sprites/litter-basket.png",
+      "sourceSha256": "9e5b06ab39bf0e7cab00d9a34342ab11beb719c4fbde5f315cbd512b86401097",
+      "uniformSourceScale": 0.9,
+      "width": 0.581468,
+      "height": 0.9,
+      "depth": 0.582517,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.6460749804973602,
+        1,
+        0.6472409963607788
+      ],
+      "referencePath": "references/litter-basket.png",
+      "previewPath": "previews/litter-basket.png",
+      "checks": {
+        "name": "litter-basket",
+        "triangles": 2162,
+        "vertices": 1798,
+        "bytes": 147968,
+        "sha256": "e03216125e77ef7fa465573c3927e3ccb99c1ed7088ccbecc363c06ebe4c6016",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "a34d061db5db2aa21490da4d600d0e7d30bc961d7c881c6d15ecfb3021603f52"
+      }
+    },
+    {
+      "name": "dumpster",
+      "label": "Alley dumpster",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one wide deep dark teal steel alley dumpster, chunky rectangular body, two closed charcoal hinged lids, four small black wheels, thick side lift sleeves, lightly worn edges, tiny teal lozenge plate on front for loot readability, no loose trash, no words",
+      "longest": 2,
+      "targetPolycount": 3000,
+      "referenceRequestId": "e918df62-a33c-4b46-97b0-3ac4ad414d30",
+      "modelRequestId": "3631250f-9096-49e1-bac5-315d981985e0",
+      "referenceTaskId": "01a21a3c-d307-72f8-a78f-c2d6a9eb4566",
+      "modelTaskId": "01a21a3e-8519-74a7-8e7f-fda15b8a8ba0",
+      "status": "complete",
+      "sourceImagePixelsSha256": "b9134fcf77bf4c2cf6b80d600a244cda056bc2e5ac77ca4b74f044167c3ffc19",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/dumpster.glb",
+      "spritePath": "sprites/dumpster.png",
+      "sourceSha256": "7a7ae400262a5e0d75dbf2227b4765969e247598ab39db8cf8a5864eb2669dfd",
+      "uniformSourceScale": 2.0,
+      "width": 2.0,
+      "height": 1.553532,
+      "depth": 1.079478,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        1,
+        0.7767660021781921,
+        0.5397390127182007
+      ],
+      "referencePath": "references/dumpster.png",
+      "previewPath": "previews/dumpster.png",
+      "checks": {
+        "name": "dumpster",
+        "triangles": 3161,
+        "vertices": 2425,
+        "bytes": 182432,
+        "sha256": "90349b4e7753cf9f428414e145b9944a56e660f341c9a4202279df68f784beb8",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "f6a968c882161ca6ad3e5e5d7c33c789db0c6c3ab52042c9bdfee25a4157d4ce"
+      }
+    },
+    {
+      "name": "streetlamp",
+      "label": "City streetlamp",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one freestanding dark charcoal city streetlamp, tall slim pole rising from a small square bolted foot, short curved gooseneck arm at the top, one downward-facing broad rounded lamp head with a pale warm ivory lens, complete lamp from foot to head, unlit, no light cone, no glow, no words",
+      "longest": 4.3,
+      "targetPolycount": 2600,
+      "referenceRequestId": "4c68b230-8974-4502-b8a7-8b6f170c2cbd",
+      "modelRequestId": "53abf3c6-0e4b-4b94-8edc-9a0de18242fa",
+      "referenceTaskId": "01a21a3c-e1f8-7338-bd85-b68bf7b0bce6",
+      "modelTaskId": null,
+      "status": "blocked-approval",
+      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+    },
+    {
+      "name": "bench",
+      "label": "City bench",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one city sidewalk bench with five warm brown wooden seat slats and four wooden backrest slats, two dark charcoal curved steel legs with armrests, stout clean cartoon shapes, full bench visible, no ground pad, no words",
+      "longest": 1.8,
+      "targetPolycount": 2400,
+      "referenceRequestId": "84744395-af3f-4048-aa8e-8e61227c0586",
+      "modelRequestId": "e3b4cbb5-5580-40f5-9a9f-84a1972413f2",
+      "referenceTaskId": "01a21a3c-efa3-7705-8011-62363163280e",
+      "modelTaskId": null,
+      "status": "blocked-approval",
+      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+    },
+    {
+      "name": "fire-hydrant",
+      "label": "Fire hydrant",
+      "prompt": "Street Survival cohesive game prop reference sprite. Flat glossy cartoon style, clean bold silhouettes, slightly rounded bevels, simplified broad surfaces, restrained glossy highlights, subtle cel shading, consistent three-quarter front view from slightly above, same soft upper-left light, crisp details, no photorealism, no fine grunge. Exactly one standalone object centered fully visible with generous clear margin on a plain uniform pale neutral grey background. No cast ground shadow, no floor, no ground, no platform, no grass, no scenery, no labels, no watermark. one bright muted red city fire hydrant, short stout cylindrical body, rounded domed cap, two large side nozzle caps and one front nozzle cap, broad flanged mounting foot, small brass top nut, no chain loops, no ground pad, no words",
+      "longest": 0.85,
+      "targetPolycount": 2000,
+      "referenceRequestId": "3f7cfb33-3837-4026-a6d1-e4113285e7aa",
+      "modelRequestId": "3c9f2210-c1d7-467c-ab2e-b47f309c4388",
+      "referenceTaskId": "01a21a3c-fbd4-76c8-a558-96a9d8425838",
+      "modelTaskId": null,
+      "status": "blocked-approval",
+      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+    }
+  ],
+  "submittedCredits": 243,
+  "balanceAfterSubmissions": 108,
+  "pendingCredits": 45,
+  "assetState": "9 complete static world-prop models and transparent sprites; all twelve individual references; 3 models pending. Not integrated in game."
+}

@@ -1,0 +1,104 @@
+{
+  "loadedInThreeJs": 9,
+  "models": [
+    {
+      "name": "tier-1-small",
+      "meshes": 1,
+      "size": [
+        0.7788711786270142,
+        0.7997360229492188,
+        0.800000011920929
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "tier-2-supply",
+      "meshes": 1,
+      "size": [
+        0.6897198259830475,
+        1.100000023841858,
+        0.5894107818603516
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "tier-3-reinforced",
+      "meshes": 1,
+      "size": [
+        1.25,
+        1.0740649700164795,
+        0.9899024963378906
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "tier-4-long",
+      "meshes": 1,
+      "size": [
+        2.0999999046325684,
+        0.3457796573638916,
+        0.4511912912130356
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "tier-5-heavy",
+      "meshes": 1,
+      "size": [
+        2.200000047683716,
+        0.7353917956352234,
+        0.9458240270614624
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "trash-can-metal",
+      "meshes": 1,
+      "size": [
+        0.651490181684494,
+        0.8999999761581421,
+        0.5959331691265106
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "wheelie-bin",
+      "meshes": 1,
+      "size": [
+        0.5803236961364746,
+        1.100000023841858,
+        0.5703148245811462
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "litter-basket",
+      "meshes": 1,
+      "size": [
+        0.581467479467392,
+        0.8999999761581421,
+        0.5825169086456299
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "dumpster",
+      "meshes": 1,
+      "size": [
+        2,
+        1.5535320043563843,
+        1.0794780254364014
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    }
+  ]
+}

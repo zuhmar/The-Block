@@ -1,0 +1,143 @@
+{
+  "transparentSprites": 9,
+  "pairedReferences": 9,
+  "referenceImages": 12,
+  "pendingModels": 3,
+  "sprites": [
+    {
+      "name": "tier-1-small",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        81,
+        54,
+        435,
+        456
+      ],
+      "spriteSha256": "535ae0120e6fb90710102df5f2c0b5c75b2811768764b2f675544eb8e791dbba"
+    },
+    {
+      "name": "tier-2-supply",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        126,
+        57,
+        386,
+        459
+      ],
+      "spriteSha256": "5924d990bb7cb8a84586f9531666488bc3e1ae3c97f964a124316147e808df7c"
+    },
+    {
+      "name": "tier-3-reinforced",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        65,
+        73,
+        447,
+        449
+      ],
+      "spriteSha256": "661a7f8c0c2f2e4a0eb944054f52aeac6c603e2d049a3d33a7a96212db871759"
+    },
+    {
+      "name": "tier-4-long",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        53,
+        149,
+        462,
+        360
+      ],
+      "spriteSha256": "66075ba0ca6e48c359160f792fee9e678557e37f296a7a9d6507327a9e9c0305"
+    },
+    {
+      "name": "tier-5-heavy",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        59,
+        125,
+        454,
+        385
+      ],
+      "spriteSha256": "c4748bbb95789084236bfcb6a276b86983dee7f35a457badce260a23d7f9b203"
+    },
+    {
+      "name": "trash-can-metal",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        148,
+        114,
+        364,
+        433
+      ],
+      "spriteSha256": "ca418d99e4c09b9bb9f8e89472cb5cb8c06d2e18970317c6a7643dff7abd4f5b"
+    },
+    {
+      "name": "wheelie-bin",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        142,
+        85,
+        372,
+        450
+      ],
+      "spriteSha256": "ded7ff05e4bcb0368a9c84aa278d14c1a889e11962827464175e757558714a32"
+    },
+    {
+      "name": "litter-basket",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        147,
+        69,
+        365,
+        440
+      ],
+      "spriteSha256": "86eff47f16cbefc212f1588cd13ae9bfe8800cf24ed01a054240165dd76e78ee"
+    },
+    {
+      "name": "dumpster",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        56,
+        59,
+        455,
+        449
+      ],
+      "spriteSha256": "98dd3f39ca0e649e9a9ce2d3a68550b077feb884c8b647f6e084c65aacbecdbd"
+    }
+  ]
+}

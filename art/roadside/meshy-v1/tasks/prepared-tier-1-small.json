@@ -1,0 +1,15 @@
+{
+  "name": "tier-1-small",
+  "modelPath": "models/tier-1-small.glb",
+  "spritePath": "sprites/tier-1-small.png",
+  "sourceSha256": "f245401fe92d33b5e2301a2d3ee8ecf7b19997314ab5709fd4d2f59be07bd675",
+  "uniformSourceScale": 0.8,
+  "width": 0.778871,
+  "height": 0.799736,
+  "depth": 0.8,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3d-dd9c-7280-8c0f-f2c28c7f4340",
+  "referenceTaskId": "01a21a3c-6c66-71fa-b54e-0cd79ad6db25"
+}

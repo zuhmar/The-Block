@@ -1,0 +1,15 @@
+{
+  "name": "dumpster",
+  "modelPath": "models/dumpster.glb",
+  "spritePath": "sprites/dumpster.png",
+  "sourceSha256": "7a7ae400262a5e0d75dbf2227b4765969e247598ab39db8cf8a5864eb2669dfd",
+  "uniformSourceScale": 2.0,
+  "width": 2.0,
+  "height": 1.553532,
+  "depth": 1.079478,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-8519-74a7-8e7f-fda15b8a8ba0",
+  "referenceTaskId": "01a21a3c-d307-72f8-a78f-c2d6a9eb4566"
+}

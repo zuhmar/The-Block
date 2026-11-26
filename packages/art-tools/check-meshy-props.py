@@ -4,11 +4,13 @@ from io import BytesIO
 from PIL import Image
 import hashlib,json,math,struct,sys
 
-assert len(sys.argv)==2, 'Usage: python packages/art-tools/check-meshy-props.py PACK_DIRECTORY'
+assert len(sys.argv) in (2,3) and (len(sys.argv)==2 or sys.argv[2]=='--allow-pending'), 'Usage: python packages/art-tools/check-meshy-props.py PACK_DIRECTORY [--allow-pending]'
+allow_pending='--allow-pending' in sys.argv
 ROOT=Path(sys.argv[1])
 manifest=json.loads((ROOT/'manifest.json').read_text())
 checks=[]
 for prop in manifest['props']:
+    if allow_pending and prop.get('status')=='blocked-approval':continue
     name=prop['name'];path=ROOT/'models'/(name+'.glb');raw=path.read_bytes()
     magic,version,length=struct.unpack_from('<4sII',raw)
     assert magic==b'glTF' and version==2 and length==len(raw),f'{name}: invalid GLB header'
@@ -47,7 +49,7 @@ for prop in manifest['props']:
     check={'name':name,'triangles':triangles,'vertices':vertices,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'embeddedTextures':textures,'selfContained':True,'referenceSha256':hashlib.sha256(reference.read_bytes()).hexdigest()}
     checks.append(check)
     prop['modelPath']='models/'+name+'.glb';prop['referencePath']='references/'+name+'.png';prop['previewPath']='previews/'+name+'.png';prop['checks']=check
-report={'props':checks,'totalTriangles':sum(c['triangles'] for c in checks),'totalModelBytes':sum(c['bytes'] for c in checks),'allSelfContained':True,'scope':'Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game.'}
+report={'props':checks,'totalTriangles':sum(c['triangles'] for c in checks),'totalModelBytes':sum(c['bytes'] for c in checks),'allSelfContained':True,'pendingModels':len(manifest['props'])-len(checks),'scope':'Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game.'}
 (ROOT/'checks.json').write_text(json.dumps(report,indent=2)+'\n')
 (ROOT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print(json.dumps({'props':len(checks),'totalTriangles':report['totalTriangles'],'totalModelBytes':report['totalModelBytes'],'allSelfContained':True}))

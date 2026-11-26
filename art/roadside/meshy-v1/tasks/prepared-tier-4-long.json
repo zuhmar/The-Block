@@ -1,0 +1,15 @@
+{
+  "name": "tier-4-long",
+  "modelPath": "models/tier-4-long.glb",
+  "spritePath": "sprites/tier-4-long.png",
+  "sourceSha256": "0cc6e9eed8380b8598138486abaa3a10fc2857ee438feb1a08f00d9f847eee69",
+  "uniformSourceScale": 2.1,
+  "width": 2.1,
+  "height": 0.34578,
+  "depth": 0.451191,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-1139-75ef-8ba5-de37de9bf2d2",
+  "referenceTaskId": "01a21a3c-9334-7171-ab14-078d56b0ad1d"
+}

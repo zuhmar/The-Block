@@ -1,0 +1,15 @@
+{
+  "name": "tier-3-reinforced",
+  "modelPath": "models/tier-3-reinforced.glb",
+  "spritePath": "sprites/tier-3-reinforced.png",
+  "sourceSha256": "8dc957ee7e71661a809a7988feab62d8d088583e83c17a15cc852f845e331867",
+  "uniformSourceScale": 1.25,
+  "width": 1.25,
+  "height": 1.074065,
+  "depth": 0.989902,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-00fd-771f-9c92-6b6240400e63",
+  "referenceTaskId": "01a21a3c-8660-76e3-a22f-71ac5f61be5d"
+}

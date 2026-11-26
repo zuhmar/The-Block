@@ -1,0 +1,15 @@
+{
+  "name": "tier-5-heavy",
+  "modelPath": "models/tier-5-heavy.glb",
+  "spritePath": "sprites/tier-5-heavy.png",
+  "sourceSha256": "43d5caf9577934346bacc5563dd0d52813fd423dd79b4978ce09de6887337705",
+  "uniformSourceScale": 2.2,
+  "width": 2.2,
+  "height": 0.735392,
+  "depth": 0.945824,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a3e-23fc-75e8-b2ae-58b71cd1eaf4",
+  "referenceTaskId": "01a21a3c-9f66-71e0-9736-8124acf12b1e"
+}
