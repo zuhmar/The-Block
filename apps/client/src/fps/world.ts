@@ -1,3 +1,4 @@
+import { streetPropBlocked } from "./city-streets-layout";
 import {
   timberBlocked,
   timberSurface,
@@ -484,6 +485,7 @@ export function blocked(
   return (
     blockedTerrain(p) ||
     timberBlocked(p, footHeight) ||
+    streetPropBlocked(p, footHeight) ||
     jailGroundBlocked(p, footHeight) ||
     harborBlocked(p, footHeight) ||
     compoundBlocked(p, 0.32, footHeight) ||

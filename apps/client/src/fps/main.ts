@@ -1,3 +1,4 @@
+import { createCityStreets } from "./city-streets-view";
 import { createCityRowRender } from "./city-row-render";
 import { orientBuildingRoots } from "./building-orientation-view";
 import { buildingWorld, buildingFootprint } from "./building-layout";
@@ -576,7 +577,12 @@ function ribbon(
   geo.computeVertexNormals();
   scene.add(new THREE.Mesh(geo, material(color)));
 }
-for (const ROAD of ROADS) {
+const cityStreets = COMPACT.active ? createCityStreets() : undefined;
+if (cityStreets) {
+  scene.add(cityStreets.root);
+  canvas.dataset.streets = JSON.stringify(cityStreets.stats);
+}
+for (const ROAD of COMPACT.active ? [] : ROADS) {
   ribbon(ROAD, pavedWidth(ROAD), 0.035, 0xbfc0aa);
   ribbon(ROAD, ROAD === CITY_RING ? 3.6 : 6, 0.055, 0x515c60);
   for (let i = 1; i < ROAD.length; i++) {
@@ -616,28 +622,6 @@ for (const f of CITY_FRONTAGES) {
   );
   walk.rotation.y = -Math.atan2(dz, dx);
 }
-// Painted crossings tie the new short blocks into the existing avenue grid.
-if (COMPACT.active)
-  for (const [x, z] of [
-    [88, 80],
-    [88, 124],
-    [46, 124],
-    [18, 102],
-  ]) {
-    for (const side of [-1, 1])
-      for (let stripe = -2; stripe <= 2; stripe++) {
-        box(
-          scene,
-          x + stripe * 0.9,
-          0.079,
-          z + side * 5.2,
-          0.5,
-          0.012,
-          1.4,
-          0xe8e3cd,
-        );
-      }
-  }
 // The prison's only road connection crosses the water channel.
 if (COMPACT.active) {
   for (const park of RESOURCE_PARKS)
@@ -807,6 +791,7 @@ const officeSign = sign("SOUTH HARBOR · PORT OFFICE", 3.4, 0.45);
 officeSign.position.set(-111, 2.9, COMPACT.active ? 141.19 : 201.19);
 scene.add(officeSign);
 const shotObstacles: THREE.Object3D[] = [
+  ...(cityStreets ? [cityStreets.proxy] : []),
   ...(COMPACT.active ? [timberYard.proxy] : []),
   jailGrounds.proxy,
   coast.surface,

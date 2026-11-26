@@ -1,3 +1,4 @@
+import { configureCityStreets, clearCityStreets } from "./city-streets-layout";
 import denseCityPlan from "./dense-city-plan.json";
 import {
   orientCityFrontages,
@@ -506,12 +507,14 @@ export function configureCompactCity() {
       color: 0x728b76,
     });
   }
+  configureCityStreets();
   undo = () => {
     if (!COMPACT.active) return;
     for (const [o, values] of snapshots) Object.assign(o, values);
     JAIL_BOXES.splice(0, JAIL_BOXES.length, ...oldJailBoxes);
     BUILDINGS.forEach((b) => BUILDING_YAWS.delete(b));
     CITY_FRONTAGES.splice(0);
+    clearCityStreets();
     truncateCityBuildings(buildingCount);
     BUILDINGS.forEach((b) => BUILDING_FRONTS.delete(b));
     LOOT.splice(lootCount);
