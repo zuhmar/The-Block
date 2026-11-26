@@ -1,3 +1,9 @@
+import { orientCityFrontages, CITY_FRONTAGES } from "./building-frontage";
+import {
+  BUILDING_YAWS,
+  buildingWorld,
+  buildingFootprint,
+} from "./building-layout";
 import { TIMBER_YARD } from "./timber-yard-layout";
 import { CITY_APARTMENTS } from "./city-apartments-layout";
 import {
@@ -408,7 +414,7 @@ export function configureCompactCity() {
   for (const [type, x, z] of [
     ["tenement", -16, -60],
     ["flats", -2, -60],
-    ["district-offices", 0, -48],
+    ["district-offices", 0, -46],
     ["district-duplex", -144, -10],
     ["tenement", -36, 2],
     ["flats", -66, 6],
@@ -454,10 +460,30 @@ export function configureCompactCity() {
           depth: 0.65,
           scale: 0.8,
         });
+  // Leave the apartment's straight entrance walk clear of the street bin.
+  for (const p of [...ROAD_BINS, ...LOOT])
+    if (Math.abs(p.x + 100) < 0.01 && Math.abs(p.z - 36.1) < 0.01) {
+      remember(p);
+      p.x = -97.5;
+    }
+  orientCityFrontages((b) => {
+    for (const l of LOOT)
+      if (
+        Math.abs(l.x - b.x) < b.width / 2 &&
+        Math.abs(l.z - b.z) < b.depth / 2
+      ) {
+        remember(l);
+        const p = buildingWorld(b, { x: l.x - b.x, z: l.z - b.z });
+        l.x = p.x;
+        l.z = p.z;
+      }
+  });
   undo = () => {
     if (!COMPACT.active) return;
     for (const [o, values] of snapshots) Object.assign(o, values);
     JAIL_BOXES.splice(0, JAIL_BOXES.length, ...oldJailBoxes);
+    BUILDINGS.forEach((b) => BUILDING_YAWS.delete(b));
+    CITY_FRONTAGES.splice(0);
     truncateCityBuildings(buildingCount);
     BUILDINGS.forEach((b) => BUILDING_FRONTS.delete(b));
     LOOT.splice(lootCount);
@@ -479,7 +505,11 @@ export function cityPlotClear(p: (typeof CITY_PLOTS)[number]) {
       )
         return false;
   return (
-    ![...BUILDINGS, ...HARBOR_BOXES, ...COMPOUND_BARRIERS].some(
+    ![
+      ...BUILDINGS.map(buildingFootprint),
+      ...HARBOR_BOXES,
+      ...COMPOUND_BARRIERS,
+    ].some(
       (b) =>
         Math.abs(b.x - p.x) < b.width / 2 + r + 1 &&
         Math.abs(b.z - p.z) < b.depth / 2 + r + 1,

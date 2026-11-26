@@ -15,7 +15,7 @@ import {
   LOOT,
   ROADS,
 } from "../apps/client/src/fps/world";
-import { frontOf } from "../apps/client/src/fps/building-layout";
+import { frontOf, buildingWorld } from "../apps/client/src/fps/building-layout";
 import { ResourceWorld } from "../apps/client/src/fps/resource-world";
 import { jailGate } from "../apps/client/src/fps/jail-ground-layout";
 
@@ -113,7 +113,10 @@ test("denser city keeps fine-grained road routes and infill entrances clear", ()
     assert.ok(added.length >= 14);
     for (const b of added)
       assert.equal(
-        blocked({ x: b.x, z: b.z + frontOf(b) * (b.depth / 2 + 0.7) }, []),
+        blocked(
+          buildingWorld(b, { x: 0, z: frontOf(b) * (b.depth / 2 + 0.7) }),
+          [],
+        ),
         false,
         b.name + " entrance apron",
       );

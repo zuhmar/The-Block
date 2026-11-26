@@ -1,3 +1,4 @@
+import { buildingFootprint } from "./building-layout";
 import { COMPACT, CITY_PLOTS } from "./compact-plan";
 import {
   BUILDINGS,
@@ -54,7 +55,7 @@ export function createHousingPlots(pieces: Piece[]): HousingPlot[] {
     if (
       !clear ||
       [
-        ...BUILDINGS.filter(buildingEnabled),
+        ...BUILDINGS.filter(buildingEnabled).map(buildingFootprint),
         ...LOOT,
         ...pieces.map(pieceBox),
       ].some(

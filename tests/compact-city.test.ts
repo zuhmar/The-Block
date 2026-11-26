@@ -27,6 +27,7 @@ import {
 } from "../apps/client/src/fps/world";
 import {
   frontOf,
+  buildingWorld,
   fixtures,
   partitions,
   doorAngles,
@@ -124,8 +125,9 @@ test("relocated districts retain building-front orientation, loot alignment and 
           i === 5 && owner.type === "store"
             ? { x: -3.2, z: 1 }
             : { x: old.x - owner.x, z: old.z - owner.z };
-        assert.ok(Math.abs(LOOT[i].x - b.x - offset.x) < 0.001);
-        assert.ok(Math.abs(LOOT[i].z - b.z - offset.z) < 0.001);
+        const expected = buildingWorld(b, offset);
+        assert.ok(Math.abs(LOOT[i].x - expected.x) < 0.001);
+        assert.ok(Math.abs(LOOT[i].z - expected.z) < 0.001);
       }
     }
     for (const spec of [

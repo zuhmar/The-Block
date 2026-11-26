@@ -1,3 +1,6 @@
+import { orientBuildingRoots } from "./building-orientation-view";
+import { buildingWorld, buildingFootprint } from "./building-layout";
+import { CITY_FRONTAGES } from "./building-frontage";
 import { createTimberYard } from "./timber-yard-view";
 import { TIMBER_YARD } from "./timber-yard-layout";
 import {
@@ -595,6 +598,23 @@ for (const ROAD of ROADS) {
     }
   }
 }
+// A continuous entrance walk makes each corrected frontage visible from its street.
+for (const f of CITY_FRONTAGES) {
+  const length = Math.max(0.2, f.distance - f.roadWidth / 2),
+    dx = (f.street.x - f.door.x) / f.distance,
+    dz = (f.street.z - f.door.z) / f.distance;
+  const walk = box(
+    scene,
+    f.door.x + (dx * length) / 2,
+    0.022,
+    f.door.z + (dz * length) / 2,
+    length,
+    0.012,
+    1.6,
+    0xc8c5b1,
+  );
+  walk.rotation.y = -Math.atan2(dz, dx);
+}
 // Painted crossings tie the new short blocks into the existing avenue grid.
 if (COMPACT.active)
   for (const [x, z] of [
@@ -646,11 +666,10 @@ canvas.dataset.timberYard = JSON.stringify({
   loaded: timberYard.loaded,
   instances: timberYard.instances,
 });
+canvas.dataset.frontages = JSON.stringify(CITY_FRONTAGES);
 const buildingModels = BUILDINGS.map((b, index) => {
   const model = loadBlenderBuilding(index, boxGeo, sign);
-  model.root.position.set(b.x, 0, b.z);
-  model.shotRoot.position.set(b.x, 0, b.z);
-  model.shotRoot.updateMatrixWorld(true);
+  Object.assign(model, orientBuildingRoots(model.root, model.shotRoot, b));
   model.root.visible = buildingEnabled(b);
   scene.add(model.root);
   return model;
@@ -665,11 +684,13 @@ fade.addColorStop(1, "#fff0");
 contactCtx.fillStyle = fade;
 contactCtx.fillRect(0, 0, 64, 64);
 const contacts = [
-  ...BUILDINGS.filter(buildingEnabled).map((b) => ({
-    ...b,
-    width: b.width + 3,
-    depth: b.depth + 3,
-  })),
+  ...BUILDINGS.filter(buildingEnabled)
+    .map(buildingFootprint)
+    .map((b) => ({
+      ...b,
+      width: b.width + 3,
+      depth: b.depth + 3,
+    })),
 ];
 const shadow = new THREE.InstancedMesh(
   new THREE.PlaneGeometry(1, 1),
@@ -2992,8 +3013,8 @@ function nearestMartDoor() {
     const b = BUILDINGS[i];
     if (!isMart(b)) continue;
     for (let id = 1; id < 3; id++) {
-      const p = martDoorPoint(id, martState(i).angles[id]),
-        target = new THREE.Vector3(b.x + p.x, 1.3, b.z + p.z);
+      const p = buildingWorld(b, martDoorPoint(id, martState(i).angles[id])),
+        target = new THREE.Vector3(p.x, 1.3, p.z);
       const d = Math.hypot(player.x - target.x, player.z - target.z);
       if (d >= distance) continue;
       const from = new THREE.Vector3(player.x, 1.65 + vertical, player.z);

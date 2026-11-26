@@ -263,6 +263,31 @@ export const frontOf = (b: Building) =>
     : b.type === "jail" || b.z < 0
       ? 1
       : -1);
+/** Cardinal world orientation; all room, stair and door plans remain in prefab coordinates. */
+export const BUILDING_YAWS = new WeakMap<object, number>();
+export const buildingYaw = (b: Building) => BUILDING_YAWS.get(b) ?? 0;
+export function buildingFootprint(b: Building) {
+  const odd = Math.abs(Math.sin(buildingYaw(b))) > 0.5;
+  return {
+    ...b,
+    width: odd ? b.depth : b.width,
+    depth: odd ? b.width : b.depth,
+  };
+}
+export function buildingWorld(b: Building, p: BuildingPoint): BuildingPoint {
+  const a = buildingYaw(b),
+    c = Math.cos(a),
+    s = Math.sin(a);
+  return { ...p, x: b.x + p.x * c + p.z * s, z: b.z - p.x * s + p.z * c };
+}
+export function buildingLocal(b: Building, p: BuildingPoint): BuildingPoint {
+  const a = buildingYaw(b),
+    c = Math.cos(a),
+    s = Math.sin(a),
+    x = p.x - b.x,
+    z = p.z - b.z;
+  return { ...p, x: x * c - z * s, z: x * s + z * c };
+}
 export const buildingDoorOffset = (b: Building) =>
   b.type === "jail" ? JAIL_DOOR_Z : (frontOf(b) * b.depth) / 2;
 export const doorPosition = (index: number) => {
@@ -270,12 +295,12 @@ export const doorPosition = (index: number) => {
     a = doorAngles[index];
   if (isMart(b)) {
     const p = martDoorPoint(0, a);
-    return { x: b.x + p.x, z: b.z + p.z };
+    return buildingWorld(b, p);
   }
-  return {
-    x: b.x - DOOR_WIDTH / 2 + (Math.cos(a) * DOOR_WIDTH) / 2,
-    z: b.z + buildingDoorOffset(b) - (Math.sin(a) * DOOR_WIDTH) / 2,
-  };
+  return buildingWorld(b, {
+    x: -DOOR_WIDTH / 2 + (Math.cos(a) * DOOR_WIDTH) / 2,
+    z: buildingDoorOffset(b) - (Math.sin(a) * DOOR_WIDTH) / 2,
+  });
 };
 export function doorBlocksPoint(
   index: number,
@@ -285,16 +310,12 @@ export function doorBlocksPoint(
 ) {
   const building = BUILDINGS[index];
   if (isMart(building))
-    return martDoorBlocked(
-      0,
-      { x: p.x - building.x, z: p.z - building.z, y: p.y },
-      angle,
-      radius,
-    );
+    return martDoorBlocked(0, buildingLocal(building, p), angle, radius);
   if ((p.y ?? 0) > 2.8) return false;
   const b = BUILDINGS[index],
-    dx = p.x - (b.x - DOOR_WIDTH / 2),
-    dz = p.z - (b.z + buildingDoorOffset(b));
+    local = buildingLocal(b, p),
+    dx = local.x + DOOR_WIDTH / 2,
+    dz = local.z - buildingDoorOffset(b);
   const x = dx * Math.cos(angle) - dz * Math.sin(angle),
     z = dx * Math.sin(angle) + dz * Math.cos(angle);
   return x > -radius && x < DOOR_WIDTH + radius && Math.abs(z) < 0.07 + radius;
@@ -315,13 +336,13 @@ export function animateDoors(dt: number, occupants: BuildingPoint[]) {
       animateApartmentDoors(
         i,
         dt,
-        occupants.map((p) => ({ x: p.x - b.x, z: p.z - b.z, y: p.y })),
+        occupants.map((p) => buildingLocal(b, p)),
       );
     if (isMart(b))
       animateMartDoors(
         i,
         dt,
-        occupants.map((p) => ({ x: p.x - b.x, z: p.z - b.z, y: p.y })),
+        occupants.map((p) => buildingLocal(b, p)),
       );
     const goal = doorTargets[i] ? (frontOf(BUILDINGS[i]) * Math.PI) / 2 : 0,
       delta = goal - doorAngles[i];
@@ -640,7 +661,7 @@ function within(
 export function buildingSurface(p: BuildingPoint, maxHeight: number) {
   let y = 0;
   BUILDINGS.forEach((b, i) => {
-    const local = { x: p.x - b.x, z: p.z - b.z };
+    const local = buildingLocal(b, p);
     for (const slab of buildingSlabs(i))
       if (within(local, slab) && slab.y <= maxHeight + 0.001)
         y = Math.max(y, slab.y);
@@ -661,7 +682,7 @@ export function buildingSurface(p: BuildingPoint, maxHeight: number) {
 export function buildingCeiling(p: BuildingPoint, feet: number) {
   let ceiling = Infinity;
   BUILDINGS.forEach((b, i) => {
-    if (isMart(b) && martInside({ x: p.x - b.x, z: p.z - b.z }) && feet < 4.04)
+    if (isMart(b) && martInside(buildingLocal(b, p)) && feet < 4.04)
       ceiling = Math.min(ceiling, 4.04);
     if (buildingStories(b) < 2) {
       if (
@@ -674,7 +695,7 @@ export function buildingCeiling(p: BuildingPoint, feet: number) {
         );
       return;
     }
-    const local = { x: p.x - b.x, z: p.z - b.z };
+    const local = buildingLocal(b, p);
     for (const slab of buildingSlabs(i))
       if (within(local, slab, 0.12) && slab.y - 0.18 >= feet + 1.9 - 0.01)
         ceiling = Math.min(ceiling, slab.y - 0.18);
@@ -804,9 +825,16 @@ export function buildingBlocked(
 ) {
   return BUILDINGS.some((b, i) => {
     if (!buildingEnabled(b)) return false;
+    const odd = Math.abs(Math.sin(buildingYaw(b))) > 0.5,
+      extentX = isMart(b) ? 7 : (odd ? b.depth : b.width) / 2,
+      extentZ = isMart(b) ? 7 : (odd ? b.width : b.depth) / 2;
+    if (
+      Math.abs(p.x - b.x) > extentX + radius + 0.2 ||
+      Math.abs(p.z - b.z) > extentZ + radius + 0.2
+    )
+      return false;
     const feet = p.y ?? 0;
-    const x = p.x - b.x,
-      z = p.z - b.z,
+    const { x, z } = buildingLocal(b, p),
       hx = b.width / 2,
       hz = b.depth / 2,
       front = frontOf(b);
@@ -906,10 +934,13 @@ export function containingBuilding(p: BuildingPoint) {
   return BUILDINGS.findIndex(
     (b) =>
       buildingEnabled(b) &&
-      Math.abs(p.x - b.x) < b.width / 2 - WALL / 2 &&
-      Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2 &&
-      !(b.type === "jail" && inJailCourtyard(p.x - b.x, p.z - b.z)) &&
-      (!isMart(b) || martInside({ x: p.x - b.x, z: p.z - b.z })),
+      Math.abs(buildingLocal(b, p).x) < b.width / 2 - WALL / 2 &&
+      Math.abs(buildingLocal(b, p).z) < b.depth / 2 - WALL / 2 &&
+      !(
+        b.type === "jail" &&
+        inJailCourtyard(buildingLocal(b, p).x, buildingLocal(b, p).z)
+      ) &&
+      (!isMart(b) || martInside(buildingLocal(b, p))),
   );
 }
 

@@ -1,11 +1,16 @@
 import {
+  buildingWorld,
+  buildingLocal,
+  buildingFootprint,
+} from "./building-layout";
+import {
   isMart,
   martPlan,
   martDoorBlocked,
   martState,
 } from "./block-mart-layout";
 import { doorAngles } from "./building-layout";
-import { doorBlocksPoint, buildingDoorOffset } from "./building-layout";
+import { doorBlocksPoint, doorPosition } from "./building-layout";
 import type { PatrolSpec } from "./military-compound";
 import {
   BUILDINGS,
@@ -120,23 +125,25 @@ function patrolPath(
     id = (x: number, z: number) => x + "," + z;
   const blockedDoors = new Set<string>();
   BUILDINGS.forEach((b, i) => {
+    const footprint = buildingFootprint(b);
     if (
-      b.x + b.width / 2 < bounds.minX ||
-      b.x - b.width / 2 > bounds.maxX ||
-      b.z + b.depth / 2 < bounds.minZ ||
-      b.z - b.depth / 2 > bounds.maxZ
+      b.x + footprint.width / 2 < bounds.minX ||
+      b.x - footprint.width / 2 > bounds.maxX ||
+      b.z + footprint.depth / 2 < bounds.minZ ||
+      b.z - footprint.depth / 2 > bounds.maxZ
     )
       return;
     if (isMart(b)) {
       martPlan.doors.forEach((d, door) => {
-        const cx = b.x + d.center[0],
-          cz = b.z + d.center[1];
+        const center = buildingWorld(b, { x: d.center[0], z: d.center[1] }),
+          cx = center.x,
+          cz = center.z;
         for (let x = Math.floor(cx) - 2; x <= Math.ceil(cx) + 2; x++)
           for (let z = Math.floor(cz) - 2; z <= Math.ceil(cz) + 2; z++)
             if (
               martDoorBlocked(
                 door,
-                { x: x - b.x, z: z - b.z },
+                buildingLocal(b, { x, z }),
                 door === 0 ? doorAngles[i] : martState(i).angles[door],
               )
             )
@@ -144,9 +151,9 @@ function patrolPath(
       });
       return;
     }
-    const entry = b.z + buildingDoorOffset(b);
-    for (let x = Math.floor(b.x) - 2; x <= Math.ceil(b.x) + 2; x++)
-      for (let z = Math.floor(entry) - 2; z <= Math.ceil(entry) + 2; z++)
+    const entry = doorPosition(i);
+    for (let x = Math.floor(entry.x) - 2; x <= Math.ceil(entry.x) + 2; x++)
+      for (let z = Math.floor(entry.z) - 2; z <= Math.ceil(entry.z) + 2; z++)
         if (doorBlocksPoint(i, { x, z })) blockedDoors.add(id(x, z));
   });
   const nearbyPieces = pieces.filter(

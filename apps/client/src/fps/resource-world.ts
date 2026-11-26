@@ -1,6 +1,6 @@
 import { timberBlocked } from "./timber-yard-layout";
 import { COMPACT, parkSite, RESOURCE_PARKS } from "./compact-plan";
-import { buildingEnabled } from "./building-layout";
+import { buildingEnabled, buildingFootprint } from "./building-layout";
 import {
   BUILDINGS,
   LOOT,
@@ -33,6 +33,10 @@ const nodeKinds = ["node-rock", "node-sulfur", "node-metal"] as const;
 export class ResourceWorld {
   entities: WorldResource[] = [];
   revision = 0;
+  private buildingSites = BUILDINGS.map((b) => ({
+    source: b,
+    bounds: buildingFootprint(b),
+  }));
   private cells = new Map<string, WorldResource[]>();
   private nextTick = 0;
   constructor(
@@ -126,9 +130,9 @@ export class ResourceWorld {
         if (!COMPACT.active && inTown({ x: p.x + dx, z: p.z + dz }))
           return false;
     return (
-      !BUILDINGS.some(
-        (b) =>
-          buildingEnabled(b) &&
+      !this.buildingSites.some(
+        ({ source, bounds: b }) =>
+          buildingEnabled(source) &&
           Math.abs(p.x - b.x) < b.width / 2 + radius + 1 &&
           Math.abs(p.z - b.z) < b.depth / 2 + radius + 1,
       ) &&
