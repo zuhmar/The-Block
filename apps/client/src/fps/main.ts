@@ -1,3 +1,4 @@
+import { createCityRowRender } from "./city-row-render";
 import { orientBuildingRoots } from "./building-orientation-view";
 import { buildingWorld, buildingFootprint } from "./building-layout";
 import { CITY_FRONTAGES } from "./building-frontage";
@@ -673,6 +674,13 @@ const buildingModels = BUILDINGS.map((b, index) => {
   model.root.visible = buildingEnabled(b);
   scene.add(model.root);
   return model;
+});
+const cityRows = createCityRowRender(buildingModels);
+scene.add(cityRows.root);
+canvas.dataset.cityRows = JSON.stringify({
+  buildings: cityRows.rows,
+  batches: cityRows.batches,
+  instances: cityRows.instances,
 });
 // Permanent-building contact shadows only; gatherable models have no baked ground patches.
 const contactCanvas = document.createElement("canvas");
@@ -4028,6 +4036,7 @@ function frame(now: number) {
       buildingModels[i].root.visible =
         buildingEnabled(b) && Math.hypot(player.x - b.x, player.z - b.z) < 145;
   });
+  cityRows.update(player);
   if (playing || stationOpen) tickProduction(productionDt, now);
   if (!playing && !needsRender) return;
   needsRender = false;

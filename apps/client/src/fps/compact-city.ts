@@ -1,4 +1,9 @@
-import { orientCityFrontages, CITY_FRONTAGES } from "./building-frontage";
+import denseCityPlan from "./dense-city-plan.json";
+import {
+  orientCityFrontages,
+  CITY_FRONTAGES,
+  frontageOptions,
+} from "./building-frontage";
 import {
   BUILDING_YAWS,
   buildingWorld,
@@ -478,6 +483,29 @@ export function configureCompactCity() {
         l.z = p.z;
       }
   });
+  // Append new street rows after all previous building and cache indices.
+  for (const [row, p] of denseCityPlan.entries()) {
+    const source = BUILDINGS.findIndex((b) => b.type === p.type);
+    const index = copyCityBuilding(source, p.x, p.z, `STREET ROW ${row + 1}`),
+      b = BUILDINGS[index];
+    BUILDING_YAWS.set(b, p.yaw);
+    const frontage = frontageOptions(index).find(
+      (f) => Math.abs(Math.sin((f.yaw - p.yaw) / 2)) < 0.001,
+    );
+    if (!frontage)
+      throw Error(`Street row ${row + 1} has no clear road-facing entrance`);
+    CITY_FRONTAGES.push(frontage);
+    const cache = buildingWorld(b, { x: 0, z: frontOf(b) > 0 ? -1 : 1 });
+    LOOT.push({
+      ...cache,
+      width: 1.1,
+      depth: 0.85,
+      height: 0.9,
+      tier: 2,
+      name: "Street row supplies",
+      color: 0x728b76,
+    });
+  }
   undo = () => {
     if (!COMPACT.active) return;
     for (const [o, values] of snapshots) Object.assign(o, values);
