@@ -1,0 +1,15 @@
+{
+  "name": "bottled-water",
+  "modelPath": "models/bottled-water.glb",
+  "spritePath": "sprites/bottled-water.png",
+  "sourceSha256": "1a1cbf3a5478a4333cbf5ea8df782ff930f81c757230d72b44c33261adfbd71a",
+  "uniformSourceScale": 0.24,
+  "width": 0.079039,
+  "height": 0.24,
+  "depth": 0.078015,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1e-e6c5-7069-9125-e374845d9c4c",
+  "referenceTaskId": "01a21a19-225d-7700-9afb-47330fa78647"
+}

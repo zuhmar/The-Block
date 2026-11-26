@@ -1,0 +1,15 @@
+{
+  "name": "bandage",
+  "modelPath": "models/bandage.glb",
+  "spritePath": "sprites/bandage.png",
+  "sourceSha256": "cdfa55fb388733c1eae07714a4b91d841ccd774c061d05bd734f44b2c6fcf9ce",
+  "uniformSourceScale": 0.09,
+  "width": 0.069718,
+  "height": 0.079723,
+  "depth": 0.09,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a21-d807-7333-93ac-cd1f41a5516f",
+  "referenceTaskId": "01a21a19-d4a7-716a-ac58-760f5bc5f86d"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "mechanical-parts",
+  "modelPath": "models/mechanical-parts.glb",
+  "spritePath": "sprites/mechanical-parts.png",
+  "sourceSha256": "ba2722374c00deb39882ca0facaefed8c20a61e618ca615084083c777d603dc2",
+  "uniformSourceScale": 0.22,
+  "width": 0.217565,
+  "height": 0.22,
+  "depth": 0.202446,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a18-dd72-72a7-ac1c-6f9241299b8e",
+  "referenceTaskId": "01a21a17-028e-748a-907a-f0ce6f4963bd"
+}

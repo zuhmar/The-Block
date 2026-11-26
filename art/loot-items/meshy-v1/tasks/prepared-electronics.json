@@ -1,0 +1,15 @@
+{
+  "name": "electronics",
+  "modelPath": "models/electronics.glb",
+  "spritePath": "sprites/electronics.png",
+  "sourceSha256": "cbbb99474952a0c33656c0cdcc505c07d655b65bc5d98403bcdad75eac57b0a8",
+  "uniformSourceScale": 0.22,
+  "width": 0.108184,
+  "height": 0.22,
+  "depth": 0.050563,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-dbb0-747b-ac8f-5431ff9bfff0",
+  "referenceTaskId": "01a21a1c-5f99-77aa-88fc-ee14fff5a8dc"
+}

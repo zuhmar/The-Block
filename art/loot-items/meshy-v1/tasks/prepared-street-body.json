@@ -1,0 +1,15 @@
+{
+  "name": "street-body",
+  "modelPath": "models/street-body.glb",
+  "spritePath": "sprites/street-body.png",
+  "sourceSha256": "7955222f38272df7f14424b09dfcba32e5ae04701e74d64d42d8c157c09439f3",
+  "uniformSourceScale": 0.65,
+  "width": 0.649574,
+  "height": 0.65,
+  "depth": 0.280004,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-1ed1-7478-a9fa-bebe6d15b3e3",
+  "referenceTaskId": "01a21a1c-9a74-72fa-88e7-c6e5c8e7223f"
+}

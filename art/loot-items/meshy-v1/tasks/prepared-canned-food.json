@@ -1,0 +1,15 @@
+{
+  "name": "canned-food",
+  "modelPath": "models/canned-food.glb",
+  "spritePath": "sprites/canned-food.png",
+  "sourceSha256": "92feb62461b09ce4d64778418e8d42f0a0ec30bfa8ad6045353edf44b639e791",
+  "uniformSourceScale": 0.11,
+  "width": 0.11,
+  "height": 0.078693,
+  "depth": 0.11,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1f-050e-75cc-a191-9963ac73aa41",
+  "referenceTaskId": "01a21a19-3ce5-7018-a488-ffac687a520c"
+}

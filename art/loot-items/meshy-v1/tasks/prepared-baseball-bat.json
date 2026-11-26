@@ -1,0 +1,15 @@
+{
+  "name": "baseball-bat",
+  "modelPath": "models/baseball-bat.glb",
+  "spritePath": "sprites/baseball-bat.png",
+  "sourceSha256": "ab08229d7c7a4048fc7e41650ff63286b1e076d06b94b6882fa40b6c7b508a39",
+  "uniformSourceScale": 0.9,
+  "width": 0.063685,
+  "height": 0.9,
+  "depth": 0.064313,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1e-d6f7-72bf-901f-94e92106ea76",
+  "referenceTaskId": "01a21a19-14b4-759f-9cd5-ffe7e89b2795"
+}

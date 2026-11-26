@@ -1,0 +1,15 @@
+{
+  "name": "reinforced-body",
+  "modelPath": "models/reinforced-body.glb",
+  "spritePath": "sprites/reinforced-body.png",
+  "sourceSha256": "251e0e243794bab9f3f5f330a7a16130c7ec41a17dcabf65ecd693e281b5bed9",
+  "uniformSourceScale": 0.65,
+  "width": 0.65,
+  "height": 0.639469,
+  "depth": 0.368744,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-e635-7293-868c-8b4cdea10261",
+  "referenceTaskId": "01a21a1e-25f6-70ee-a3ed-b5c225d9d8eb"
+}

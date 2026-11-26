@@ -1,0 +1,15 @@
+{
+  "name": "cash",
+  "modelPath": "models/cash.glb",
+  "spritePath": "sprites/cash.png",
+  "sourceSha256": "09e17be879a5d1f449dd74c524a3e78edc0970ede2de2071ab7caa11259d0394",
+  "uniformSourceScale": 0.18,
+  "width": 0.111916,
+  "height": 0.068718,
+  "depth": 0.18,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-07aa-7710-9ecb-f539d736cd67",
+  "referenceTaskId": "01a21a1a-0551-7408-a8aa-0211f2ebda52"
+}

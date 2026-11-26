@@ -1,0 +1,15 @@
+{
+  "name": "watch",
+  "modelPath": "models/watch.glb",
+  "spritePath": "sprites/watch.png",
+  "sourceSha256": "d0f0667fc7224102c6f1d36d0b4bd0d886e956696921883f045fdfaa5056bf45",
+  "uniformSourceScale": 0.1,
+  "width": 0.057382,
+  "height": 0.099865,
+  "depth": 0.1,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-176c-72b7-9f46-af623e33ee72",
+  "referenceTaskId": "01a21a1a-157e-75cc-ac81-411f1665e4d7"
+}

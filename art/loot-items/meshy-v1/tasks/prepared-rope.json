@@ -1,0 +1,15 @@
+{
+  "name": "rope",
+  "modelPath": "models/rope.glb",
+  "spritePath": "sprites/rope.png",
+  "sourceSha256": "e0dcb0e074134101bd6d7fff71fd1a5b5168c5978eb2e55da8d9aaae56ef2ecf",
+  "uniformSourceScale": 0.25,
+  "width": 0.25,
+  "height": 0.153873,
+  "depth": 0.248462,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a18-ca33-757a-bb1c-0a68b9d841bb",
+  "referenceTaskId": "01a21a16-f541-713d-83a3-d485a60bb378"
+}

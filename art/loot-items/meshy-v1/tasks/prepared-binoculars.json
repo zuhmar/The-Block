@@ -1,0 +1,15 @@
+{
+  "name": "binoculars",
+  "modelPath": "models/binoculars.glb",
+  "spritePath": "sprites/binoculars.png",
+  "sourceSha256": "b47bbc8bfc76a891ec443bf6d17b6450e16213abfff68f4d8ba55e8a18cac87b",
+  "uniformSourceScale": 0.2,
+  "width": 0.2,
+  "height": 0.088161,
+  "depth": 0.183831,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1e-c703-71f7-8fd1-ee9118d0ebea",
+  "referenceTaskId": "01a21a18-ffa0-7202-8179-b40a88e216ee"
+}

@@ -1,0 +1,344 @@
+{
+  "checked": 42,
+  "sourceReferencesVerified": 42,
+  "transparentSprites": 42,
+  "reusedAssetsVerified": 24,
+  "sprites": [
+    {
+      "name": "scrap-metal",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [96, 76, 432, 385],
+      "spriteSha256": "a814a900e3d1a1ed367fde3b31c2c0cc3371316749d93130488661de03c6f5c7"
+    },
+    {
+      "name": "cloth",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [52, 123, 461, 392],
+      "spriteSha256": "6a6ba019ad4fc269645fd976df44515b09998663f021f97060d132f9a1613657"
+    },
+    {
+      "name": "leather",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [80, 128, 452, 379],
+      "spriteSha256": "37fc9a40e1bb988037aa371bb69a88840712def9c11505ccd79272c74099ab7d"
+    },
+    {
+      "name": "rope",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [109, 119, 403, 389],
+      "spriteSha256": "6f5a4cf77f1ceeafe7180d175b8a156a526ebc299426a869a9fb28253b3d5ef1"
+    },
+    {
+      "name": "mechanical-parts",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [129, 130, 396, 428],
+      "spriteSha256": "6796c1f4317630808b6ae36e3bdb800b9bade138629b7f45e9e4739cd521eb0a"
+    },
+    {
+      "name": "electrical-parts",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [54, 127, 422, 419],
+      "spriteSha256": "81a90bad74d57354463de3c44b2278c7586ede93708537976fdb59f815da271d"
+    },
+    {
+      "name": "weapon-parts",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [112, 170, 395, 343],
+      "spriteSha256": "73c62322f378801805fb85eb6cfeb07b4a6e8130a92e957783a4bb3a9d1f2959"
+    },
+    {
+      "name": "building-plan",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [82, 180, 439, 359],
+      "spriteSha256": "a0f5e5cbe45575ddaf57a50da9265865f667f9bc4db0950ee15f79352c4367d7"
+    },
+    {
+      "name": "construction-hammer",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [156, 60, 352, 429],
+      "spriteSha256": "aad7d0f7393c0aa27060a143d74731a24b78c8e2eb9a1e13ea79185bc32634ad"
+    },
+    {
+      "name": "repair-tool",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [188, 70, 324, 440],
+      "spriteSha256": "1096b015443f8d2da193aa34067d139416f943587038a315cf98773c3075179a"
+    },
+    {
+      "name": "torch",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [187, 94, 328, 411],
+      "spriteSha256": "138e53d181841a41bd64b2765c9dff9f3beb0ff8c5cc8502804b1db9ae0c828e"
+    },
+    {
+      "name": "flashlight",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [63, 115, 432, 422],
+      "spriteSha256": "68cd52351a41d11fbc243df800c33b7e3a355a64463d4c28b681599623e31ec8"
+    },
+    {
+      "name": "binoculars",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [53, 134, 440, 393],
+      "spriteSha256": "a9ae519fc81d0968d4612cd941e0b0e4387b52bc119649e0ea3ced624423883b"
+    },
+    {
+      "name": "baseball-bat",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [239, 56, 273, 455],
+      "spriteSha256": "55e1af595ff45e242f5238c04f3e958ef9e31441508942bc9f108744abe1a038"
+    },
+    {
+      "name": "bottled-water",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [194, 77, 318, 442],
+      "spriteSha256": "be5613b6b609561a43be71b59732c8be28f0f78a3af02ed05581ae164ac684a2"
+    },
+    {
+      "name": "canned-drink",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [189, 67, 323, 442],
+      "spriteSha256": "3b2b5233d257d5e3af73abe3c5d3015f657563c4a2938d4be90e3df3087ef904"
+    },
+    {
+      "name": "canned-food",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [106, 92, 406, 420],
+      "spriteSha256": "f84d37ff67e01cb2cedc7f257732296fbe2953cb85bee0a74e51d7c378028904"
+    },
+    {
+      "name": "snack-bar",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [66, 112, 446, 401],
+      "spriteSha256": "d9112e0ee04e98f5ac1ac206e78e733650c3b3d730c7114a86aada8fdf051867"
+    },
+    {
+      "name": "cooked-meat",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [83, 159, 430, 351],
+      "spriteSha256": "bb33df75ef5332a30f2589eb187845d83dcf773fbc77a8ada0fdf2507e8b083b"
+    },
+    {
+      "name": "bandage",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [139, 90, 396, 441],
+      "spriteSha256": "f58eaf0a058b31fdb1478fdad77ac8540ec757438fa29c9bec0cbd6a8848846e"
+    },
+    {
+      "name": "medkit",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [98, 103, 413, 440],
+      "spriteSha256": "6b090e91820790b667a189617f802dcdb0e9b8323cf1fe0a70bb5d58da3f2c10"
+    },
+    {
+      "name": "painkillers",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [170, 71, 342, 441],
+      "spriteSha256": "0c0ce6fb5508c7f6b055b0e52729348f4c065c68b475a069497ae58e562c814c"
+    },
+    {
+      "name": "cash",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [56, 96, 454, 419],
+      "spriteSha256": "9603b4746a60f6307ccd8a1bdae6afcf5f8871be00253d1134067d9443ceefc0"
+    },
+    {
+      "name": "watch",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [116, 115, 356, 401],
+      "spriteSha256": "a6bf25d9582e50cc49a9b4b0ec6c6865d5156007ef0b18a882cb7a96f85aebd4"
+    },
+    {
+      "name": "jewelry",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [132, 89, 380, 421],
+      "spriteSha256": "24b15a9383f399442b77c55548540c88f662508a4f1add5f3868f84b57ec866e"
+    },
+    {
+      "name": "electronics",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [168, 78, 343, 440],
+      "spriteSha256": "4bd573cda624ed65e7aa28af95916caa4499f32a30232299a78088488954036c"
+    },
+    {
+      "name": "contraband",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [52, 111, 459, 404],
+      "spriteSha256": "741cf8e15a07b02805172431721ff86939aca64e3c671716d8920d8d5f7e19fc"
+    },
+    {
+      "name": "keycard",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [64, 61, 448, 450],
+      "spriteSha256": "1c301916c8f1b6290172582996094b2096693f112665a74b99702a730c28ada6"
+    },
+    {
+      "name": "street-headwear",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [84, 128, 419, 428],
+      "spriteSha256": "55bad96de740f35aa86299c407ada84c9c0cc7fa9a61385b13a86fe5c9defa25"
+    },
+    {
+      "name": "street-body",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [111, 103, 392, 439],
+      "spriteSha256": "98db87b9e8d54ef92792e82d9281c1705f6bd48d191af0ba0e9c52c8cf4aa36e"
+    },
+    {
+      "name": "street-legs",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [179, 73, 349, 439],
+      "spriteSha256": "e08c2e5b70eae53944ed214125eaedd1938e21be24d9dedbf4ceb5b52c4af819"
+    },
+    {
+      "name": "street-feet",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [81, 127, 428, 397],
+      "spriteSha256": "4e713da6fdc54e319c4628b1072fa49fe2d1eacc078176d891005686318cda39"
+    },
+    {
+      "name": "reinforced-headwear",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [136, 118, 379, 397],
+      "spriteSha256": "c8cd21f14a1a77a60f06ddcec80230c840353bda332086c42c49dc5cd1a53ac1"
+    },
+    {
+      "name": "reinforced-body",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [118, 104, 401, 430],
+      "spriteSha256": "78098eca2f0dc27034f079fd8bdcc3ff06901c05fc01affd7dab3e8992c82532"
+    },
+    {
+      "name": "reinforced-legs",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [171, 82, 353, 437],
+      "spriteSha256": "e81982a92ddd8f6d6aeb6caa0dc67ccb781d7ac1f1df8ac2d3ecae76b319f476"
+    },
+    {
+      "name": "reinforced-feet",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [97, 76, 434, 431],
+      "spriteSha256": "22050879f5a47dedec4b1f75cdd6cc3ec5097fe1358e64c2807896ddbd797f4e"
+    },
+    {
+      "name": "armored-headwear",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [141, 118, 384, 428],
+      "spriteSha256": "1ea17fece184693ff35827e498e7ac0d1fe94e3ebbcd881e091eb9e47706ae74"
+    },
+    {
+      "name": "armored-body",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [110, 107, 407, 415],
+      "spriteSha256": "27366b07da9a69ef4ec44a9469ad567d5c1235a738d39bb4191e228317f8148e"
+    },
+    {
+      "name": "armored-legs",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [167, 79, 358, 434],
+      "spriteSha256": "b729df6ed214a06c58a0bdbdb81b0e581f9191d0b3317b0afc63cb5dccd56d83"
+    },
+    {
+      "name": "armored-feet",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [93, 79, 424, 424],
+      "spriteSha256": "5adcc024af393b58502024bd2ea67ce561f0b28f68c9a8a2f1099dc2c55fcac2"
+    },
+    {
+      "name": "door-lock",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [119, 70, 408, 420],
+      "spriteSha256": "97607acc6619128a2fa822426ee618bacde7f359e435f0c72f8d34455fa2a662"
+    },
+    {
+      "name": "storage-lock",
+      "sourceImagePixelsMatchReference": true,
+      "spriteMode": "RGBA",
+      "spriteSize": [512, 512],
+      "alphaBounds": [139, 101, 374, 442],
+      "spriteSha256": "32d51e4f03eb70bec44375f2f757423caddc1adee3ee7dc1619c6da7436b8f1e"
+    }
+  ]
+}

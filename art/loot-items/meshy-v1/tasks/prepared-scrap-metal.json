@@ -1,0 +1,15 @@
+{
+  "name": "scrap-metal",
+  "modelPath": "models/scrap-metal.glb",
+  "spritePath": "sprites/scrap-metal.png",
+  "sourceSha256": "a055b789415a0a99ecef760fbc1c32ad6b827d76a919be8cf9c9d9cf6b15a2d0",
+  "uniformSourceScale": 0.25,
+  "width": 0.196154,
+  "height": 0.139469,
+  "depth": 0.25,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a17-b2a8-747f-bb66-f7c4522812f5",
+  "referenceTaskId": "01a21a16-6b9f-711a-9ceb-ef9a71946a62"
+}

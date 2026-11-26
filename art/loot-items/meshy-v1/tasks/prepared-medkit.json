@@ -1,0 +1,15 @@
+{
+  "name": "medkit",
+  "modelPath": "models/medkit.glb",
+  "spritePath": "sprites/medkit.png",
+  "sourceSha256": "4f1f92ddf4ccd985f6d85da2d8bd70901bdd1a2e28a6a4884b841d7ca77d97b0",
+  "uniformSourceScale": 0.3,
+  "width": 0.3,
+  "height": 0.292714,
+  "depth": 0.128349,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a21-e6ea-71b7-ac0f-428f979b0211",
+  "referenceTaskId": "01a21a19-e605-708f-ad5f-838f9719b908"
+}

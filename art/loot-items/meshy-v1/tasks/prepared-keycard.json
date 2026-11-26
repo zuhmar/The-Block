@@ -1,0 +1,15 @@
+{
+  "name": "keycard",
+  "modelPath": "models/keycard.glb",
+  "spritePath": "sprites/keycard.png",
+  "sourceSha256": "96448289efc0fd1d844c3b0926254bc8607f46af150f290b57873cdf210ecb09",
+  "uniformSourceScale": 0.09,
+  "width": 0.09,
+  "height": 0.065042,
+  "depth": 0.005378,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-fc82-7071-9d5b-093672050ae5",
+  "referenceTaskId": "01a21a1c-7afa-76e1-869a-f4e940a084bd"
+}

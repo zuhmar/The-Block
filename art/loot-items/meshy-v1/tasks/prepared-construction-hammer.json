@@ -1,0 +1,15 @@
+{
+  "name": "construction-hammer",
+  "modelPath": "models/construction-hammer.glb",
+  "spritePath": "sprites/construction-hammer.png",
+  "sourceSha256": "424e27d790f4606140709b2a76445e41a83fa0b582e0b3ce2779a8852db45eb9",
+  "uniformSourceScale": 0.42,
+  "width": 0.2255,
+  "height": 0.42,
+  "depth": 0.059237,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1d-ba5a-7081-ba96-6402cfd83e7c",
+  "referenceTaskId": "01a21a17-dec7-7693-8075-e4581029ab66"
+}

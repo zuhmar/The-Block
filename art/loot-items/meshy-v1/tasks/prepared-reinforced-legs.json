@@ -1,0 +1,15 @@
+{
+  "name": "reinforced-legs",
+  "modelPath": "models/reinforced-legs.glb",
+  "spritePath": "sprites/reinforced-legs.png",
+  "sourceSha256": "11837d38da510121c487382d9ca27598b5d505f481ae1c81daa31625d14e6008",
+  "uniformSourceScale": 0.9,
+  "width": 0.473316,
+  "height": 0.9,
+  "depth": 0.260582,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-f648-7740-acb2-7b1b354d0c58",
+  "referenceTaskId": "01a21a1e-353f-707b-a099-df3bfdfa3524"
+}

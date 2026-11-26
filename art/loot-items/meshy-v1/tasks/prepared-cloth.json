@@ -1,0 +1,15 @@
+{
+  "name": "cloth",
+  "modelPath": "models/cloth.glb",
+  "spritePath": "sprites/cloth.png",
+  "sourceSha256": "59a43f079ea55481d96e78945d009d996d09b31a6006c250b7d42299cfca6643",
+  "uniformSourceScale": 0.3,
+  "width": 0.3,
+  "height": 0.107203,
+  "depth": 0.3,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a18-a9fc-7008-befd-a4935df1bc3e",
+  "referenceTaskId": "01a21a16-dc08-7053-87ed-fa94837a7410"
+}

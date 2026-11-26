@@ -1,0 +1,15 @@
+{
+  "name": "painkillers",
+  "modelPath": "models/painkillers.glb",
+  "spritePath": "sprites/painkillers.png",
+  "sourceSha256": "6a0120265d74f8f5c500fa0322ae982c3cf037000100e3d699f559d82a5de533",
+  "uniformSourceScale": 0.10008086539574294,
+  "width": 0.050491,
+  "height": 0.1,
+  "depth": 0.050023,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a21-f5d8-72fc-a0ab-57e338a4aa4f",
+  "referenceTaskId": "01a21a19-f52a-700d-bfca-b75c713445cd"
+}

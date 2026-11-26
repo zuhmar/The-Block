@@ -1,0 +1,8 @@
+{
+  "task_id": "01a21a1f-050e-75cc-a191-9963ac73aa41",
+  "status": "SUCCEEDED",
+  "ai_model": "meshy-t2",
+  "model_type": "smart-topology",
+  "nativeSize": [1, 0.7153940200805664, 1],
+  "referenceTaskId": "01a21a19-3ce5-7018-a488-ffac687a520c"
+}

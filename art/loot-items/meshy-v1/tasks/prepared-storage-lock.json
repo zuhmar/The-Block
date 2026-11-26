@@ -1,0 +1,15 @@
+{
+  "name": "storage-lock",
+  "modelPath": "models/storage-lock.glb",
+  "spritePath": "sprites/storage-lock.png",
+  "sourceSha256": "74444d1e964fdaa38350eff85a6643d39ff13fc02d328feb82dd456baf81b461",
+  "uniformSourceScale": 0.1,
+  "width": 0.06881,
+  "height": 0.1,
+  "depth": 0.035546,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-ae62-738d-a03f-bf31c5583633",
+  "referenceTaskId": "01a21a20-089f-7200-b0b7-1a50018aa912"
+}

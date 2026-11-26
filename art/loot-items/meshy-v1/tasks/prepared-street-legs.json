@@ -1,0 +1,15 @@
+{
+  "name": "street-legs",
+  "modelPath": "models/street-legs.glb",
+  "spritePath": "sprites/street-legs.png",
+  "sourceSha256": "ac4bef35799e048a9b067b2490da2939b76184834692bda165c26a78e096c776",
+  "uniformSourceScale": 0.85,
+  "width": 0.418457,
+  "height": 0.85,
+  "depth": 0.247884,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-b451-75d3-999f-3d60fb43b9a6",
+  "referenceTaskId": "01a21a1d-f8d0-77c7-8597-c1468177167b"
+}

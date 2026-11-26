@@ -1,0 +1,680 @@
+{
+  "props": [
+    {
+      "name": "scrap-metal",
+      "triangles": 2405,
+      "vertices": 1993,
+      "bytes": 176416,
+      "sha256": "9d61fe2b6ff720d5a3712f504419dff8abc18195009c5b562a11d9f2522107e6",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "d7de0d6c8cedd02d184395140d8cfac825ff10a0fe754cb8df96f15f04d00fcd"
+    },
+    {
+      "name": "cloth",
+      "triangles": 1828,
+      "vertices": 1421,
+      "bytes": 144832,
+      "sha256": "c6bd06c4b4eace955d2fb15b2be60f41b6465233e7bcac31d8243afd66090d3b",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "7a2eb6e2ef456c968c04ff95cfe1449a6a3f3d5e6a8b17b460395cf33f49553b"
+    },
+    {
+      "name": "leather",
+      "triangles": 2421,
+      "vertices": 2251,
+      "bytes": 161816,
+      "sha256": "5323c727481bd96a01b00113ff57aea1155efa48f9ac58665a8e44d3dedd0c0b",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "959589ecd7c61772aefb04206ef96e579c52b2bf2b587fe4f2e9da19e097b088"
+    },
+    {
+      "name": "rope",
+      "triangles": 2771,
+      "vertices": 2259,
+      "bytes": 262376,
+      "sha256": "d4356c373184b7f8d1c3109849fb2d34c3ce247618ea73a64dfb54ba4317a576",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "9b79aa120b5200a8765f61054b4f7386db57c4f1fd98336e81fc595de9d91d1b"
+    },
+    {
+      "name": "mechanical-parts",
+      "triangles": 3230,
+      "vertices": 2621,
+      "bytes": 230568,
+      "sha256": "6c748d35e1b2cf8583b4bb9dc49601a185f386f065b2aba19978ad53bd18cfdc",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e79f2983f9579461f91a1c9fa7efcead25a6a0b0121e23bb443c66445db58176"
+    },
+    {
+      "name": "electrical-parts",
+      "triangles": 2683,
+      "vertices": 2225,
+      "bytes": 207740,
+      "sha256": "14fde391b56f967ee5f2fba1a6156b824ecc9b220dd14090aff14da6c6d72cb6",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "7ec5dfaabcbff2570bb14cce29612a0f9fe5d32fae3816e3ae91d417c7144e62"
+    },
+    {
+      "name": "weapon-parts",
+      "triangles": 2431,
+      "vertices": 2036,
+      "bytes": 194004,
+      "sha256": "79b46befd7326c01716b287b73e65dd34340b232908f8fd3bddb33d4cb33e3b6",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "f7c6a721a9ea1d54a4d0dcb9955080110f7cbb72a9da6fb3b3bfea0fd1bb0976"
+    },
+    {
+      "name": "building-plan",
+      "triangles": 2316,
+      "vertices": 1778,
+      "bytes": 171080,
+      "sha256": "0d240bac078f5b69f32c8f579e43d406568a655a66c5e69cf6507d2e3d03a582",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "bd0bd0c30b3555ec2801ddc06d298f865597e6b037e959d9eb32442d7ac2a1c1"
+    },
+    {
+      "name": "construction-hammer",
+      "triangles": 2684,
+      "vertices": 1765,
+      "bytes": 153568,
+      "sha256": "daa1aa22d49eedf5500e85a69828a02343984c0358f17fa6fbd6c5af42fb36bc",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "edaf962b236e9007537f9240f30bbe29f41ec49426747873b42ba95de19a147c"
+    },
+    {
+      "name": "repair-tool",
+      "triangles": 2721,
+      "vertices": 1977,
+      "bytes": 184572,
+      "sha256": "6783d2c5ce93689c037c1518b6005ad0cad2e1c3e0e6a1cdebc5de83c1e4dea4",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "cc42b619fc42def52da2f8a1fe56f7fbc2da089e3eaa67875fe18db48048d3a1"
+    },
+    {
+      "name": "torch",
+      "triangles": 2321,
+      "vertices": 1670,
+      "bytes": 178892,
+      "sha256": "c70092dc5d9f39765fadc795086d6a27c86e434769ea033482ccad874449918b",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "f495053f03d0e4a392ffa4110c4952dd2161107e757eeb6457c974291f50e9dc"
+    },
+    {
+      "name": "flashlight",
+      "triangles": 2296,
+      "vertices": 1693,
+      "bytes": 153208,
+      "sha256": "eb35ff896329896fe5a477e6904629c0e9d563a99b698e9713bb547c629c0e62",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "722749f937cd1ed6a7e819a5614cbbf4d52bc78784e29f9bd78d7f2af8377679"
+    },
+    {
+      "name": "binoculars",
+      "triangles": 3027,
+      "vertices": 2156,
+      "bytes": 159792,
+      "sha256": "2b24859233bcef9d162f7cb1a2bbe2a0b803e659fbde562d17f20ca44b96e9f6",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "82e70fe254d71834d2828d2d97131dcf72ba06bf2c5614830c407d62cd0c7d77"
+    },
+    {
+      "name": "baseball-bat",
+      "triangles": 2369,
+      "vertices": 1755,
+      "bytes": 145800,
+      "sha256": "ac625fe13bf39b819312faf79b3ce3285250c5f62c08278eef8d29eef5679e65",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e4a527756846e0934408e34910a374d3d4587f54c5b2fa4593c9003fbddd34de"
+    },
+    {
+      "name": "bottled-water",
+      "triangles": 2390,
+      "vertices": 1778,
+      "bytes": 173088,
+      "sha256": "528d3926eb01708ebbf2958ceda3f165af4a9889e16c8d560f2681424882c676",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "aad945b14ab2a70b9dd07cc20ff580b1b585804913327a3ebcf11e74d9a8b9de"
+    },
+    {
+      "name": "canned-drink",
+      "triangles": 1962,
+      "vertices": 1367,
+      "bytes": 123872,
+      "sha256": "2b6edf74d1dd5b2fc666cdaa0916c20dd7144b1475fbd4f9fcd031158f67fe55",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "ac0af23c603c4a86b16614e2bbf0c9e5bb33e7731ab9f7343f2fef95a8252010"
+    },
+    {
+      "name": "canned-food",
+      "triangles": 1996,
+      "vertices": 1529,
+      "bytes": 149824,
+      "sha256": "b054006da2ba07b559447a480d6d0beb1e2a592e08fe437063c491bac2619f15",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "5fc33096446a9fb4798e3ef2fa7bfe8136c5aa69adbfdae54cf353f1f17f2bc0"
+    },
+    {
+      "name": "snack-bar",
+      "triangles": 1926,
+      "vertices": 1339,
+      "bytes": 136384,
+      "sha256": "56f7eeb4da39392cc1be72c0e164007f61a7c6d8f8d232a3dafe4199f6dc31e0",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "838df3fd3a9e6678ec293412f936779ae6e954c2dfb50672149ea530583c3cee"
+    },
+    {
+      "name": "cooked-meat",
+      "triangles": 2146,
+      "vertices": 1444,
+      "bytes": 158164,
+      "sha256": "86871131bfe032aed428f7aa6d39ecfd44114586be848a933656d057bb88b232",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "5f908bbde7a738756b2e1313476d5f5661c16462ad47a987ca526ac1d4ae839f"
+    },
+    {
+      "name": "bandage",
+      "triangles": 2195,
+      "vertices": 1750,
+      "bytes": 190356,
+      "sha256": "f2631b1eb8cde994497a182b3c1a74257c5f9719c3ba82af4f5ed974600db0ff",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "9193bc53b53abdcf4c777fc8089aaa44a27ea4e4f1696057c1debfedc4f37a53"
+    },
+    {
+      "name": "medkit",
+      "triangles": 1914,
+      "vertices": 1429,
+      "bytes": 118484,
+      "sha256": "81a7129ac276d6049371662d432567a638a2c5e3e181ab1d7c265b3d56acec30",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "168aec7290996e51a683f354c0711bbf187c587190e0c9cb2cee376da37e9871"
+    },
+    {
+      "name": "painkillers",
+      "triangles": 2204,
+      "vertices": 1737,
+      "bytes": 184916,
+      "sha256": "46cb530463c52404f65d46678ee438962686799f4fdf38c3ff73f73dcf1ac849",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "dcfdb9a79c19065ab4e76cad127aee932815bf4f4d96f9cd88f0da4e93a13404"
+    },
+    {
+      "name": "cash",
+      "triangles": 2170,
+      "vertices": 1668,
+      "bytes": 139512,
+      "sha256": "f7a631113b76207611f1b14de31f48c06f5443619687a342f18cff4fa4435ae9",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "4d0d721321e5e17e7ed2b8ef094fa6f0bcb0a778ab7b5ca0268df2f5ee0a5da3"
+    },
+    {
+      "name": "watch",
+      "triangles": 2662,
+      "vertices": 2234,
+      "bytes": 216264,
+      "sha256": "17f16c6b78f1fa1f5f814abcfe108ee6bc75dd65198428da9a1d3dca005bb1f2",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "36d70227e3f4ba0c574a325bcb52253083873631556ba423e111f964fd932870"
+    },
+    {
+      "name": "jewelry",
+      "triangles": 3366,
+      "vertices": 2954,
+      "bytes": 316448,
+      "sha256": "0ecf65a986b1cdfa4a4b35270779878b5b49e55ef1da8fdacc7450a1a95fca91",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e1720473022aa77899dfb5a234ca5ff90d42d4b6608a222942a9b86d8304a08e"
+    },
+    {
+      "name": "electronics",
+      "triangles": 2549,
+      "vertices": 1907,
+      "bytes": 147844,
+      "sha256": "ee638b02669d52cf61159df18891c0961dbd9bd5bc8dbb196edd0f1fd8e8807b",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "6e220bf37dc6682e23bdd09e3335904a5cd1f0540079494f961e463a185984dc"
+    },
+    {
+      "name": "contraband",
+      "triangles": 2190,
+      "vertices": 1453,
+      "bytes": 119824,
+      "sha256": "f414b1092f0e5cbc1368c856e6bde6ce3c1ecc93da79a9aaba72374900f910d6",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "5db8f10157801928b9b1c04a54480dd406c19642675e1c42ba7b6294d959a997"
+    },
+    {
+      "name": "keycard",
+      "triangles": 1662,
+      "vertices": 1103,
+      "bytes": 118564,
+      "sha256": "eaa6769d9ec752723d39a414b788ba620e738ea8f075178b7a88ac8e1a171b9c",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "587deec3eeafe0807c10e200cf3e68d1b00ecfbf8759ae5846a018bfb59b888a"
+    },
+    {
+      "name": "street-headwear",
+      "triangles": 2610,
+      "vertices": 1649,
+      "bytes": 140576,
+      "sha256": "efa3d5473acb459ddf17cf23ec372c1f97cfd3a91f05e005c793f152b8fd3738",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "5eafd44df48af8c1f9e6d1613cfe12b99beadcc7b41f2cb48341bebf18b70533"
+    },
+    {
+      "name": "street-body",
+      "triangles": 4464,
+      "vertices": 3286,
+      "bytes": 215588,
+      "sha256": "840066000d86eb605a98ed16f43263ce56ad7d333cb2d04e934763b52ff0b7db",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "fba983ee1cd58e7340559d93e453d0eecdf5c8adcfa0b239d4ae6032076f2e92"
+    },
+    {
+      "name": "street-legs",
+      "triangles": 3843,
+      "vertices": 2685,
+      "bytes": 191688,
+      "sha256": "49442bfc34d2b730851f601921a8e71f3c37707adaf74116cf963890afed26a4",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "0044a0753496e97d197a0f6bc00ccdcd8b69017374d6a4a3cb94c8c323eaa5cd"
+    },
+    {
+      "name": "street-feet",
+      "triangles": 3454,
+      "vertices": 2670,
+      "bytes": 216780,
+      "sha256": "bb15f5c96067c8bc75254a8c27ab6bb9335a71ab31bfa7e70f828fedea921983",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "75bb51c6cace84593abf1ad6f8b3a5f887d7eb2998407acf86c5b69e55cb83ec"
+    },
+    {
+      "name": "reinforced-headwear",
+      "triangles": 3151,
+      "vertices": 2321,
+      "bytes": 177564,
+      "sha256": "98181fae0ea8a01dd7b25fb8362c4af37307d2c74fb3aaaf4b616e41d8d16e8e",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "10f0f2377fb8c4b6085bb27c7b6131818258ac293c141937cac8f2016562ad0a"
+    },
+    {
+      "name": "reinforced-body",
+      "triangles": 4325,
+      "vertices": 3474,
+      "bytes": 240504,
+      "sha256": "6e036fb99b01be5646169008d835d173d072804f94994c70e0d146b2123f8010",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "b1c831e368f704e7fb84a86f29c4db63c8bf8e973e290acb7084e65ab4e84c43"
+    },
+    {
+      "name": "reinforced-legs",
+      "triangles": 4093,
+      "vertices": 3065,
+      "bytes": 198180,
+      "sha256": "5af8e1b96a0557e9c863726f0859753c79ddf31dc082b23b01df94e20eecf311",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "a8f02402555df3198bd01bd57efa9f29fc12fdd20fe3ac889cbad21aea7893b3"
+    },
+    {
+      "name": "reinforced-feet",
+      "triangles": 3440,
+      "vertices": 2940,
+      "bytes": 225316,
+      "sha256": "b9b729ddb68d153f0c72b349b64691546e13a53683fe15b13fd2a37d4fe7176e",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e5b8c83428aba38e8c69af8feaab16e32f635e966d73e84d901e63b8b7bc5fd9"
+    },
+    {
+      "name": "armored-headwear",
+      "triangles": 3197,
+      "vertices": 2358,
+      "bytes": 206368,
+      "sha256": "2b84404afb3d6309eebf9a0d7f120e1bfaca8bcc15d0f6d8b4c2b00b34060d8a",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "719eca637c26d74455d8985d7e8f9d43d46fbf2669debf17eed83314542df950"
+    },
+    {
+      "name": "armored-body",
+      "triangles": 4674,
+      "vertices": 3573,
+      "bytes": 284152,
+      "sha256": "5482aaf1b4aa4863a118834757cc62251b6fac8104af44c8a01c1f52dbbaea5e",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "cb9ea7614986c22ff548d3520181c302f92d164b24e431a47ee373270b768c08"
+    },
+    {
+      "name": "armored-legs",
+      "triangles": 3953,
+      "vertices": 2903,
+      "bytes": 207920,
+      "sha256": "ca7afe11b73fc91308f3194e1c7710fe80b535c8d25f58b88f67bff66e2ae554",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "dc7b939b298aa0afcc4cb43095ee8a593a8b21b690162211919b96eaf3c1f040"
+    },
+    {
+      "name": "armored-feet",
+      "triangles": 3616,
+      "vertices": 3164,
+      "bytes": 245864,
+      "sha256": "d63ab96eac43a726d0d49efbbf90fc5eebaee25324c5919e80abdf1b47d5262a",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "ed717ed74b243a66f91d39f788d4a1d3e10ca5a6056fb105f88fb8aaa199d8d1"
+    },
+    {
+      "name": "door-lock",
+      "triangles": 2507,
+      "vertices": 1962,
+      "bytes": 167192,
+      "sha256": "9ced5628ffb5e21bce5432517868bff2195ab3a7b808a3538cdff8b060f1ddc2",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "660e18d4ca6fbc93e162904cda30a098431de40e9464d2f216e0eabd8e7969c4"
+    },
+    {
+      "name": "storage-lock",
+      "triangles": 2380,
+      "vertices": 1714,
+      "bytes": 149064,
+      "sha256": "f1afb1b8472dc9247b7ad0cf8a3569fe2f89ad55b8cb2e2fa6205d05cb4d0658",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "847e2793564153650cd166f6808a0764edcdab5c1f5cbfa7324548687d35b9a3"
+    }
+  ],
+  "totalTriangles": 116542,
+  "totalModelBytes": 7684964,
+  "allSelfContained": true,
+  "scope": "Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game."
+}

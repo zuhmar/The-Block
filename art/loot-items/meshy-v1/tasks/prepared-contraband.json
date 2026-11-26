@@ -1,0 +1,15 @@
+{
+  "name": "contraband",
+  "modelPath": "models/contraband.glb",
+  "spritePath": "sprites/contraband.png",
+  "sourceSha256": "74ce5e1481af63b76cdbd64fd1e9d61d8ec404e93dd06231ca4439d154768c17",
+  "uniformSourceScale": 0.22,
+  "width": 0.22,
+  "height": 0.090692,
+  "depth": 0.132013,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-ebb3-76b8-b6ac-4c6407e478ab",
+  "referenceTaskId": "01a21a1c-6cda-770d-8313-3a09b9137f22"
+}

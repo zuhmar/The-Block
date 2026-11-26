@@ -1,0 +1,15 @@
+{
+  "name": "street-feet",
+  "modelPath": "models/street-feet.glb",
+  "spritePath": "sprites/street-feet.png",
+  "sourceSha256": "50959e4c9cc8b154ce5f53a9d0fc396f03bcbce155f31682a5c9f3d2bb2a41d4",
+  "uniformSourceScale": 0.4,
+  "width": 0.321831,
+  "height": 0.172551,
+  "depth": 0.4,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-c572-7546-a668-99584f9e0d5b",
+  "referenceTaskId": "01a21a1e-079b-7050-83cd-c4f8eb11c1ab"
+}

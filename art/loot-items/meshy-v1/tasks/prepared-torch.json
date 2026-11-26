@@ -1,0 +1,15 @@
+{
+  "name": "torch",
+  "modelPath": "models/torch.glb",
+  "spritePath": "sprites/torch.png",
+  "sourceSha256": "1e0b8d5b33cd9fa2e92c1cc02dd772d8001009ad31bf300b2c2493b229ec2318",
+  "uniformSourceScale": 0.6,
+  "width": 0.245904,
+  "height": 0.6,
+  "depth": 0.145142,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1d-d80d-7196-86ab-516a199a0296",
+  "referenceTaskId": "01a21a17-fe07-72cc-b451-29c20b164ff3"
+}

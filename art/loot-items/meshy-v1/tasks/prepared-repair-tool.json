@@ -1,0 +1,15 @@
+{
+  "name": "repair-tool",
+  "modelPath": "models/repair-tool.glb",
+  "spritePath": "sprites/repair-tool.png",
+  "sourceSha256": "a6bd0f0a55f0f639a0484ede9fc096f64f4c071efc6bbfd8ed5bee162e6b8e5a",
+  "uniformSourceScale": 0.33,
+  "width": 0.122953,
+  "height": 0.33,
+  "depth": 0.029471,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1d-c8f0-718c-ad9b-da35a30944fa",
+  "referenceTaskId": "01a21a17-ec28-72e5-8eda-fd28d4ad9f4a"
+}

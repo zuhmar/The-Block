@@ -1,0 +1,299 @@
+{
+  "loadedInThreeJs": 42,
+  "models": [
+    {
+      "name": "scrap-metal",
+      "meshes": 1,
+      "size": [0.19615375995635986, 0.1394689977169037, 0.25],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "cloth",
+      "meshes": 1,
+      "size": [0.30000001192092896, 0.10720290243625641, 0.30000001192092896],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "leather",
+      "meshes": 1,
+      "size": [0.3499999940395355, 0.17121684551239014, 0.18299715965986252],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "rope",
+      "meshes": 1,
+      "size": [0.25, 0.1538729965686798, 0.2484619915485382],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "mechanical-parts",
+      "meshes": 1,
+      "size": [0.21756547689437866, 0.2199999988079071, 0.20244597643613815],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "electrical-parts",
+      "meshes": 1,
+      "size": [0.1583290919661522, 0.09477612376213074, 0.18000000715255737],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "weapon-parts",
+      "meshes": 1,
+      "size": [0.30000001192092896, 0.1081458032131195, 0.2880213111639023],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "building-plan",
+      "meshes": 1,
+      "size": [0.27368879318237305, 0.09028144925832748, 0.3499999940395355],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "construction-hammer",
+      "meshes": 1,
+      "size": [0.2254996821284294, 0.41999998688697815, 0.05923679657280445],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "repair-tool",
+      "meshes": 1,
+      "size": [0.12295272573828697, 0.33000001311302185, 0.029470650479197502],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "torch",
+      "meshes": 1,
+      "size": [0.24590401351451874, 0.6000000238418579, 0.1451418101787567],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "flashlight",
+      "meshes": 1,
+      "size": [0.11520275473594666, 0.1120387464761734, 0.25],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "binoculars",
+      "meshes": 1,
+      "size": [0.20000000298023224, 0.08816100656986237, 0.18383140861988068],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "baseball-bat",
+      "meshes": 1,
+      "size": [0.06368489563465118, 0.8999999761581421, 0.06431309878826141],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "bottled-water",
+      "meshes": 1,
+      "size": [0.07903919741511345, 0.23999999463558197, 0.07801535725593567],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "canned-drink",
+      "meshes": 1,
+      "size": [0.050798021256923676, 0.14000000059604645, 0.05068126134574413],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "canned-food",
+      "meshes": 1,
+      "size": [0.10999999940395355, 0.07869334518909454, 0.10999999940395355],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "snack-bar",
+      "meshes": 1,
+      "size": [0.12999999523162842, 0.055095817893743515, 0.01711787935346365],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "cooked-meat",
+      "meshes": 1,
+      "size": [0.20000000298023224, 0.033327601850032806, 0.12294580042362213],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "bandage",
+      "meshes": 1,
+      "size": [0.06971760094165802, 0.07972326129674911, 0.09000000357627869],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "medkit",
+      "meshes": 1,
+      "size": [0.30000001192092896, 0.2927142083644867, 0.12834900617599487],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "painkillers",
+      "meshes": 1,
+      "size": [0.0504910945892334, 0.09999999403953552, 0.05002261511981487],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "cash",
+      "meshes": 1,
+      "size": [0.11191554367542267, 0.06871752440929413, 0.18000000715255737],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "watch",
+      "meshes": 1,
+      "size": [0.05738219991326332, 0.09986480325460434, 0.10000000149011612],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "jewelry",
+      "meshes": 1,
+      "size": [0.15732160210609436, 0.20000000298023224, 0.028550200164318085],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "electronics",
+      "meshes": 1,
+      "size": [0.10818412154912949, 0.2199999988079071, 0.0505632609128952],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "contraband",
+      "meshes": 1,
+      "size": [0.2199999988079071, 0.09069213271141052, 0.13201253861188889],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "keycard",
+      "meshes": 1,
+      "size": [0.09000000357627869, 0.06504173576831818, 0.005378220230340958],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "street-headwear",
+      "meshes": 1,
+      "size": [0.17898789048194885, 0.15984174609184265, 0.25999999046325684],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "street-body",
+      "meshes": 1,
+      "size": [0.6495735943317413, 0.6499999761581421, 0.28000374138355255],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "street-legs",
+      "meshes": 1,
+      "size": [0.41845671832561493, 0.8500000238418579, 0.24788381159305573],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "street-feet",
+      "meshes": 1,
+      "size": [0.32183119654655457, 0.1725511997938156, 0.4000000059604645],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "reinforced-headwear",
+      "meshes": 1,
+      "size": [0.23961509764194489, 0.28999999165534973, 0.2820006310939789],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "reinforced-body",
+      "meshes": 1,
+      "size": [0.6499999761581421, 0.63946932554245, 0.3687436878681183],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "reinforced-legs",
+      "meshes": 1,
+      "size": [0.4733162969350815, 0.8999999761581421, 0.26058241724967957],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "reinforced-feet",
+      "meshes": 1,
+      "size": [0.4356103241443634, 0.3904857039451599, 0.44999998807907104],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "armored-headwear",
+      "meshes": 1,
+      "size": [0.28854212164878845, 0.33000001311302185, 0.33000001311302185],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "armored-body",
+      "meshes": 1,
+      "size": [0.7400000095367432, 0.6594487428665161, 0.45254701375961304],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "armored-legs",
+      "meshes": 1,
+      "size": [0.531866729259491, 0.9200000166893005, 0.3017002046108246],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "armored-feet",
+      "meshes": 1,
+      "size": [0.47999998927116394, 0.45274752378463745, 0.47999998927116394],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "door-lock",
+      "meshes": 1,
+      "size": [0.14590352028608322, 0.17000000178813934, 0.07491917163133621],
+      "floorPivotY": 0,
+      "staticPickup": true
+    },
+    {
+      "name": "storage-lock",
+      "meshes": 1,
+      "size": [0.0688101015985012, 0.10000000149011612, 0.03554609976708889],
+      "floorPivotY": 0,
+      "staticPickup": true
+    }
+  ]
+}

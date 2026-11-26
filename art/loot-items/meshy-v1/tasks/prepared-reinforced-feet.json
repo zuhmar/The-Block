@@ -1,0 +1,15 @@
+{
+  "name": "reinforced-feet",
+  "modelPath": "models/reinforced-feet.glb",
+  "spritePath": "sprites/reinforced-feet.png",
+  "sourceSha256": "3e953456991619300f16f567b1d2c1e83cbafb572c6799c83eea8b3f54c6b604",
+  "uniformSourceScale": 0.45,
+  "width": 0.43561,
+  "height": 0.390486,
+  "depth": 0.45,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-07b1-75b4-86eb-6789038bdd5a",
+  "referenceTaskId": "01a21a1e-42a9-7290-a9bd-ecb34581d164"
+}

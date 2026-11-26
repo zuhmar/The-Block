@@ -1,0 +1,15 @@
+{
+  "name": "jewelry",
+  "modelPath": "models/jewelry.glb",
+  "spritePath": "sprites/jewelry.png",
+  "sourceSha256": "b7f12b675127ed5c593c813846913eb2b58310d2e97496bf1eafc410ceb1512f",
+  "uniformSourceScale": 0.2,
+  "width": 0.157322,
+  "height": 0.2,
+  "depth": 0.02855,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a22-cb3a-7698-9604-c25f42f2dcbd",
+  "referenceTaskId": "01a21a1c-51b4-74a0-b254-6283e0bc90b9"
+}

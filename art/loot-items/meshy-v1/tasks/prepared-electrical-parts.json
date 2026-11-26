@@ -1,0 +1,15 @@
+{
+  "name": "electrical-parts",
+  "modelPath": "models/electrical-parts.glb",
+  "spritePath": "sprites/electrical-parts.png",
+  "sourceSha256": "d44a6581250381b62f5d8599c9b1fdad0fbbae48d950590ac25579dfc99cb1de",
+  "uniformSourceScale": 0.18,
+  "width": 0.158329,
+  "height": 0.094776,
+  "depth": 0.18,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a18-ef41-77e6-bc57-346b10b5afd0",
+  "referenceTaskId": "01a21a17-0f6a-77dd-ac98-7e86c3c693e3"
+}

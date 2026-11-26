@@ -1,0 +1,15 @@
+{
+  "name": "canned-drink",
+  "modelPath": "models/canned-drink.glb",
+  "spritePath": "sprites/canned-drink.png",
+  "sourceSha256": "c098420f45150dcc1df944abe2faad5b10d306965d19765f79363cc20969ad4b",
+  "uniformSourceScale": 0.14,
+  "width": 0.050798,
+  "height": 0.14,
+  "depth": 0.050681,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1e-f6e7-7742-bdcb-9e9705957de5",
+  "referenceTaskId": "01a21a19-2fb2-73af-802e-91269d5beff6"
+}

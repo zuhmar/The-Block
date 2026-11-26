@@ -1,0 +1,15 @@
+{
+  "name": "street-headwear",
+  "modelPath": "models/street-headwear.glb",
+  "spritePath": "sprites/street-headwear.png",
+  "sourceSha256": "acd68f56ac7588ea8dfea1a033478ccde51a460c20392ae0cca354af7c8c1f05",
+  "uniformSourceScale": 0.26,
+  "width": 0.178988,
+  "height": 0.159842,
+  "depth": 0.26,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a23-0e77-774a-b163-4972e3120d0b",
+  "referenceTaskId": "01a21a1c-8a82-7308-8785-5cde6c64d7d7"
+}

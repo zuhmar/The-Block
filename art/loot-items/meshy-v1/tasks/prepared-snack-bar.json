@@ -1,0 +1,15 @@
+{
+  "name": "snack-bar",
+  "modelPath": "models/snack-bar.glb",
+  "spritePath": "sprites/snack-bar.png",
+  "sourceSha256": "6a59a18330e6ce9199ab08b51a29c9a85183c920691c84c9345a156b839b7bfd",
+  "uniformSourceScale": 0.13,
+  "width": 0.13,
+  "height": 0.055096,
+  "depth": 0.017118,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1f-14bb-7306-9ed5-52b1be28dab0",
+  "referenceTaskId": "01a21a19-4b90-76e2-8b43-2009232cdbd0"
+}

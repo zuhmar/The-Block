@@ -1,0 +1,15 @@
+{
+  "name": "door-lock",
+  "modelPath": "models/door-lock.glb",
+  "spritePath": "sprites/door-lock.png",
+  "sourceSha256": "dd36ba5272d1316ca15d0eb50d4ea78b22812da4568ea34a9ffa9f682dc46799",
+  "uniformSourceScale": 0.17,
+  "width": 0.145904,
+  "height": 0.17,
+  "depth": 0.074919,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-9da7-765f-a870-3227a7e68f02",
+  "referenceTaskId": "01a21a1f-f76d-71aa-8caa-89a69b025d20"
+}

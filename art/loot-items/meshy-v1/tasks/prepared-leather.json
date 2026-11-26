@@ -1,0 +1,15 @@
+{
+  "name": "leather",
+  "modelPath": "models/leather.glb",
+  "spritePath": "sprites/leather.png",
+  "sourceSha256": "6d978ab8139d028c2857cfe63846d16622265067cc87f735d744ff206f73e6da",
+  "uniformSourceScale": 0.35,
+  "width": 0.35,
+  "height": 0.171217,
+  "depth": 0.182997,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a18-bad6-7013-b44b-ee5d907c13ce",
+  "referenceTaskId": "01a21a16-e905-716b-8c70-6f5965feea9b"
+}

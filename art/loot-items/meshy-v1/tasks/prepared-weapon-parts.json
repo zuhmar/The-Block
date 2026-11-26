@@ -1,0 +1,15 @@
+{
+  "name": "weapon-parts",
+  "modelPath": "models/weapon-parts.glb",
+  "spritePath": "sprites/weapon-parts.png",
+  "sourceSha256": "c8e1f5ea3ec6af88a7ad1f6fcb359d1b4253683413d7f5bc33b2e574364c023e",
+  "uniformSourceScale": 0.3,
+  "width": 0.3,
+  "height": 0.108146,
+  "depth": 0.288021,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1d-9c02-748c-b047-94f7f53f50b1",
+  "referenceTaskId": "01a21a17-c1cd-74de-b05d-6be7bd2461f1"
+}

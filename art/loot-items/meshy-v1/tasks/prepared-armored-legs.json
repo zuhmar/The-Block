@@ -1,0 +1,15 @@
+{
+  "name": "armored-legs",
+  "modelPath": "models/armored-legs.glb",
+  "spritePath": "sprites/armored-legs.png",
+  "sourceSha256": "7d7a771b76d6669b7ef2a49ccb38643864b7a11b63206331dbfba9ec4e97f8fc",
+  "uniformSourceScale": 0.92,
+  "width": 0.531867,
+  "height": 0.92,
+  "depth": 0.3017,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-7b8b-7454-a1c1-552ae806a9e8",
+  "referenceTaskId": "01a21a1f-da8b-72b0-88ff-c14e90bc2052"
+}

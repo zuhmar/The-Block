@@ -1,0 +1,15 @@
+{
+  "name": "armored-feet",
+  "modelPath": "models/armored-feet.glb",
+  "spritePath": "sprites/armored-feet.png",
+  "sourceSha256": "43f1b275d22fc07b5f20633ba124fd8cb55aea80b6265ca371154566543424fd",
+  "uniformSourceScale": 0.48,
+  "width": 0.48,
+  "height": 0.452748,
+  "depth": 0.48,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-8cfe-77a3-bb2a-0ce2173376da",
+  "referenceTaskId": "01a21a1f-e900-7312-8f49-401da8b54b3f"
+}

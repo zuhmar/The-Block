@@ -1,0 +1,15 @@
+{
+  "name": "armored-body",
+  "modelPath": "models/armored-body.glb",
+  "spritePath": "sprites/armored-body.png",
+  "sourceSha256": "1fdb06b4ece2cf49bafe696a6f4e54bd7d97a293d8d0de46967ac0886a7583a1",
+  "uniformSourceScale": 0.74,
+  "width": 0.74,
+  "height": 0.659449,
+  "depth": 0.452547,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-678c-711d-8528-978b7c891de6",
+  "referenceTaskId": "01a21a1f-cb06-71fb-8656-e71bae49b736"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "armored-headwear",
+  "modelPath": "models/armored-headwear.glb",
+  "spritePath": "sprites/armored-headwear.png",
+  "sourceSha256": "fdd95148f6fc36de0422dc90d0313c3d5b302f1e4572f4bf29641badac839fa3",
+  "uniformSourceScale": 0.33,
+  "width": 0.288542,
+  "height": 0.33,
+  "depth": 0.33,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a24-58a9-72bf-8312-08fc5c2ad963",
+  "referenceTaskId": "01a21a1f-bd0d-7138-9236-39abef40aafb"
+}

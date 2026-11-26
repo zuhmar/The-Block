@@ -1,0 +1,15 @@
+{
+  "name": "building-plan",
+  "modelPath": "models/building-plan.glb",
+  "spritePath": "sprites/building-plan.png",
+  "sourceSha256": "8cadf61abec82298e8dd67fe244399972631583e78383ef8ec655a60ebed0f36",
+  "uniformSourceScale": 0.35,
+  "width": 0.273689,
+  "height": 0.090281,
+  "depth": 0.35,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a1d-aba1-701d-b7d3-885779c131fc",
+  "referenceTaskId": "01a21a17-d026-70c7-bd26-e64c17cb1d08"
+}

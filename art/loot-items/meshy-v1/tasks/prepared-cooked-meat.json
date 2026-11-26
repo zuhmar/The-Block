@@ -1,0 +1,15 @@
+{
+  "name": "cooked-meat",
+  "modelPath": "models/cooked-meat.glb",
+  "spritePath": "sprites/cooked-meat.png",
+  "sourceSha256": "963a9037e66209f7471e5d5a6b6aabd19ba5966cff51490dba4623276742fedb",
+  "uniformSourceScale": 0.2,
+  "width": 0.2,
+  "height": 0.033328,
+  "depth": 0.122946,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a21-c90b-74a2-a811-2d8a30eb7af8",
+  "referenceTaskId": "01a21a19-c5e7-777e-bb61-812d2fd72b86"
+}
