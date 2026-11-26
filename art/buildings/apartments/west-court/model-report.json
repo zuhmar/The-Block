@@ -14,16 +14,19 @@
   "roofLevel": 9.6,
   "individualDoors": 7,
   "full": {
-    "bytes": 6014296,
-    "triangles": 108110
+    "bytes": 6519312,
+    "triangles": 301898
   },
   "lod": {
-    "bytes": 712632,
+    "bytes": 710472,
     "triangles": 8759
   },
   "scale": [
     1,
     1,
     1
-  ]
+  ],
+  "propSet": "meshy-apartments-v1",
+  "propInstances": 54,
+  "uniquePropAssets": 8
 }

@@ -227,6 +227,9 @@ export const buildingEnabled = (b: Building) =>
   !isNorthBuilding(b.type) || NORTH_LAB.enabled;
 export type BuildingPoint = { x: number; z: number; y?: number };
 export type Fixture = {
+  /** Prepared Meshy prop and measured shooting/visual bounds, when supplied. */
+  asset?: string;
+  height?: number;
   kind:
     | "shelf"
     | "counter"

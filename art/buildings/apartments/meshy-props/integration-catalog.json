@@ -1,0 +1,90 @@
+{
+  "apartment-bed": {
+    "width": 1.6,
+    "height": 0.996303,
+    "depth": 2.107124,
+    "uniformSourceScale": 2.1071236333567933,
+    "sourceYaw": 0,
+    "sourceSha256": "7600a48e9044025b99584f77a6d50b68e75f9bf57bdb26fc06f228eca3cd7db2",
+    "modelTaskId": "01a21955-a479-7465-81c3-91d10bb2c0b0",
+    "bytes": 245200,
+    "textureSize": 1024
+  },
+  "apartment-sofa": {
+    "width": 2.141076,
+    "height": 1.058933,
+    "depth": 1.15,
+    "uniformSourceScale": 2.141076415387369,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "8aa8ff9a1689651d256cd23b92f8ad59dead8ba558fc98680d71d1f9ed33755a",
+    "modelTaskId": "01a21955-b50c-7423-ad89-c2965ffca760",
+    "bytes": 222408,
+    "textureSize": 1024
+  },
+  "apartment-wardrobe": {
+    "width": 0.715616,
+    "height": 1.9,
+    "depth": 0.500768,
+    "uniformSourceScale": 1.9,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "012fa0ab5534e0ef0a207c2925b32eb1833e4a981408d6b8ec43ae1c1760cea9",
+    "modelTaskId": "01a21955-c4cf-758a-a91d-2b21a592dce0",
+    "bytes": 195724,
+    "textureSize": 1024
+  },
+  "apartment-kitchen": {
+    "width": 2.483215,
+    "height": 1.35,
+    "depth": 0.844385,
+    "uniformSourceScale": 2.4832151619560014,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "f60d1168955c81097cd90d836e19d12aa87ff9a26a341b36bd1d9b9bb9f973f6",
+    "modelTaskId": "01a21955-d50e-7719-a856-6211074790f7",
+    "bytes": 287480,
+    "textureSize": 1024
+  },
+  "apartment-table": {
+    "width": 1.2,
+    "height": 0.801163,
+    "depth": 0.794659,
+    "uniformSourceScale": 1.2,
+    "sourceYaw": 0,
+    "sourceSha256": "ea473cd866a510554c2c84d514f42806b44cc232dea750a8b9b31a529f999dd1",
+    "modelTaskId": "01a21955-e5e5-705f-930a-afaca7977ef4",
+    "bytes": 137704,
+    "textureSize": 1024
+  },
+  "apartment-chair": {
+    "width": 0.5,
+    "height": 0.922242,
+    "depth": 0.543333,
+    "uniformSourceScale": 0.9222420907916052,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "04814adf1d07056b755664cefd2a9aa031672785790abfa182aa1986399834b1",
+    "modelTaskId": "01a21956-577d-7315-bd84-9a1d5f1495ff",
+    "bytes": 166832,
+    "textureSize": 1024
+  },
+  "apartment-fridge": {
+    "width": 0.8,
+    "height": 1.756674,
+    "depth": 0.76884,
+    "uniformSourceScale": 1.7566742251269396,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "de1ce6a3cff62aac08427f843e526073aa44ca725c3fff99f27e0fe0a77ccd2e",
+    "modelTaskId": "01a21956-67e7-7450-b617-cbce647824ec",
+    "bytes": 150888,
+    "textureSize": 1024
+  },
+  "apartment-tv-stand": {
+    "width": 1.4,
+    "height": 1.090463,
+    "depth": 0.445122,
+    "uniformSourceScale": 1.4,
+    "sourceYaw": 3.141592653589793,
+    "sourceSha256": "638bf7182e9e04b0ddc69efc60ebb581bf4f14b98eb19df7866fc8e7c334247d",
+    "modelTaskId": "01a21956-7668-7251-b403-b06205b02fb2",
+    "bytes": 205428,
+    "textureSize": 1024
+  }
+}

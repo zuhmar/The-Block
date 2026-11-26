@@ -27,6 +27,7 @@ with sync_playwright() as p:
  versions=json.loads(data()['tenements']);assert len(versions)==2 and all(v['version']=='tenement-v2' for v in versions),versions
  bx,bz=-100,6;index=36;stairx=bx+7.65;startz=bz+4.6;endz=bz-5.15;hallx=bx+5.2
  assert json.loads(data()['buildingSources'])[index]=='blender'
+ props=json.loads(data()['apartmentProps']);assert len(props)==54 and len(set(p['asset'] for p in props))==8,props
  look(math.pi);walk(0,-108.4);page.keyboard.press('e');walk(0,-112);page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.jailGate).angle < -1.5');walk(0,-74);walk(-48,-74);walk(-48,40);walk(-102,40);walk(-102,34);walk(bx,34);walk(bx,bz+10)
  look(0);page.screenshot(path='work/west-court-exterior-game.png');assert int(data()['nearestDoor'])==index
  page.keyboard.press('e');page.wait_for_function('(i)=>JSON.parse(document.querySelector("#world").dataset.doors)[i]>1.5',arg=index);walk(bx,bz+7);walk(hallx,bz+7)
@@ -35,7 +36,10 @@ with sync_playwright() as p:
   for unit,localz in [(1,3),(0,-4)]:
    walk(hallx,bz+localz);near=json.loads(data()['nearestApartmentDoor']);assert near=={'i':index,'id':floor*2+unit},near
    page.keyboard.press('e');page.wait_for_function('(id)=>JSON.parse(document.querySelector("#world").dataset.apartmentDoors)[0].angles[id]<-1.5',arg=floor*2+unit)
-   walk(bx+2.8,bz+localz);walk(bx-4.3,bz+localz);assert abs(float(data()['footHeight'])-floor*3.2)<.04
+   walk(bx+2.8,bz+localz)
+   if floor==0 and unit==1:
+    look(math.atan2(3.8,2),-.12);page.screenshot(path='work/west-court-meshy-living-game.png');shown=[p for p in json.loads(data()['apartmentProps']) if p['visible']];assert shown and all(p['floor']==0 for p in shown),shown
+   walk(bx-4.3,bz+localz);assert abs(float(data()['footHeight'])-floor*3.2)<.04
    if floor==2 and unit==0:look(math.pi/2);page.screenshot(path='work/west-court-apartment-game.png')
    walk(bx+2.8,bz+localz);walk(hallx,bz+localz);visited.append(f'{floor+1}0{unit+1}')
   walk(hallx,startz);walk(stairx,startz);walk(stairx,endz)
@@ -43,6 +47,7 @@ with sync_playwright() as p:
   if floor<2:walk(hallx,endz)
  near=json.loads(data()['nearestApartmentDoor']);assert near=={'i':index,'id':6},near;page.keyboard.press('e');page.wait_for_function('JSON.parse(document.querySelector("#world").dataset.apartmentDoors)[0].angles[6]<-1.5')
  walk(bx+4,bz-5.15);walk(bx+4,bz-6);walk(bx-7,bz-6);walk(bx-7,bz+6);walk(bx+4,bz+6);assert abs(float(data()['footHeight'])-9.6)<.04
+ assert not any(p['visible'] for p in json.loads(data()['apartmentProps'])), 'Furniture on hidden floors should be culled from the roof'
  look(-math.pi/2,.12);page.screenshot(path='work/west-court-roof-game.png');print('All six apartments and roof reached',flush=True)
  walk(bx+4,bz-5.15);walk(stairx,endz)
  for floor in [2,1,0]:
@@ -50,4 +55,4 @@ with sync_playwright() as p:
   if floor>0:walk(hallx,endz);walk(stairx,endz)
  walk(hallx,bz+7);walk(bx,bz+7);walk(bx,bz+10);assert data()['inside']=='-1'
  assert not errors,errors;assert not missing,missing
- Path('work/west-court-browser-check.json').write_text(json.dumps({'oldTenementsPreserved':versions,'newBuildingIndex':index,'apartmentsEntered':visited,'roofReachedAt':9.6,'allSevenDoorsWorked':True,'descendedAndExited':True,'errors':errors,'missing':missing},indent=2));print('West Court walkthrough passed',flush=True);b.close()
+ Path('work/west-court-browser-check.json').write_text(json.dumps({'meshProps':{'instances':54,'assetTypes':8,'visibleFloorCulling':True},'oldTenementsPreserved':versions,'newBuildingIndex':index,'apartmentsEntered':visited,'roofReachedAt':9.6,'allSevenDoorsWorked':True,'descendedAndExited':True,'errors':errors,'missing':missing},indent=2));print('West Court walkthrough passed',flush=True);b.close()

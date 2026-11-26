@@ -35,7 +35,7 @@ export const CATALOG: CatalogAsset[] = [];
 for (const [path, url] of Object.entries(urls)) {
   const key = path.split("/models/")[1];
   if (
-    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart|tenement-v2)\//.test(
+    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart|tenement-v2|apartment-props)\//.test(
       key,
     ) ||
     (key.startsWith("block-mart/") &&
@@ -72,7 +72,7 @@ for (const [path, url] of Object.entries(urls)) {
     layer: b ? "Buildings" : "Props",
     behavior: key.startsWith("loot-chests") ? "loot" : "solid",
     url,
-    anchor: b ? [0, 0, 0] : undefined,
+    anchor: b || key.startsWith("apartment-props/") ? [0, 0, 0] : undefined,
     size: b ? [b.width, b.height, b.depth] : undefined,
   });
 }

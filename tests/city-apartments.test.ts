@@ -234,3 +234,139 @@ test("Blender prefab uses the same enlarged layout and exports real door opening
     undo();
   }
 });
+
+test("all six apartments use the eight Meshy assets at true proportions with shared geometry", async () => {
+  const catalog = JSON.parse(
+    readFileSync(
+      "apps/client/src/fps/models/apartment-props/catalog.json",
+      "utf8",
+    ),
+  );
+  for (const [name, d] of Object.entries(catalog) as [
+    string,
+    {
+      width: number;
+      height: number;
+      depth: number;
+      uniformSourceScale: number;
+      sourceSha256: string;
+    },
+  ][]) {
+    const model = await load(
+      `apps/client/src/fps/models/apartment-props/${name}.glb`,
+    );
+    model.scene.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model.scene),
+      size = box.getSize(new THREE.Vector3());
+    assert(
+      Math.abs(size.x - d.width) < 0.0001 &&
+        Math.abs(size.y - d.height) < 0.0001 &&
+        Math.abs(size.z - d.depth) < 0.0001,
+    );
+    assert(Math.abs(box.min.y) < 0.00001, "floor pivot");
+    model.scene.traverse((o) => {
+      assert(o.scale.distanceTo(new THREE.Vector3(1, 1, 1)) < 0.00001);
+      if (o instanceof THREE.Mesh) {
+        assert.equal(o.userData.sourceSha256, d.sourceSha256);
+        assert.equal(o.userData.uniformSourceScale, d.uniformSourceScale);
+      }
+    });
+  }
+  const undo = configureCompactCity();
+  try {
+    const full = await load(
+      "apps/client/src/fps/models/city-apartments/city-apartments.glb",
+    );
+    full.scene.updateMatrixWorld(true);
+    const props: THREE.Mesh[] = [];
+    full.scene.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.userData.part === "apartment-prop")
+        props.push(o);
+    });
+    assert.equal(props.length, 54);
+    assert.equal(new Set(props.map((o) => o.userData.propAsset)).size, 8);
+    assert.equal(
+      new Set(props.map((o) => o.geometry)).size,
+      8,
+      "repeat props share GPU geometry",
+    );
+    for (const floor of [0, 1, 2]) {
+      const rendered = props.filter((o) => o.userData.floor === floor),
+        physical = fixtures(36).filter(
+          (f) => Math.abs((f.y ?? 0) - (floor * 3.2 + 0.025)) < 0.001,
+        );
+      assert.equal(rendered.length, 18);
+      assert.equal(physical.length, 18);
+      for (const f of physical) {
+        const mesh = rendered.find((o) => {
+          const b = new THREE.Box3().setFromObject(o),
+            p = b.getCenter(new THREE.Vector3());
+          return (
+            o.userData.propAsset === f.asset &&
+            Math.abs(p.x - f.x) < 0.0001 &&
+            Math.abs(p.z - f.z) < 0.0001
+          );
+        });
+        assert(mesh, `rendered ${f.asset} at ${f.x},${f.z}`);
+        const b = new THREE.Box3().setFromObject(mesh),
+          s = b.getSize(new THREE.Vector3());
+        assert(
+          Math.abs(s.x - f.width) < 0.0001 &&
+            Math.abs(s.z - f.depth) < 0.0001 &&
+            Math.abs(s.y - f.height!) < 0.0001,
+        );
+        assert(Math.abs(b.min.y - f.y!) < 0.0001);
+      }
+    }
+    const low = await load(
+      "apps/client/src/fps/models/city-apartments/city-apartments-lod.glb",
+    );
+    low.scene.traverse((o) =>
+      assert.notEqual(
+        o.userData.part,
+        "apartment-prop",
+        "distance model omits furniture",
+      ),
+    );
+  } finally {
+    undo();
+  }
+});
+
+test("new furniture footprints avoid each other, partitions, loot and door swings", () => {
+  const undo = configureCompactCity();
+  try {
+    const fs = fixtures(36);
+    for (let i = 0; i < fs.length; i++) {
+      const a = fs[i];
+      for (const b of fs.slice(i + 1)) {
+        if (Math.abs((a.y ?? 0) - (b.y ?? 0)) > 0.1) continue;
+        assert(
+          Math.abs(a.x - b.x) >= (a.width + b.width) / 2 ||
+            Math.abs(a.z - b.z) >= (a.depth + b.depth) / 2,
+          `${a.asset}/${b.asset} overlap`,
+        );
+      }
+      for (const wall of partitions(36)) {
+        if (Math.abs((wall.y ?? 0) - (a.y ?? 0)) > 0.1) continue;
+        assert(
+          Math.abs(a.x - wall.x) >= (a.width + wall.width) / 2 ||
+            Math.abs(a.z - wall.z) >= (a.depth + wall.depth) / 2,
+          `${a.asset} intersects a partition`,
+        );
+      }
+    }
+    const b = BUILDINGS[36];
+    for (const d of apartmentDoors.slice(0, 6)) {
+      for (let x = 3.8; x >= 2.3; x -= 0.05)
+        for (let z = d.z; z <= d.z + 1.4; z += 0.05) {
+          assert(
+            !buildingBlocked({ x: b.x + x, z: b.z + z, y: d.y }, 0.02, true),
+            "unit-door swing stays clear of furniture",
+          );
+        }
+    }
+  } finally {
+    undo();
+  }
+});

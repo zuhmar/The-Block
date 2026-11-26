@@ -5,6 +5,7 @@ source=Path('packages/art-tools/build-tenement-v2.py').read_text()
 prefix=source.split('openings=[]')[0]
 prefix=prefix.replace("ROOT=Path('art/buildings/apartments/tenement-v2')","ROOT=Path('art/buildings/apartments/west-court')")
 prefix=prefix.replace("REF=ROOT/'references/concept.png'","REF=Path('art/buildings/apartments/tenement-v2/references/concept.png')")
+prefix=prefix.replace("p.get('doorHinge')","p.get('doorHinge') or p.get('propInstance')")
 prefix=prefix.replace("building=empty('tenement')","building=empty('city-apartments')").replace("building['assetVersion']='tenement-v2'","building['assetVersion']='west-court-v1'")
 exec(compile(prefix,'shared-tenement-modules','exec'))
 wallcode='openings=[]'+source.split('openings=[]')[1].split('# Face directions')[0]
@@ -71,21 +72,25 @@ for stair in D['stairs']:
   rod('continuous handrail',(x,stair['y']+.9,stair['startZ']),(x,stair['y']+4.1,stair['startZ']-stair['run']),.026,'navy',building,'interior',floor)
 batch(building)
 print("Stairs complete",flush=True)
+# Shared Meshy geometry is imported once, then instanced into all six apartments.
+prop_templates={}
+for asset in sorted(set(f['asset'] for f in D['fixtures'])):
+ before=set(bpy.data.objects);path=Path('apps/client/src/fps/models/apartment-props')/(asset+'.glb')
+ bpy.ops.import_scene.gltf(filepath=str(path.resolve()));new=[o for o in bpy.data.objects if o not in before];bpy.context.view_layer.update()
+ meshes=[o for o in new if o.type=='MESH']
+ for o in meshes:
+  o.data.transform(o.matrix_world);o.parent=None;o.matrix_world=Matrix.Identity(4);o['part']='apartment-prop'
+ for o in new:
+  if o.type!='MESH':bpy.data.objects.remove(o,do_unlink=True)
+ prop_templates[asset]=meshes
 for f in D['fixtures']:
- x,y,z=f['x'],f['y'],f['z'];floor=round(y/3.2)
- if f['kind'] in ['bed','table','cabinet']:place({'bed':'bed','table':'table','cabinet':'wardrobe'}[f['kind']],x,y,z,floor=floor)
- elif f['kind']=='sofa':
-  box('sofa base',x,y+.28,z,2.4,.36,.85,'teal',building,'interior',.06,floor=floor)
-  for dx in [-.53,.53]:box('sofa cushion',x+dx,y+.53,z,1.02,.2,.7,'blue',building,'interior',.06,floor=floor)
-  box('sofa back',x,y+.85,z+.34,2.4,.6,.17,'teal',building,'interior',.04,floor=floor)
-  for dx in [-1.1,1.1]:box('sofa arm',x+dx,y+.62,z,.2,.55,.85,'teal',building,'interior',.035,floor=floor)
- else:
-  box('kitchen cabinets',x,y+.48,z,4.2,.96,.8,'teal',building,'interior',.02,floor=floor);box('worktop',x,y+1.0,z,4.28,.1,.86,'cream',building,'interior',.02,floor=floor)
-  for dx in [-1.55,-.52,.52,1.55]:
-   box('cabinet front',x+dx,y+.5,z-.41,.95,.82,.04,'blue',building,'interior',.015,floor=floor);rod('kitchen pull',(x+dx-.15,y+.75,z-.45),(x+dx+.15,y+.75,z-.45),.014,'metal',building,'interior',floor)
-  box('sink',x-1,y+1.056,z,.7,.018,.55,'metal',building,'interior',.025,floor=floor);rod('tap',(x-1,y+1.05,z+.2),(x-1,y+1.35,z+.2),.025,'metal',building,'interior',floor)
-  for dx in [.5,1.1]:
-   for dz in [-.18,.18]:box('hob',x+dx,y+1.06,z+dz,.24,.02,.24,'navy',building,'interior',.04,floor=floor)
+ floor=round(f['y']/3.2);r=empty(f['asset']+'-floor-'+str(floor),building)
+ r.location=xyz(f['x'],f['y'],f['z']);r.rotation_euler.z=f.get('rotation',0);r['propInstance']=True;r['part']='apartment-prop'
+ for original in prop_templates[f['asset']]:
+  o=original.copy();o.data=original.data;bpy.context.collection.objects.link(o);o.parent=r;o['part']='apartment-prop';o['floor']=floor;o['propAsset']=f['asset']
+for meshes in prop_templates.values():
+ for o in meshes:bpy.data.objects.remove(o,do_unlink=True)
+building['propSet']='meshy-apartments-v1';building['propInstances']=len(D['fixtures'])
 # Individually numbered entrance leaves and a functioning roof exit, exported as separate hinges.
 for id,d in enumerate(D['doors']):
  frame=empty('apartment-frame-'+str(id),building);frame.location=xyz(d['x'],d['y'],d['z']);frame.rotation_euler.z=d['yaw']
@@ -106,11 +111,11 @@ batch(building);bpy.context.scene.frame_set(1)
 full=export(building,ROOT/'city-apartments.glb')
 originals={}
 for o in building.children_recursive:
- if o.type!='MESH' or o.get('part')in ['brick-detail','fine-detail','interior','lettering','door','apartment-door'] or o.data.materials[0].name in ['apt-glass','apt-grout']:continue
+ if o.type!='MESH' or o.get('part')in ['brick-detail','fine-detail','interior','lettering','door','apartment-door','apartment-prop'] or o.data.materials[0].name in ['apt-glass','apt-grout']:continue
  originals[o]=o.data;o.data=o.data.copy();bpy.context.view_layer.objects.active=o;mod=o.modifiers.new('distance simplification','DECIMATE');mod.ratio=.28;bpy.ops.object.modifier_apply(modifier=mod.name)
-low=export(building,ROOT/'city-apartments-lod.glb',('brick-detail','fine-detail','interior','lettering','apartment-door'))
+low=export(building,ROOT/'city-apartments-lod.glb',('brick-detail','fine-detail','interior','lettering','apartment-door','apartment-prop'))
 for o,m in originals.items():o.data=m
-report={'assetVersion':'west-court-v1','footprint':[18,16],'stories':3,'apartments':6,'floorLevels':[0,3.2,6.4],'roofLevel':9.6,'individualDoors':7,'full':full,'lod':low,'scale':[1,1,1]}
+report={'assetVersion':'west-court-v1','footprint':[18,16],'stories':3,'apartments':6,'floorLevels':[0,3.2,6.4],'roofLevel':9.6,'individualDoors':7,'full':full,'lod':low,'scale':[1,1,1],'propSet':'meshy-apartments-v1','propInstances':len(D['fixtures']),'uniquePropAssets':8}
 (ROOT/'model-report.json').write_text(json.dumps(report,indent=2)+'\n');(ROOT/'facade-openings.json').write_text(json.dumps(openings,indent=2)+'\n')
 runtime=Path('apps/client/src/fps/models/city-apartments');runtime.mkdir(parents=True,exist_ok=True)
 for name in ['city-apartments.glb','city-apartments-lod.glb','layout.json']:shutil.copyfile(ROOT/name,runtime/name)

@@ -1,3 +1,4 @@
+import propCatalog from "./models/apartment-props/catalog.json";
 import type { BuildingPoint, Fixture, Partition } from "./building-layout";
 
 /** A separate, metre-authored prefab. Existing tenement assets/layouts stay intact. */
@@ -35,51 +36,84 @@ export const apartmentDoors = [
     label: "ROOFTOP EXIT",
   },
 ];
+export type ApartmentProp = keyof typeof propCatalog;
+export const apartmentPropCatalog = propCatalog;
+function prop(
+  asset: ApartmentProp,
+  kind: Fixture["kind"],
+  x: number,
+  z: number,
+  y: number,
+  rotation = 0,
+): Fixture {
+  const dimensions = propCatalog[asset],
+    odd = Math.abs(Math.sin(rotation)) > 0.5;
+  return {
+    asset,
+    kind,
+    x,
+    z,
+    y: y + 0.025,
+    rotation,
+    width: odd ? dimensions.depth : dimensions.width,
+    depth: odd ? dimensions.width : dimensions.depth,
+    height: dimensions.height,
+  };
+}
 export const apartmentFixtures: Fixture[] = Array.from(
   { length: 3 },
   (_, floor) =>
-    [-1, 1].flatMap((side) => [
-      {
-        kind: "bed" as const,
-        x: -6.5,
-        z: side < 0 ? -6 : 2,
-        width: 1.5,
-        depth: 2.3,
-        y: floor * 3.2,
-      },
-      {
-        kind: "cabinet" as const,
-        x: -8.1,
-        z: side < 0 ? -1.4 : 4.8,
-        width: 0.8,
-        depth: 1,
-        y: floor * 3.2,
-      },
-      {
-        kind: "sofa" as const,
-        x: 0.8,
-        z: side < 0 ? -1.1 : 1,
-        width: 2.4,
-        depth: 0.85,
-        y: floor * 3.2,
-      },
-      {
-        kind: "table" as const,
-        x: 0.8,
-        z: side < 0 ? -2.7 : 2,
-        width: 1.2,
-        depth: 0.8,
-        y: floor * 3.2,
-      },
-      {
-        kind: "kitchen" as const,
-        x: 0.1,
-        z: side < 0 ? -7.2 : 5.35,
-        width: 4.2,
-        depth: 0.8,
-        y: floor * 3.2,
-      },
-    ]),
+    [-1, 1].flatMap((side) => {
+      const y = floor * 3.2,
+        rear = side < 0,
+        tableZ = rear ? -2.1 : 1.55;
+      return [
+        prop("apartment-bed", "bed", -6.5, rear ? -6 : 1.5, y),
+        prop(
+          "apartment-wardrobe",
+          "cabinet",
+          -8.1,
+          rear ? -1.4 : 4.8,
+          y,
+          -Math.PI / 2,
+        ),
+        prop(
+          "apartment-sofa",
+          "sofa",
+          1.1,
+          rear ? -1.05 : 1,
+          y,
+          rear ? 0 : Math.PI,
+        ),
+        prop("apartment-table", "table", -1.5, tableZ, y),
+        prop("apartment-chair", "bench", -2.47, tableZ, y, -Math.PI / 2),
+        prop("apartment-chair", "bench", -0.53, tableZ, y, Math.PI / 2),
+        prop(
+          "apartment-kitchen",
+          "kitchen",
+          0.5,
+          rear ? -7.2 : 5.35,
+          y,
+          rear ? Math.PI : 0,
+        ),
+        prop(
+          "apartment-fridge",
+          "fridge",
+          2.2,
+          rear ? -7.15 : 5.3,
+          y,
+          rear ? Math.PI : 0,
+        ),
+        prop(
+          "apartment-tv-stand",
+          "cabinet",
+          -1.9,
+          rear ? -5.55 : 4.55,
+          y,
+          rear ? Math.PI : 0,
+        ),
+      ];
+    }),
 ).flat();
 export const apartmentPartitions: Partition[] = [];
 function wall(

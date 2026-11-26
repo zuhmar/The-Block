@@ -4213,6 +4213,9 @@ function frame(now: number) {
   for (const entry of interiorBatches) {
     const b = BUILDINGS[entry.building];
     entry.mesh.visible =
+      (entry.mesh.userData.part !== "apartment-prop" ||
+        Math.abs(vertical - Number(entry.mesh.userData.floor) * STORY_HEIGHT) <
+          2.4) &&
       Math.abs(player.x - b.x) < b.width / 2 + 8 &&
       Math.abs(player.z - b.z) < b.depth / 2 + 8 &&
       interiorFrustum.intersectsBox(entry.bounds);
@@ -4429,6 +4432,15 @@ function frame(now: number) {
   canvas.dataset.lastHitBuildPiece = lastHitBuildPiece;
   canvas.dataset.nearestApartmentDoor = JSON.stringify(
     nearestApartmentDoor() ?? null,
+  );
+  canvas.dataset.apartmentProps = JSON.stringify(
+    interiorBatches
+      .filter((e) => e.mesh.userData.part === "apartment-prop")
+      .map((e) => ({
+        asset: e.mesh.userData.propAsset,
+        floor: e.mesh.userData.floor,
+        visible: e.mesh.visible,
+      })),
   );
   canvas.dataset.apartmentDoors = JSON.stringify(
     BUILDINGS.flatMap((b, i) =>

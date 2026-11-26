@@ -197,20 +197,22 @@ export function createBuildingShotProxy(index: number) {
     index,
   );
   for (const f of fixtures(index)) {
-    const height = {
-      shelf: 1.95,
-      rack: 2.65,
-      bed: 0.8,
-      bench: 1,
-      table: 0.95,
-      counter: 1.15,
-      fridge: 2.3,
-      cabinet: 1.9,
-      sofa: 1.1,
-      kitchen: 1.35,
-      pallet: 1,
-      workbench: 2.25,
-    }[f.kind];
+    const height =
+      f.height ??
+      {
+        shelf: 1.95,
+        rack: 2.65,
+        bed: 0.8,
+        bench: 1,
+        table: 0.95,
+        counter: 1.15,
+        fridge: 2.3,
+        cabinet: 1.9,
+        sofa: 1.1,
+        kitchen: 1.35,
+        pallet: 1,
+        workbench: 2.25,
+      }[f.kind];
     box(root, f.x, (f.y ?? 0) + height / 2, f.z, f.width, height, f.depth);
   }
   for (const p of partitions(index))
@@ -358,7 +360,11 @@ export function loadBlenderBuilding(
     let doorPanel: THREE.Mesh | undefined;
     root.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
-      if (o.userData.part === "interior") o.userData.interiorBuilding = index;
+      if (
+        o.userData.part === "interior" ||
+        o.userData.part === "apartment-prop"
+      )
+        o.userData.interiorBuilding = index;
       if (o.userData.part === "door") {
         o.userData.dynamicDoor = true;
         o.userData.doorIndex = index;

@@ -1,4 +1,9 @@
 {
+  "meshProps": {
+    "instances": 54,
+    "assetTypes": 8,
+    "visibleFloorCulling": true
+  },
   "oldTenementsPreserved": [
     {
       "index": 7,

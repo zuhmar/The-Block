@@ -6,7 +6,7 @@ Each model uses its own reference image. Geometry uses Meshy T2 smart topology w
 
 `references/` contains the original 1024 × 1024 AI reference PNGs. `models/` contains the textured GLBs downloaded from Meshy. `previews/` contains Meshy's resulting model thumbnails for comparison with the references.
 
-These are newly generated assets. They have not replaced the furniture inside the playable buildings yet. The building layout, collisions, player saves, and existing models remain unchanged in this asset-only update.
+The prepared versions are integrated into all six West Court apartments: 54 furniture instances, including two chairs per unit. Runtime exports in `apps/client/src/fps/models/apartment-props/` use uniform scale baked into vertices, floor pivots, 1024-pixel JPEG textures, and glossy materials. Their measured dimensions drive fixture footprints and shooting proxies. Repeated instances share eight geometry buffers and their textures; furniture on other floors is culled, and the exterior distance model omits furniture. The original Meshy downloads in this folder remain unchanged. Existing tenements, housing plots, loot identities and player saves are preserved. Integration uses local Blender processing and spends no additional Meshy credits.
 
 Actual generation charge: eight references at 9 credits and eight textured T2/N1 models at 15 credits, totalling 192 credits. Balance: 1,595 before and 1,403 after. No paid remeshing, rigging, extra variants or reruns are included.
 
