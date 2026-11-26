@@ -35,12 +35,13 @@ export const CATALOG: CatalogAsset[] = [];
 for (const [path, url] of Object.entries(urls)) {
   const key = path.split("/models/")[1];
   if (
-    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart)\//.test(
+    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart|tenement-v2)\//.test(
       key,
     ) ||
     (key.startsWith("block-mart/") &&
       !key.startsWith("block-mart/parts/") &&
       !key.startsWith("block-mart/meshy/parts/")) ||
+    (key.startsWith("tenement-v2/") && !key.startsWith("tenement-v2/parts/")) ||
     key.endsWith("jail-grounds.glb") ||
     key.endsWith("jail-meshy-grounds.glb") ||
     key.endsWith("meshy-warehouse/warehouse.glb")
@@ -64,7 +65,9 @@ for (const [path, url] of Object.entries(urls)) {
         ? "Jail · "
         : key.startsWith("block-mart/meshy/")
           ? "Block Mart Meshy · "
-          : "") +
+          : key.startsWith("tenement-v2/")
+            ? "Tenement · "
+            : "") +
       type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
     layer: b ? "Buildings" : "Props",
     behavior: key.startsWith("loot-chests") ? "loot" : "solid",
@@ -73,6 +76,19 @@ for (const [path, url] of Object.entries(urls)) {
     size: b ? [b.width, b.height, b.depth] : undefined,
   });
 }
+const apartment = Object.entries(urls).find(([p]) =>
+  p.endsWith("/tenement-v2/tenement.glb"),
+);
+if (apartment)
+  CATALOG.push({
+    id: "building:tenement-v2",
+    name: "Corner Tenements · furnished · 3 stories",
+    layer: "Buildings",
+    behavior: "solid",
+    url: apartment[1],
+    anchor: [0, 0, 0],
+    size: [10, 11.22, 10],
+  });
 const mart = Object.entries(urls).find(([p]) =>
   p.endsWith("/block-mart/meshy/block-mart.glb"),
 );
@@ -297,11 +313,13 @@ export function newMap(current = true): MapDocument {
     );
     BUILDINGS.forEach((b) =>
       add(
-        b.type === "store"
-          ? "building:block-mart"
-          : b.type === "warehouse"
-            ? "building:warehouse"
-            : "model:buildings/" + b.type + ".glb",
+        b.type === "tenement"
+          ? "building:tenement-v2"
+          : b.type === "store"
+            ? "building:block-mart"
+            : b.type === "warehouse"
+              ? "building:warehouse"
+              : "model:buildings/" + b.type + ".glb",
         b.name,
         b.x,
         b.z,

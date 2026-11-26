@@ -1,0 +1,13 @@
+# Corner Tenements · three-story upgrade
+
+The original apartment concept in `references/concept.png` is the visual source for this Blender model. It follows Block Mart's glossy cartoon building standard: warm brick relief, cream base and story bands, recessed glazed windows, projecting sills, corner quoins, stepped parapets, an entrance canopy and nameplate, mailboxes/intercom, drainpipes and shared prepared utility modules.
+
+The tenement retains the existing ten-metre-square footprint and authoritative game layout: three occupied stories at Y=0, 3.2 and 6.4m, six rooms, the existing corridor, two real stair runs, open stairwell holes, railings and the same furniture and indoor loot coordinates. The small rooftop mechanical housing is not a fourth occupied story. Juliet rails guard windows; they do not represent walkable balcony platforms. There is no new roof-access mechanic.
+
+`tenement.blend` contains the assembled model, packed concept image, studio camera and hidden reusable-module library. `tenement.glb` is the furnished full-detail export; `tenement-lod.glb` is a substantially lighter exterior for views beyond 50m. Both preserve the same door hinge and open/close clips. Runtime copies are under `apps/client/src/fps/models/tenement-v2/`. The main entrance uses the existing E/USE interaction; no character, inventory, combat, networking or persistence system is replaced.
+
+`layout.json` is exported from the existing game definitions; `facade-openings.json` records the actual glazing and entrance openings. `model-report.json` contains geometry and file budgets and the concept SHA-256. `parts/` contains fourteen independently reusable, metre-scale modules: window, entrance, canopy, bed, table, wardrobe, hall bench, mailboxes, intercom, downpipe, roof AC, window AC, roof vent and wall lamp. The utility modules reuse already approved local assets; this task submits no new paid Meshy generations. The other modules were modeled from the apartment concept, not generated from existing prop renders.
+
+Rebuild with `pnpm assets:tenement-v2`. The same tenement prefab is reused by both existing three-story tenement instances, including South Tenements, without changing their saved identities or locations. The separate map editor's current-city template uses this furnished model and includes its standalone modules.
+
+Validation covers the actual glazed openings, the shared room/stair/slab/furniture coordinates, floor levels, unit-scale transforms, full/distant hinge animations and the absence of a fictitious shooting ceiling over the stairwell. The original two-story and old three-story source assets remain available separately.

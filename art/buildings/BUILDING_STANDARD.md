@@ -17,6 +17,10 @@ Build at the intended metre dimensions. Repeated modules retain their proportion
 - Make the assembled building and useful standalone modules available in the separate map editor.
 - Measure geometry and texture budgets, check exports and collisions, and walk the actual entrance/interior/exit routes before pushing to main. Verify the resulting live deployment.
 
+## Reference discipline
+
+New prop reference sprites must be generated directly from the approved building concept artwork. Do not substitute renders of the existing Blender props as the visual source for a Meshy replacement. Existing prepared utility assets may be reused locally at uniform scale.
+
 ## Current delivery
 
-Block Mart is integrated. Its standalone Meshy prop set is the next asset task; generation status and model IDs belong in `block-mart/meshy-props/manifest.json`. Completing that set does not imply that the other building models have already been rebuilt.
+Block Mart and its nine original-art Meshy prop types are integrated. The three-story Corner Tenements upgrade follows the same standard using its own original concept and the existing game floor plan. Other building upgrades remain separate tasks.

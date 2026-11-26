@@ -3931,6 +3931,11 @@ function frame(now: number) {
         );
         return;
       }
+      if ("additionalDoors" in model)
+        for (const hinge of model.additionalDoors) {
+          hinge.rotation.y = doorAngles[i];
+          hinge.updateMatrixWorld(true);
+        }
       model.door.rotation.y = doorAngles[i];
       model.door.updateMatrixWorld(true);
       model.shotDoor.rotation.y = doorAngles[i];
@@ -4340,6 +4345,13 @@ function frame(now: number) {
         .map((entry) => entry.building),
     ),
   ]);
+  canvas.dataset.tenements = JSON.stringify(
+    buildingModels.flatMap((model, i) =>
+      BUILDINGS[i].type === "tenement"
+        ? [{ index: i, version: model.root.userData.assetVersion }]
+        : [],
+    ),
+  );
   canvas.dataset.buildingSources = JSON.stringify(
     buildingModels.map((m) => m.source),
   );

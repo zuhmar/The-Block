@@ -13,6 +13,7 @@ import {
   fixtures,
   partitions,
   buildingSlabs,
+  buildingStories,
   buildingStairs,
   STORY_HEIGHT,
   DOOR_WIDTH,
@@ -94,7 +95,7 @@ const URLS: Record<string, string> = {
   ).href,
 
   flats: new URL("./models/buildings/flats.glb", import.meta.url).href,
-  tenement: new URL("./models/buildings/tenement.glb", import.meta.url).href,
+  tenement: new URL("./models/tenement-v2/tenement.glb", import.meta.url).href,
   jail: new URL("./models/buildings/jail.glb", import.meta.url).href,
   store: new URL("./models/buildings/store.glb", import.meta.url).href,
   shelter: new URL("./models/buildings/shelter.glb", import.meta.url).href,
@@ -162,7 +163,15 @@ export function createBuildingShotProxy(index: number) {
       b.height - 2.85,
       WALL,
     );
-    box(root, 0, 3.25, 0, b.width, 0.1, b.depth);
+    box(
+      root,
+      0,
+      buildingStories(b) > 1 ? b.height : 3.25,
+      0,
+      b.width,
+      buildingStories(b) > 1 ? 0.18 : 0.1,
+      b.depth,
+    );
     box(root, 0, 0.007, 0, b.width, 0.025, b.depth);
   }
   door.position.set(-DOOR_WIDTH / 2, 0, buildingDoorOffset(b));
@@ -215,11 +224,19 @@ export function createBuildingShotProxy(index: number) {
   return { root, door, doorPanel };
 }
 const loaded = new Map<number, THREE.Group>();
+let tenementLod: THREE.Group | undefined;
 export async function preloadBlenderBuildings() {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const loader = new GLTFLoader();
   await Promise.allSettled([
     preloadBlockMart(),
+    loader
+      .loadAsync(
+        new URL("./models/tenement-v2/tenement-lod.glb", import.meta.url).href,
+      )
+      .then((gltf) => {
+        tenementLod = gltf.scene;
+      }),
     ...BUILDINGS.map(async (b, index) => {
       const gltf = await loader.loadAsync(URLS[b.type]);
       loaded.set(index, gltf.scene);
@@ -235,7 +252,7 @@ export function loadBlenderBuilding(
   const b = BUILDINGS[index],
     proxy = createBuildingShotProxy(index);
   try {
-    const root =
+    let root =
       loaded.get(index) ??
       loaded
         .get(BUILDINGS.findIndex((other) => other.type === b.type))
@@ -243,6 +260,27 @@ export function loadBlenderBuilding(
     if (!root) throw Error("Building asset unavailable");
     const door = root.getObjectByName(b.type + "-door-hinge");
     if (!door) throw Error("Missing animated building door");
+    const additionalDoors: THREE.Object3D[] = [];
+    if (b.type === "tenement") {
+      let version: string | undefined;
+      root.traverse((o) => {
+        version ??= o.userData.assetVersion;
+      });
+      if (tenementLod) {
+        const low = tenementLod.clone(true),
+          lowDoor = low.getObjectByName("tenement-door-hinge");
+        if (lowDoor) {
+          const lod = new THREE.LOD();
+          lod.addLevel(root, 0);
+          lod.addLevel(low, 50);
+          const wrapper = new THREE.Group();
+          wrapper.add(lod);
+          root = wrapper;
+          additionalDoors.push(lowDoor);
+        }
+      }
+      root.userData.assetVersion = version;
+    }
     let doorPanel: THREE.Mesh | undefined;
     root.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
@@ -261,6 +299,7 @@ export function loadBlenderBuilding(
       shotRoot: proxy.root,
       shotDoor: proxy.door,
       source: "blender",
+      additionalDoors,
       mart: undefined,
     };
   } catch {
@@ -283,6 +322,7 @@ export function loadBlenderBuilding(
       shotRoot: proxy.root,
       shotDoor: proxy.door,
       source: "fallback",
+      additionalDoors: [] as THREE.Object3D[],
       mart: undefined,
     };
   }

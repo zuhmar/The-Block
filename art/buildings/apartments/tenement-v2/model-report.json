@@ -1,0 +1,86 @@
+{
+  "source": "Original-art Blender apartment architecture; shared prepared utility modules",
+  "referenceSha256": "d6e568af29c1f00089c1bc1c251e52d160e017d90f79a79bb50078c28633c685",
+  "stories": 3,
+  "rooms": 6,
+  "full": {
+    "bytes": 3263280,
+    "triangles": 58124
+  },
+  "lod": {
+    "bytes": 651620,
+    "triangles": 7840
+  },
+  "parts": {
+    "window": {
+      "bytes": 17040,
+      "triangles": 216
+    },
+    "entrance": {
+      "bytes": 55800,
+      "triangles": 912
+    },
+    "entry-canopy": {
+      "bytes": 11348,
+      "triangles": 144
+    },
+    "bed": {
+      "bytes": 40964,
+      "triangles": 696
+    },
+    "table": {
+      "bytes": 12576,
+      "triangles": 168
+    },
+    "wardrobe": {
+      "bytes": 25500,
+      "triangles": 396
+    },
+    "hall-bench": {
+      "bytes": 21796,
+      "triangles": 348
+    },
+    "mailboxes": {
+      "bytes": 81356,
+      "triangles": 1440
+    },
+    "intercom": {
+      "bytes": 10440,
+      "triangles": 132
+    },
+    "downpipe": {
+      "bytes": 21152,
+      "triangles": 300
+    },
+    "roof-ac": {
+      "bytes": 86224,
+      "triangles": 1050
+    },
+    "window-ac": {
+      "bytes": 86232,
+      "triangles": 1050
+    },
+    "roof-vent": {
+      "bytes": 96200,
+      "triangles": 1020
+    },
+    "wall-lamp": {
+      "bytes": 68444,
+      "triangles": 878
+    }
+  },
+  "placementScale": [
+    1,
+    1,
+    1
+  ],
+  "footprint": [
+    10,
+    10
+  ],
+  "gameFloorLevels": [
+    0,
+    3.2,
+    6.4
+  ]
+}
