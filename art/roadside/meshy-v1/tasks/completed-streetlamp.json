@@ -1,0 +1,32 @@
+{
+  "ai_model": "meshy-t2",
+  "created_at": 1795737025559,
+  "formats": [
+    "glb",
+    "fbx",
+    "obj",
+    "usdz",
+    "stl"
+  ],
+  "model_type": "smart-topology",
+  "progress": 100,
+  "refinable": false,
+  "size": [
+    0.29678700864315033,
+    1,
+    0.1488330066204071
+  ],
+  "status": "SUCCEEDED",
+  "task_id": "01a21a44-79f2-7392-b946-e864def97856",
+  "task_type": "image-to-3d",
+  "texturable": false,
+  "textured": true,
+  "ui_enabled": true,
+  "referenceTaskId": "01a21a3c-e1f8-7338-bd85-b68bf7b0bce6",
+  "nativeSize": [
+    0.29678700864315033,
+    1,
+    0.1488330066204071
+  ],
+  "sourceImageUrlWasVerified": true
+}

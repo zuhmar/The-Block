@@ -1,5 +1,5 @@
 {
-  "loadedInThreeJs": 9,
+  "loadedInThreeJs": 12,
   "models": [
     {
       "name": "tier-1-small",
@@ -96,6 +96,39 @@
         2,
         1.5535320043563843,
         1.0794780254364014
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "streetlamp",
+      "meshes": 1,
+      "size": [
+        1.2761842012405396,
+        4.300000190734863,
+        0.6399819552898407
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "bench",
+      "meshes": 1,
+      "size": [
+        1.7999999523162842,
+        1.2415571212768555,
+        1.0681127905845642
+      ],
+      "floorPivotY": 0,
+      "staticWorldProp": true
+    },
+    {
+      "name": "fire-hydrant",
+      "meshes": 1,
+      "size": [
+        0.5763136148452759,
+        0.8500000238418579,
+        0.5812461674213409
       ],
       "floorPivotY": 0,
       "staticWorldProp": true

@@ -6,9 +6,12 @@ const root = "art/roadside/meshy-v1",
   manifest = JSON.parse(await readFile(root + "/manifest.json", "utf8")),
   loader = new GLTFLoader(),
   models = [];
-for (const p of manifest.props.filter(
-  (p: { status: string }) => p.status === "complete",
-)) {
+if (
+  manifest.props.length !== 12 ||
+  manifest.props.some((p: { status: string }) => p.status !== "complete")
+)
+  throw Error("The completed roadside pack must contain all twelve models");
+for (const p of manifest.props) {
   const raw = await readFile(root + "/models/" + p.name + ".glb"),
     g = await loader.parseAsync(
       raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength),

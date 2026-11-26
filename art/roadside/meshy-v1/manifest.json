@@ -449,9 +449,44 @@
       "referenceRequestId": "4c68b230-8974-4502-b8a7-8b6f170c2cbd",
       "modelRequestId": "53abf3c6-0e4b-4b94-8edc-9a0de18242fa",
       "referenceTaskId": "01a21a3c-e1f8-7338-bd85-b68bf7b0bce6",
-      "modelTaskId": null,
-      "status": "blocked-approval",
-      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+      "modelTaskId": "01a21a44-79f2-7392-b946-e864def97856",
+      "status": "complete",
+      "sourceImagePixelsSha256": "685dece67ceca1df3628a2618529251d81d50233c86b3370e4519ac8d9d3082b",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/streetlamp.glb",
+      "spritePath": "sprites/streetlamp.png",
+      "sourceSha256": "f5405f36c13065e9d9a06c116e1251b5ee583a822100d3f126553e75171fcdee",
+      "uniformSourceScale": 4.3,
+      "width": 1.276184,
+      "height": 4.3,
+      "depth": 0.639982,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.29678700864315033,
+        1,
+        0.1488330066204071
+      ],
+      "referencePath": "references/streetlamp.png",
+      "previewPath": "previews/streetlamp.png",
+      "checks": {
+        "name": "streetlamp",
+        "triangles": 2743,
+        "vertices": 1995,
+        "bytes": 128880,
+        "sha256": "dc9a829882dc46cc7f552d48bdae64c6fa45745eafbaa390ac69682305d5a11b",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "d63f0fdb273b36a9e3a0327c57f490847fd2aa95c22941e140a8e7f53c2ef49f"
+      }
     },
     {
       "name": "bench",
@@ -462,9 +497,44 @@
       "referenceRequestId": "84744395-af3f-4048-aa8e-8e61227c0586",
       "modelRequestId": "e3b4cbb5-5580-40f5-9a9f-84a1972413f2",
       "referenceTaskId": "01a21a3c-efa3-7705-8011-62363163280e",
-      "modelTaskId": null,
-      "status": "blocked-approval",
-      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+      "modelTaskId": "01a21a44-8a27-7757-a47b-23f5492efab6",
+      "status": "complete",
+      "sourceImagePixelsSha256": "7323d301c369653946403308b7f70c942c1814e22f39b389ca1ac01cfd7f5b13",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/bench.glb",
+      "spritePath": "sprites/bench.png",
+      "sourceSha256": "7621fa489b3e78fdb1700538b29c40b25145d9ce7174ab86914cd7501ff7e08a",
+      "uniformSourceScale": 1.8,
+      "width": 1.8,
+      "height": 1.241557,
+      "depth": 1.068113,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        1,
+        0.6897539794445038,
+        0.593396008014679
+      ],
+      "referencePath": "references/bench.png",
+      "previewPath": "previews/bench.png",
+      "checks": {
+        "name": "bench",
+        "triangles": 2594,
+        "vertices": 2114,
+        "bytes": 167412,
+        "sha256": "87e4587c681ebe767879408e48a4fc2e9a8aa550e9916fc808dde9f0c3069495",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "17020e2cebb61783646a77435f7f9eef6e930dd89ce6580ebf7d95a27bc31ca6"
+      }
     },
     {
       "name": "fire-hydrant",
@@ -475,13 +545,49 @@
       "referenceRequestId": "3f7cfb33-3837-4026-a6d1-e4113285e7aa",
       "modelRequestId": "3c9f2210-c1d7-467c-ab2e-b47f309c4388",
       "referenceTaskId": "01a21a3c-fbd4-76c8-a558-96a9d8425838",
-      "modelTaskId": null,
-      "status": "blocked-approval",
-      "blockReason": "Automatic approval review rejected paid submission; needs user approval for 15 credits."
+      "modelTaskId": "01a21a44-9ae7-776e-8a70-0ca6f7026603",
+      "status": "complete",
+      "sourceImagePixelsSha256": "33afe3d6c1927ca285be33524e902a797e5544a8451a631214c260775850a99e",
+      "sourceImagePixelsMatchReference": true,
+      "modelPath": "models/fire-hydrant.glb",
+      "spritePath": "sprites/fire-hydrant.png",
+      "sourceSha256": "cefe6203a9a7f937480eb0aa4c46c8cab45d5974894af99e9bff0ecd46b506c6",
+      "uniformSourceScale": 0.85,
+      "width": 0.576314,
+      "height": 0.85,
+      "depth": 0.581246,
+      "textureResolution": 1024,
+      "spriteResolution": 512,
+      "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+      "modelType": "smart-topology",
+      "nativeBounds": [
+        0.6780160069465637,
+        1,
+        0.6838190257549286
+      ],
+      "referencePath": "references/fire-hydrant.png",
+      "previewPath": "previews/fire-hydrant.png",
+      "checks": {
+        "name": "fire-hydrant",
+        "triangles": 2088,
+        "vertices": 1777,
+        "bytes": 172452,
+        "sha256": "259f20cd8a1e81a6cc727b9e6fb38504e2a78199b1a583f44b77b772b65d3aa8",
+        "embeddedTextures": [
+          {
+            "width": 1024,
+            "height": 1024,
+            "format": "JPEG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "1d6a22fecccfd6d9072e0daf244d7d481157fbd96a71022f33ef055e50d9eac4"
+      }
     }
   ],
-  "submittedCredits": 243,
-  "balanceAfterSubmissions": 108,
-  "pendingCredits": 45,
-  "assetState": "9 complete static world-prop models and transparent sprites; all twelve individual references; 3 models pending. Not integrated in game."
+  "submittedCredits": 288,
+  "balanceAfterSubmissions": 63,
+  "pendingCredits": 0,
+  "assetState": "12 complete static world-prop models and transparent sprites; all twelve individual references; 0 models pending. Not integrated in game.",
+  "approvedCompletionCredits": 45
 }

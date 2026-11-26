@@ -1,8 +1,8 @@
 {
-  "transparentSprites": 9,
-  "pairedReferences": 9,
+  "transparentSprites": 12,
+  "pairedReferences": 12,
   "referenceImages": 12,
-  "pendingModels": 3,
+  "pendingModels": 0,
   "sprites": [
     {
       "name": "tier-1-small",
@@ -138,6 +138,51 @@
         449
       ],
       "spriteSha256": "98dd3f39ca0e649e9a9ce2d3a68550b077feb884c8b647f6e084c65aacbecdbd"
+    },
+    {
+      "name": "streetlamp",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        200,
+        77,
+        319,
+        458
+      ],
+      "spriteSha256": "943e9474afbc8d4e3236b79e6c125d38a258bf87770a080b699acb70d8be1adb"
+    },
+    {
+      "name": "bench",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        50,
+        63,
+        461,
+        453
+      ],
+      "spriteSha256": "23135478e39a860d3d6c80b9f3163538282adbe04199c5348ea93dea318fbdd9"
+    },
+    {
+      "name": "fire-hydrant",
+      "sourceImagePixelsMatchReference": true,
+      "spriteSize": [
+        512,
+        512
+      ],
+      "alphaBounds": [
+        162,
+        115,
+        350,
+        431
+      ],
+      "spriteSha256": "8abda28c7e55baf3663dc53145ea7f5b0dd72c855654ae1ffe0167beac541f0f"
     }
   ]
 }

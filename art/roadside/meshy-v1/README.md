@@ -8,17 +8,15 @@ matching teal plates for readability. There are no ground patches or terrain pla
 ## Delivered
 
 - **12 individual 1024 × 1024 AI-generated reference images** in `references/`.
-- **9 textured Meshy models** in `models/`: five crate tiers, metal trash can, wheelie
-  bin, litter basket and dumpster.
-- **9 transparent 512 × 512 sprites** in `sprites/`, rendered from those models.
+- **12 textured Meshy models** in `models/`: five crate tiers, metal trash can, wheelie
+  bin, litter basket, dumpster, streetlamp, bench and fire hydrant.
+- **12 transparent 512 × 512 sprites** in `sprites/`, rendered from those models.
 - Meshy previews, per-task journals, prompts, source hashes and verification reports.
 - Open `index.html` to inspect/filter/download individual files. The two gallery
   images show the original references and the finished transparent sprites separately.
 
-Streetlamp, bench and hydrant references are ready. Their **3D model submissions are
-blocked by automatic approval review**, which requested explicit credit approval.
-No placeholder models are represented as completed work. This kit is **not yet
-integrated into the playable map**; current gameplay and saved objects are unchanged.
+All twelve models are complete. This kit is **not yet integrated into the playable
+map**; current gameplay and saved objects are unchanged.
 
 ## Meshy pipeline and cost
 
@@ -28,18 +26,16 @@ Preparation embeds a 1024px JPEG texture, preserves proportions through uniform 
 sets the origin at the floor and renders the model with an actual alpha background.
 These are static environmental props; lids and doors are not rigged for animation.
 
-**243 credits spent:** 12 reference images × 9 + 9 textured models × 15.
-**108 credits remain.** The remaining three textured models would cost **45 credits**,
-bringing the total to the originally planned **288**, with 63 remaining. No paid reruns.
-Two attempts to submit the streetlamp were rejected before creation; neither spent
-credits or created a duplicate task. Request IDs are retained for safe continuation.
+**288 credits spent:** 12 reference images × 9 + 12 textured models × 15.
+**63 credits remain.** The user approved the final 45-credit completion step.
+No paid reruns or duplicate generation tasks were used.
 
 ## Validation and regeneration
 
 ```sh
 blender -b -t 2 --python-exit-code 1 --python packages/art-tools/prepare-roadside-props.py
 python packages/art-tools/check-roadside-sprites.py
-python packages/art-tools/check-meshy-props.py art/roadside/meshy-v1 --allow-pending
+python packages/art-tools/check-meshy-props.py art/roadside/meshy-v1
 pnpm exec tsx packages/art-tools/check-roadside-props.ts
 python packages/art-tools/pack-roadside-props.py
 ```
@@ -48,8 +44,7 @@ Preparation reads downloaded originals from `work/roadside-raw/`; source GLB has
 are recorded in `tasks/prepared-*.json`. Meshy task IDs are retained for later downloads.
 Validation checks the actual Meshy source pixels against each intended reference,
 alpha and clear margins, real-world bounds, self-contained textures, triangle budgets,
-and floor pivots through the actual Three.js GLTF loader. Pending models remain explicit
-in the manifest and are excluded only when `--allow-pending` is supplied.
+and floor pivots through the actual Three.js GLTF loader. All twelve model and sprite pairs are required by the completed-pack checks.
 
 The downloadable `work/street-survival-roadside-assets.zip` contains this entire art
-pack, including all twelve references and the nine completed model/sprite pairs.
+pack, including all twelve references and the twelve completed model/sprite pairs.

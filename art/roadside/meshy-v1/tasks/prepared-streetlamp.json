@@ -1,0 +1,15 @@
+{
+  "name": "streetlamp",
+  "modelPath": "models/streetlamp.glb",
+  "spritePath": "sprites/streetlamp.png",
+  "sourceSha256": "f5405f36c13065e9d9a06c116e1251b5ee583a822100d3f126553e75171fcdee",
+  "uniformSourceScale": 4.3,
+  "width": 1.276184,
+  "height": 4.3,
+  "depth": 0.639982,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a44-79f2-7392-b946-e864def97856",
+  "referenceTaskId": "01a21a3c-e1f8-7338-bd85-b68bf7b0bce6"
+}

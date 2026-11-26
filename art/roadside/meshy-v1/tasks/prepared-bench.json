@@ -1,0 +1,15 @@
+{
+  "name": "bench",
+  "modelPath": "models/bench.glb",
+  "spritePath": "sprites/bench.png",
+  "sourceSha256": "7621fa489b3e78fdb1700538b29c40b25145d9ce7174ab86914cd7501ff7e08a",
+  "uniformSourceScale": 1.8,
+  "width": 1.8,
+  "height": 1.241557,
+  "depth": 1.068113,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a44-8a27-7757-a47b-23f5492efab6",
+  "referenceTaskId": "01a21a3c-efa3-7705-8011-62363163280e"
+}

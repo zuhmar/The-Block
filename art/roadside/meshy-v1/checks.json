@@ -143,11 +143,59 @@
       ],
       "selfContained": true,
       "referenceSha256": "f6a968c882161ca6ad3e5e5d7c33c789db0c6c3ab52042c9bdfee25a4157d4ce"
+    },
+    {
+      "name": "streetlamp",
+      "triangles": 2743,
+      "vertices": 1995,
+      "bytes": 128880,
+      "sha256": "dc9a829882dc46cc7f552d48bdae64c6fa45745eafbaa390ac69682305d5a11b",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "d63f0fdb273b36a9e3a0327c57f490847fd2aa95c22941e140a8e7f53c2ef49f"
+    },
+    {
+      "name": "bench",
+      "triangles": 2594,
+      "vertices": 2114,
+      "bytes": 167412,
+      "sha256": "87e4587c681ebe767879408e48a4fc2e9a8aa550e9916fc808dde9f0c3069495",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "17020e2cebb61783646a77435f7f9eef6e930dd89ce6580ebf7d95a27bc31ca6"
+    },
+    {
+      "name": "fire-hydrant",
+      "triangles": 2088,
+      "vertices": 1777,
+      "bytes": 172452,
+      "sha256": "259f20cd8a1e81a6cc727b9e6fb38504e2a78199b1a583f44b77b772b65d3aa8",
+      "embeddedTextures": [
+        {
+          "width": 1024,
+          "height": 1024,
+          "format": "JPEG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "1d6a22fecccfd6d9072e0daf244d7d481157fbd96a71022f33ef055e50d9eac4"
     }
   ],
-  "totalTriangles": 20947,
-  "totalModelBytes": 1489888,
+  "totalTriangles": 28372,
+  "totalModelBytes": 1958632,
   "allSelfContained": true,
-  "pendingModels": 3,
+  "pendingModels": 0,
   "scope": "Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game."
 }

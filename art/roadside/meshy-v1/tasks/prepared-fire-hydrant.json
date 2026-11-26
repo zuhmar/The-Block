@@ -1,0 +1,15 @@
+{
+  "name": "fire-hydrant",
+  "modelPath": "models/fire-hydrant.glb",
+  "spritePath": "sprites/fire-hydrant.png",
+  "sourceSha256": "cefe6203a9a7f937480eb0aa4c46c8cab45d5974894af99e9bff0ecd46b506c6",
+  "uniformSourceScale": 0.85,
+  "width": 0.576314,
+  "height": 0.85,
+  "depth": 0.581246,
+  "textureResolution": 1024,
+  "spriteResolution": 512,
+  "spriteMethod": "Transparent Blender render of the AI-generated Meshy model; no procedural replacement geometry",
+  "modelTaskId": "01a21a44-9ae7-776e-8a70-0ca6f7026603",
+  "referenceTaskId": "01a21a3c-fbd4-76c8-a558-96a9d8425838"
+}
