@@ -1,9 +1,15 @@
+import {
+  LOOT_ITEM_KINDS,
+  lootItemSpec,
+  lootSprite,
+  isLootItem,
+} from "./loot-item-spec";
 import { BULLET_AMMO, isBulletAmmo, ammoModelKind, STARTER_AMMO } from "./ammo";
 import { WEAPONS, type WeaponKind, type Tool } from "./weapons";
 export const CARRY_SLOTS = 20,
   HOTBAR_SLOTS = 5;
 export const ITEM_KINDS = [
-  "cash",
+  ...LOOT_ITEM_KINDS,
   ...BULLET_AMMO,
   "sulfur-refined",
   "metal-fragments",
@@ -41,15 +47,17 @@ export const isResource = (k: ItemKind) =>
 export const isGun = (k: ItemKind) =>
   ["pistol", "smg", "rifle", "sniper", "lmg", "rocket"].includes(k);
 export const stackLimit = (k: ItemKind) =>
-  k === "cash"
+  lootItemSpec(k)?.stack ??
+  (k === "cash"
     ? 1000000
     : isResource(k) || isBulletAmmo(k)
       ? 500
       : isGun(k) || isHarvestTool(k)
         ? 1
-        : 5;
+        : 5);
 export const itemName = (k: ItemKind) =>
-  k === "cash"
+  lootItemSpec(k)?.name ??
+  (k === "cash"
     ? "Cash"
     : ((
         {
@@ -70,10 +78,10 @@ export const itemName = (k: ItemKind) =>
           axe: "Axe",
           pickaxe: "Pickaxe",
         } as Partial<Record<ItemKind, string>>
-      )[k] ?? WEAPONS[k as WeaponKind].name);
+      )[k] ?? WEAPONS[k as WeaponKind].name));
 export const itemIcon = (k: ItemKind) =>
-  k === "cash"
-    ? "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ctext x='16' y='49' font-size='48' fill='%23d9bd62'%3E$%3C/text%3E%3C/svg%3E"
+  isLootItem(k)
+    ? lootSprite(k)
     : ["sulfur-refined", "metal-fragments", "charcoal", "gunpowder"].includes(k)
       ? `/assets/crafting/item-${k}.png`
       : ammoModelKind(k)
@@ -84,10 +92,10 @@ export const itemIcon = (k: ItemKind) =>
             ? `/assets/resource-items/item-${k}.png`
             : `/assets/weapon-icons/${({ rifle: "assault-rifle", lmg: "light-machine-gun", rocket: "rocket-launcher", rockets: "rocket-launcher" } as Partial<Record<ItemKind, string>>)[k] ?? k}.png`;
 export const itemTool = (k: ItemKind): Tool =>
+  isLootItem(k) ||
   isResource(k) ||
   isHarvestTool(k) ||
   isBulletAmmo(k) ||
-  k === "cash" ||
   k === "rockets"
     ? "hands"
     : (k as WeaponKind);

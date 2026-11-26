@@ -1,3 +1,6 @@
+import { isLootItem } from "./loot-item-spec";
+import { useLootItem } from "./use-loot-item";
+import { lootModelStats } from "./loot-pickup-models";
 import { createCityStreets } from "./city-streets-view";
 import { createCityRowRender } from "./city-row-render";
 import { orientBuildingRoots } from "./building-orientation-view";
@@ -2288,6 +2291,15 @@ const inventoryDialog = createInventoryDialog({
   changed: inventoryChanged,
   activate: activateHand,
   health: () => health,
+  use(id) {
+    const result = useLootItem(inventory(), id, health);
+    if (!result) return false;
+    save.inventory = result.inventory;
+    health = result.health;
+    inventoryChanged();
+    sound.play("pickup", { ui: true, gain: 0.2 });
+    return true;
+  },
   atReserve,
   close: closeInventory,
   store(id) {
@@ -3181,7 +3193,13 @@ function interact() {
   if ((survival().lootReadyAt[i] ?? 0) > Date.now())
     return toast("Container restocking · return later");
   storeCurrentGun();
-  const rewards = scavengeRewards(inventory(), i, lootReward(LOOT[i]));
+  const rewards = scavengeRewards(
+    inventory(),
+    i,
+    lootReward(LOOT[i]),
+    LOOT[i],
+    Math.floor(Date.now() / LOOT_COOLDOWN_MS),
+  );
   if (!rewards) return toast("Inventory full · make room before searching");
   save.inventory = rewards.inventory;
   survival().cash = Math.min(1000000, survival().cash + rewards.cash);
@@ -3191,7 +3209,10 @@ function interact() {
   persist();
   updateHud();
   toast(
-    `${LOOT[i].name} · supplies and $${rewards.cash} · restocks in 10 minutes`,
+    `${LOOT[i].name} · ${rewards.items
+      .slice(-2)
+      .map(([kind]) => itemName(kind))
+      .join(", ")} and $${rewards.cash} · restocks in 10 minutes`,
   );
 }
 function jump() {
@@ -3274,7 +3295,8 @@ function fire() {
   const held = selectedItem(inventory());
   if (
     held &&
-    (isResource(held.kind) ||
+    (isLootItem(held.kind) ||
+      isResource(held.kind) ||
       isBulletAmmo(held.kind) ||
       held.kind === "rockets")
   )
@@ -4230,7 +4252,8 @@ function frame(now: number) {
     const carried = selectedItem(inventory());
     heldResource.root.visible =
       !!carried &&
-      (isResource(carried.kind) ||
+      (isLootItem(carried.kind) ||
+        isResource(carried.kind) ||
         isBulletAmmo(carried.kind) ||
         carried.kind === "rockets") &&
       !harvestAction &&
@@ -4415,6 +4438,7 @@ function frame(now: number) {
     useRemaining > 0 ? 1 - useRemaining / 0.8 : 0,
   );
   canvas.dataset.health = String(health);
+  canvas.dataset.lootPickups = JSON.stringify(lootModelStats());
   canvas.dataset.waterEffects = JSON.stringify(coast.waterStats());
   canvas.dataset.jailKit = jailGrounds.source;
   canvas.dataset.jailGate = JSON.stringify(jailGate);

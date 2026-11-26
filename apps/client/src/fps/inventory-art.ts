@@ -1,3 +1,9 @@
+import { isLootItem } from "./loot-item-spec";
+import {
+  cachedLootModel,
+  loadLootModel,
+  fitLootModel,
+} from "./loot-pickup-models";
 import { craftingMaterialModel } from "./crafting-models";
 import { ammoModel } from "./ammo-models";
 import { isBulletAmmo } from "./ammo";
@@ -19,6 +25,7 @@ export async function preloadInventoryArt() {
 }
 function resourceModel(kind: ItemKind) {
   return (
+    cachedLootModel(kind) ??
     models.get(kind)?.clone(true) ??
     ammoModel(kind) ??
     craftingMaterialModel(kind)
@@ -43,7 +50,8 @@ export function createDroppedItems() {
         v = new THREE.Group();
         const art = resourceModel(d.kind);
         if (art) {
-          art.scale.setScalar(0.65);
+          if (isLootItem(d.kind)) fitLootModel(art, d.kind);
+          else art.scale.setScalar(0.65);
           v.add(art);
         } else {
           const m = new THREE.Mesh(geometry, bag);
@@ -57,6 +65,15 @@ export function createDroppedItems() {
         }
         root.add(v);
         visuals.set(d.id, v);
+        if (isLootItem(d.kind)) {
+          const target = v;
+          void loadLootModel(d.kind).then((template) => {
+            if (!template || visuals.get(d.id) !== target) return;
+            target.clear();
+            target.add(fitLootModel(template.clone(true), d.kind));
+            target.userData.itemSource = "meshy";
+          });
+        }
       }
       v.position.set(d.x, d.y + 0.01, d.z);
     }
@@ -77,6 +94,7 @@ export function createHeldResource() {
   holder.quaternion.copy(rig.gun.root.quaternion);
   rig.gun.root.parent!.add(holder);
   const resources = new Map<string, THREE.Group>();
+  const requested = new Set<string>();
   for (const k of [
     "sulfur-refined",
     "metal-fragments",
@@ -113,15 +131,28 @@ export function createHeldResource() {
       holder.scale.setScalar(aspect < 0.8 ? 0.25 : 0.32);
     },
     animate(kind: ItemKind, time: number, moving: boolean, dt: number) {
+      if (isLootItem(kind) && !requested.has(kind)) {
+        requested.add(kind);
+        void loadLootModel(kind).then((template) => {
+          if (!template || resources.has(kind)) return;
+          const model = fitLootModel(template.clone(true), kind, true);
+          model.position.y = -0.07;
+          model.visible = false;
+          holder.add(model);
+          resources.set(kind, model);
+        });
+      }
       rig.equip(true);
       rig.animate(time, moving, 0, { dt, shotSerial: 0 });
       rig.gun.root.visible = false;
       for (const [k, m] of resources) m.visible = k === kind;
       rig.root.userData.itemSource =
-        resources.has(kind) &&
-        (isResource(kind) || isBulletAmmo(kind) || kind === "rockets")
-          ? "blender"
-          : "none";
+        isLootItem(kind) && resources.has(kind)
+          ? "meshy"
+          : resources.has(kind) &&
+              (isResource(kind) || isBulletAmmo(kind) || kind === "rockets")
+            ? "blender"
+            : "none";
     },
   };
 }

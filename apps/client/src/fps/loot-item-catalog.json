@@ -1,0 +1,338 @@
+{
+  "scrap-metal": {
+    "name": "Scrap metal",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.25
+  },
+  "cloth": {
+    "name": "Cloth",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.3
+  },
+  "leather": {
+    "name": "Leather",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.35
+  },
+  "rope": {
+    "name": "Rope",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.25
+  },
+  "mechanical-parts": {
+    "name": "Mechanical parts",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 2,
+    "heal": 0,
+    "longest": 0.22
+  },
+  "electrical-parts": {
+    "name": "Electrical parts",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 2,
+    "heal": 0,
+    "longest": 0.18
+  },
+  "weapon-parts": {
+    "name": "Weapon parts",
+    "category": "materials",
+    "stack": 500,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.3
+  },
+  "building-plan": {
+    "name": "Building plan",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.35
+  },
+  "construction-hammer": {
+    "name": "Construction hammer",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.42
+  },
+  "repair-tool": {
+    "name": "Repair wrench",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.33
+  },
+  "torch": {
+    "name": "Torch",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.6
+  },
+  "flashlight": {
+    "name": "Flashlight",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.25
+  },
+  "binoculars": {
+    "name": "Binoculars",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 2,
+    "heal": 0,
+    "longest": 0.2
+  },
+  "baseball-bat": {
+    "name": "Baseball bat",
+    "category": "tools",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.9
+  },
+  "bottled-water": {
+    "name": "Bottled water",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 5,
+    "longest": 0.24
+  },
+  "canned-drink": {
+    "name": "Canned drink",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 5,
+    "longest": 0.14
+  },
+  "canned-food": {
+    "name": "Canned food",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 12,
+    "longest": 0.11
+  },
+  "snack-bar": {
+    "name": "Snack bar",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 8,
+    "longest": 0.13
+  },
+  "cooked-meat": {
+    "name": "Cooked meat",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 20,
+    "longest": 0.2
+  },
+  "bandage": {
+    "name": "Bandage",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 15,
+    "longest": 0.09
+  },
+  "medkit": {
+    "name": "Medkit",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 2,
+    "heal": 50,
+    "longest": 0.3
+  },
+  "painkillers": {
+    "name": "Painkillers",
+    "category": "consumables",
+    "stack": 5,
+    "minTier": 1,
+    "heal": 10,
+    "longest": 0.1
+  },
+  "cash": {
+    "name": "Cash",
+    "category": "valuables",
+    "stack": 1000000,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.18
+  },
+  "watch": {
+    "name": "Watch",
+    "category": "valuables",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.1
+  },
+  "jewelry": {
+    "name": "Gold chain",
+    "category": "valuables",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.2
+  },
+  "electronics": {
+    "name": "Electronics",
+    "category": "valuables",
+    "stack": 5,
+    "minTier": 2,
+    "heal": 0,
+    "longest": 0.22
+  },
+  "contraband": {
+    "name": "Sealed contraband parcel",
+    "category": "valuables",
+    "stack": 5,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.22
+  },
+  "keycard": {
+    "name": "Keycard",
+    "category": "valuables",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.09
+  },
+  "street-headwear": {
+    "name": "Street cap",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.26
+  },
+  "street-body": {
+    "name": "Street jacket",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.65
+  },
+  "street-legs": {
+    "name": "Street pants",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.85
+  },
+  "street-feet": {
+    "name": "Street sneakers",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.4
+  },
+  "reinforced-headwear": {
+    "name": "Military helmet",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.29
+  },
+  "reinforced-body": {
+    "name": "Reinforced military vest",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.65
+  },
+  "reinforced-legs": {
+    "name": "Military pants",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.9
+  },
+  "reinforced-feet": {
+    "name": "Combat boots",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 3,
+    "heal": 0,
+    "longest": 0.45
+  },
+  "armored-headwear": {
+    "name": "Full-face armored helmet",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 4,
+    "heal": 0,
+    "longest": 0.33
+  },
+  "armored-body": {
+    "name": "Heavy chest armor",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 4,
+    "heal": 0,
+    "longest": 0.74
+  },
+  "armored-legs": {
+    "name": "Armored pants",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 4,
+    "heal": 0,
+    "longest": 0.92
+  },
+  "armored-feet": {
+    "name": "Armored boots",
+    "category": "armor",
+    "stack": 1,
+    "minTier": 4,
+    "heal": 0,
+    "longest": 0.48
+  },
+  "door-lock": {
+    "name": "Keypad door lock",
+    "category": "security",
+    "stack": 1,
+    "minTier": 2,
+    "heal": 0,
+    "longest": 0.17
+  },
+  "storage-lock": {
+    "name": "Storage padlock",
+    "category": "security",
+    "stack": 1,
+    "minTier": 1,
+    "heal": 0,
+    "longest": 0.1
+  }
+}

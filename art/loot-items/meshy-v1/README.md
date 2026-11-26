@@ -45,3 +45,29 @@ pnpm exec tsx packages/art-tools/check-loot-pickups.ts
 ```
 
 To prepare original GLBs downloaded from the recorded Meshy tasks, place them in `work/loot-raw/<item-name>.glb` and run Blender 4.3 with `packages/art-tools/prepare-loot-pickups.py`. It writes the uniform-scale derivatives and transparent sprites. Original download hashes are retained; the temporary raw downloads may be discarded after successful preparation.
+
+## Game integration
+
+The 42 prepared models and transparent inventory icons are served unchanged from
+`apps/client/static/assets/loot-items/`. `loot-item-catalog.json` registers their
+names, stack limits, loot tiers, healing amounts and physical dimensions. Existing
+weapons, ammunition, tools and gathering resources retain their previous assets.
+
+Searchable containers add two tier-eligible pickups alongside existing starter
+supplies. Stock rotates each ten-minute restock period; trash uses the lowest tier.
+All additions are atomic: a full bag leaves the container available. Existing
+inventories, storage, dropped stacks and death drops use the same validated item
+registry, with no save reset or automatic grant.
+
+Select food or medicine in the inventory and press **USE** to restore health.
+Healthy or dead players cannot consume them. New armor, utilities, components and
+locks currently function as collectible, carryable and storable pickups; this
+integration does not add clothing equipment, access control or new crafting recipes.
+The existing axe/pickaxe and weapon systems remain unchanged.
+
+GLBs load only when held or dropped, share cached geometry/materials, and cap their
+runtime base-color texture at 512px for phones. Model proportions are preserved by
+uniform scaling. Diagnostics are exposed as `canvas.dataset.lootPickups`.
+
+Validation: `tests/loot-pickups.test.ts` checks source/runtime asset hashes, save and
+drop roundtrips, storage transfers, tier coverage, full-bag rollback and healing.
