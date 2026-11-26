@@ -18,7 +18,7 @@ export const RESOURCE_PARKS = [
   { x: 132, z: 146, width: 24, depth: 28, kind: "node-metal" },
   { x: -144, z: 20, width: 22, depth: 24, kind: "tree" },
   { x: 44, z: 16, width: 22, depth: 24, kind: "tree" },
-  { x: 42, z: 102, width: 20, depth: 24, kind: "tree" },
+  { x: 46, z: 102, width: 26, depth: 26, kind: "tree" },
 ] as const;
 export function inRect(
   p: { x: number; z: number },

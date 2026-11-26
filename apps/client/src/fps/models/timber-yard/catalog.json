@@ -1,0 +1,38 @@
+{
+  "timber-log-cradle": {
+    "width": 3.4,
+    "height": 1.7823,
+    "depth": 1.83313,
+    "uniformSourceScale": 3.4
+  },
+  "timber-plank-pallet": {
+    "width": 2.2,
+    "height": 1.2841,
+    "depth": 1.55276,
+    "uniformSourceScale": 2.2
+  },
+  "timber-forklift": {
+    "width": 1.4,
+    "height": 2.10475,
+    "depth": 3.06331,
+    "uniformSourceScale": 3.0633097869373516
+  },
+  "timber-saw-bench": {
+    "width": 1.91963,
+    "height": 1.3,
+    "depth": 0.87905,
+    "uniformSourceScale": 1.919632338295803
+  },
+  "timber-capture-terminal": {
+    "width": 1.19867,
+    "height": 2.7273,
+    "depth": 1.2,
+    "uniformSourceScale": 2.7273037762275276
+  },
+  "timber-shipping-container": {
+    "width": 5.80563,
+    "height": 2.43228,
+    "depth": 2.44,
+    "uniformSourceScale": 5.805625659997601
+  }
+}

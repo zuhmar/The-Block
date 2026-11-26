@@ -1,0 +1,1062 @@
+[
+  {
+    "x": -14.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -14.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -10.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -10.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -6.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -6.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -2.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -2.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 2.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 2.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 6.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 6.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 10.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 10.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -14.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -14.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -10.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -10.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -6.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -6.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 6.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 6.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 10.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 10.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 0.28,
+    "depth": 0.18,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 4.0,
+    "height": 2.2,
+    "depth": 0.12,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -14.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -14.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -6.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -6.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 6.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 6.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 10.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 10.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 14.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 14.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -14.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -14.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -6.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -6.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -3.0,
+    "width": 0.1800000000000001,
+    "height": 0.28,
+    "depth": 2.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -3.0,
+    "width": 0.12000000000000012,
+    "height": 2.2,
+    "depth": 2.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -1.5,
+    "width": 0.18000000000000005,
+    "height": 0.28,
+    "depth": 1.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -1.5,
+    "width": 0.12000000000000005,
+    "height": 2.2,
+    "depth": 1.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 3.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 3.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 7.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 7.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 11.0,
+    "width": 0.18000000000000024,
+    "height": 0.28,
+    "depth": 4.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 11.0,
+    "width": 0.12000000000000025,
+    "height": 2.2,
+    "depth": 4.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 14.0,
+    "width": 0.1800000000000001,
+    "height": 0.28,
+    "depth": 2.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 14.0,
+    "width": 0.12000000000000012,
+    "height": 2.2,
+    "depth": 2.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 15.5,
+    "width": 0.18000000000000005,
+    "height": 0.28,
+    "depth": 1.0,
+    "projectile": true,
+    "name": "concrete curb"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 15.5,
+    "width": 0.12000000000000005,
+    "height": 2.2,
+    "depth": 1.0,
+    "projectile": false,
+    "name": "fence movement screen"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -12.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -8.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -4.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -2.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 5.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 9.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 13.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 15.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -12.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -12.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -8.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -8.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -4.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 0.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 4.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 8.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 8.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 12.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 12.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -12.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -8.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 8.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 12.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.4,
+    "height": 2.35,
+    "depth": 0.4,
+    "projectile": true,
+    "name": "fence post"
+  },
+  {
+    "x": -4.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.45,
+    "height": 2.5,
+    "depth": 0.48,
+    "projectile": true,
+    "name": "gate pier"
+  },
+  {
+    "x": 4.0,
+    "y": 0.0,
+    "z": 16.0,
+    "width": 0.45,
+    "height": 2.5,
+    "depth": 0.48,
+    "projectile": true,
+    "name": "gate pier"
+  },
+  {
+    "x": -8.25,
+    "y": 0.08499999999999996,
+    "z": 15.58,
+    "width": 7.8,
+    "height": 2.15,
+    "depth": 0.22,
+    "projectile": true,
+    "name": "sliding leaf"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": 4.0,
+    "width": 0.5,
+    "height": 4.4,
+    "depth": 0.5,
+    "projectile": true,
+    "name": "truck portal post"
+  },
+  {
+    "x": 16.0,
+    "y": 0.0,
+    "z": -4.0,
+    "width": 0.5,
+    "height": 4.4,
+    "depth": 0.5,
+    "projectile": true,
+    "name": "truck portal post"
+  },
+  {
+    "x": 16.0,
+    "y": 4.140000000000001,
+    "z": 0.0,
+    "width": 0.3600000000000005,
+    "height": 0.36,
+    "depth": 8.25,
+    "projectile": true,
+    "name": "truck portal header"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": 1.0,
+    "width": 0.34,
+    "height": 2.4,
+    "depth": 0.34,
+    "projectile": true,
+    "name": "pedestrian post"
+  },
+  {
+    "x": -16.0,
+    "y": 0.0,
+    "z": -1.0,
+    "width": 0.34,
+    "height": 2.4,
+    "depth": 0.34,
+    "projectile": true,
+    "name": "pedestrian post"
+  },
+  {
+    "x": -15.16,
+    "y": 0.125,
+    "z": 0.84,
+    "width": 1.68,
+    "height": 2.05,
+    "depth": 0.14000000000000012,
+    "projectile": true,
+    "name": "pedestrian leaf"
+  },
+  {
+    "x": 6.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.16,
+    "height": 3.28,
+    "depth": 6.0,
+    "projectile": true,
+    "name": "shed side wall"
+  },
+  {
+    "x": 12.0,
+    "y": 0.0,
+    "z": -10.0,
+    "width": 0.16,
+    "height": 3.28,
+    "depth": 6.0,
+    "projectile": true,
+    "name": "shed side wall"
+  },
+  {
+    "x": 9.0,
+    "y": 0.0,
+    "z": -13.0,
+    "width": 6.0,
+    "height": 3.28,
+    "depth": 0.16,
+    "projectile": true,
+    "name": "shed back wall"
+  },
+  {
+    "x": 6.2,
+    "y": 0.0,
+    "z": -7.18,
+    "width": 0.28,
+    "height": 3.32,
+    "depth": 0.28,
+    "projectile": true,
+    "name": "front shed post"
+  },
+  {
+    "x": 11.8,
+    "y": 0.0,
+    "z": -7.18,
+    "width": 0.28,
+    "height": 3.32,
+    "depth": 0.28,
+    "projectile": true,
+    "name": "front shed post"
+  },
+  {
+    "x": 9.0,
+    "y": 3.055,
+    "z": -7.18,
+    "width": 5.8,
+    "height": 0.25,
+    "depth": 0.24,
+    "projectile": true,
+    "name": "shed lintel"
+  },
+  {
+    "x": -5.6,
+    "y": 0.0,
+    "z": 17.0,
+    "width": 2.0,
+    "height": 0.9,
+    "depth": 0.72,
+    "projectile": true,
+    "name": "concrete barrier"
+  },
+  {
+    "x": 5.6,
+    "y": 0.0,
+    "z": 17.0,
+    "width": 2.0,
+    "height": 0.9,
+    "depth": 0.72,
+    "projectile": true,
+    "name": "concrete barrier"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": -5.5,
+    "width": 0.7200000000000001,
+    "height": 0.9,
+    "depth": 2.0,
+    "projectile": true,
+    "name": "concrete barrier"
+  },
+  {
+    "x": 14.0,
+    "y": 0.0,
+    "z": 5.5,
+    "width": 0.7200000000000001,
+    "height": 0.9,
+    "depth": 2.0,
+    "projectile": true,
+    "name": "concrete barrier"
+  }
+]

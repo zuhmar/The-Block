@@ -827,5 +827,5 @@
       "scale": [1, 1, 1]
     }
   ],
-  "state": "Architecture models only; not placed into the playable world; Meshy props and capture gameplay are separate stages."
+  "state": "Integrated through runtime derivatives at city coordinates (46, 102). Source architecture remains unchanged; capture ownership is a separate multiplayer stage."
 }

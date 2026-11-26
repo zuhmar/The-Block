@@ -51,8 +51,11 @@ test("West Court appends six larger apartments without changing existing tenemen
       z: 102,
       name: "SOUTH TENEMENTS",
     });
-    assert.equal(LOOT.slice(oldLoot.length + 10).length, 6);
-    for (const c of LOOT.slice(oldLoot.length + 10)) {
+    assert.equal(
+      LOOT.slice(oldLoot.length + 10, oldLoot.length + 16).length,
+      6,
+    );
+    for (const c of LOOT.slice(oldLoot.length + 10, oldLoot.length + 16)) {
       assert.equal(
         buildingBlocked(c),
         false,

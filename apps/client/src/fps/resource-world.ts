@@ -1,3 +1,4 @@
+import { timberBlocked } from "./timber-yard-layout";
 import { COMPACT, parkSite, RESOURCE_PARKS } from "./compact-plan";
 import { buildingEnabled } from "./building-layout";
 import {
@@ -117,6 +118,7 @@ export class ResourceWorld {
   }
   private staticSite(p: Point, radius: number) {
     if (COMPACT.active && !parkSite(p, radius)) return false;
+    if (timberBlocked(p, 0, radius)) return false;
     if (blockedTerrain(p, radius + 1) || roadDistance(p) < 4.8 + radius)
       return false;
     for (const dx of [-radius, 0, radius])

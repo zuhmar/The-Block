@@ -1,3 +1,5 @@
+import { createTimberYard } from "./timber-yard-view";
+import { TIMBER_YARD } from "./timber-yard-layout";
 import {
   isCityApartments,
   apartmentDoors,
@@ -593,6 +595,28 @@ for (const ROAD of ROADS) {
     }
   }
 }
+// Painted crossings tie the new short blocks into the existing avenue grid.
+if (COMPACT.active)
+  for (const [x, z] of [
+    [88, 80],
+    [88, 124],
+    [46, 124],
+    [18, 102],
+  ]) {
+    for (const side of [-1, 1])
+      for (let stripe = -2; stripe <= 2; stripe++) {
+        box(
+          scene,
+          x + stripe * 0.9,
+          0.079,
+          z + side * 5.2,
+          0.5,
+          0.012,
+          1.4,
+          0xe8e3cd,
+        );
+      }
+  }
 // The prison's only road connection crosses the water channel.
 if (COMPACT.active) {
   for (const park of RESOURCE_PARKS)
@@ -614,6 +638,14 @@ if (COMPACT.active) {
       box(scene, x, 0.42, z, 0.15, 0.85, 0.15, 0x8b9791);
   }
 }
+const timberYard = createTimberYard();
+timberYard.root.visible = COMPACT.active;
+scene.add(timberYard.root);
+canvas.dataset.timberYard = JSON.stringify({
+  ...TIMBER_YARD,
+  loaded: timberYard.loaded,
+  instances: timberYard.instances,
+});
 const buildingModels = BUILDINGS.map((b, index) => {
   const model = loadBlenderBuilding(index, boxGeo, sign);
   model.root.position.set(b.x, 0, b.z);
@@ -746,6 +778,7 @@ const officeSign = sign("SOUTH HARBOR · PORT OFFICE", 3.4, 0.45);
 officeSign.position.set(-111, 2.9, COMPACT.active ? 141.19 : 201.19);
 scene.add(officeSign);
 const shotObstacles: THREE.Object3D[] = [
+  ...(COMPACT.active ? [timberYard.proxy] : []),
   jailGrounds.proxy,
   coast.surface,
   nature.cover,
@@ -3963,6 +3996,9 @@ function frame(now: number) {
     !COMPACT.active || Math.hypot(player.x, player.z + 124) < 155;
   harbor.root.visible =
     Math.hypot(player.x + 60, player.z - (COMPACT.active ? 174 : 234)) < 165;
+  timberYard.root.visible =
+    COMPACT.active &&
+    Math.hypot(player.x - TIMBER_YARD.x, player.z - TIMBER_YARD.z) < 120;
   northLab.root.visible =
     NORTH_LAB.enabled &&
     Math.hypot(player.x - NORTH_LAB.x, player.z - NORTH_LAB.z) < 170;

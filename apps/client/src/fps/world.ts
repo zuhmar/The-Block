@@ -1,3 +1,8 @@
+import {
+  timberBlocked,
+  timberSurface,
+  timberCeiling,
+} from "./timber-yard-layout";
 import { COMPACT, onCityLand, onJailBridge } from "./compact-plan";
 import { readSurvival, type SurvivalState } from "./survival-state";
 import {
@@ -478,6 +483,7 @@ export function blocked(
 ) {
   return (
     blockedTerrain(p) ||
+    timberBlocked(p, footHeight) ||
     jailGroundBlocked(p, footHeight) ||
     harborBlocked(p, footHeight) ||
     compoundBlocked(p, 0.32, footHeight) ||
@@ -629,6 +635,7 @@ export function placementReason(
         if (inTown(p) && !COMPACT.active)
           return "Build in the meadows outside towns and compounds";
         if (roadDistance(p) < 5) return "Keep roads and sidewalks clear";
+        if (timberBlocked(p, 0, 1)) return "Keep the lumberyard clear";
         if (blockedTerrain(p, 0.3)) return "Choose dry, level ground";
         if (resourceBlocked(p, 0, true, 0.6)) return "Keep clear of trees";
       }
@@ -748,6 +755,7 @@ export function platformTop(p: Omit<Piece, "id">, pieces: Piece[]) {
 }
 export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   let height = Math.max(
+    timberSurface(p, maxHeight),
     buildingSurface(p, maxHeight),
     jailGroundSurface(p, maxHeight),
     compoundSurface(p, maxHeight),
@@ -768,7 +776,11 @@ export function surfaceHeight(p: Point, pieces: Piece[], maxHeight = Infinity) {
   return height;
 }
 export function ceilingHeight(p: Point, pieces: Piece[], feet: number) {
-  let ceiling = Math.min(buildingCeiling(p, feet), jailGroundCeiling(p, feet));
+  let ceiling = Math.min(
+    timberCeiling(p, feet),
+    buildingCeiling(p, feet),
+    jailGroundCeiling(p, feet),
+  );
   for (const s of pieces)
     if (
       (s.kind === "floor" || s.kind === "storage") &&

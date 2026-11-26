@@ -1,6 +1,6 @@
 # Timber yard — Blender architecture kit
 
-Eleven individually authored, metre-scale modules based on `art/ai/pvp/timber-yard/reference.png`. The matching six textured Meshy props are available in [meshy-props](meshy-props/README.md). Both packs await placement in the playable map.
+Eleven individually authored, metre-scale modules based on `art/ai/pvp/timber-yard/reference.png`. The matching six textured Meshy props are available in [meshy-props](meshy-props/README.md). Both packs are integrated into the southern city block; see [integration notes](../../../docs/timber-yard-city-integration.md).
 
 | Module            | Dimensions / purpose                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------------------ |
@@ -22,4 +22,4 @@ All pieces retain unit scale. Meshes are authored to their actual dimensions rat
 
 Rebuild and validate with `pnpm assets:timber-yard-kit`. The validator loads every export in Three.js and checks dimensions, scale, connectors, open-wire gaps, animated gate clearance, shed access and roof removal. `checks.json` records the result.
 
-These models have not been placed into the playable map. This stage adds no capture logic, multiplayer ownership, resource changes or save migrations, and spends no Meshy credits.
+Runtime derivatives are placed in the playable map. The original Blender library remains unchanged. Capture ownership is a separate multiplayer stage; see the integration notes for collision, scale and runtime validation.

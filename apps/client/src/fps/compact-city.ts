@@ -1,3 +1,4 @@
+import { TIMBER_YARD } from "./timber-yard-layout";
 import { CITY_APARTMENTS } from "./city-apartments-layout";
 import {
   JAIL_KIT_TOWERS,
@@ -110,6 +111,12 @@ export function configureCompactCity() {
     else if (loot.x < -125 && loot.z > -30 && loot.z < 32) d = shifts.west;
     shift(loot, d);
   }
+  // Keep the harbor weapon case off the southern avenue without changing its saved index.
+  for (const l of LOOT)
+    if (Math.abs(l.z - 168) < 1.5) {
+      remember(l);
+      l.z = 169.4;
+    }
   // Keep this container's saved cooldown index; move it clear of the new shelves.
   remember(LOOT[5]);
   LOOT[5].x = BUILDINGS[0].x - 3.2;
@@ -285,15 +292,32 @@ export function configureCompactCity() {
     ],
     ...[-128, -48, 18, 154].map((x) => [
       { x, z: -74 },
-      { x, z: 168 },
+      { x, z: 164 },
     ]),
-    ...[-74, 40, 80, 124, 168].map((z) => [
+    ...[-74, 40, 80, 124, 164].map((z) => [
       { x: -152, z },
       { x: 154, z },
     ]),
     [
       { x: -128, z: -33 },
       { x: -48, z: -33 },
+    ],
+    [
+      { x: 46, z: 118 },
+      { x: 46, z: 124 },
+    ],
+    [
+      { x: 62, z: 102 },
+      { x: 66, z: 102 },
+      { x: 66, z: 124 },
+    ],
+    [
+      { x: 30, z: 102 },
+      { x: 18, z: 102 },
+    ],
+    [
+      { x: 88, z: 80 },
+      { x: 88, z: 124 },
     ],
     CITY_RING,
     [
@@ -379,10 +403,50 @@ export function configureCompactCity() {
       daily: size === 16 ? 25 : 60,
     });
   }
+  // Authored street-facing infill. Append after existing loot to retain saved cooldown IDs.
+  let added = 0;
+  for (const [type, x, z] of [
+    ["tenement", -16, -60],
+    ["flats", -2, -60],
+    ["district-offices", 0, -48],
+    ["district-duplex", -144, -10],
+    ["tenement", -36, 2],
+    ["flats", -66, 6],
+    ["district-offices", -18, 28],
+    ["district-duplex", 6, 52],
+    ["tenement", 82, 52],
+    ["flats", 6, 64],
+    ["district-offices", -114, 68],
+    ["district-duplex", -98, 68],
+    ["tenement", -84, 68],
+    ["flats", -70, 68],
+  ] as const) {
+    const source = BUILDINGS.findIndex((b) => b.type === type),
+      b = BUILDINGS[source];
+    copyCityBuilding(source, x, z, `CITY BLOCK ${++added}`);
+    LOOT.push({
+      x,
+      z: z + (frontOf(b) > 0 ? -1 : 1),
+      width: 1.1,
+      depth: 0.85,
+      height: 0.9,
+      tier: 2,
+      name: "City apartment supplies",
+      color: 0x728b76,
+    });
+  }
   TREES.splice(0);
   for (const park of RESOURCE_PARKS.filter((p) => p.kind === "tree"))
-    for (const dx of [-6, 0, 6])
-      for (const dz of [-7, 7])
+    for (const dx of park.x === TIMBER_YARD.x && park.z === TIMBER_YARD.z
+      ? [-6, -2, 4]
+      : [-6, 0, 6])
+      for (const dz of park.x === TIMBER_YARD.x && park.z === TIMBER_YARD.z
+        ? [-7, 7]
+        : [
+            -Math.min(7, park.depth / 2 - 3),
+            0,
+            Math.min(7, park.depth / 2 - 3),
+          ])
         TREES.push({
           x: park.x + dx,
           z: park.z + dz,
