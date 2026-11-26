@@ -1,0 +1,161 @@
+{
+  "purpose": "Street Survival / Block Mart game props",
+  "source": "Separate AI-generated sprites interpreted directly from approved original Block Mart concept artwork; not derived from existing Blender prop renders",
+  "originalConcept": "../references/block-mart.png",
+  "originalConceptSha256": "e846895966d1d248c32c3c975d3197761a7052d639130a3877d36268c15cbd1b",
+  "geometryModel": "meshy-t2",
+  "textureModel": "meshy-n1",
+  "gameIntegrated": false,
+  "modelsGeneratedFromCorrectedReferences": false,
+  "budget": {
+    "originalEstimate": 135,
+    "supersededDraftCreditsSpent": 75,
+    "correctedSetCredits": 135,
+    "totalIncludingDrafts": 210,
+    "additionalBeyondOriginalEstimate": 75,
+    "awaitingApprovalForPaidReruns": true
+  },
+  "assets": [
+    {
+      "name": "retail-shelf",
+      "reference": "image-references/retail-shelf.png",
+      "referenceSha256": "cb7b112f6b4dc64a94d0b7b47e6e1fa454fa7a769916d069ea22702e55016a68",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [156, 56, 1100, 1225],
+      "targetTriangles": 4000,
+      "status": "reference_ready"
+    },
+    {
+      "name": "checkout-counter",
+      "reference": "image-references/checkout-counter.png",
+      "referenceSha256": "2b5b33c4c6c87037fab9fae0ed8411e84ed78763e9afff3a1486ac0dcfbcca1a",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [47, 283, 1214, 1082],
+      "targetTriangles": 3000,
+      "status": "reference_ready"
+    },
+    {
+      "name": "refrigerator",
+      "reference": "image-references/refrigerator.png",
+      "referenceSha256": "daa072cba82faa00983b7ff39db5a49e79e4c7a104405a42208f3789ab22b525",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [109, 59, 1145, 1234],
+      "targetTriangles": 3000,
+      "status": "reference_ready"
+    },
+    {
+      "name": "stock-boxes",
+      "reference": "image-references/stock-boxes.png",
+      "referenceSha256": "744e29c07a0c6d8889e31c3c36ce85ab2762c70b2d63d69b6574be61a547f6db",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [194, 82, 1054, 1185],
+      "targetTriangles": 1600,
+      "status": "reference_ready"
+    },
+    {
+      "name": "roof-ac",
+      "reference": "image-references/roof-ac.png",
+      "referenceSha256": "411e101c1bc75423d0aaacecb09fa90ecbdf1a09b5202d7a4b2ecaae9017ad4d",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [82, 204, 1171, 1119],
+      "targetTriangles": 1600,
+      "status": "reference_ready"
+    },
+    {
+      "name": "roof-vent",
+      "reference": "image-references/roof-vent.png",
+      "referenceSha256": "aaef72e7ceb2fffee35d04f552884e98efb97fecced395188406ef9e13ec6b5e",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [173, 78, 1073, 1199],
+      "targetTriangles": 1000,
+      "status": "reference_ready"
+    },
+    {
+      "name": "exterior-light",
+      "reference": "image-references/exterior-light.png",
+      "referenceSha256": "ef2d4eb8910d83d9785fd3ff9bc5438270819547747268927e6065b0930178a1",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [93, 171, 1183, 1064],
+      "targetTriangles": 800,
+      "status": "reference_ready"
+    },
+    {
+      "name": "security-camera",
+      "reference": "image-references/security-camera.png",
+      "referenceSha256": "39944808d1c8f73f3fd98e92fb8fc68a7a85901a7a57bce6b1dc0e108399b122",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [0, 255],
+      "visibleBounds": [123, 167, 1129, 1096],
+      "targetTriangles": 800,
+      "status": "reference_ready"
+    },
+    {
+      "name": "rain-downpipe",
+      "reference": "image-references/rain-downpipe.png",
+      "referenceSha256": "40c618c366b1cafb8a7009a7c8094ea970d56d8637ad5500ff7a75b4d5f41491",
+      "width": 887,
+      "height": 1774,
+      "alphaRange": [0, 255],
+      "visibleBounds": [340, 34, 572, 1755],
+      "targetTriangles": 600,
+      "status": "reference_ready"
+    }
+  ],
+  "supersededDrafts": [
+    {
+      "name": "retail-shelf",
+      "taskId": "01a218df-19da-75dc-bd26-04de05a00cc4",
+      "taskType": "image-to-3d",
+      "requestId": "25f5d47c-1e92-4ff8-aa1e-3ecdacbb15a1",
+      "status": "SUCCEEDED",
+      "usedAsCorrectedModel": false
+    },
+    {
+      "name": "checkout-counter",
+      "taskId": "01a218df-51aa-7792-a28c-533bcced83ee",
+      "taskType": "image-to-3d",
+      "requestId": "23e48477-c9bc-4535-991f-99e1251c1c15",
+      "status": "SUCCEEDED",
+      "usedAsCorrectedModel": false
+    },
+    {
+      "name": "refrigerator",
+      "taskId": "01a218df-9994-7356-97d9-a1cbddbfbab3",
+      "taskType": "image-to-3d",
+      "requestId": "dc13b881-9ff9-4be8-a17c-f49a728bff48",
+      "status": "SUCCEEDED",
+      "usedAsCorrectedModel": false
+    },
+    {
+      "name": "stock-boxes",
+      "taskId": "01a218e0-1644-711a-b445-1a3050635d6f",
+      "taskType": "image-to-3d",
+      "requestId": "6353c155-1b64-4f01-9cdc-5de05d799f59",
+      "status": "SUCCEEDED",
+      "usedAsCorrectedModel": false
+    },
+    {
+      "name": "roof-ac",
+      "taskId": "01a218e0-6ea5-7097-b51a-af2b26d21fb4",
+      "taskType": "image-to-3d",
+      "requestId": "ef4f45d1-cbcd-4ad9-890c-2afe758a3622",
+      "status": "SUCCEEDED",
+      "usedAsCorrectedModel": false
+    }
+  ]
+}
