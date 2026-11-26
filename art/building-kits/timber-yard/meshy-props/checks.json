@@ -1,0 +1,104 @@
+{
+  "props": [
+    {
+      "name": "timber-log-cradle",
+      "triangles": 5694,
+      "vertices": 4960,
+      "bytes": 3767320,
+      "sha256": "3b0f9d7481ead017d7de8552a682cdda73bd2ba767c2fc91d4f20455674cb653",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "6bc57c0ae943777d7f77537a84487eadeb5e2b1a691926d763c3b3632a83990a"
+    },
+    {
+      "name": "timber-plank-pallet",
+      "triangles": 4005,
+      "vertices": 3472,
+      "bytes": 3022748,
+      "sha256": "4ae81b53639b585bb40461a51e7eb0d5b2d6356ed9f06b7c5cd2d1660531ce5c",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "9111b7960ccc86247d870046fb0685f7e2fe2f1dbbbc0039949e60b2f23893fc"
+    },
+    {
+      "name": "timber-forklift",
+      "triangles": 9026,
+      "vertices": 7250,
+      "bytes": 3628360,
+      "sha256": "f3f9a32fda19c74c6bef5e0fe39d249578fb94ede353a1032d5e725772edcd4c",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "761607500b35c796ecfd43b1452a05108a878d4c94a9a5bb401788506e5e67c2"
+    },
+    {
+      "name": "timber-saw-bench",
+      "triangles": 6015,
+      "vertices": 5303,
+      "bytes": 3996056,
+      "sha256": "48e0b9a0e9d71cc30d595ee34b0f3232e917b9b1466c847b7d5afc81e2785100",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "7a7c72348cafc3a029ddcf7824ff9a1681f413d66b17faabc66629ac0954326d"
+    },
+    {
+      "name": "timber-capture-terminal",
+      "triangles": 6102,
+      "vertices": 4945,
+      "bytes": 3658728,
+      "sha256": "4546c41741464268aa78443544f52e1d5ad4de475e113a206060ec78c62f2b43",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "78637e0d6caf179b49b879af3f43956fc87f486b753a4150acbb8936b03c6ccb"
+    },
+    {
+      "name": "timber-shipping-container",
+      "triangles": 4819,
+      "vertices": 4698,
+      "bytes": 3764796,
+      "sha256": "957c596db510d280fd2c54d819eb886e932e3114e52fc1c952f2851fff3986c8",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "254f3319d918b9ad253e7e9ab336c4016e8a8f9710a4bfccfd8e7ae45348c5e2"
+    }
+  ],
+  "totalTriangles": 35661,
+  "totalModelBytes": 21838008,
+  "allSelfContained": true,
+  "scope": "Static GLB structure, embedded image decoding and polygon budgets; this does not place models in the game."
+}

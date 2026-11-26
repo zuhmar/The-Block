@@ -1,0 +1,225 @@
+{
+  "set": "Timber yard Meshy props",
+  "purpose": "Separate low-poly textured game props based on the approved timber-yard concept",
+  "geometryModel": "meshy-t2",
+  "textureModel": "meshy-n1",
+  "balanceBefore": 1403,
+  "estimatedCredits": 144,
+  "props": [
+    {
+      "name": "timber-log-cradle",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict the stacked timber log bundle in a teal steel storage cradle with these details. Eight to ten round cut honey-brown logs, readable light circular cut ends with simple wood rings, dark brown bark, neatly layered into a stable stack. Two teal steel cradle frames with upright side posts and low structural feet hold the logs. Full logs visible, no scattered loose logs or floor platform.",
+      "targetPolycount": 6000,
+      "suggestedSizeMetres": [3.4, 2, 4.5],
+      "referenceRequestId": "d2c266e9-0c78-4fc1-9ef7-ea0d410528bb",
+      "modelRequestId": "14a27cd4-cc49-4c17-b435-61e32254a241",
+      "referenceTaskId": "01a21982-dfd7-7685-99e0-32bac2d0912c",
+      "modelTaskId": "01a21984-1a19-752b-a489-ae16ed9fa7b0",
+      "referencePath": "references/timber-log-cradle.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [1, 0.5242049992084503, 0.5391570031642914],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "6bc57c0ae943777d7f77537a84487eadeb5e2b1a691926d763c3b3632a83990a",
+      "modelPath": "models/timber-log-cradle.glb",
+      "previewPath": "previews/timber-log-cradle.png",
+      "checks": {
+        "name": "timber-log-cradle",
+        "triangles": 5694,
+        "vertices": 4960,
+        "bytes": 3767320,
+        "sha256": "3b0f9d7481ead017d7de8552a682cdda73bd2ba767c2fc91d4f20455674cb653",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "6bc57c0ae943777d7f77537a84487eadeb5e2b1a691926d763c3b3632a83990a"
+      }
+    },
+    {
+      "name": "timber-plank-pallet",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict one strapped stack of rectangular sawn timber planks resting on a simple wooden shipping pallet, with these details. Warm honey brown timber, clear layered plank ends, two dark charcoal restraint straps, fork pockets under the pallet, flat top. One compact complete palletized stack only, no round logs.",
+      "targetPolycount": 4000,
+      "suggestedSizeMetres": [2.2, 1.3, 2.2],
+      "referenceRequestId": "d67d9d0a-a628-4a0d-a444-c0e26bf16b1b",
+      "modelRequestId": "6d11880e-767d-41da-af30-658214d837da",
+      "referenceTaskId": "01a21982-ee83-734f-8cbf-5c0c34f6b347",
+      "modelTaskId": "01a21984-2ad0-7433-849e-437c488200de",
+      "referencePath": "references/timber-plank-pallet.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [1, 0.5836810171604156, 0.7057989835739136],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "9111b7960ccc86247d870046fb0685f7e2fe2f1dbbbc0039949e60b2f23893fc",
+      "modelPath": "models/timber-plank-pallet.glb",
+      "previewPath": "previews/timber-plank-pallet.png",
+      "checks": {
+        "name": "timber-plank-pallet",
+        "triangles": 4005,
+        "vertices": 3472,
+        "bytes": 3022748,
+        "sha256": "4ae81b53639b585bb40461a51e7eb0d5b2d6356ed9f06b7c5cd2d1660531ce5c",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "9111b7960ccc86247d870046fb0685f7e2fe2f1dbbbc0039949e60b2f23893fc"
+      }
+    },
+    {
+      "name": "timber-forklift",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict the small yellow industrial forklift with these details. A compact rounded yellow body, charcoal overhead safety cage with visibly open sides, black seat and steering wheel, four dark rubber tires, a vertical lifting mast and two separate straight steel forks extending forward at ground height. Retain real forklift proportions and clear openings, no driver, no load on the forks, no warehouse scenery.",
+      "targetPolycount": 9000,
+      "suggestedSizeMetres": [1.4, 2.5, 3.5],
+      "referenceRequestId": "36c3e71f-b1a9-487f-ac4f-4b24f5d86902",
+      "modelRequestId": "a6c07587-ee75-4b52-aa3b-29e119155807",
+      "referenceTaskId": "01a21982-faf3-71fc-ac21-90c2995804a1",
+      "modelTaskId": "01a21984-3b0f-75a0-83c8-29e4917d1f5d",
+      "referencePath": "references/timber-forklift.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [1, 0.6870850026607513, 0.4570219963788986],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "761607500b35c796ecfd43b1452a05108a878d4c94a9a5bb401788506e5e67c2",
+      "modelPath": "models/timber-forklift.glb",
+      "previewPath": "previews/timber-forklift.png",
+      "checks": {
+        "name": "timber-forklift",
+        "triangles": 9026,
+        "vertices": 7250,
+        "bytes": 3628360,
+        "sha256": "f3f9a32fda19c74c6bef5e0fe39d249578fb94ede353a1032d5e725772edcd4c",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "761607500b35c796ecfd43b1452a05108a878d4c94a9a5bb401788506e5e67c2"
+      }
+    },
+    {
+      "name": "timber-saw-bench",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict the saw workbench inside the open-front shed with these details. A complete freestanding teal industrial circular saw table, a sturdy rectangular work surface on four teal legs, visible silver circular saw blade with a rounded yellow safety guard at one end, rollers along the feed table and simple charcoal motor housing below. Include only this working machine and its fixed frame, no shed, no surrounding timber stacks, no loose planks, no wood-shaving ground patch.",
+      "targetPolycount": 6000,
+      "suggestedSizeMetres": [2.7, 1.3, 1.2],
+      "referenceRequestId": "38ec91df-8006-4d4d-992d-92ac5375480c",
+      "modelRequestId": "7cece791-bd4a-446e-9b94-1ce68bf1d187",
+      "referenceTaskId": "01a21983-09d5-74b4-8dc8-a850923c7612",
+      "modelTaskId": "01a21984-503d-7752-be34-a354d2c151b5",
+      "referencePath": "references/timber-saw-bench.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [1, 0.6772130131721497, 0.4579259902238846],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "7a7c72348cafc3a029ddcf7824ff9a1681f413d66b17faabc66629ac0954326d",
+      "modelPath": "models/timber-saw-bench.glb",
+      "previewPath": "previews/timber-saw-bench.png",
+      "checks": {
+        "name": "timber-saw-bench",
+        "triangles": 6015,
+        "vertices": 5303,
+        "bytes": 3996056,
+        "sha256": "48e0b9a0e9d71cc30d595ee34b0f3232e917b9b1466c847b7d5afc81e2785100",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "7a7c72348cafc3a029ddcf7824ff9a1681f413d66b17faabc66629ac0954326d"
+      }
+    },
+    {
+      "name": "timber-capture-terminal",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict the central capture-point control terminal with these details. A stout cream and muted-teal industrial console with slanted glowing cyan screen, chunky physical buttons, dark access panels, low built-in yellow corner guards and an amber beacon on top. Attached behind it is a slender charcoal flag mast with one small teal cloth flag. Console, beacon and mast are a single standalone asset. Keep the base compact and structural, no painted capture circle, no ground slab, no text on the screen.",
+      "targetPolycount": 6500,
+      "suggestedSizeMetres": [1.4, 3, 1.2],
+      "referenceRequestId": "2518f59d-c691-439a-95cf-af8b88cc3bf4",
+      "modelRequestId": "b421da55-e54b-4917-b006-33c883730de0",
+      "referenceTaskId": "01a21983-1e1d-76d2-9dfd-9396e4154919",
+      "modelTaskId": "01a21984-cee2-718a-a643-c8d8ed51797a",
+      "referencePath": "references/timber-capture-terminal.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [0.43950699269771576, 1, 0.43999500572681427],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "78637e0d6caf179b49b879af3f43956fc87f486b753a4150acbb8936b03c6ccb",
+      "modelPath": "models/timber-capture-terminal.glb",
+      "previewPath": "previews/timber-capture-terminal.png",
+      "checks": {
+        "name": "timber-capture-terminal",
+        "triangles": 6102,
+        "vertices": 4945,
+        "bytes": 3658728,
+        "sha256": "4546c41741464268aa78443544f52e1d5ad4de475e113a206060ec78c62f2b43",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "78637e0d6caf179b49b879af3f43956fc87f486b753a4150acbb8936b03c6ccb"
+      }
+    },
+    {
+      "name": "timber-shipping-container",
+      "prompt": "Create ONE standalone game-prop reference for the Street Survival timber yard. Use flat glossy cartoon style, clean bevelled shapes, controlled highlights, honey brown timber, muted teal industrial metal, cream accents and charcoal hardware. Show the full object in a clear elevated front three-quarter view, unobstructed with comfortable margins, on a plain pale gray background. The picture is of the prop itself, not the whole yard. No yard ground slab, no terrain patch, no scenery, no extra objects, no people, no text, no logos, no collage, no cut off parts. Depict the closed teal shipping container with these details as one standalone 20-foot industrial cargo container. Correct long rectangular proportions, rounded edges, evenly spaced vertical corrugated metal panels, strong corner castings, two closed cargo doors at one short end with charcoal locking rods and metal hinges. Continuous roof and floor, no interior contents, no labels, no logos, no graffiti, no concrete ground platform.",
+      "targetPolycount": 5000,
+      "suggestedSizeMetres": [6.1, 2.59, 2.44],
+      "referenceRequestId": "3f47d9da-5a0f-4770-89a7-dc1ec5f16b94",
+      "modelRequestId": "21d9060b-925f-43e5-9c52-647beabdff34",
+      "referenceTaskId": "01a21983-2c58-767f-b6ad-4296ac33f285",
+      "modelTaskId": "01a21984-dee3-70ec-a4b0-fc6c822fb910",
+      "referencePath": "references/timber-shipping-container.png",
+      "status": "SUCCEEDED",
+      "modelType": "smart-topology",
+      "nativeBounds": [1, 0.418953001499176, 0.4202819913625717],
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "254f3319d918b9ad253e7e9ab336c4016e8a8f9710a4bfccfd8e7ae45348c5e2",
+      "modelPath": "models/timber-shipping-container.glb",
+      "previewPath": "previews/timber-shipping-container.png",
+      "checks": {
+        "name": "timber-shipping-container",
+        "triangles": 4819,
+        "vertices": 4698,
+        "bytes": 3764796,
+        "sha256": "957c596db510d280fd2c54d819eb886e932e3114e52fc1c952f2851fff3986c8",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "254f3319d918b9ad253e7e9ab336c4016e8a8f9710a4bfccfd8e7ae45348c5e2"
+      }
+    }
+  ],
+  "referenceGenerationMethod": "Meshy text-to-image descriptions; original concept retained locally",
+  "blockedConceptUpload": {
+    "requestId": "3566d290-cb6d-4efa-9de7-32dd08f6467f",
+    "reason": "Automatic approval review rejected external upload of the local concept image; no Meshy task created."
+  },
+  "balanceAfter": 1259,
+  "actualCreditsSpent": 144,
+  "rejectedUploadChargedCredits": 0,
+  "designReference": "art/ai/pvp/timber-yard/reference.png",
+  "designReferenceSha256": "4418873d97b94ad1c6f0ab2b33bf47110560e719f79753179706297a3d15a9d3",
+  "sourceReferencesVerified": 6
+}

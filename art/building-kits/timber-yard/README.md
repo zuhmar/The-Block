@@ -1,6 +1,6 @@
 # Timber yard — Blender architecture kit
 
-Eleven individually authored, metre-scale modules based on `art/ai/pvp/timber-yard/reference.png`. This is the architecture stage: the logs, plank piles, forklift, saw machinery and capture terminal are reserved for the subsequent Meshy stage.
+Eleven individually authored, metre-scale modules based on `art/ai/pvp/timber-yard/reference.png`. The matching six textured Meshy props are available in [meshy-props](meshy-props/README.md). Both packs await placement in the playable map.
 
 | Module            | Dimensions / purpose                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------------------ |
