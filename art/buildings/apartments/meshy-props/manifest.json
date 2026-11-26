@@ -1,0 +1,287 @@
+{
+  "set": "West Court apartment props",
+  "style": "Street Survival flat glossy cartoon",
+  "purpose": "Textured low-poly game props generated from separate reference images",
+  "estimatedCredits": 192,
+  "balanceBefore": 1595,
+  "geometryModel": "meshy-t2",
+  "textureModel": "meshy-n1",
+  "props": [
+    {
+      "name": "apartment-bed",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. A sturdy modest apartment bed, warm honey brown wooden frame and headboard, cream mattress, two cream pillows and a neatly tucked muted teal quilt. Simple low wooden feet. The bed and its bedding form one furniture asset. No bedside table.",
+      "targetPolycount": 5000,
+      "suggestedSizeMetres": [1.5, 0.85, 2.3],
+      "referenceRequestId": "f7de459c-9900-4179-accc-66a6987d5bd8",
+      "modelRequestId": "0a91e445-3bf1-411c-b627-82db51dfa87c",
+      "referenceTaskId": "01a21954-14ca-72ea-b377-d15cff855a83",
+      "modelTaskId": "01a21955-a479-7465-81c3-91d10bb2c0b0",
+      "referencePath": "references/apartment-bed.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [0.7593289911746979, 0.4728260040283203, 1],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "e89a0b0a15d279d9185f0f3fa8a694d60f893ee9e2ba5824f0eefff2182b38a3",
+      "modelPath": "models/apartment-bed.glb",
+      "previewPath": "previews/apartment-bed.png",
+      "checks": {
+        "name": "apartment-bed",
+        "triangles": 5310,
+        "vertices": 3800,
+        "bytes": 2742080,
+        "sha256": "7600a48e9044025b99584f77a6d50b68e75f9bf57bdb26fc06f228eca3cd7db2",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "e89a0b0a15d279d9185f0f3fa8a694d60f893ee9e2ba5824f0eefff2182b38a3"
+      }
+    },
+    {
+      "name": "apartment-sofa",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. A comfortable wide two-seat apartment sofa with muted teal upholstery, two thick seat cushions, rounded padded armrests, blue teal back cushions and four short dark feet. Straight sofa, no chaise, no loose throw pillows or table.",
+      "targetPolycount": 5000,
+      "suggestedSizeMetres": [2.4, 1.05, 0.85],
+      "referenceRequestId": "5f7c0c2d-cf4d-4e41-8819-f72e8476c381",
+      "modelRequestId": "f7c140de-2bd1-47a7-8e99-72d3555a4b4b",
+      "referenceTaskId": "01a21954-63d2-72d7-bb46-7fd0f33353a2",
+      "modelTaskId": "01a21955-b50c-7423-ad89-c2965ffca760",
+      "referencePath": "references/apartment-sofa.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [1, 0.4945800006389618, 0.5371130108833313],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "4ff3133b991a93d00b12252d71c514e6c6c0ae49599a2978ab81c8ccd7f3d499",
+      "modelPath": "models/apartment-sofa.glb",
+      "previewPath": "previews/apartment-sofa.png",
+      "checks": {
+        "name": "apartment-sofa",
+        "triangles": 5326,
+        "vertices": 3510,
+        "bytes": 2934444,
+        "sha256": "8aa8ff9a1689651d256cd23b92f8ad59dead8ba558fc98680d71d1f9ed33755a",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "4ff3133b991a93d00b12252d71c514e6c6c0ae49599a2978ab81c8ccd7f3d499"
+      }
+    },
+    {
+      "name": "apartment-wardrobe",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. A tall narrow freestanding warm honey brown wooden apartment wardrobe with two full-height closed paneled doors, a small dark plinth, and two charcoal vertical pull handles. Front and right side visible, solid closed back. No mirror.",
+      "targetPolycount": 3500,
+      "suggestedSizeMetres": [0.8, 1.9, 1],
+      "referenceRequestId": "425f7aaa-3586-43dd-9ebd-901f8951afcd",
+      "modelRequestId": "f56af836-14f0-4eb6-a188-4b10d26791f6",
+      "referenceTaskId": "01a21954-72aa-717b-88d0-432c0e19ed2a",
+      "modelTaskId": "01a21955-c4cf-758a-a91d-2b21a592dce0",
+      "referencePath": "references/apartment-wardrobe.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [0.3766399919986725, 1, 0.26356200873851776],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "15b6eb9b64b382505bd65159aef234c959fc021ed86f453a3bcf180d3aa77824",
+      "modelPath": "models/apartment-wardrobe.glb",
+      "previewPath": "previews/apartment-wardrobe.png",
+      "checks": {
+        "name": "apartment-wardrobe",
+        "triangles": 3743,
+        "vertices": 2825,
+        "bytes": 2520200,
+        "sha256": "012fa0ab5534e0ef0a207c2925b32eb1833e4a981408d6b8ec43ae1c1760cea9",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "15b6eb9b64b382505bd65159aef234c959fc021ed86f453a3bcf180d3aa77824"
+      }
+    },
+    {
+      "name": "apartment-kitchen",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. One straight freestanding apartment kitchen base-counter unit, four cabinets with muted teal paneled fronts and charcoal handles, continuous cream countertop, an inset metal sink with curved faucet on the left, a simple charcoal four-burner electric hob on the right. Approximately four times as wide as high. Closed cabinet backs and sides. No wall cabinets, no wall, no backsplash, no oven hood, no refrigerator.",
+      "targetPolycount": 6500,
+      "suggestedSizeMetres": [4.2, 1.35, 0.8],
+      "referenceRequestId": "fbd99d26-d91b-43a7-9313-bc78c334eef2",
+      "modelRequestId": "4ea54df7-36ec-4987-954d-baaf146c183f",
+      "referenceTaskId": "01a21954-7f3e-77ef-afd8-88be0386ea1e",
+      "modelTaskId": "01a21955-d50e-7719-a856-6211074790f7",
+      "referencePath": "references/apartment-kitchen.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [1, 0.5436500012874603, 0.340037003159523],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "c8fe30c17c2d419024725910a56a05c5c306ebf31facd9ef3e835c457864c413",
+      "modelPath": "models/apartment-kitchen.glb",
+      "previewPath": "previews/apartment-kitchen.png",
+      "checks": {
+        "name": "apartment-kitchen",
+        "triangles": 6276,
+        "vertices": 4896,
+        "bytes": 2605376,
+        "sha256": "f60d1168955c81097cd90d836e19d12aa87ff9a26a341b36bd1d9b9bb9f973f6",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "c8fe30c17c2d419024725910a56a05c5c306ebf31facd9ef3e835c457864c413"
+      }
+    },
+    {
+      "name": "apartment-table",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. A small rectangular apartment dining table, warm honey brown wooden top with softly beveled corners and four sturdy straight wooden legs, subtle cream trim under the tabletop. Plain empty tabletop. Table only, no chairs, no tableware.",
+      "targetPolycount": 2500,
+      "suggestedSizeMetres": [1.2, 0.95, 0.8],
+      "referenceRequestId": "a7307a96-e07a-4acc-94d5-7463fdaabca2",
+      "modelRequestId": "d11d664b-e6ba-4f51-ad87-b87e527d288b",
+      "referenceTaskId": "01a21954-8e58-77e1-b186-bf16c4c72972",
+      "modelTaskId": "01a21955-e5e5-705f-930a-afaca7977ef4",
+      "referencePath": "references/apartment-table.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [1, 0.6676360070705414, 0.6622160077095032],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "357f4b13548c796a76196588c1b2200b00010715b13497895c44775995b63877",
+      "modelPath": "models/apartment-table.glb",
+      "previewPath": "previews/apartment-table.png",
+      "checks": {
+        "name": "apartment-table",
+        "triangles": 2372,
+        "vertices": 1658,
+        "bytes": 1997776,
+        "sha256": "ea473cd866a510554c2c84d514f42806b44cc232dea750a8b9b31a529f999dd1",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "357f4b13548c796a76196588c1b2200b00010715b13497895c44775995b63877"
+      }
+    },
+    {
+      "name": "apartment-chair",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. One simple apartment dining chair, warm honey brown wooden frame, four sturdy legs, rounded wooden backrest with two wide slats, and a muted teal padded seat. Chair only, no table. All four legs clearly formed.",
+      "targetPolycount": 2500,
+      "suggestedSizeMetres": [0.48, 0.95, 0.5],
+      "referenceRequestId": "3eeb1f75-29b2-43c2-80e8-6e353a526998",
+      "modelRequestId": "b3e7551e-cd60-47eb-b8f9-b2dabb275143",
+      "referenceTaskId": "01a21954-9b05-741a-b3af-bf0ca6e060ec",
+      "modelTaskId": "01a21956-577d-7315-bd84-9a1d5f1495ff",
+      "referencePath": "references/apartment-chair.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [0.542156994342804, 1, 0.5891439914703369],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "108f5409dccf392749db49f9c3da6f17250b9be8009ae128cedbca115a911a35",
+      "modelPath": "models/apartment-chair.glb",
+      "previewPath": "previews/apartment-chair.png",
+      "checks": {
+        "name": "apartment-chair",
+        "triangles": 2650,
+        "vertices": 1939,
+        "bytes": 2468976,
+        "sha256": "04814adf1d07056b755664cefd2a9aa031672785790abfa182aa1986399834b1",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "108f5409dccf392749db49f9c3da6f17250b9be8009ae128cedbca115a911a35"
+      }
+    },
+    {
+      "name": "apartment-fridge",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. A modest freestanding cream apartment refrigerator with a small separate freezer door on top and large closed fridge door below, rounded corners, simple dark charcoal vertical handles and a small charcoal bottom grille. Plain closed doors with no logos, no magnets, no lettering. Refrigerator only.",
+      "targetPolycount": 3000,
+      "suggestedSizeMetres": [0.72, 1.8, 0.72],
+      "referenceRequestId": "408f546f-3ba9-4f6b-be4a-eec9e40afa49",
+      "modelRequestId": "0b53f816-bf43-462f-9204-0776d5eea9db",
+      "referenceTaskId": "01a21954-abfe-76ec-aeb6-7c644541d52c",
+      "modelTaskId": "01a21956-67e7-7450-b617-cbce647824ec",
+      "referencePath": "references/apartment-fridge.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [0.45540599524974823, 1, 0.43766801059246063],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "dccfb97e503115720bed31a3b92f2fdbe69f8d1a050a2644c9d7d67876fa46fb",
+      "modelPath": "models/apartment-fridge.glb",
+      "previewPath": "previews/apartment-fridge.png",
+      "checks": {
+        "name": "apartment-fridge",
+        "triangles": 3254,
+        "vertices": 2199,
+        "bytes": 1560148,
+        "sha256": "de1ce6a3cff62aac08427f843e526073aa44ca725c3fff99f27e0fe0a77ccd2e",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "dccfb97e503115720bed31a3b92f2fdbe69f8d1a050a2644c9d7d67876fa46fb"
+      }
+    },
+    {
+      "name": "apartment-tv-stand",
+      "prompt": "Street Survival game furniture reference. Flat glossy cartoon style, clean bold simplified silhouette, rounded bevelled edges, restrained smooth cel shading, controlled glossy highlights, no photorealism, no distressed texture. Cohesive palette of muted teal upholstery or cabinetry, warm honey brown wood, cream accents, dark charcoal fittings. One complete standalone object, full object visible with comfortable margins, elevated front three-quarter view, isolated on a plain pale gray background, no floor platform, no ground patch, no scenery, no people, no text, no labels, no collage, no extra objects. One apartment entertainment console: a compact warm honey brown low TV cabinet with two teal closed side doors and a dark central shelf, supporting one small upright flat screen television on two short feet. Charcoal television bezel, plain dark blue unlit screen with a restrained soft highlight. Cabinet and TV form one complete prop. No text, no logos, no remote, no separate accessories.",
+      "targetPolycount": 4000,
+      "suggestedSizeMetres": [1.4, 1.35, 0.42],
+      "referenceRequestId": "56009c58-1015-4b76-ada9-7d4c9dea7e99",
+      "modelRequestId": "f3b3099e-7880-449c-afed-2aecda40618b",
+      "referenceTaskId": "01a21954-ba0a-777e-9d84-6790a5f6ad51",
+      "modelTaskId": "01a21956-7668-7251-b403-b06205b02fb2",
+      "referencePath": "references/apartment-tv-stand.png",
+      "modelStatus": "SUCCEEDED",
+      "meshyBounds": [1, 0.778901994228363, 0.3179439902305603],
+      "modelType": "smart-topology",
+      "sourceImagePixelsMatchReference": true,
+      "sourceImageSha256": "686facd55f4f2d59f2950d664a57243cd81ad3ad1391d5b0d5f3e9aa169eb695",
+      "modelPath": "models/apartment-tv-stand.glb",
+      "previewPath": "previews/apartment-tv-stand.png",
+      "checks": {
+        "name": "apartment-tv-stand",
+        "triangles": 3993,
+        "vertices": 3105,
+        "bytes": 2589252,
+        "sha256": "638bf7182e9e04b0ddc69efc60ebb581bf4f14b98eb19df7866fc8e7c334247d",
+        "embeddedTextures": [
+          {
+            "width": 2048,
+            "height": 2048,
+            "format": "PNG"
+          }
+        ],
+        "selfContained": true,
+        "referenceSha256": "686facd55f4f2d59f2950d664a57243cd81ad3ad1391d5b0d5f3e9aa169eb695"
+      }
+    }
+  ],
+  "balanceAfter": 1403,
+  "actualCredits": 192,
+  "sourceReferencesVerified": 8,
+  "status": "Eight textured GLBs downloaded and validated"
+}

@@ -1,0 +1,136 @@
+{
+  "props": [
+    {
+      "name": "apartment-bed",
+      "triangles": 5310,
+      "vertices": 3800,
+      "bytes": 2742080,
+      "sha256": "7600a48e9044025b99584f77a6d50b68e75f9bf57bdb26fc06f228eca3cd7db2",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "e89a0b0a15d279d9185f0f3fa8a694d60f893ee9e2ba5824f0eefff2182b38a3"
+    },
+    {
+      "name": "apartment-sofa",
+      "triangles": 5326,
+      "vertices": 3510,
+      "bytes": 2934444,
+      "sha256": "8aa8ff9a1689651d256cd23b92f8ad59dead8ba558fc98680d71d1f9ed33755a",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "4ff3133b991a93d00b12252d71c514e6c6c0ae49599a2978ab81c8ccd7f3d499"
+    },
+    {
+      "name": "apartment-wardrobe",
+      "triangles": 3743,
+      "vertices": 2825,
+      "bytes": 2520200,
+      "sha256": "012fa0ab5534e0ef0a207c2925b32eb1833e4a981408d6b8ec43ae1c1760cea9",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "15b6eb9b64b382505bd65159aef234c959fc021ed86f453a3bcf180d3aa77824"
+    },
+    {
+      "name": "apartment-kitchen",
+      "triangles": 6276,
+      "vertices": 4896,
+      "bytes": 2605376,
+      "sha256": "f60d1168955c81097cd90d836e19d12aa87ff9a26a341b36bd1d9b9bb9f973f6",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "c8fe30c17c2d419024725910a56a05c5c306ebf31facd9ef3e835c457864c413"
+    },
+    {
+      "name": "apartment-table",
+      "triangles": 2372,
+      "vertices": 1658,
+      "bytes": 1997776,
+      "sha256": "ea473cd866a510554c2c84d514f42806b44cc232dea750a8b9b31a529f999dd1",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "357f4b13548c796a76196588c1b2200b00010715b13497895c44775995b63877"
+    },
+    {
+      "name": "apartment-chair",
+      "triangles": 2650,
+      "vertices": 1939,
+      "bytes": 2468976,
+      "sha256": "04814adf1d07056b755664cefd2a9aa031672785790abfa182aa1986399834b1",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "108f5409dccf392749db49f9c3da6f17250b9be8009ae128cedbca115a911a35"
+    },
+    {
+      "name": "apartment-fridge",
+      "triangles": 3254,
+      "vertices": 2199,
+      "bytes": 1560148,
+      "sha256": "de1ce6a3cff62aac08427f843e526073aa44ca725c3fff99f27e0fe0a77ccd2e",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "dccfb97e503115720bed31a3b92f2fdbe69f8d1a050a2644c9d7d67876fa46fb"
+    },
+    {
+      "name": "apartment-tv-stand",
+      "triangles": 3993,
+      "vertices": 3105,
+      "bytes": 2589252,
+      "sha256": "638bf7182e9e04b0ddc69efc60ebb581bf4f14b98eb19df7866fc8e7c334247d",
+      "embeddedTextures": [
+        {
+          "width": 2048,
+          "height": 2048,
+          "format": "PNG"
+        }
+      ],
+      "selfContained": true,
+      "referenceSha256": "686facd55f4f2d59f2950d664a57243cd81ad3ad1391d5b0d5f3e9aa169eb695"
+    }
+  ],
+  "totalTriangles": 32924,
+  "totalModelBytes": 19418252,
+  "allSelfContained": true,
+  "scope": "Static GLB structure, embedded image decoding and polygon budgets; models are not placed in the game yet."
+}
