@@ -116,8 +116,13 @@ test("relocated districts retain building-front orientation, loot alignment and 
         );
       if (owner) {
         const b = BUILDINGS[source.indexOf(owner)];
-        assert.ok(Math.abs(LOOT[i].x - b.x - (old.x - owner.x)) < 0.001);
-        assert.ok(Math.abs(LOOT[i].z - b.z - (old.z - owner.z)) < 0.001);
+        // The furnished replacement moves its existing crate out of a new shelf aisle.
+        const offset =
+          i === 5 && owner.type === "store"
+            ? { x: -3.2, z: 1 }
+            : { x: old.x - owner.x, z: old.z - owner.z };
+        assert.ok(Math.abs(LOOT[i].x - b.x - offset.x) < 0.001);
+        assert.ok(Math.abs(LOOT[i].z - b.z - offset.z) < 0.001);
       }
     }
     for (const spec of [

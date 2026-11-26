@@ -8,7 +8,7 @@ A single-storey corner convenience store modeled directly in Blender from the ap
 - `block-mart.glb`: furnished detailed model, exported at metre scale with embedded materials and no external texture dependencies.
 - `block-mart-lod.glb`: lighter distance version that removes small brick, grocery-label and package detail while preserving architecture and all door animations.
 - `parts/`: 14 independent reusable GLBs: display window, glass entrance door, delivery door, stockroom door, awning, retail shelf, checkout counter, refrigerator, supply boxes, roof AC, roof vent, exterior lamp, security camera and downpipe.
-- `layout.json`: floor outline, actual wall openings, door centers/tangents, stockroom partitions and fixture bounds for the future game integration.
+- `layout.json`: floor outline, actual wall openings, door centers/tangents, stockroom partitions and fixture bounds shared by runtime collision and shooting cover.
 - `model-report.json`: measured triangle/file counts and reference SHA-256.
 - `preview-exterior.png`, `preview-rear.png`, `preview-interior.png`: Blender renders of the modeled geometry, not AI concept images.
 
@@ -26,4 +26,4 @@ Run `pnpm assets:block-mart` with Blender 4.3.2. Add `-- --skip-renders` when in
 
 Automated checks parse both GLBs, enforce geometry/file budgets and unit scale, compare the packed reference hash, check fixture bounds, verify recessed transparent glazing, and play each independent animation to prove its opening is actually clear. Studio lights and background are preview-only and are excluded from the GLBs.
 
-This is a model delivery for review. It has not replaced the existing in-game store: placement, gameplay interaction with all three doors, runtime collision/navigation, loot and physical-phone performance still need the integration step. Do not infer those from the studio renders.
+The compact city now uses this model at the existing store location, without scaling. E / USE operates the diagonal front entrance, stockroom and delivery doors independently. Physics, bullet cover and NPC door avoidance share the exported layout. The original store remains available for legacy layout compatibility. The detailed model switches to its lighter model at 45m. The map editor includes the assembled shop and all 14 reusable props. Existing player saves and loot cooldown indices are preserved. Automated/browser verification does not establish performance on a physical phone.

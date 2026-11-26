@@ -1,3 +1,9 @@
+import { isMart } from "./block-mart-layout";
+import {
+  preloadBlockMart,
+  createBlockMart,
+  createMartProxy,
+} from "./block-mart-view";
 import { JAIL_BUILDING_WALLS, JAIL_BUILDING_SLABS } from "./jail-kit-layout";
 import * as THREE from "three";
 import {
@@ -101,6 +107,7 @@ const proxyGeometry = new THREE.BoxGeometry(1, 1, 1),
   proxyMaterial = new THREE.MeshBasicMaterial();
 /** Low-detail shooting geometry matches the existing physical layout, never rendered. */
 export function createBuildingShotProxy(index: number) {
+  if (isMart(BUILDINGS[index])) return createMartProxy(index);
   const b = BUILDINGS[index],
     front = frontOf(b),
     root = new THREE.Group(),
@@ -211,18 +218,20 @@ const loaded = new Map<number, THREE.Group>();
 export async function preloadBlenderBuildings() {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const loader = new GLTFLoader();
-  await Promise.allSettled(
-    BUILDINGS.map(async (b, index) => {
+  await Promise.allSettled([
+    preloadBlockMart(),
+    ...BUILDINGS.map(async (b, index) => {
       const gltf = await loader.loadAsync(URLS[b.type]);
       loaded.set(index, gltf.scene);
     }),
-  );
+  ]);
 }
 export function loadBlenderBuilding(
   index: number,
   geometry: THREE.BoxGeometry,
   makeSign: (text: string, w: number, h: number) => THREE.Mesh,
 ) {
+  if (isMart(BUILDINGS[index])) return createBlockMart(index);
   const b = BUILDINGS[index],
     proxy = createBuildingShotProxy(index);
   try {
@@ -252,6 +261,7 @@ export function loadBlenderBuilding(
       shotRoot: proxy.root,
       shotDoor: proxy.door,
       source: "blender",
+      mart: undefined,
     };
   } catch {
     const fallback =
@@ -273,6 +283,7 @@ export function loadBlenderBuilding(
       shotRoot: proxy.root,
       shotDoor: proxy.door,
       source: "fallback",
+      mart: undefined,
     };
   }
 }

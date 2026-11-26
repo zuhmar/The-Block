@@ -1,3 +1,4 @@
+import { isMart, martState, martDoorPoint } from "./block-mart-layout";
 import {
   jailGate,
   jailGateNearby,
@@ -2944,6 +2945,40 @@ function nearestDoor() {
   }
   return nearest;
 }
+function nearestMartDoor() {
+  if (vertical > 2.2) return undefined;
+  let nearest: { i: number; id: number } | undefined,
+    distance = 2.4;
+  for (let i = 0; i < BUILDINGS.length; i++) {
+    const b = BUILDINGS[i];
+    if (!isMart(b)) continue;
+    for (let id = 1; id < 3; id++) {
+      const p = martDoorPoint(id, martState(i).angles[id]),
+        target = new THREE.Vector3(b.x + p.x, 1.3, b.z + p.z);
+      const d = Math.hypot(player.x - target.x, player.z - target.z);
+      if (d >= distance) continue;
+      const from = new THREE.Vector3(player.x, 1.65 + vertical, player.z);
+      coverRay.set(from, target.clone().sub(from).normalize());
+      coverRay.far = from.distanceTo(target) + 0.15;
+      const hit = coverRay.intersectObjects(
+        [...shotObstacles, ...construction.children],
+        true,
+      )[0];
+      if (
+        hit &&
+        !(
+          hit.object.userData.doorIndex === i &&
+          hit.object.userData.martDoorId === id
+        ) &&
+        hit.distance < from.distanceTo(target) - 0.1
+      )
+        continue;
+      nearest = { i, id };
+      distance = d;
+    }
+  }
+  return nearest;
+}
 function nearestBuiltDoor() {
   let nearest: Piece | undefined,
     distance = 2.4;
@@ -3012,6 +3047,18 @@ function interact() {
     sound.play(jailGate.open ? "door-open" : "door-close", { gain: 0.5 });
     return toast(
       jailGate.open ? "Opening compound gates" : "Closing compound gates",
+    );
+  }
+  const mart = nearestMartDoor();
+  if (mart) {
+    const s = martState(mart.i);
+    s.targets[mart.id] = !s.targets[mart.id];
+    sound.play(s.targets[mart.id] ? "door-open" : "door-close", { gain: 0.5 });
+    updateHud();
+    return toast(
+      (s.targets[mart.id] ? "Opening " : "Closing ") +
+        (mart.id === 1 ? "delivery" : "stockroom") +
+        " door",
     );
   }
   const door = nearestDoor();
@@ -3661,6 +3708,14 @@ function updateHud() {
     $("#hint-text").textContent =
       "E / USE · " + (jailGate.open ? "Close gates" : "Open gates");
   }
+  const martDoor = nearestMartDoor();
+  if (!build && martDoor) {
+    $("#hint-title").textContent =
+      martDoor.id === 1 ? "DELIVERY DOOR" : "STOCKROOM DOOR";
+    $("#hint-text").textContent =
+      "E / USE · " +
+      (martState(martDoor.i).targets[martDoor.id] ? "Close door" : "Open door");
+  }
   const plotSign =
     !build && survival().plots.find((p) => plotSignDistance(p) < 4);
   if (plotSign && !built && door < 0 && near < 0) {
@@ -3869,6 +3924,13 @@ function frame(now: number) {
     ]);
     buildingModels.forEach((model, i) => {
       if (COMPACT.active && !model.root.visible) return;
+      if (model.mart) {
+        model.mart.update(
+          doorAngles[i],
+          Math.hypot(player.x - BUILDINGS[i].x, player.z - BUILDINGS[i].z),
+        );
+        return;
+      }
       model.door.rotation.y = doorAngles[i];
       model.door.updateMatrixWorld(true);
       model.shotDoor.rotation.y = doorAngles[i];
@@ -4281,6 +4343,10 @@ function frame(now: number) {
   canvas.dataset.buildingSources = JSON.stringify(
     buildingModels.map((m) => m.source),
   );
+  canvas.dataset.blockMart = JSON.stringify({
+    state: martState(0),
+    near: nearestMartDoor(),
+  });
   canvas.dataset.doors = JSON.stringify(doorAngles);
   canvas.dataset.lastHitDoor = String(lastHitDoor);
   canvas.dataset.lastHitBuildPiece = lastHitBuildPiece;

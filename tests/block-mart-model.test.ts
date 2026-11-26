@@ -130,7 +130,7 @@ test("fourteen reusable GLB components include recessed transparent glazing inst
     await readFile(`${root}/model-report.json`, "utf8"),
   );
   assert.equal(Object.keys(report.parts).length, 14);
-  assert.equal(report.gameIntegrated, false);
+  assert.equal(report.gameIntegrated, true);
   assert(report.full.bytes < 3000000);
 });
 

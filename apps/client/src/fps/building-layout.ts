@@ -1,4 +1,14 @@
 import {
+  isMart,
+  martInside,
+  martBlocked,
+  martDoorPoint,
+  martDoorBlocked,
+  resetMartDoors,
+  animateMartDoors,
+  martPlan,
+} from "./block-mart-layout";
+import {
   JAIL_DOOR_Z,
   JAIL_BUILDING_WALLS,
   inJailCourtyard,
@@ -246,6 +256,10 @@ export const buildingDoorOffset = (b: Building) =>
 export const doorPosition = (index: number) => {
   const b = BUILDINGS[index],
     a = doorAngles[index];
+  if (isMart(b)) {
+    const p = martDoorPoint(0, a);
+    return { x: b.x + p.x, z: b.z + p.z };
+  }
   return {
     x: b.x - DOOR_WIDTH / 2 + (Math.cos(a) * DOOR_WIDTH) / 2,
     z: b.z + buildingDoorOffset(b) - (Math.sin(a) * DOOR_WIDTH) / 2,
@@ -257,6 +271,14 @@ export function doorBlocksPoint(
   angle = doorAngles[index],
   radius = 0.32,
 ) {
+  const building = BUILDINGS[index];
+  if (isMart(building))
+    return martDoorBlocked(
+      0,
+      { x: p.x - building.x, z: p.z - building.z, y: p.y },
+      angle,
+      radius,
+    );
   if ((p.y ?? 0) > 2.8) return false;
   const b = BUILDINGS[index],
     dx = p.x - (b.x - DOOR_WIDTH / 2),
@@ -269,11 +291,19 @@ export function toggleDoor(index: number) {
   doorTargets[index] = !doorTargets[index];
 }
 export function resetDoors() {
+  resetMartDoors();
   doorAngles.fill(0);
   doorTargets.fill(false);
 }
 export function animateDoors(dt: number, occupants: BuildingPoint[]) {
   for (let i = 0; i < BUILDINGS.length; i++) {
+    const b = BUILDINGS[i];
+    if (isMart(b))
+      animateMartDoors(
+        i,
+        dt,
+        occupants.map((p) => ({ x: p.x - b.x, z: p.z - b.z, y: p.y })),
+      );
     const goal = doorTargets[i] ? (frontOf(BUILDINGS[i]) * Math.PI) / 2 : 0,
       delta = goal - doorAngles[i];
     if (Math.abs(delta) < 0.0001) {
@@ -603,6 +633,8 @@ export function buildingSurface(p: BuildingPoint, maxHeight: number) {
 export function buildingCeiling(p: BuildingPoint, feet: number) {
   let ceiling = Infinity;
   BUILDINGS.forEach((b, i) => {
+    if (isMart(b) && martInside({ x: p.x - b.x, z: p.z - b.z }) && feet < 4.04)
+      ceiling = Math.min(ceiling, 4.04);
     if (buildingStories(b) < 2) {
       if (
         (b.type === "military-tent" || b.type === "military-medical") &&
@@ -635,7 +667,23 @@ export function buildingCeiling(p: BuildingPoint, feet: number) {
   return ceiling;
 }
 export const FURNITURE = BUILDINGS.map((_, i) => createFixtures(i));
-export const fixtures = (index: number) => FURNITURE[index];
+export const fixtures = (index: number): Fixture[] =>
+  isMart(BUILDINGS[index])
+    ? martPlan.fixtures.map((f) => ({
+        kind:
+          f.kind === "retail-shelf"
+            ? "shelf"
+            : f.kind === "refrigerator"
+              ? "fridge"
+              : f.kind === "stock-boxes"
+                ? "pallet"
+                : "counter",
+        x: (f.bounds.min[0] + f.bounds.max[0]) / 2,
+        z: (f.bounds.min[2] + f.bounds.max[2]) / 2,
+        width: f.bounds.max[0] - f.bounds.min[0],
+        depth: f.bounds.max[2] - f.bounds.min[2],
+      }))
+    : FURNITURE[index];
 export type Partition = {
   x: number;
   z: number;
@@ -712,7 +760,7 @@ function createPartitions(index: number): Partition[] {
 }
 const PARTITIONS = BUILDINGS.map((_, index) => createPartitions(index));
 export function partitions(index: number) {
-  return PARTITIONS[index];
+  return isMart(BUILDINGS[index]) ? [] : PARTITIONS[index];
 }
 export function buildingBlocked(
   p: BuildingPoint,
@@ -729,6 +777,14 @@ export function buildingBlocked(
       front = frontOf(b);
     if (Math.abs(x) > hx + radius + 0.2 || Math.abs(z) > hz + radius + 0.2)
       return false;
+    if (isMart(b))
+      return martBlocked(
+        i,
+        { x, z, y: feet },
+        radius,
+        ignoreDoors,
+        doorAngles[i],
+      );
     if (b.type === "jail") {
       if (
         JAIL_BUILDING_WALLS.some(
@@ -811,7 +867,8 @@ export function containingBuilding(p: BuildingPoint) {
       buildingEnabled(b) &&
       Math.abs(p.x - b.x) < b.width / 2 - WALL / 2 &&
       Math.abs(p.z - b.z) < b.depth / 2 - WALL / 2 &&
-      !(b.type === "jail" && inJailCourtyard(p.x - b.x, p.z - b.z)),
+      !(b.type === "jail" && inJailCourtyard(p.x - b.x, p.z - b.z)) &&
+      (!isMart(b) || martInside({ x: p.x - b.x, z: p.z - b.z })),
   );
 }
 

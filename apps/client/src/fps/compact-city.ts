@@ -108,6 +108,10 @@ export function configureCompactCity() {
     else if (loot.x < -125 && loot.z > -30 && loot.z < 32) d = shifts.west;
     shift(loot, d);
   }
+  // Keep this container's saved cooldown index; move it clear of the new shelves.
+  remember(LOOT[5]);
+  LOOT[5].x = BUILDINGS[0].x - 3.2;
+  LOOT[5].z = BUILDINGS[0].z + 1;
   for (const b of BUILDINGS) {
     BUILDING_FRONTS.set(b, frontOf(b));
     let d = { x: 0, z: 0 };
@@ -127,6 +131,10 @@ export function configureCompactCity() {
         )
           shift(l, d);
     shift(b, d);
+    if (b.type === "store") {
+      b.name = "BLOCK MART";
+      b.height = 5.3;
+    }
   }
   for (const o of [...JAIL_BOXES, ...JAIL_TOWERS]) shift(o, shifts.jail);
   for (const s of JAIL_STAIRS) {

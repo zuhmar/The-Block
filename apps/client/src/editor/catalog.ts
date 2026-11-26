@@ -35,9 +35,10 @@ export const CATALOG: CatalogAsset[] = [];
 for (const [path, url] of Object.entries(urls)) {
   const key = path.split("/models/")[1];
   if (
-    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit)\//.test(
+    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart)\//.test(
       key,
     ) ||
+    (key.startsWith("block-mart/") && !key.startsWith("block-mart/parts/")) ||
     key.endsWith("jail-grounds.glb") ||
     key.endsWith("jail-meshy-grounds.glb") ||
     key.endsWith("meshy-warehouse/warehouse.glb")
@@ -59,6 +60,19 @@ for (const [path, url] of Object.entries(urls)) {
     size: b ? [b.width, b.height, b.depth] : undefined,
   });
 }
+const mart = Object.entries(urls).find(([p]) =>
+  p.endsWith("/block-mart/block-mart.glb"),
+);
+if (mart)
+  CATALOG.push({
+    id: "building:block-mart",
+    name: "Block Mart · furnished",
+    layer: "Buildings",
+    behavior: "solid",
+    url: mart[1],
+    anchor: [0, 0, 0],
+    size: [10, 5.3, 10],
+  });
 const warehouse = Object.entries(urls).find(([p]) =>
   p.endsWith("/meshy-warehouse/warehouse.glb"),
 );
@@ -270,9 +284,11 @@ export function newMap(current = true): MapDocument {
     );
     BUILDINGS.forEach((b) =>
       add(
-        b.type === "warehouse"
-          ? "building:warehouse"
-          : "model:buildings/" + b.type + ".glb",
+        b.type === "store"
+          ? "building:block-mart"
+          : b.type === "warehouse"
+            ? "building:warehouse"
+            : "model:buildings/" + b.type + ".glb",
         b.name,
         b.x,
         b.z,

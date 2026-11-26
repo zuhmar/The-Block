@@ -1,7 +1,7 @@
 """Reference-guided, directly authored Blender Block Mart and reusable architecture/prop kit.
 No paid generation, imported building mesh, nonuniform instance scaling or runtime changes.
 """
-import bpy,bmesh,math,json,random,hashlib,sys
+import bpy,bmesh,math,json,random,hashlib,sys,shutil
 from pathlib import Path
 from mathutils import Vector,Matrix
 ROOT=Path('art/buildings/block-mart');PARTS=ROOT/'parts';PARTS.mkdir(parents=True,exist_ok=True)
@@ -333,7 +333,10 @@ bpy.context.scene.frame_set(1)
 full=export(building,ROOT/'block-mart.glb');lod=export(building,ROOT/'block-mart-lod.glb',('brick-detail','product-detail','label-detail','wear-detail'))
 plan={'units':'metres','floor':poly,'wallThickness':.28,'wallHeight':4.1,'doors':door_plan,'walls':colliders,'fixtures':fixtures,'referenceSha256':sha}
 (ROOT/'layout.json').write_text(json.dumps(plan,indent=2)+'\n')
-report={'source':'Direct Blender modeling from approved image','referenceSha256':sha,'full':full,'lod':lod,'parts':part_report,'materials':len(M),'scale':[1,1,1],'gameIntegrated':False}
+report={'source':'Direct Blender modeling from approved image','referenceSha256':sha,'full':full,'lod':lod,'parts':part_report,'materials':len(M),'scale':[1,1,1],'gameIntegrated':True}
+runtime=Path('apps/client/src/fps/models/block-mart');runtime.mkdir(parents=True,exist_ok=True)
+for name in ['block-mart.glb','block-mart-lod.glb','layout.json']:shutil.copyfile(ROOT/name,runtime/name)
+shutil.copytree(PARTS,runtime/'parts',dirs_exist_ok=True)
 (ROOT/'model-report.json').write_text(json.dumps(report,indent=2)+'\n')
 # Source includes an organized hidden kit collection, complete building, and studio cameras.
 kit_collection=bpy.data.collections.new('Reusable modules');bpy.context.scene.collection.children.link(kit_collection)

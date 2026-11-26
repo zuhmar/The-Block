@@ -1,3 +1,10 @@
+import {
+  isMart,
+  martPlan,
+  martDoorBlocked,
+  martState,
+} from "./block-mart-layout";
+import { doorAngles } from "./building-layout";
 import { doorBlocksPoint, buildingDoorOffset } from "./building-layout";
 import type { PatrolSpec } from "./military-compound";
 import {
@@ -120,6 +127,23 @@ function patrolPath(
       b.z - b.depth / 2 > bounds.maxZ
     )
       return;
+    if (isMart(b)) {
+      martPlan.doors.forEach((d, door) => {
+        const cx = b.x + d.center[0],
+          cz = b.z + d.center[1];
+        for (let x = Math.floor(cx) - 2; x <= Math.ceil(cx) + 2; x++)
+          for (let z = Math.floor(cz) - 2; z <= Math.ceil(cz) + 2; z++)
+            if (
+              martDoorBlocked(
+                door,
+                { x: x - b.x, z: z - b.z },
+                door === 0 ? doorAngles[i] : martState(i).angles[door],
+              )
+            )
+              blockedDoors.add(id(x, z));
+      });
+      return;
+    }
     const entry = b.z + buildingDoorOffset(b);
     for (let x = Math.floor(b.x) - 2; x <= Math.ceil(b.x) + 2; x++)
       for (let z = Math.floor(entry) - 2; z <= Math.ceil(entry) + 2; z++)
