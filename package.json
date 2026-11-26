@@ -56,7 +56,8 @@
     "assets:block-mart": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py",
     "assets:tenement-v2": "tsx packages/art-tools/export-tenement-v2.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-tenement-v2.py",
     "assets:block-mart-meshy": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py -- --meshy-props",
-    "assets:city-apartments": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-apartment-props.py && tsx packages/art-tools/export-city-apartments.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-city-apartments.py"
+    "assets:city-apartments": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-apartment-props.py && tsx packages/art-tools/export-city-apartments.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-city-apartments.py",
+    "assets:timber-yard-kit": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-timber-yard-kit.py && tsx packages/art-tools/check-timber-yard-kit.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

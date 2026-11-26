@@ -1,0 +1,124 @@
+{
+  "moduleCount": 11,
+  "referenceVerified": true,
+  "unitScale": true,
+  "fenceGapsVerified": true,
+  "gateOpenCloseVerified": true,
+  "openShedVerified": true,
+  "removableRoofVerified": true,
+  "threeEntrances": true,
+  "modules": [
+    {
+      "name": "fence-panel-4m",
+      "triangles": 804,
+      "bytes": 54860,
+      "bounds": {
+        "min": [-2, 0, -0.09000000357627869],
+        "max": [2, 2.200000047683716, 0.09000000357627869]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "fence-panel-2m",
+      "triangles": 612,
+      "bytes": 41416,
+      "bounds": {
+        "min": [-1, 0, -0.09000000357627869],
+        "max": [1, 2.200000047683716, 0.09000000357627869]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "fence-panel-1m",
+      "triangles": 540,
+      "bytes": 36008,
+      "bounds": {
+        "min": [-0.5, 0, -0.09000000357627869],
+        "max": [0.5, 2.200000047683716, 0.09000000357627869]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "fence-post",
+      "triangles": 324,
+      "bytes": 20036,
+      "bounds": {
+        "min": [-0.20000000298023224, 0, -0.20000000298023224],
+        "max": [0.20000000298023224, 2.3499999046325684, 0.20000000298023224]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "sliding-gate-8m",
+      "triangles": 3664,
+      "bytes": 215392,
+      "bounds": {
+        "min": [-4.224999904632568, 0, -0.6299999803304672],
+        "max": [4.225000381469727, 2.490000009536743, 0.23999999463558197]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "pedestrian-gate-2m",
+      "triangles": 1344,
+      "bytes": 85312,
+      "bounds": {
+        "min": [-1.1699999570846558, 0, -0.17000000178813934],
+        "max": [1.1700000762939453, 2.4000000953674316, 0.17000000178813934]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "truck-entrance-8m",
+      "triangles": 732,
+      "bytes": 44180,
+      "bounds": {
+        "min": [-4.25, 0, -0.25],
+        "max": [4.25, 4.5, 0.25]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "concrete-barrier-2m",
+      "triangles": 340,
+      "bytes": 21844,
+      "bounds": {
+        "min": [-1, 0, -0.36000001430511475],
+        "max": [1, 0.8999999761581421, 0.36000001430511475]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "saw-shed-shell",
+      "triangles": 5396,
+      "bytes": 326400,
+      "bounds": {
+        "min": [-3.115000009536743, 0, -3.069999933242798],
+        "max": [3.115000009536743, 3.319999933242798, 3.0350000858306885]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "saw-shed-roof",
+      "triangles": 816,
+      "bytes": 57848,
+      "bounds": {
+        "min": [
+          -3.2899999618530273, -0.034738317131996155, -3.3450002670288086
+        ],
+        "max": [3.2900002002716064, 1.3949999809265137, 3.3450002670288086]
+      },
+      "unitScale": true
+    },
+    {
+      "name": "saw-shed",
+      "triangles": 6212,
+      "bytes": 383440,
+      "bounds": {
+        "min": [-3.2899999618530273, 0, -3.3450002670288086],
+        "max": [3.2900002002716064, 4.694999933242798, 3.3450002670288086]
+      },
+      "unitScale": true
+    }
+  ]
+}

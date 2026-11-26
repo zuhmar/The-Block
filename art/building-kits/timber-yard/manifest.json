@@ -1,0 +1,831 @@
+{
+  "assetVersion": "timber-yard-architecture-v1",
+  "reference": "art/ai/pvp/timber-yard/reference.png",
+  "referenceSha256": "4418873d97b94ad1c6f0ab2b33bf47110560e719f79753179706297a3d15a9d3",
+  "units": "metres",
+  "yardFootprint": [32, 32],
+  "snapGridMetres": 1,
+  "moduleCount": 11,
+  "modules": {
+    "fence-panel-4m": {
+      "snaps": {
+        "left": [-2.0, 0, 0],
+        "right": [2.0, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "concrete curb",
+          "center": [0, 0.14, 0],
+          "size": [4, 0.28, 0.18],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "fence movement screen",
+          "center": [0, 1.1, 0],
+          "size": [4, 2.2, 0.12],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": false
+        }
+      ],
+      "bayWidth": 4,
+      "export": {
+        "bytes": 54860,
+        "triangles": 804
+      }
+    },
+    "fence-panel-2m": {
+      "snaps": {
+        "left": [-1.0, 0, 0],
+        "right": [1.0, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "concrete curb",
+          "center": [0, 0.14, 0],
+          "size": [2, 0.28, 0.18],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "fence movement screen",
+          "center": [0, 1.1, 0],
+          "size": [2, 2.2, 0.12],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": false
+        }
+      ],
+      "bayWidth": 2,
+      "export": {
+        "bytes": 41416,
+        "triangles": 612
+      }
+    },
+    "fence-panel-1m": {
+      "snaps": {
+        "left": [-0.5, 0, 0],
+        "right": [0.5, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "concrete curb",
+          "center": [0, 0.14, 0],
+          "size": [1, 0.28, 0.18],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "fence movement screen",
+          "center": [0, 1.1, 0],
+          "size": [1, 2.2, 0.12],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": false
+        }
+      ],
+      "bayWidth": 1,
+      "export": {
+        "bytes": 36008,
+        "triangles": 540
+      }
+    },
+    "fence-post": {
+      "snaps": {
+        "base": [0, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "fence post",
+          "center": [0, 1.175, 0],
+          "size": [0.4, 2.35, 0.4],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "export": {
+        "bytes": 20036,
+        "triangles": 324
+      }
+    },
+    "sliding-gate-8m": {
+      "snaps": {
+        "left": [-4, 0, 0],
+        "right": [4, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "gate pier",
+          "center": [-4, 1.25, 0],
+          "size": [0.45, 2.5, 0.48],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "gate pier",
+          "center": [4, 1.25, 0],
+          "size": [0.45, 2.5, 0.48],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "sliding leaf",
+          "center": [0, 1.16, 0],
+          "size": [7.8, 2.15, 0.22],
+          "parent": "sliding-gate-leaf",
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "bayWidth": 8,
+      "clearOpeningWidth": 7.55,
+      "motion": {
+        "node": "sliding-gate-leaf",
+        "type": "slide",
+        "axis": "x",
+        "closed": 0,
+        "open": -8.25,
+        "seconds": 1,
+        "parkingClearance": 8.25
+      },
+      "export": {
+        "bytes": 215392,
+        "triangles": 3664
+      }
+    },
+    "pedestrian-gate-2m": {
+      "snaps": {
+        "left": [-1, 0, 0],
+        "right": [1, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "pedestrian post",
+          "center": [-1, 1.2, 0],
+          "size": [0.34, 2.4, 0.34],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "pedestrian post",
+          "center": [1, 1.2, 0],
+          "size": [0.34, 2.4, 0.34],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "pedestrian leaf",
+          "center": [0.84, 1.15, 0],
+          "size": [1.68, 2.05, 0.14],
+          "parent": "pedestrian-gate-hinge",
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "bayWidth": 2,
+      "clearOpeningWidth": 1.66,
+      "motion": {
+        "node": "pedestrian-gate-hinge",
+        "type": "hinge",
+        "closed": 0,
+        "open": -1.5707963267948966,
+        "seconds": 1,
+        "hinge": [-0.84, 0, 0]
+      },
+      "export": {
+        "bytes": 85312,
+        "triangles": 1344
+      }
+    },
+    "truck-entrance-8m": {
+      "snaps": {
+        "left": [-4, 0, 0],
+        "right": [4, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "truck portal post",
+          "center": [-4, 2.2, 0],
+          "size": [0.5, 4.4, 0.5],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "truck portal post",
+          "center": [4, 2.2, 0],
+          "size": [0.5, 4.4, 0.5],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "truck portal header",
+          "center": [0, 4.32, 0],
+          "size": [8.25, 0.36, 0.36],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "bayWidth": 8,
+      "clearOpeningWidth": 7.5,
+      "clearOpeningHeight": 4.14,
+      "export": {
+        "bytes": 44180,
+        "triangles": 732
+      }
+    },
+    "concrete-barrier-2m": {
+      "snaps": {
+        "left": [-1, 0, 0],
+        "right": [1, 0, 0]
+      },
+      "colliders": [
+        {
+          "name": "concrete barrier",
+          "center": [0, 0.45, 0],
+          "size": [2, 0.9, 0.72],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "bayWidth": 2,
+      "export": {
+        "bytes": 21844,
+        "triangles": 340
+      }
+    },
+    "saw-shed-shell": {
+      "snaps": {
+        "roof-mount": [0, 3.3, 0],
+        "front": [0, 0, 3],
+        "back": [0, 0, -3]
+      },
+      "colliders": [
+        {
+          "name": "shed side wall",
+          "center": [-3, 1.64, 0],
+          "size": [0.16, 3.28, 6],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed side wall",
+          "center": [3, 1.64, 0],
+          "size": [0.16, 3.28, 6],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed back wall",
+          "center": [0, 1.64, -3],
+          "size": [6, 3.28, 0.16],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "front shed post",
+          "center": [-2.8, 1.66, 2.82],
+          "size": [0.28, 3.32, 0.28],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "front shed post",
+          "center": [2.8, 1.66, 2.82],
+          "size": [0.28, 3.32, 0.28],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed lintel",
+          "center": [0, 3.18, 2.82],
+          "size": [5.8, 0.25, 0.24],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "footprint": [6, 6],
+      "clearOpeningWidth": 5.32,
+      "clearOpeningHeight": 3.02,
+      "surfaces": [
+        {
+          "center": [0, 0, 0],
+          "size": [6, 6],
+          "y": 0.03
+        }
+      ],
+      "export": {
+        "bytes": 326400,
+        "triangles": 5396
+      }
+    },
+    "saw-shed-roof": {
+      "snaps": {
+        "mount": [0, 0, 0]
+      },
+      "colliders": [],
+      "footprint": [6.5, 6.56],
+      "mountHeight": 3.3,
+      "meshCollision": {
+        "part": "roof",
+        "blocksMovement": true,
+        "blocksProjectiles": true
+      },
+      "export": {
+        "bytes": 57848,
+        "triangles": 816
+      }
+    },
+    "saw-shed": {
+      "snaps": {
+        "front": [0, 0, 3],
+        "back": [0, 0, -3]
+      },
+      "colliders": [
+        {
+          "name": "shed side wall",
+          "center": [-3, 1.64, 0],
+          "size": [0.16, 3.28, 6],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed side wall",
+          "center": [3, 1.64, 0],
+          "size": [0.16, 3.28, 6],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed back wall",
+          "center": [0, 1.64, -3],
+          "size": [6, 3.28, 0.16],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "front shed post",
+          "center": [-2.8, 1.66, 2.82],
+          "size": [0.28, 3.32, 0.28],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "front shed post",
+          "center": [2.8, 1.66, 2.82],
+          "size": [0.28, 3.32, 0.28],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        },
+        {
+          "name": "shed lintel",
+          "center": [0, 3.18, 2.82],
+          "size": [5.8, 0.25, 0.24],
+          "parent": null,
+          "blocksMovement": true,
+          "blocksProjectiles": true
+        }
+      ],
+      "footprint": [6.5, 6.56],
+      "clearOpeningWidth": 5.32,
+      "clearOpeningHeight": 3.02,
+      "detachableRoof": true,
+      "surfaces": [
+        {
+          "center": [0, 0, 0],
+          "size": [6, 6],
+          "y": 0.03
+        }
+      ],
+      "meshCollision": {
+        "part": "roof",
+        "blocksMovement": true,
+        "blocksProjectiles": true
+      },
+      "export": {
+        "bytes": 383440,
+        "triangles": 6212
+      }
+    }
+  },
+  "assembly": {
+    "bytes": 916924,
+    "triangles": 45268
+  },
+  "placements": [
+    {
+      "module": "fence-panel-4m",
+      "position": [-14.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-10.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-6.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-2.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [2.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [6.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [10.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [14.0, 0, -16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-14.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-10.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-6.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [6.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [10.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [14.0, 0, 16.0],
+      "yaw": -0.0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, -14.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, -10.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, -6.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, 6.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, 10.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [16.0, 0, 14.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, -14.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, -10.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, -6.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-2m",
+      "position": [-16.0, 0, -3.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-1m",
+      "position": [-16.0, 0, -1.5],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, 3.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, 7.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-4m",
+      "position": [-16.0, 0, 11.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-2m",
+      "position": [-16.0, 0, 14.0],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-panel-1m",
+      "position": [-16.0, 0, 15.5],
+      "yaw": -1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, -12.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, -8.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, -4.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, -2.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, 5.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, 9.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, 13.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, 15.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-16.0, 0, 16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-12.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-12.0, 0, 16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-8.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-8.0, 0, 16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [-4.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [0.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [4.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [8.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [8.0, 0, 16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [12.0, 0, -16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [12.0, 0, 16.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16, 0, -16],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16.0, 0, -12.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16.0, 0, -8.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16.0, 0, 8.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16.0, 0, 12.0],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "fence-post",
+      "position": [16, 0, 16],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "sliding-gate-8m",
+      "position": [0, 0, 16],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "truck-entrance-8m",
+      "position": [16, 0, 0],
+      "yaw": 1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "pedestrian-gate-2m",
+      "position": [-16, 0, 0],
+      "yaw": 1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "saw-shed",
+      "position": [9, 0, -10],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "concrete-barrier-2m",
+      "position": [-5.6, 0, 17],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "concrete-barrier-2m",
+      "position": [5.6, 0, 17],
+      "yaw": 0,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "concrete-barrier-2m",
+      "position": [14, 0, -5.5],
+      "yaw": 1.5707963267948966,
+      "scale": [1, 1, 1]
+    },
+    {
+      "module": "concrete-barrier-2m",
+      "position": [14, 0, 5.5],
+      "yaw": 1.5707963267948966,
+      "scale": [1, 1, 1]
+    }
+  ],
+  "state": "Architecture models only; not placed into the playable world; Meshy props and capture gameplay are separate stages."
+}
