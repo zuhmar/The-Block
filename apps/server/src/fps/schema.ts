@@ -60,7 +60,7 @@ export const fpsActionSchema = z.discriminatedUnion("type", [
     yaw: angle,
     pitch: z.number().finite().min(-1.35).max(1.35),
   }),
-  ...(["reload", "detonate", "respawn"] as const).map((type) =>
+  ...(["reload", "detonate", "respawn", "intro"] as const).map((type) =>
     z.object({ type: z.literal(type) }),
   ),
 ]);

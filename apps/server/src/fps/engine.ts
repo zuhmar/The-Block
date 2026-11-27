@@ -1,3 +1,4 @@
+import { jailReleasePose } from "../../../client/src/fps/jail-intro-state.js";
 import { streetPolicePatrols } from "../../../client/src/fps/police-layout.js";
 import {
   isStreetPolice,
@@ -144,6 +145,7 @@ import {
 } from "../../../client/src/fps/jail-ground-layout.js";
 
 export type OnlinePlayer = {
+  introSeen?: boolean;
   id: string;
   name: string;
   pose: FpsPose;
@@ -213,6 +215,8 @@ export class FpsEngine {
   constructor(saved: FpsWorld = newFpsWorld()) {
     initializeFpsMap();
     this.world = saved;
+    // Existing characters keep their position and skip the new-player cinematic.
+    for (const p of Object.values(saved.players)) p.introSeen ??= true;
     fail(saved.version === 1, "Unsupported online world version");
     this.resources = new ResourceWorld(
       () => this.world.pieces,
@@ -268,6 +272,7 @@ export class FpsEngine {
       p = this.world.players[id] = {
         id,
         name,
+        introSeen: false,
         pose: { ...START, y: 0, vy: 0, yaw: Math.PI, pitch: -0.03 },
         health: 100,
         inventory,
@@ -675,6 +680,15 @@ export class FpsEngine {
         for (const projectile of [...this.world.projectiles])
           if (projectile.kind === "c4" && projectile.ownerId === id)
             this.explode(projectile, now);
+        break;
+      case "intro":
+        if (p.introSeen) break;
+        if (this.isSafe(p.pose) && p.combatUntil <= now) {
+          p.pose = jailReleasePose();
+          this.inputs.get(id)?.stop();
+        }
+        p.introSeen = true;
+        this.touch(p);
         break;
       case "respawn":
         fail(p.health <= 0, "You are still alive");
@@ -1430,10 +1444,13 @@ export class FpsEngine {
       : undefined;
     return {
       rev: p.rev,
+      introSeen: p.introSeen !== false,
+      pose: { ...p.pose },
       health: p.health,
       reloadUntil: p.reload?.until ?? 0,
       save: {
         version: 1,
+        introSeen: p.introSeen !== false,
         wood: countItem(inventory, "wood"),
         resources: {
           rock: countItem(inventory, "rock"),

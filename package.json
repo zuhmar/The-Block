@@ -58,7 +58,8 @@
     "assets:block-mart-meshy": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-block-mart.py -- --meshy-props",
     "assets:city-apartments": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/prepare-apartment-props.py && tsx packages/art-tools/export-city-apartments.ts && blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-city-apartments.py",
     "assets:timber-yard-kit": "blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-timber-yard-kit.py && tsx packages/art-tools/check-timber-yard-kit.ts",
-    "assets:timber-yard-runtime": "blender -b -t 2 --python-exit-code 1 --python packages/art-tools/prepare-timber-yard.py"
+    "assets:timber-yard-runtime": "blender -b -t 2 --python-exit-code 1 --python packages/art-tools/prepare-timber-yard.py",
+    "assets:jail-intro": "tsx packages/art-tools/export-jail-intro.ts && blender -b -t 4 --python packages/art-tools/build-jail-intro.py && blender -b -t 4 art/cinematics/jail-release/jail-release.blend -a && python3 packages/art-tools/encode-jail-intro.py"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -9,7 +9,7 @@ import type { Projectile } from "../../../apps/client/src/fps/explosives";
 import type { Tool } from "../../../apps/client/src/fps/weapons";
 export const FPS_VERSION = 1;
 // Increment when the client must instantiate a different authored NPC roster.
-export const FPS_CONTENT_VERSION = 2;
+export const FPS_CONTENT_VERSION = 3;
 export const FPS_STEP = 0.02;
 export type FpsPose = {
   x: number;
@@ -68,7 +68,7 @@ export type FpsAction =
       id?: string;
     }
   | { type: "fire"; yaw: number; pitch: number }
-  | { type: "reload" | "detonate" | "respawn" };
+  | { type: "reload" | "detonate" | "respawn" | "intro" };
 export type FpsPublicPlayer = {
   id: string;
   name: string;
@@ -103,6 +103,8 @@ export type FpsWorldPatch = {
   projectiles: FpsProjectile[];
 };
 export type FpsPrivate = {
+  introSeen: boolean;
+  pose: FpsPose;
   rev: number;
   save: Save;
   health: number;

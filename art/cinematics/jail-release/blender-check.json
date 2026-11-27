@@ -1,0 +1,75 @@
+{
+  "shots": 4,
+  "frames": 288,
+  "fps": 24,
+  "actors": [
+    {
+      "name": "Player escort actor",
+      "rigBones": 32,
+      "walkStrips": [
+        "Walking_SmartRigArmature"
+      ]
+    },
+    {
+      "name": "Police left escort actor",
+      "rigBones": 66,
+      "walkStrips": [
+        "Walking_SmartRigArmature.001"
+      ]
+    },
+    {
+      "name": "Police right escort actor",
+      "rigBones": 66,
+      "walkStrips": [
+        "Walking_SmartRigArmature.002"
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "frame": 1,
+      "player": [
+        0.0,
+        -7.800000190734863,
+        0.7639568448066711
+      ],
+      "soleZ": 0.014999985694885254,
+      "gateAngle": 0.0,
+      "barrierMaxZ": 1.647399663925171
+    },
+    {
+      "frame": 155,
+      "player": [
+        0.0,
+        -14.54127025604248,
+        0.7639568448066711
+      ],
+      "soleZ": 0.014999985694885254,
+      "gateAngle": 1.5707963705062866,
+      "barrierMaxZ": 2.436582326889038
+    },
+    {
+      "frame": 240,
+      "player": [
+        0.0,
+        -18.72381019592285,
+        0.7639568448066711
+      ],
+      "soleZ": 0.014999985694885254,
+      "gateAngle": 1.5707963705062866,
+      "barrierMaxZ": 2.436582326889038
+    },
+    {
+      "frame": 288,
+      "player": [
+        0.0,
+        -20.200000762939453,
+        0.7639568448066711
+      ],
+      "soleZ": 0.014999985694885254,
+      "gateAngle": 0.0,
+      "barrierMaxZ": 1.647399663925171
+    }
+  ],
+  "firstPersonActorHidden": true
+}

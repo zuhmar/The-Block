@@ -185,7 +185,7 @@ export function fpsRoom(bootstrap: string) {
       )
         throw Error("Sign in first or refresh the game");
       if (options.contentVersion !== FPS_CONTENT_VERSION)
-        throw Error("City updated · refresh this page for police patrols");
+        throw Error("City updated · refresh this page");
       const token = createHash("sha256").update(options.token).digest("hex");
       const row = (
         await pool.query(

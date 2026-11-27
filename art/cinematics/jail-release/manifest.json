@@ -1,0 +1,91 @@
+{
+  "duration": 12,
+  "fps": 24,
+  "frames": 288,
+  "sources": {
+    "apps/client/src/fps/models/street/jail-meshy-grounds.glb": "41fbe25213054e17854d3b312602e332c559815c2ebf1f2b5f27e86d0104ce41",
+    "apps/client/src/fps/models/buildings/jail.glb": "ed2e705ba6239b211aaa34b677d3625833b126e2d0b3a394e247c55edc2db5b9",
+    "apps/client/src/fps/models/buildings/shelter.glb": "8768b0ca128ba8449f0801e03d25f2dc9e675f38fefe8f082444a29e4d51f799",
+    "apps/client/src/fps/models/buildings/workshop.glb": "741a985b7eb9286bc37255de57708eda6907ac548aa41b2d94c37b903260d35c",
+    "apps/client/src/fps/models/buildings/tenement.glb": "c514d65ef6ec99f492205e4cc7efeb0af984e3b87564225d4c7085202866facf",
+    "apps/client/src/fps/models/buildings/military-barracks.glb": "a2bae01fa3caf24748f8ac32d94013d48cc978159c385bc6efd579bc00138f09",
+    "apps/client/src/fps/models/buildings/north-workshop.glb": "a87a9a536c8122563b4004407155b1ce906f6066569176f62607b152b2b18438",
+    "apps/client/src/fps/models/buildings/north-warehouse.glb": "eaae730a3072d1f1747ee6ceb28bf9e608499073248ae5ae646b8b4d0afea6f1",
+    "apps/client/src/fps/models/buildings/flats.glb": "3c68818c5f67ab891c009bf503fc3a4776c0f62ea7e1df1900cc30ece07be935",
+    "apps/client/src/fps/models/meshy-shadow/animated.glb": "a3bb794b40e83cc6320e97d7068057a5b1e935431d05da843529af0c8ad70cb2",
+    "apps/client/src/fps/models/meshy-police/animated.glb": "1475b9f639c9fb211475f164b21138f5f4b0de710ae3e817c7a9fe61deb5ea7a"
+  },
+  "actors": [
+    {
+      "role": "Player",
+      "rig": "SmartRigArmature",
+      "bones": 32,
+      "walk": "Walking_SmartRigArmature",
+      "stop": 270,
+      "height": 2,
+      "x": 0
+    },
+    {
+      "role": "Police left",
+      "rig": "SmartRigArmature.001",
+      "bones": 66,
+      "walk": "Walking_SmartRigArmature.001",
+      "stop": 255,
+      "height": 2,
+      "x": -1.05
+    },
+    {
+      "role": "Police right",
+      "rig": "SmartRigArmature.002",
+      "bones": 66,
+      "walk": "Walking_SmartRigArmature.002",
+      "stop": 255,
+      "height": 2,
+      "x": 1.05
+    }
+  ],
+  "shots": [
+    {
+      "name": "01 Courtyard release",
+      "start": 1,
+      "end": 60
+    },
+    {
+      "name": "02 Escort to gate",
+      "start": 61,
+      "end": 216
+    },
+    {
+      "name": "03 Outside the gate",
+      "start": 217,
+      "end": 272
+    },
+    {
+      "name": "04 First person handoff",
+      "start": 273,
+      "end": 288
+    }
+  ],
+  "gate": {
+    "opens": [
+      108,
+      150
+    ],
+    "closes": [
+      263,
+      285
+    ]
+  },
+  "handoffLocal": {
+    "x": 0,
+    "z": 20.2,
+    "y": 0
+  },
+  "render": {
+    "engine": "Blender Workbench",
+    "lighting": "Studio paint, texture materials, specular highlights, shadows and cavity",
+    "antialiasing": "FXAA",
+    "width": 960,
+    "height": 540
+  }
+}

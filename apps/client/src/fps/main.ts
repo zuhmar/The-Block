@@ -1,3 +1,5 @@
+import { createJailIntro } from "./jail-intro";
+import { jailReleasePose } from "./jail-intro-state";
 import { streetPolicePatrols } from "./police-layout";
 import { isStreetPolice, reportPoliceViolence, updatePolice } from "./police";
 import { OnlineWorld, onlineMode, installOnlineMenu } from "./online";
@@ -11,6 +13,9 @@ import type {
 let online: OnlineWorld | undefined;
 let networkClockOffset = 0;
 let onlineSpawnApplied = false;
+let onlineIntroSeen: boolean | undefined;
+let introShowing = false;
+const jailIntro = createJailIntro();
 const networkNpcShots = new Set<string>();
 import { createSettingsDialog } from "./settings-ui";
 import {
@@ -3058,6 +3063,54 @@ function start() {
     toast("Connect to the city first");
     return;
   }
+  if (introShowing) return;
+  if (onlineMode && onlineIntroSeen === undefined) {
+    toast("Loading your character…");
+    return;
+  }
+  if (
+    (onlineMode ? onlineIntroSeen === false : save.introSeen === false) &&
+    health > 0
+  ) {
+    introShowing = true;
+    playing = false;
+    resetInput();
+    sound.setPaused(true);
+    $("#menu").hidden = true;
+    $("#hud").hidden = true;
+    void jailIntro.play(sound.getSettings()).then(async (result) => {
+      if (result === "aborted") {
+        introShowing = false;
+        $("#menu").hidden = false;
+        return;
+      }
+      if (onlineMode) {
+        $("#menu").hidden = false;
+        $("#start").textContent = "FINISHING YOUR RELEASE…";
+        $<HTMLButtonElement>("#start").disabled = true;
+        const ok = await online?.action({ type: "intro" });
+        if (!ok) {
+          introShowing = false;
+          $("#menu").hidden = false;
+          toast("Reconnect to finish your release");
+          return;
+        }
+      } else {
+        save.introSeen = true;
+        const pose = jailReleasePose();
+        player = { x: pose.x, z: pose.z };
+        vertical = verticalSpeed = 0;
+        yaw = pose.yaw;
+        pitch = pose.pitch;
+        persist();
+      }
+      introShowing = false;
+      lastFrame = performance.now();
+      needsRender = true;
+      start();
+    });
+    return;
+  }
   hasEntered = true;
   $("#pause-settings").hidden = false;
   settleHousing();
@@ -4466,6 +4519,10 @@ const interiorFrustum = new THREE.Frustum(),
   interiorView = new THREE.Matrix4();
 function frame(now: number) {
   requestAnimationFrame(frame);
+  if (introShowing) {
+    lastFrame = now;
+    return;
+  }
   const productionDt = Math.min(Math.max(0, (now - lastFrame) / 1000), 1);
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
@@ -5083,6 +5140,16 @@ activateHand(inventory().active, false);
 const remotePlayers = new OnlinePlayers(scene);
 function applyOnlinePrivate(state: FpsPrivate) {
   const wasDead = health <= 0;
+  const finishedIntro = onlineIntroSeen === false && state.introSeen;
+  onlineIntroSeen = state.introSeen;
+  if (finishedIntro) {
+    online?.stop();
+    player = { x: state.pose.x, z: state.pose.z };
+    vertical = state.pose.y;
+    verticalSpeed = state.pose.vy;
+    yaw = state.pose.yaw;
+    pitch = state.pose.pitch;
+  }
   const pieces = save.pieces,
     drops = inventory().drops;
   save = { ...state.save, pieces };
@@ -5240,12 +5307,17 @@ function onlineStatus(message: string, disconnected: boolean) {
   if (status) status.textContent = message;
   const button = document.querySelector<HTMLButtonElement>("#start");
   if (button) {
-    button.disabled = !online?.ready || !!online?.paused;
+    button.disabled =
+      !online?.ready ||
+      !!online?.paused ||
+      onlineIntroSeen === undefined ||
+      introShowing;
     button.textContent = online?.ready ? "ENTER ONLINE CITY" : "CONNECTING…";
   }
   const retry = document.querySelector<HTMLElement>("#online-reconnect");
   if (retry) retry.hidden = !disconnected;
   if (disconnected) {
+    jailIntro.abort();
     if (settingsOpen) closeSettings(false);
     if (inventoryOpen) closeInventory();
     if (stationOpen) closeStation(false);

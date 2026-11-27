@@ -1,0 +1,96 @@
+{
+  "offset": {
+    "x": 0,
+    "z": -124
+  },
+  "city": [
+    {
+      "x": 0,
+      "z": 100,
+      "width": 12,
+      "depth": 12,
+      "height": 5.2,
+      "color": 8108468,
+      "name": "THE HAVEN",
+      "type": "shelter",
+      "yaw": 1.5707963267948966
+    },
+    {
+      "x": -34,
+      "z": 86,
+      "width": 9,
+      "depth": 8,
+      "height": 4.2,
+      "color": 13269077,
+      "name": "WORKSHOP",
+      "type": "workshop",
+      "yaw": -1.5707963267948966
+    },
+    {
+      "x": -26.5,
+      "z": 99,
+      "width": 10,
+      "depth": 10,
+      "height": 9.9,
+      "color": 11041128,
+      "name": "CORNER TENEMENTS",
+      "type": "tenement",
+      "yaw": -1.5707963267948966
+    },
+    {
+      "x": -80,
+      "z": 72,
+      "width": 14,
+      "depth": 10,
+      "height": 4.3,
+      "color": 7701866,
+      "name": "SWAT BARRACKS",
+      "type": "military-barracks",
+      "yaw": 0
+    },
+    {
+      "type": "north-workshop",
+      "name": "NORTH WORKS · MAINTENANCE",
+      "x": 45,
+      "z": 70,
+      "width": 22,
+      "depth": 16,
+      "height": 4.8,
+      "color": 5992569,
+      "yaw": 0
+    },
+    {
+      "type": "north-warehouse",
+      "name": "NORTH WORKS · WAREHOUSE",
+      "x": 87,
+      "z": 74,
+      "width": 38,
+      "depth": 20,
+      "height": 6,
+      "color": 3444113,
+      "yaw": 0
+    },
+    {
+      "x": -16,
+      "z": 64,
+      "width": 10,
+      "depth": 10,
+      "height": 9.9,
+      "color": 11041128,
+      "name": "CITY BLOCK 1",
+      "type": "tenement",
+      "yaw": 3.141592653589793
+    },
+    {
+      "x": -2,
+      "z": 64,
+      "width": 12,
+      "depth": 10,
+      "height": 6.7,
+      "color": 14002808,
+      "name": "CITY BLOCK 2",
+      "type": "flats",
+      "yaw": 0
+    }
+  ]
+}

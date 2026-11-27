@@ -982,6 +982,7 @@ export function canRemove(piece: Piece, pieces: Piece[]) {
   );
 }
 export type Save = {
+  introSeen?: boolean;
   survival?: SurvivalState;
   inventory?: Inventory;
   resources?: ResourceWallet;
@@ -992,7 +993,13 @@ export type Save = {
   opened: number[];
 };
 export function readSave(raw: string | null): Save {
-  const fresh: Save = { version: 1, wood: 10000, pieces: [], opened: [] };
+  const fresh: Save = {
+    version: 1,
+    introSeen: false,
+    wood: 10000,
+    pieces: [],
+    opened: [],
+  };
   if (!raw) return fresh;
   try {
     const s = JSON.parse(raw);
@@ -1029,6 +1036,7 @@ export function readSave(raw: string | null): Save {
     }
     return {
       version: 1,
+      ...(typeof s.introSeen === "boolean" ? { introSeen: s.introSeen } : {}),
       ...(readSurvival(s.survival)
         ? { survival: readSurvival(s.survival) }
         : {}),

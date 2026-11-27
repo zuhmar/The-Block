@@ -1,0 +1,21 @@
+{
+  "bytes": 5207088,
+  "sha256": "2035f75976ae8ba7d326c1eebbab3b41957659748534e6ba13be14d5095eb038",
+  "duration": 12.0,
+  "streams": [
+    {
+      "codec": "h264",
+      "type": "video",
+      "width": 960,
+      "height": 540,
+      "fps": "24/1"
+    },
+    {
+      "codec": "aac",
+      "type": "audio",
+      "width": null,
+      "height": null,
+      "fps": "0/0"
+    }
+  ]
+}

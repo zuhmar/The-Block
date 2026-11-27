@@ -1,0 +1,11 @@
+# Jail release cinematic
+
+The first arrival of a new character plays a 12-second Blender cinematic. The actual runtime black player, two white police rigs, U-shaped jail, furnished courtyard, towers, animated gate/barrier and modular bridge are imported from existing GLBs. Nearby city buildings use the current compact-map placement export. No models or paid generation jobs are substituted.
+
+The editable, packed source is `art/cinematics/jail-release/jail-release.blend`. It includes three complete rigs with native walk/idle strips, baked foot contact, an escort route, world-space gate/barrier pivots and four cameras. `build-jail-intro.py` reconstructs it from the recorded runtime assets. The manifest records source SHA-256 hashes and camera timings. `encode-jail-intro.py` packages the render as H.264/AAC MP4 with game footsteps, gate sounds and a fade into the live game. The video and poster live in `apps/client/static/assets/cinematics/` and load only when needed.
+
+Press Enter the Block to watch; Skip Intro or Escape continues immediately. Playback errors offer a Continue button, and reduced-motion users can explicitly choose Play or Continue. Sound follows the game's volume/mute settings. The game renderer pauses behind the movie to reduce phone workload.
+
+Online completion is stored per account in the existing persistent 3D character JSON. Only a fresh character in the protected release area, outside combat, receives the authority's handoff position beyond the real gate and barrier. Completion is idempotent, and cannot recall an established character from elsewhere in the world. Returning accounts are migrated to seen without changing their position, inventory, cash or structures. Respawns do not reset the flag. An interrupted intro remains pending on reconnect. Solo saves retain an explicit first-arrival flag; legacy device saves skip the intro without changing their saved progress.
+
+FPS content version 3 requires clients to refresh for the updated first-arrival contract. Shared gameplay messages remain version 1. This is a rendered opening scene; the multiplayer city keeps running while it plays, with the arriving player inside the existing protected jail release area.
