@@ -1,0 +1,30 @@
+{
+  "reference": "art/characters/jail-player/reference.png",
+  "referenceSha256": "e17510f8e93dc1ed8614950bce9fd1fe115633270e80ddc6f5528753d17c817b",
+  "method": "Blender modeled silhouette, tailored clothing, separate glossy head/hands/shoes, fitted bold lettering",
+  "rigSource": "art/characters/jail-player/animated-character.blend",
+  "bones": 24,
+  "clips": [
+    "CrouchLookAroundBow",
+    "Idle_3",
+    "Pistol_Fire",
+    "Pistol_Hold",
+    "Pistol_Reload",
+    "Punch_Left",
+    "Punch_Right",
+    "Regular_Jump",
+    "Rifle_Fire",
+    "Rifle_Hold",
+    "Rifle_Reload",
+    "Running",
+    "SMG_Fire",
+    "SMG_Hold",
+    "SMG_Reload",
+    "Sniper_Fire",
+    "Sniper_Hold",
+    "Sniper_Reload",
+    "Walking"
+  ],
+  "triangles": 80666,
+  "newMeshyCredits": 0
+}
