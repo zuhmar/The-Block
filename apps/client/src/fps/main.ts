@@ -8,6 +8,7 @@ import type {
 } from "../../../../packages/shared/src/fps-protocol";
 let online: OnlineWorld | undefined;
 let networkClockOffset = 0;
+let onlineSpawnApplied = false;
 const networkNpcShots = new Set<string>();
 import { createSettingsDialog } from "./settings-ui";
 import {
@@ -5004,7 +5005,6 @@ function applyOnlinePrivate(state: FpsPrivate) {
     const p = pieces.find((p) => p.id === state.station!.id);
     if (p) Object.assign(p, state.station);
   }
-  equippedItemId = undefined;
   reconcileEquipment();
   const held = selectedItem(inventory());
   if (held && isGun(held.kind))
@@ -5029,6 +5029,11 @@ function applyOnlinePrivate(state: FpsPrivate) {
 }
 function applyOnlineSnapshot(s: FpsSnapshot) {
   networkClockOffset = s.serverTime - Date.now();
+  if (!onlineSpawnApplied) {
+    yaw = s.pose.yaw;
+    pitch = s.pose.pitch;
+    onlineSpawnApplied = true;
+  }
   const w = s.world;
   if (w.pieces) {
     const old = new Map(save.pieces.map((p) => [p.id, p]));
