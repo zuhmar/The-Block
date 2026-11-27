@@ -26,7 +26,7 @@ export type StreetSegment = {
 };
 export type StreetJunction = Point & { arms: Point[] };
 export type StreetProp = Point & {
-  kind: "lamp" | "clutter";
+  kind: "lamp" | "clutter" | "bench" | "hydrant" | "dumpster";
   width: number;
   depth: number;
   height: number;
@@ -195,4 +195,37 @@ export function configureCityStreets() {
         kind: "clutter",
       });
   }
+  const dressing = [
+    { kind: "bench" as const, width: 1.8, depth: 1.069, height: 1.242 },
+    { kind: "hydrant" as const, width: 0.577, depth: 0.582, height: 0.85 },
+    { kind: "dumpster" as const, width: 2, depth: 1.08, height: 1.554 },
+  ];
+  for (const [j, s] of STREET_PLAN.segments.entries())
+    for (let t = 17; t < s.length - 12; t += 23) {
+      const spec = dressing[(j + Math.floor(t / 23)) % 3];
+      if (STREET_PLAN.props.filter((p) => p.kind === spec.kind).length >= 8)
+        continue;
+      const side = (j + Math.floor(t / 23)) % 2 ? 1 : -1,
+        nx = -s.uz * side,
+        nz = s.ux * side;
+      const p = {
+        x: s.a.x + s.ux * t + nx * (s.width / 2 + 1.35),
+        z: s.a.z + s.uz * t + nz * (s.width / 2 + 1.35),
+      };
+      const yaw = spec.kind === "dumpster" ? 0 : Math.atan2(-nx, -nz),
+        c = Math.abs(Math.cos(yaw)),
+        a = Math.abs(Math.sin(yaw));
+      const width = spec.width * c + spec.depth * a,
+        depth = spec.depth * c + spec.width * a;
+      if (free(p, Math.hypot(width, depth) / 2 + 0.15))
+        STREET_PLAN.props.push({
+          ...p,
+          kind: spec.kind,
+          width,
+          depth,
+          height: spec.height,
+          y: 0.035,
+          yaw,
+        });
+    }
 }

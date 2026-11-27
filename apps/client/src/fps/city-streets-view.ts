@@ -1,3 +1,4 @@
+import { roadsideModel, roadsideInstances } from "./roadside-models";
 import * as THREE from "three";
 import { STREET_PLAN, type StreetSegment } from "./city-streets-layout";
 import { CITY_FRONTAGES } from "./building-frontage";
@@ -290,8 +291,28 @@ export function createCityStreets() {
             );
       }
     }
+  const modelInstances: THREE.Group[] = [];
+  let meshyProps = 0;
   for (const p of STREET_PLAN.props) {
-    if (p.kind === "lamp") {
+    const name =
+      p.kind === "lamp"
+        ? "streetlamp"
+        : p.kind === "hydrant"
+          ? "fire-hydrant"
+          : p.kind;
+    const model =
+      p.kind !== "clutter" && p.kind !== "dumpster"
+        ? roadsideModel(name)
+        : undefined;
+    if (model) {
+      const group = new THREE.Group();
+      group.add(model);
+      group.position.set(p.x, p.y, p.z);
+      group.rotation.y = p.yaw;
+      if (p.kind === "lamp") group.scale.setScalar(p.height / 4.3);
+      modelInstances.push(group);
+      meshyProps++;
+    } else if (p.kind === "lamp") {
       const nx = Math.sin(p.yaw),
         nz = Math.cos(p.yaw);
       part("cylinder", p.x, 0.08, p.z, 0.32, 0.16, 0.32, 0x384950);
@@ -329,7 +350,7 @@ export function createCityStreets() {
         0xffdf9b,
         p.yaw,
       );
-    } else {
+    } else if (p.kind === "clutter") {
       part("box", p.x - 0.17, 0.23, p.z, 0.55, 0.46, 0.54, 0xae8654);
       part("box", p.x - 0.17, 0.47, p.z, 0.58, 0.025, 0.57, 0xc7a775);
       part("box", p.x - 0.17, 0.488, p.z, 0.1, 0.014, 0.56, 0xd5bb8d);
@@ -345,6 +366,22 @@ export function createCityStreets() {
         0x394a4e,
       );
     }
+    if (
+      !model &&
+      p.kind !== "lamp" &&
+      p.kind !== "clutter" &&
+      p.kind !== "dumpster"
+    )
+      part(
+        "box",
+        p.x,
+        p.y + p.height / 2,
+        p.z,
+        p.width,
+        p.height,
+        p.depth,
+        0x384950,
+      );
     const m = new THREE.Mesh(box, material(0x384950));
     m.position.set(p.x, p.y + p.height / 2, p.z);
     m.scale.set(p.width, p.height, p.depth);
@@ -361,6 +398,7 @@ export function createCityStreets() {
     mesh.computeBoundingSphere();
     root.add(mesh);
   }
+  const modelBatches = roadsideInstances(root, modelInstances);
   proxy.updateMatrixWorld(true);
   return {
     root,
@@ -372,7 +410,11 @@ export function createCityStreets() {
       drains,
       lights: STREET_PLAN.props.filter((p) => p.kind === "lamp").length,
       clutter: STREET_PLAN.props.filter((p) => p.kind === "clutter").length,
-      batches: groups.size + 2,
+      meshyProps,
+      benches: STREET_PLAN.props.filter((p) => p.kind === "bench").length,
+      hydrants: STREET_PLAN.props.filter((p) => p.kind === "hydrant").length,
+      dumpsters: STREET_PLAN.props.filter((p) => p.kind === "dumpster").length,
+      batches: groups.size + 2 + modelBatches,
     },
   };
 }

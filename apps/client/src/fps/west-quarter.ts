@@ -23,6 +23,7 @@ export const ROAD_BINS = [
   ),
 ];
 export const BIN_SPECS = {
+  dumpster: { width: 2, depth: 1.08, height: 1.554, reward: 20 },
   metal: { width: 0.6, depth: 0.6, height: 0.95, reward: 8 },
   wheelie: { width: 0.65, depth: 0.7, height: 1.1, reward: 12 },
   litter: { width: 0.65, depth: 0.65, height: 1, reward: 10 },

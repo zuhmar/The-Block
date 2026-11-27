@@ -1,4 +1,8 @@
-import { configureCityStreets, clearCityStreets } from "./city-streets-layout";
+import {
+  configureCityStreets,
+  clearCityStreets,
+  STREET_PLAN,
+} from "./city-streets-layout";
 import denseCityPlan from "./dense-city-plan.json";
 import {
   orientCityFrontages,
@@ -508,6 +512,22 @@ export function configureCompactCity() {
     });
   }
   configureCityStreets();
+  // Append only: preserve every previous saved container index and cooldown.
+  for (const p of STREET_PLAN.props.filter((p) => p.kind === "dumpster"))
+    LOOT.push({
+      x: p.x,
+      z: p.z,
+      y: p.y,
+      width: p.width,
+      depth: p.depth,
+      height: p.height,
+      kind: "trash",
+      model: "dumpster",
+      tier: 0,
+      name: "Alley dumpster",
+      reward: 20,
+      color: 0x326467,
+    });
   undo = () => {
     if (!COMPACT.active) return;
     for (const [o, values] of snapshots) Object.assign(o, values);

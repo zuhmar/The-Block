@@ -54,7 +54,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "e99172ab79f553b1f018a3a04889ed94c0c63111adb516108d01d6fd3b131bcc"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/tier-1-small.glb"
     },
     {
       "name": "tier-2-supply",
@@ -102,7 +103,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "e64b71e2640873b22c05ffba5e6fef42e583c119ca8e0f665b2b37291e018ccb"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/tier-2-supply.glb"
     },
     {
       "name": "tier-3-reinforced",
@@ -150,7 +152,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "efdbb5f145bdbb67f033f8b25774c48af86671815be44373601759e3a633428a"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/tier-3-reinforced.glb"
     },
     {
       "name": "tier-4-long",
@@ -198,7 +201,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "727fbc3a76396a0b9509c856ce6ded27c87fa227224db6f3f443df7f47269864"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/tier-4-long.glb"
     },
     {
       "name": "tier-5-heavy",
@@ -246,7 +250,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "d5688aa7b212f57b473155dc077c934c162897fcb58b19dfc7934692059a190d"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/tier-5-heavy.glb"
     },
     {
       "name": "trash-can-metal",
@@ -294,7 +299,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "b487f361b4b97d9507819c9f08ea0d87bc55efe5e74b18e2b35c73440085cf85"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/trash-can-metal.glb"
     },
     {
       "name": "wheelie-bin",
@@ -342,7 +348,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "e30569fdec2cf039f963191faafd3bdcb116e8cd8308cc7cb77d4b3e117b4934"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/wheelie-bin.glb"
     },
     {
       "name": "litter-basket",
@@ -390,7 +397,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "a34d061db5db2aa21490da4d600d0e7d30bc961d7c881c6d15ecfb3021603f52"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/litter-basket.glb"
     },
     {
       "name": "dumpster",
@@ -438,7 +446,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "f6a968c882161ca6ad3e5e5d7c33c789db0c6c3ab52042c9bdfee25a4157d4ce"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/dumpster.glb"
     },
     {
       "name": "streetlamp",
@@ -486,7 +495,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "d63f0fdb273b36a9e3a0327c57f490847fd2aa95c22941e140a8e7f53c2ef49f"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/streetlamp.glb"
     },
     {
       "name": "bench",
@@ -534,7 +544,8 @@
         ],
         "selfContained": true,
         "referenceSha256": "17020e2cebb61783646a77435f7f9eef6e930dd89ce6580ebf7d95a27bc31ca6"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/bench.glb"
     },
     {
       "name": "fire-hydrant",
@@ -582,12 +593,13 @@
         ],
         "selfContained": true,
         "referenceSha256": "1d6a22fecccfd6d9072e0daf244d7d481157fbd96a71022f33ef055e50d9eac4"
-      }
+      },
+      "runtimeModelPath": "apps/client/src/fps/models/roadside/fire-hydrant.glb"
     }
   ],
   "submittedCredits": 288,
   "balanceAfterSubmissions": 63,
   "pendingCredits": 0,
-  "assetState": "12 complete static world-prop models and transparent sprites; all twelve individual references; 0 models pending. Not integrated in game.",
+  "assetState": "All twelve models and sprites complete; models integrated into the game and separate map editor.",
   "approvedCompletionCredits": 45
 }

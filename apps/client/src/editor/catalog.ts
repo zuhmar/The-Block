@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+import { STREET_PLAN } from "../fps/city-streets-layout";
 import { configureCompactCity } from "../fps/compact-city";
 import { CITY_PLOTS, RESOURCE_PARKS, JAIL_ISLAND } from "../fps/compact-plan";
 import { START } from "../fps/world";
@@ -35,7 +36,7 @@ export const CATALOG: CatalogAsset[] = [];
 for (const [path, url] of Object.entries(urls)) {
   const key = path.split("/models/")[1];
   if (
-    !/^(buildings|build-wood|street|loot-chests|meshy-warehouse|jail-kit|block-mart|tenement-v2|apartment-props)\//.test(
+    !/^(buildings|build-wood|street|roadside|loot-chests|meshy-warehouse|jail-kit|block-mart|tenement-v2|apartment-props)\//.test(
       key,
     ) ||
     (key.startsWith("block-mart/") &&
@@ -70,9 +71,18 @@ for (const [path, url] of Object.entries(urls)) {
             : "") +
       type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
     layer: b ? "Buildings" : "Props",
-    behavior: key.startsWith("loot-chests") ? "loot" : "solid",
+    behavior:
+      key.startsWith("loot-chests") ||
+      /^roadside\/(tier-|trash-can-metal|wheelie-bin|litter-basket|dumpster)/.test(
+        key,
+      )
+        ? "loot"
+        : "solid",
     url,
-    anchor: b || key.startsWith("apartment-props/") ? [0, 0, 0] : undefined,
+    anchor:
+      b || key.startsWith("roadside/") || key.startsWith("apartment-props/")
+        ? [0, 0, 0]
+        : undefined,
     size: b ? [b.width, b.height, b.depth] : undefined,
   });
 }
@@ -378,8 +388,15 @@ export function newMap(current = true): MapDocument {
     LOOT.forEach((l) =>
       add(
         l.kind === "trash"
-          ? `model:street/bin-${l.model ?? "metal"}.glb`
-          : `model:loot-chests/tier-${l.tier}-${["", "small", "supply", "reinforced", "long", "heavy"][l.tier]}.glb`,
+          ? `model:roadside/${
+              {
+                dumpster: "dumpster",
+                metal: "trash-can-metal",
+                wheelie: "wheelie-bin",
+                litter: "litter-basket",
+              }[l.model ?? "metal"]
+            }.glb`
+          : `model:roadside/tier-${l.tier}-${["", "small", "supply", "reinforced", "long", "heavy"][l.tier]}.glb`,
         l.name,
         l.x,
         l.z,
@@ -391,6 +408,25 @@ export function newMap(current = true): MapDocument {
         },
       ),
     );
+    for (const p of STREET_PLAN.props) {
+      const name =
+        p.kind === "lamp"
+          ? "streetlamp"
+          : p.kind === "hydrant"
+            ? "fire-hydrant"
+            : p.kind === "bench"
+              ? "bench"
+              : undefined;
+      if (name)
+        add(`model:roadside/${name}.glb`, name, p.x, p.z, {
+          y: p.y,
+          yaw: p.yaw,
+          scale:
+            p.kind === "lamp"
+              ? [p.height / 4.3, p.height / 4.3, p.height / 4.3]
+              : [1, 1, 1],
+        });
+    }
     let seed = 73;
     const resources = new ResourceWorld(
       () => [],

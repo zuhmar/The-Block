@@ -28,6 +28,6 @@ for p in m['props']:
  p.update(prepared);p['status']='complete';p['modelType']=done['model_type'];p['nativeBounds']=done.get('nativeSize')
  records.append({'name':name,'sourceImagePixelsMatchReference':True,'spriteSize':list(sprite.size),'alphaBounds':list(bounds),'spriteSha256':hashlib.sha256((ROOT/'sprites'/(name+'.png')).read_bytes()).hexdigest()})
 assert len(records)==sum(bool(p['modelTaskId']) for p in m['props'])
-m['assetState']=f"{len(records)} complete static world-prop models and transparent sprites; all twelve individual references; {len(m['props'])-len(records)} models pending. Not integrated in game."
+m['assetState']=f"{len(records)} complete static world-prop models and transparent sprites; all twelve individual references; {len(m['props'])-len(records)} models pending. Integrated into the game and separate map editor."
 (ROOT/'sprite-checks.json').write_text(json.dumps({'transparentSprites':len(records),'pairedReferences':len(records),'referenceImages':12,'pendingModels':len(m['props'])-len(records),'sprites':records},indent=2)+'\n')
 (ROOT/'manifest.json').write_text(json.dumps(m,indent=2)+'\n');print('Validated',len(records),'transparent sprites and exact source pairs')

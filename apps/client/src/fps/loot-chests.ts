@@ -1,28 +1,24 @@
-import * as THREE from "three";
-
-const URLS = [
-  new URL("./models/loot-chests/tier-1-small.glb", import.meta.url).href,
-  new URL("./models/loot-chests/tier-2-supply.glb", import.meta.url).href,
-  new URL("./models/loot-chests/tier-3-reinforced.glb", import.meta.url).href,
-  new URL("./models/loot-chests/tier-4-long.glb", import.meta.url).href,
-  new URL("./models/loot-chests/tier-5-heavy.glb", import.meta.url).href,
+import {
+  preloadRoadsideModels,
+  roadsideModel,
+  roadsideSources,
+} from "./roadside-models";
+const names = [
+  "tier-1-small",
+  "tier-2-supply",
+  "tier-3-reinforced",
+  "tier-4-long",
+  "tier-5-heavy",
 ];
-const loaded = new Map<number, THREE.Group>();
-export async function preloadLootChests() {
-  const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
-  const loader = new GLTFLoader();
-  await Promise.allSettled(
-    URLS.map(async (url, index) => {
-      const gltf = await loader.loadAsync(url);
-      loaded.set(index + 1, gltf.scene);
-    }),
-  );
-}
+export const preloadLootChests = preloadRoadsideModels;
 export function lootChestModel(tier: number) {
-  return loaded.get(tier)?.clone(true);
+  return roadsideModel(names[tier - 1]);
 }
 export function lootChestSources() {
-  return URLS.map(
-    (_, i) => `${i + 1}:${loaded.has(i + 1) ? "meshy" : "fallback"}`,
-  ).join(",");
+  return names
+    .map(
+      (name, i) =>
+        `${i + 1}:${roadsideSources().includes(name) ? "meshy-roadside" : "fallback"}`,
+    )
+    .join(",");
 }

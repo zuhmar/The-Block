@@ -15,7 +15,7 @@ for kind,folder in [('references','references'),('sprites','sprites')]:
  sheet.save(root/('gallery-'+kind+'.png'))
 css='body{margin:32px;background:#19262c;color:#e6e9e9;font:16px system-ui}h1{color:#e2c581}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}article{padding:16px;background:#26373d;border-radius:12px}img{width:100%;aspect-ratio:1;object-fit:contain;background:#dfe4e4;border-radius:8px}a{color:#8de1d8}p{line-height:1.5}small{display:block;color:#c4cece}input{padding:12px;margin-bottom:20px;width:min(90%,400px)}'
 completed=sum(p['status']=='complete' for p in m['props'])
-summary=f"Five crate tiers and seven street props. {completed} completed textured models and transparent sprites; all {len(m['props'])} references. Assets are not yet placed in the game."
+summary=f"Five crate tiers and seven street props. {completed} completed textured models and transparent sprites; all {len(m['props'])} references. Integrated into the game and separate map editor."
 cards=[]
 for p in m['props']:
  name=p['name'];done=p['status']=='complete';img=('sprites' if done else 'references')+'/'+name+'.png'

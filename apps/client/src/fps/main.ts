@@ -1,3 +1,4 @@
+import { fitRoadside, roadsideSources, roadsideModel } from "./roadside-models";
 import { isLootItem } from "./loot-item-spec";
 import { useLootItem } from "./use-loot-item";
 import { lootModelStats } from "./loot-pickup-models";
@@ -710,17 +711,20 @@ scene.add(shadow);
 const nature = createNatureRenderer(resourceWorld);
 nature.update(START, 0);
 scene.add(nature.root, nature.cover);
-// Street furniture makes the little settlement readable without oversized sprites.
-for (const [x, z] of [
-  [-27, 8],
-  [29, 2],
-  [-10, -9],
-  [10, 9],
-]) {
-  cylinder(scene, x, 2.2, z, 0.09, 4.4, 0x56655d);
-  box(scene, x + 0.5, 4.45, z, 1.15, 0.12, 0.15, 0x56655d);
-  box(scene, x + 1, 4.3, z, 0.5, 0.16, 0.3, 0xe5dfb8);
-}
+// Compact streets use the shared instanced Meshy lamp kit.
+if (!COMPACT.active)
+  for (const [x, z] of [
+    [-27, 8],
+    [29, 2],
+    [-10, -9],
+    [10, 9],
+  ]) {
+    const lamp = roadsideModel("streetlamp");
+    if (lamp) {
+      lamp.position.set(x, 0, z);
+      scene.add(lamp);
+    }
+  }
 const jailGrounds = jailGroundModel();
 scene.add(jailGrounds.root, jailGrounds.proxy);
 // Keep cheap shot-cover boxes separate from the detailed visual meshes.
@@ -728,6 +732,15 @@ const lootMeshes: THREE.Group[] = [];
 LOOT.forEach((c, index) => {
   const visual =
     c.kind === "trash" ? binModel(c.model!) : lootChestModel(c.tier);
+  if (visual) {
+    fitRoadside(visual, c.width, c.height, c.depth);
+    const size = new THREE.Box3()
+      .setFromObject(visual)
+      .getSize(new THREE.Vector3());
+    c.width = size.x;
+    c.height = size.y;
+    c.depth = size.z;
+  }
   const g = new THREE.Group();
   g.position.set(c.x, c.y ?? 0, c.z);
   g.userData.loot = index;
@@ -4525,6 +4538,7 @@ function frame(now: number) {
   canvas.dataset.nearestDoor = String(nearestDoor());
   canvas.dataset.buildModels = woodBuildingSources();
   canvas.dataset.lootModels = lootChestSources();
+  canvas.dataset.roadsideModels = JSON.stringify(roadsideSources());
   canvas.dataset.lootProxyCount = String(
     lootMeshes.reduce(
       (n, g) => n + g.children.filter((c) => !c.visible).length,

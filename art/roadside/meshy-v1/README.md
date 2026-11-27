@@ -15,8 +15,18 @@ matching teal plates for readability. There are no ground patches or terrain pla
 - Open `index.html` to inspect/filter/download individual files. The two gallery
   images show the original references and the finished transparent sprites separately.
 
-All twelve models are complete. This kit is **not yet integrated into the playable
-map**; current gameplay and saved objects are unchanged.
+All twelve models are integrated into the game and separate map editor. Existing
+crate and bin locations retain their saved container indices and cooldowns. Models
+are fitted uniformly inside their former placement envelopes, with movement and shot
+collision matching the resulting visual bounds. New searchable dumpsters are appended
+after existing containers. Benches and hydrants occupy validated sidewalk positions
+outside roads, entrances, housing parcels and resource parks. Streetlamps reuse the
+existing lamp positions; repeated street models share instanced GPU batches.
+
+Runtime copies live in `apps/client/src/fps/models/roadside/`. One shared preload loads
+the twelve assets and caps their base-color textures to 512px on the GPU. The map
+editor lists every model, uses the updated containers in its city template, and includes
+the new street dressing. No player inventory or persistent world data is reset.
 
 ## Meshy pipeline and cost
 

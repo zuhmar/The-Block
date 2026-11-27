@@ -1,3 +1,4 @@
+import { preloadRoadsideModels, roadsideModel } from "./roadside-models";
 import { COMPACT } from "./compact-plan";
 import { jailGate } from "./jail-ground-layout";
 import { JAIL_KIT_GATES } from "./jail-kit-layout";
@@ -10,15 +11,13 @@ import {
 } from "./jail-ground-layout";
 import type { BinKind } from "./west-quarter";
 const urls = {
-  metal: new URL("./models/street/bin-metal.glb", import.meta.url).href,
-  wheelie: new URL("./models/street/bin-wheelie.glb", import.meta.url).href,
-  litter: new URL("./models/street/bin-litter.glb", import.meta.url).href,
   meshy: new URL("./models/street/jail-meshy-grounds.glb", import.meta.url)
     .href,
   jail: new URL("./models/street/jail-grounds.glb", import.meta.url).href,
 };
 const loaded = new Map<string, THREE.Group>();
 export async function preloadStreetFurniture() {
+  await preloadRoadsideModels();
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const loader = new GLTFLoader();
   await Promise.allSettled(
@@ -27,7 +26,15 @@ export async function preloadStreetFurniture() {
     }),
   );
 }
-export const binModel = (kind: BinKind) => loaded.get(kind)?.clone(true);
+export const binModel = (kind: BinKind) =>
+  roadsideModel(
+    {
+      dumpster: "dumpster",
+      metal: "trash-can-metal",
+      wheelie: "wheelie-bin",
+      litter: "litter-basket",
+    }[kind],
+  );
 export function jailGroundModel() {
   const asset = COMPACT.active ? loaded.get("meshy") : loaded.get("jail");
   const root = asset?.clone(true) ?? new THREE.Group(),
