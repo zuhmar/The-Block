@@ -1,3 +1,4 @@
+import { createDayNightView } from "./day-night-view";
 import { fitRoadside, roadsideSources, roadsideModel } from "./roadside-models";
 import { isLootItem } from "./loot-item-spec";
 import { useLootItem } from "./use-loot-item";
@@ -215,7 +216,7 @@ const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
 $("#app").innerHTML = `
 <canvas id="world" aria-label="Street Survival first-person 3D world"></canvas>
 <div id="hud" hidden>
-  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span></div><button id="inventory-button" aria-label="Open inventory">BAG <small>I</small></button><button id="housing-button" aria-label="Land, upkeep and hand crafting">LAND <small>H</small></button><button id="build-tool">BUILD <small>B</small></button><button id="pause-button" aria-label="Pause game">||</button></header>
+  <header><div class="brand">STREET<span>SURVIVAL</span><small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span><time id="world-time" aria-label="World time"></time></div><button id="inventory-button" aria-label="Open inventory">BAG <small>I</small></button><button id="housing-button" aria-label="Land, upkeep and hand crafting">LAND <small>H</small></button><button id="build-tool">BUILD <small>B</small></button><button id="pause-button" aria-label="Pause game">||</button></header>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="resource-wallet" aria-label="Gathered resources"><span>ROCK <b id="rock-count">0</b></span><span>SULFUR <b id="sulfur-count">0</b></span><span>METAL <b id="metal-count">0</b></span></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span><span id="structure-health-label" hidden></span><meter id="structure-health-bar" min="0" max="100" value="100" aria-label="Structure health" hidden></meter></div>
@@ -436,7 +437,8 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.rotation.order = "YXZ";
 scene.add(camera);
-scene.add(new THREE.HemisphereLight(0xe8f6ff, 0x809166, 2.5));
+const worldAmbient = new THREE.HemisphereLight(0xe8f6ff, 0x809166, 2.5);
+scene.add(worldAmbient);
 const sun = new THREE.DirectionalLight(0xffe4bb, 2.6);
 sun.position.set(-30, 55, 20);
 scene.add(sun);
@@ -1220,10 +1222,20 @@ viewModel.setAspect(camera.aspect);
 const viewScene = new THREE.Scene();
 const viewCamera = new THREE.PerspectiveCamera(72, camera.aspect, 0.025, 10);
 viewScene.add(viewCamera);
-viewScene.add(new THREE.HemisphereLight(0xffffff, 0x526b54, 2));
+const viewAmbient = new THREE.HemisphereLight(0xffffff, 0x526b54, 2);
+viewScene.add(viewAmbient);
 const viewLight = new THREE.DirectionalLight(0xffecd2, 2.5);
 viewLight.position.set(-2, 3, 2);
 viewScene.add(viewLight);
+const dayNight = createDayNightView({
+  scene,
+  ambient: worldAmbient,
+  sun,
+  viewAmbient,
+  viewLight,
+  renderer,
+  mobile: touch,
+});
 renderer.autoClear = false;
 renderer.info.autoReset = false;
 viewCamera.add(viewModel.root);
@@ -4035,6 +4047,14 @@ function frame(now: number) {
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
   clock += dt;
+  const worldTime = dayNight.update(Date.now(), player);
+  coast.setDaylight(worldTime.daylight);
+  const timeLabel = `${worldTime.time} · ${worldTime.phase}`;
+  if ($("#world-time").textContent !== timeLabel) {
+    $("#world-time").textContent = timeLabel;
+    $("#world-time").setAttribute("datetime", worldTime.time);
+  }
+  canvas.dataset.dayNight = JSON.stringify(dayNight.diagnostics());
   if (Date.now() - lastHousingTick >= 1000) {
     lastHousingTick = Date.now();
     settleHousing();

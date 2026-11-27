@@ -1817,3 +1817,12 @@ h1 em {
 #budget {
   white-space: nowrap;
 }
+
+#world-time {
+  display: block;
+  font-size: 9px;
+  line-height: 1.4;
+  color: #e2d5b0;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}

@@ -38,7 +38,7 @@ void main(){vec4 world=modelMatrix*vec4(position,1.0);vWater=world.xz;vec4 mvPos
 #include <fog_vertex>
 }`;
 const surfaceFragment = `#include <fog_pars_fragment>
-uniform sampler2D uTile;uniform float uTime;varying vec2 vWater;
+uniform float uDaylight;uniform sampler2D uTile;uniform float uTime;varying vec2 vWater;
 vec2 mirrorUv(vec2 p){return 1.0-abs(fract(p*.5)*2.0-1.0);}
 void main(){
  vec2 p=vWater/11.0;
@@ -48,7 +48,7 @@ void main(){
  vec3 color=mix(a,b,.36)*.82;
  float glint=pow(max(0.0,sin(p.x*3.1+p.y*4.7+uTime*.8)*cos(p.y*2.7-uTime*.5)),12.0);
  color+=vec3(.12,.2,.2)*glint;
- gl_FragColor=vec4(color,1.0);
+ gl_FragColor=vec4(color*mix(vec3(.12,.2,.34),vec3(1.0),uDaylight),1.0);
  #include <tonemapping_fragment>
  #include <colorspace_fragment>
  #include <fog_fragment>
@@ -58,9 +58,9 @@ varying vec2 vUv;void main(){vUv=uv;vec4 mvPosition=modelViewMatrix*vec4(positio
 #include <fog_vertex>
 }`;
 const foamFragment = `#include <fog_pars_fragment>
-uniform sampler2D uFoam;uniform float uTime;varying vec2 vUv;
+uniform float uDaylight;uniform sampler2D uFoam;uniform float uTime;varying vec2 vUv;
 void main(){vec4 foam=texture2D(uFoam,vec2(1.0-abs(fract((vUv.x+uTime*.025)*.5)*2.0-1.0),vUv.y+sin(vUv.x*2.0+uTime*.65)*.025));
- float alpha=foam.a*(.34+.12*sin(uTime*.8+vUv.x*.4));if(alpha<.015)discard;gl_FragColor=vec4(mix(foam.rgb,vec3(.8,1.0,1.0),.25),alpha);
+ float alpha=foam.a*(.34+.12*sin(uTime*.8+vUv.x*.4));if(alpha<.015)discard;gl_FragColor=vec4(mix(foam.rgb,vec3(.8,1.0,1.0),.25)*mix(vec3(.25,.34,.48),vec3(1.0),uDaylight),alpha);
  #include <tonemapping_fragment>
  #include <colorspace_fragment>
  #include <fog_fragment>
@@ -71,10 +71,10 @@ void main(){vAge=(uTime-aBorn)/1.8;vUv=uv;vec3 p=position;p.xy*=.35+clamp(vAge,0
 #include <fog_vertex>
 }`;
 const rippleFragment = `#include <fog_pars_fragment>
-uniform sampler2D uRipple;varying vec2 vUv;varying float vAge;
+uniform float uDaylight;uniform sampler2D uRipple;varying vec2 vUv;varying float vAge;
 void main(){if(vAge<0.0||vAge>=1.0)discard;vec4 tex=texture2D(uRipple,vUv);float r=length(vUv-vec2(.5));
  float ring=max(1.0-smoothstep(.008,.024,abs(r-.35)),1.0-smoothstep(.007,.02,abs(r-.22)));
- float alpha=tex.a*ring*smoothstep(0.0,.08,vAge)*pow(1.0-vAge,1.4)*.65;if(alpha<.01)discard;gl_FragColor=vec4(.78,.97,1.0,alpha);
+ float alpha=tex.a*ring*smoothstep(0.0,.08,vAge)*pow(1.0-vAge,1.4)*.65;if(alpha<.01)discard;gl_FragColor=vec4(vec3(.78,.97,1.0)*mix(vec3(.25,.34,.48),vec3(1.0),uDaylight),alpha);
  #include <tonemapping_fragment>
  #include <colorspace_fragment>
  #include <fog_fragment>
@@ -83,9 +83,11 @@ export function createWater(coasts: readonly (readonly WaterPoint[])[]) {
   const root = new THREE.Group();
   root.name = "animated-cartoon-water";
   const time = { value: 0 };
+  const daylight = { value: 1 };
   const uniforms = (other: Record<string, THREE.IUniform>) => ({
     ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog),
     uTime: time,
+    uDaylight: daylight,
     ...other,
   });
   const material = new THREE.ShaderMaterial({
@@ -211,6 +213,11 @@ export function createWater(coasts: readonly (readonly WaterPoint[])[]) {
   }
   return {
     root,
+    setDaylight(value: number) {
+      daylight.value = Number.isFinite(value)
+        ? THREE.MathUtils.clamp(value, 0, 1)
+        : 1;
+    },
     material,
     foam,
     pool,
@@ -221,6 +228,7 @@ export function createWater(coasts: readonly (readonly WaterPoint[])[]) {
       for (const t of born)
         if (time.value - t >= 0 && time.value - t < RIPPLE_SECONDS) active++;
       return {
+        daylight: daylight.value,
         source: textures.size === 3 ? "ai-textures" : "fallback",
         layers: 2,
         drawCalls: 3,

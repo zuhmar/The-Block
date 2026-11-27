@@ -73,6 +73,7 @@ export function createCoast() {
     root,
     surface: terrain,
     waterMaterial: water.material,
+    setDaylight: water.setDaylight,
     splash: water.splash,
     splashRay: water.splashRay,
     waterStats: water.stats,
