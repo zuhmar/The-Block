@@ -162,3 +162,16 @@
     padding: 8px;
   }
 }
+
+#settings-overlay #reset {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  border: 1px solid #ac7164;
+  border-radius: 5px;
+  background: #432b2b;
+  color: #f1b5a7;
+  font-size: 11px;
+  text-decoration: none;
+}
