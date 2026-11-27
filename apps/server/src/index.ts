@@ -27,20 +27,24 @@ import {
 } from "../../../packages/shared/src/index.js";
 import { LOOT_CRATES } from "../../../packages/game-data/loot-crates.js";
 const config = readServerConfig();
-// A dedicated PostgreSQL advisory lock forbids a second authority for this city.
-const authority = await pool.connect();
-await acquireAuthority(
-  authority,
-  process.env.RAILWAY_DEPLOYMENT_ID ? 90000 : 0,
-);
-await migrate();
 const bootstrap = randomUUID();
 let roomId = "";
 let fpsRoomId = "";
 const app = express();
+let authorityReady = false;
 app.disable("x-powered-by");
 app.use(cors({ origin: config.clientOrigin }));
 app.use(express.json({ limit: "8kb" }));
+// Liveness permits Railway to drain the previous instance; readiness remains
+// gated by the database lock and both authoritative rooms.
+app.get("/live", (_req, res) => res.json({ ok: true }));
+app.use((req, res, next) => {
+  if (!authorityReady && req.path !== "/health") {
+    res.status(503).json({ error: "City starting · reconnect shortly" });
+    return;
+  }
+  next();
+});
 const attempts = new Map<string, { n: number; until: number }>();
 const authSchema = z.object({
   name: z
@@ -373,6 +377,21 @@ const game = new Server({
 game.define("block", Block).filterBy([]);
 game.define("block3d", fpsRoom(bootstrap)).filterBy([]);
 await game.listen(config.port);
+// A dedicated PostgreSQL advisory lock forbids a second authority for this city.
+const authority = await pool.connect();
+await acquireAuthority(
+  authority,
+  process.env.RAILWAY_DEPLOYMENT_ID ? 90000 : 0,
+);
+await migrate();
+
+authority.on("error", () => {
+  console.error(
+    "World authority connection lost; stopping to prevent competing writers",
+  );
+  process.exit(1);
+});
 roomId = (await matchMaker.createRoom("block", { bootstrap })).roomId;
 fpsRoomId = (await matchMaker.createRoom("block3d", { bootstrap })).roomId;
+authorityReady = true;
 console.log(`Street Survival authority · listening on port ${config.port}`);
