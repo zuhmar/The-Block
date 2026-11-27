@@ -1,5 +1,17 @@
 # STB jail player
 
+**Corrected base-matching version:** use `base-fit/animated.glb` and
+`base-fit/base-jail-player.blend`. The earlier Meshy generation below changed the
+character's anatomy and is retained only as a draft. The corrected version uses
+the actual existing base player mesh, all 32 rig bones and all 19 existing clips.
+The head, hands, feet and body vertex coordinates are unchanged. Orange suit
+materials, rounded cuffs, collar, zipper and STB lettering supply the outfit.
+`base-fit/corrected-preview.png` and `base-fit/base-preview.png` share the same
+A-pose and camera. `base-fit/report.json` records the exact source hash and
+geometry-preservation check. No additional paid generation was submitted.
+
+Rebuild the corrected version with `blender -b -t 4 --python-exit-code 1 --python packages/art-tools/build-base-jail-outfit.py`.
+
 Orange STB jumpsuit over the established glossy black character, built from `reference.png`.
 
 - `jail-player.glb`: unchanged textured Meshy model, image-to-3D task `01a21d79-5596-75ff-a5a5-1ec20eab90ed`.

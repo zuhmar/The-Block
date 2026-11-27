@@ -1,0 +1,33 @@
+{
+  "baseSource": "apps/client/src/fps/models/meshy-shadow/animated.glb",
+  "baseSha256": "a3bb794b40e83cc6320e97d7068057a5b1e935431d05da843529af0c8ad70cb2",
+  "baseVerticesPreserved": 18411,
+  "baseGeometryUnchanged": true,
+  "bones": 32,
+  "animations": [
+    "CrouchLookAroundBow",
+    "Idle_3",
+    "Pistol_Fire",
+    "Pistol_Hold",
+    "Pistol_Reload",
+    "Punch_Left",
+    "Punch_Right",
+    "Regular_Jump",
+    "Rifle_Fire",
+    "Rifle_Hold",
+    "Rifle_Reload",
+    "Running",
+    "SMG_Fire",
+    "SMG_Hold",
+    "SMG_Reload",
+    "Sniper_Fire",
+    "Sniper_Hold",
+    "Sniper_Reload",
+    "Walking"
+  ],
+  "notes": [
+    "Original head, hands, feet, body geometry, rig and actions retained.",
+    "Orange suit material uses existing weighted body faces; anatomy and skin weights are unchanged.",
+    "No Meshy regeneration or rigging charges."
+  ]
+}
