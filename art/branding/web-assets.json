@@ -1,0 +1,29 @@
+{
+  "source": "art/branding/survive-the-block-logo.png",
+  "files": [
+    {
+      "path": "apps/client/static/assets/branding/survive-the-block-384.webp",
+      "width": 384,
+      "height": 256,
+      "bytes": 41246
+    },
+    {
+      "path": "apps/client/static/assets/branding/survive-the-block-768.webp",
+      "width": 768,
+      "height": 512,
+      "bytes": 101714
+    },
+    {
+      "path": "apps/client/static/assets/branding/survive-the-block-1536.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 235068
+    },
+    {
+      "path": "apps/client/static/assets/branding/survive-the-block-icon.png",
+      "width": 96,
+      "height": 64,
+      "bytes": 16041
+    }
+  ]
+}

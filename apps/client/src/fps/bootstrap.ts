@@ -1,3 +1,5 @@
+import { logoMarkup } from "../branding";
+import "../branding.css";
 import { preloadTimberYard } from "./timber-yard-view";
 import { preloadWaterAssets } from "./water-view";
 import { preloadNorthLab } from "./north-lab-model";
@@ -17,8 +19,7 @@ import { preloadBlenderBuildings } from "./blender-buildings";
 import "./style.css";
 import "./theme.css";
 const app = document.querySelector<HTMLElement>("#app")!;
-app.innerHTML =
-  '<div id="loading-screen" class="overlay"><div class="menu-card loading-card"><span class="eyebrow">WELCOME TO THE BLOCK</span><h2>STREET <em>SURVIVAL</em></h2><p role="status">Preparing the streets…</p><div class="loading-track" aria-hidden="true"><i></i></div><small>Scavenge. Build. Survive.</small></div></div>';
+app.innerHTML = `<div id="loading-screen" class="overlay"><div class="menu-card loading-card"><span class="eyebrow">WELCOME TO THE BLOCK</span><h2 class="logo-heading">${logoMarkup("", "300px")}</h2><p role="status">Preparing the streets…</p><div class="loading-track" aria-hidden="true"><i></i></div><small>Scavenge. Build. Survive.</small></div></div>`;
 void preloadSoundFiles();
 void Promise.allSettled([
   preloadTimberYard(),

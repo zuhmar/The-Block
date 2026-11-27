@@ -475,7 +475,7 @@ export function newMap(current = true): MapDocument {
     format: "street-survival-map",
     version: 1,
     name: current
-      ? "Street Survival · compact city & jail island"
+      ? "Survive the Block · compact city & jail island"
       : "Untitled island",
     worldSize: 640,
     coast: COASTLINE.filter((_, i) => i % 16 === 0).map((p) => ({ ...p })),

@@ -148,7 +148,7 @@ export function validateMap(
     !coastValid(d.coast)
   )
     throw Error(
-      "Unsupported or invalid map. Use a Street Survival map export (maximum 2,000 objects).",
+      "Unsupported or invalid map. Use a Survive the Block map export (maximum 2,000 objects).",
     );
   const assetIds = new Set<string>();
   let total = 0;
