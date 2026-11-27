@@ -1,75 +1,159 @@
 {
-  "shots": 4,
-  "frames": 288,
+  "shots": 5,
+  "frames": 360,
   "fps": 24,
   "actors": [
     {
       "name": "Player escort actor",
-      "rigBones": 32,
+      "rigBones": 76,
       "walkStrips": [
-        "Walking_SmartRigArmature"
+        "Walking_STB Jail Player"
       ]
     },
     {
       "name": "Police left escort actor",
       "rigBones": 66,
       "walkStrips": [
-        "Walking_SmartRigArmature.001"
+        "Walking_SmartRigArmature"
       ]
     },
     {
       "name": "Police right escort actor",
       "rigBones": 66,
       "walkStrips": [
-        "Walking_SmartRigArmature.002"
+        "Walking_SmartRigArmature.001"
       ]
     }
   ],
   "samples": [
     {
+      "actor": "Player escort actor",
       "frame": 1,
-      "player": [
-        0.0,
-        -7.800000190734863,
-        0.7639568448066711
-      ],
-      "soleZ": 0.014999985694885254,
-      "gateAngle": 0.0,
-      "barrierMaxZ": 1.647399663925171
+      "soleZ": -0.00800002459436655,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0019999993965029716
     },
     {
+      "actor": "Police left escort actor",
+      "frame": 1,
+      "soleZ": -0.008000019937753677,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0020000040531158447
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 1,
+      "soleZ": -0.008000023663043976,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0020000003278255463
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 36,
+      "soleZ": -0.008000046014785767,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0019999779760837555
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 36,
+      "soleZ": -0.0079999640583992,
+      "surfaceZ": -0.009999964386224747,
+      "clearance": 0.0020000003278255463
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 36,
+      "soleZ": -0.008000023663043976,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0020000003278255463
+    },
+    {
+      "actor": "Player escort actor",
       "frame": 155,
-      "player": [
-        0.0,
-        -14.54127025604248,
-        0.7639568448066711
-      ],
-      "soleZ": 0.014999985694885254,
-      "gateAngle": 1.5707963705062866,
-      "barrierMaxZ": 2.436582326889038
+      "soleZ": -0.008000023663043976,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.0020000003278255463
     },
     {
+      "actor": "Police left escort actor",
+      "frame": 155,
+      "soleZ": 0.017266687005758286,
+      "surfaceZ": 0.01526668667793274,
+      "clearance": 0.0020000003278255463
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 155,
+      "soleZ": -0.008000025525689125,
+      "surfaceZ": -0.010000023990869522,
+      "clearance": 0.001999998465180397
+    },
+    {
+      "actor": "Player escort actor",
       "frame": 240,
-      "player": [
-        0.0,
-        -18.72381019592285,
-        0.7639568448066711
-      ],
-      "soleZ": 0.014999985694885254,
-      "gateAngle": 1.5707963705062866,
-      "barrierMaxZ": 2.436582326889038
+      "soleZ": 0.012000013142824173,
+      "surfaceZ": 0.010000010952353477,
+      "clearance": 0.0020000021904706955
     },
     {
+      "actor": "Police left escort actor",
+      "frame": 240,
+      "soleZ": 0.012000013142824173,
+      "surfaceZ": 0.010000010952353477,
+      "clearance": 0.0020000021904706955
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 240,
+      "soleZ": 0.012000011280179024,
+      "surfaceZ": 0.010000010952353477,
+      "clearance": 0.0020000003278255463
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 270,
+      "soleZ": 0.012000015005469322,
+      "surfaceZ": 0.010000010952353477,
+      "clearance": 0.0020000040531158447
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 270,
+      "soleZ": 0.011999979615211487,
+      "surfaceZ": 0.00999998115003109,
+      "clearance": 0.001999998465180397
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 270,
+      "soleZ": 0.011999979615211487,
+      "surfaceZ": 0.00999998115003109,
+      "clearance": 0.001999998465180397
+    },
+    {
+      "actor": "Player escort actor",
       "frame": 288,
-      "player": [
-        0.0,
-        -20.200000762939453,
-        0.7639568448066711
-      ],
-      "soleZ": 0.014999985694885254,
-      "gateAngle": 0.0,
-      "barrierMaxZ": 1.647399663925171
+      "soleZ": 0.012000012211501598,
+      "surfaceZ": 0.010000010952353477,
+      "clearance": 0.002000001259148121
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 288,
+      "soleZ": 0.011999979615211487,
+      "surfaceZ": 0.00999998115003109,
+      "clearance": 0.001999998465180397
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 288,
+      "soleZ": 0.011999979615211487,
+      "surfaceZ": 0.00999998115003109,
+      "clearance": 0.001999998465180397
     }
   ],
-  "firstPersonActorHidden": true
+  "firstPersonActorHidden": true,
+  "welcome": "WELCOME TO SURVIVE THE BLOCK",
+  "logoObject": "Approved Survive the Block logo"
 }

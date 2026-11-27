@@ -1,7 +1,7 @@
 {
-  "bytes": 5207088,
-  "sha256": "2035f75976ae8ba7d326c1eebbab3b41957659748534e6ba13be14d5095eb038",
-  "duration": 12.0,
+  "bytes": 4900772,
+  "sha256": "de981a2c07c232f297e19732740334f8e4719af3577b6b9d6d7a16249f81863f",
+  "duration": 15.0,
   "streams": [
     {
       "codec": "h264",

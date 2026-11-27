@@ -1,9 +1,9 @@
 import { COMPACT } from "./compact-plan";
 import { JAIL_OFFSET } from "./jail-ground-layout";
 import { START } from "./world";
-export const JAIL_INTRO_SECONDS = 12;
-export const JAIL_INTRO_POSTER = "/assets/cinematics/jail-release-v1.webp";
-export const JAIL_INTRO_VIDEO = "/assets/cinematics/jail-release-v1.mp4";
+export const JAIL_INTRO_SECONDS = 15;
+export const JAIL_INTRO_POSTER = "/assets/cinematics/jail-release-v2.webp";
+export const JAIL_INTRO_VIDEO = "/assets/cinematics/jail-release-v2.mp4";
 /** Past the real gate at local 17 and barrier at 19, still in the protected release area. */
 export function jailReleasePose() {
   return {

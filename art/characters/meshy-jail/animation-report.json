@@ -1,0 +1,142 @@
+{
+  "source": "User uploaded Mixamo GLB",
+  "originalSha256": "6038640342f12bfcd759ae683327e95574573b4efa07f1dcfcf7536272a62058",
+  "newMeshyCredits": 0,
+  "bones": 76,
+  "heightMeters": 2,
+  "sourceUnitScale": 1.2244236634697883,
+  "clips": [
+    {
+      "name": "Running",
+      "frames": 20,
+      "seconds": 0.6333333333333333,
+      "source": "Native uploaded Meshy animation"
+    },
+    {
+      "name": "Walking",
+      "frames": 32,
+      "seconds": 1.0333333333333334,
+      "source": "Native uploaded Meshy animation"
+    },
+    {
+      "name": "CrouchLookAroundBow",
+      "frames": 176,
+      "seconds": 5.833333333333333,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Idle_3",
+      "frames": 300,
+      "seconds": 9.966666666666667,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Pistol_Fire",
+      "frames": 7,
+      "seconds": 0.2,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Pistol_Hold",
+      "frames": 31,
+      "seconds": 1.0,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Pistol_Reload",
+      "frames": 43,
+      "seconds": 1.4,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Punch_Left",
+      "frames": 13,
+      "seconds": 0.4,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Punch_Right",
+      "frames": 13,
+      "seconds": 0.4,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Regular_Jump",
+      "frames": 56,
+      "seconds": 1.8333333333333333,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Rifle_Fire",
+      "frames": 6,
+      "seconds": 0.16666666666666666,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Rifle_Hold",
+      "frames": 31,
+      "seconds": 1.0,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Rifle_Reload",
+      "frames": 64,
+      "seconds": 2.1,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "SMG_Fire",
+      "frames": 4,
+      "seconds": 0.1,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "SMG_Hold",
+      "frames": 31,
+      "seconds": 1.0,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "SMG_Reload",
+      "frames": 55,
+      "seconds": 1.8,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Sniper_Fire",
+      "frames": 13,
+      "seconds": 0.4,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Sniper_Hold",
+      "frames": 31,
+      "seconds": 1.0,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    },
+    {
+      "name": "Sniper_Reload",
+      "frames": 79,
+      "seconds": 2.6,
+      "mappedBones": 26,
+      "source": "Blender game library"
+    }
+  ],
+  "bytes": 10074988
+}

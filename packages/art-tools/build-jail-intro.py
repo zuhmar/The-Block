@@ -8,7 +8,7 @@ from mathutils import Vector
 ROOT=Path.cwd();OUT=ROOT/'art/cinematics/jail-release';OUT.mkdir(parents=True,exist_ok=True)
 WORK=ROOT/'work/jail-intro';WORK.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True);bpy.context.preferences.filepaths.save_version=0
-scene=bpy.context.scene;scene.render.fps=24;scene.frame_start=1;scene.frame_end=288
+scene=bpy.context.scene;scene.render.fps=24;scene.frame_start=1;scene.frame_end=360
 scene.render.engine='BLENDER_WORKBENCH';scene.display.shading.light='STUDIO';scene.display.shading.studio_light='paint.sl';scene.display.shading.color_type='TEXTURE';scene.display.shading.show_shadows=True;scene.display.shading.show_cavity=True;scene.display.shading.cavity_type='BOTH';scene.display.shading.show_specular_highlight=True;scene.display.shading.background_type='WORLD';scene.display.render_aa='FXAA'
 scene.render.resolution_x=960;scene.render.resolution_y=540;scene.render.resolution_percentage=100
 scene.render.image_settings.file_format='PNG';scene.render.film_transparent=False
@@ -16,7 +16,8 @@ scene.view_settings.view_transform='AgX';scene.view_settings.look='AgX - Medium 
 scene.world=bpy.data.worlds.new('Afternoon sky');scene.world.color=(.38,.59,.74);scene.world.use_nodes=True
 scene.world.node_tree.nodes['Background'].inputs['Color'].default_value=(.45,.66,.82,1)
 scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value=.55
-report={'duration':12,'fps':24,'frames':288,'sources':{},'actors':[],'shots':[],'gate':{'opens':[108,150],'closes':[263,285]},'handoffLocal':{'x':0,'z':20.2,'y':0}}
+report={'duration':15,'fps':24,'frames':360,'sources':{},'actors':[],'shots':[],'gate':{'opens':[108,150],'closes':[263,285]},'handoffLocal':{'x':0,'z':20.2,'y':0}}
+report['render']={'engine':'Blender Workbench','lighting':'Studio paint, texture materials, specular highlights, shadows and cavity','antialiasing':'FXAA','width':960,'height':540}
 def load(path,name,position=(0,0,0),yaw=0):
  before=set(scene.objects);actions=set(bpy.data.actions);bpy.ops.import_scene.gltf(filepath=str(ROOT/path))
  objs=[o for o in scene.objects if o not in before];wrapper=bpy.data.objects.new(name,None);scene.collection.objects.link(wrapper)
@@ -26,7 +27,7 @@ def load(path,name,position=(0,0,0),yaw=0):
  report['sources'][str(path)]=hashlib.sha256((ROOT/path).read_bytes()).hexdigest()
  return wrapper,objs,[a for a in bpy.data.actions if a not in actions]
 def mat(name,color,rough=.45):
- m=bpy.data.materials.new(name);m.use_nodes=True;p=m.node_tree.nodes['Principled BSDF'];p.inputs['Base Color'].default_value=(*color,1);p.inputs['Roughness'].default_value=rough;p.inputs['Coat Weight'].default_value=.16;return m
+ m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True;p=m.node_tree.nodes['Principled BSDF'];p.inputs['Base Color'].default_value=(*color,1);p.inputs['Roughness'].default_value=rough;p.inputs['Coat Weight'].default_value=.16;return m
 def box(name,loc,size,material):
  bpy.ops.mesh.primitive_cube_add(size=1,location=loc);o=bpy.context.object;o.name=name;o.dimensions=size;bpy.ops.object.transform_apply(location=False,rotation=False,scale=True);o.data.materials.append(material);return o
 concrete=mat('Runtime courtyard concrete',(.32,.36,.38));grass=mat('City grass',(.19,.38,.19));water=mat('Harbor blue',(.045,.33,.48),.22);asphalt=mat('City asphalt',(.09,.12,.15));stripe=mat('Road stripe',(.88,.88,.77))
@@ -44,6 +45,15 @@ for x in range(-140,150,7):box('Coastal road marking',(x,-50,.01),(3,.12,.02),st
 layout=json.loads((OUT/'layout.json').read_text())
 for i,b in enumerate(layout['city']):
  load(Path(f"apps/client/src/fps/models/buildings/{b['type']}.glb"),'Actual city building '+str(i),(b['x'],-b['z'],0),-b['yaw'])
+# Cache actual walking-surface heights before actors are added.
+walk_surfaces={}
+for lane in [-1.05,0,1.05]:
+ for step in range(65,210):
+  hit,point,*_=scene.ray_cast(bpy.context.evaluated_depsgraph_get(),Vector((lane,-step/10,.5)),Vector((0,0,-1)),distance=2)
+  walk_surfaces[(lane,step)]=point.z if hit else .01
+def floor_height(x,y):
+ lane=min([-1.05,0,1.05],key=lambda a:abs(a-x));step=max(65,min(209,round(-y*10)));return walk_surfaces[(lane,step)]
+
 # Shared glossy materials and physically plausible, soft daylight.
 def light(name,kind,loc,power,size=5):
  data=bpy.data.lights.new(name,kind);data.energy=power
@@ -53,21 +63,26 @@ sun=light('Afternoon sun','SUN',(8,-10,15),2.1);sun.data.angle=.12
 light('Soft sky key','AREA',(3,-15,10),1700,9);light('Courtyard fill','AREA',(-7,-4,7),1000,8)
 # Keep imported clips as editable NLA strips. Remove root drift, not the walking gait.
 def character(kind,x,offset,stop):
- path=Path('apps/client/src/fps/models')/('meshy-shadow' if kind=='Player' else 'meshy-police')/'animated.glb'
+ path=Path('art/characters/meshy-jail/animated.glb') if kind=='Player' else Path('apps/client/src/fps/models/meshy-police/animated.glb')
  root,objs,actions=load(path,kind+' escort actor')
  rig=next(o for o in objs if o.type=='ARMATURE')
  for ob in objs:
   if ob.animation_data:
    ob.animation_data.action=None
    for tr in list(ob.animation_data.nla_tracks):ob.animation_data.nla_tracks.remove(tr)
- idle=next(a for a in actions if a.name.startswith('Idle_3_'));walk=next(a for a in actions if a.name.startswith('Walking_'))
+ idle=next(a for a in actions if a.name.startswith('Idle_3'));walk=next(a for a in actions if a.name.startswith('Walking'))
+ skinned=[o for o in objs if o.type=='MESH' and any(m.type=='ARMATURE' and m.object==rig for m in o.modifiers)]
+ for o in list(objs):
+  if o.type=='MESH' and o not in skinned:bpy.data.objects.remove(o,do_unlink=True)
  for a in [idle,walk]:
   for fc in a.fcurves:
    if fc.data_path in ['location','rotation_euler','rotation_quaternion','scale'] or ('Hips' in fc.data_path and fc.data_path.endswith('location') and fc.array_index in [0,1]):
     for key in fc.keyframe_points:key.co.y=fc.keyframe_points[0].co.y
  # Normalize complete characters to their actual game height without distorting proportions.
  rig.animation_data_create();rig.animation_data.action=idle;scene.frame_set(0);bpy.context.view_layer.update()
- pts=[o.matrix_world@Vector(c) for o in objs if o.type=='MESH' for c in o.bound_box]
+ pts=[];deps=bpy.context.evaluated_depsgraph_get()
+ for o in skinned:
+  ev=o.evaluated_get(deps);mesh=ev.to_mesh();pts.extend(ev.matrix_world@v.co for v in mesh.vertices);ev.to_mesh_clear()
  lo=min(p.z for p in pts);height=max(p.z for p in pts)-lo
  root.scale=(2/height,)*3;root.location.z=-lo*2/height;rig.animation_data.action=None
  def strip(action,start,end,repeat=False):
@@ -79,18 +94,31 @@ def character(kind,x,offset,stop):
  strip(idle,1,18);strip(walk,18,stop,True);strip(idle,stop,288)
  for frame,z in [(1,7.8+offset),(18,7.8+offset),(stop,20.2+offset),(288,20.2+offset)]:
   root.location.x=x;root.location.y=-z;root.keyframe_insert('location',frame=frame)
+ if kind=='Police right':
+  # Tuck inward at the barrier so neither shoe intersects the fixed yellow pedestal.
+  for frame,px in [(210,x),(225,.7),(stop,.7),(288,.7)]:
+   root.location.x=px;root.keyframe_insert('location',index=0,frame=frame)
  for fc in root.animation_data.action.fcurves:
   for key in fc.keyframe_points:key.interpolation='LINEAR'
  report['actors'].append({'role':kind,'rig':rig.name,'bones':len(rig.data.bones),'walk':walk.name,'stop':stop,'height':2,'x':x})
  return root
 actors=[character('Player',0,0,270),character('Police left',-1.05,-.65,255),character('Police right',1.05,-.65,255)]
-# Bake sole contact from the evaluated, animated meshes instead of the bind-pose bounds.
+report['escortRoute']='Right officer tucks inward from x=1.05 to x=0.7 over frames 210–225 to clear barrier pedestal'
+# Ground only real skinned geometry: helper meshes and bounding boxes do not define soles.
+contact_samples=[]
 for frame in range(1,289):
  scene.frame_set(frame);bpy.context.view_layer.update();deps=bpy.context.evaluated_depsgraph_get()
  for root in actors:
-  meshes=[o.evaluated_get(deps) for o in root.children_recursive if o.type=='MESH']
-  bottom=min((o.matrix_world@Vector(c)).z for o in meshes for c in o.bound_box)
-  root.location.z+=.015-bottom;root.keyframe_insert('location',index=2,frame=frame)
+  meshes=[o.evaluated_get(deps) for o in root.children_recursive if o.type=='MESH' and any(m.type=='ARMATURE' for m in o.modifiers)]
+  points=[]
+  for o in meshes:
+   mesh=o.to_mesh();points.extend(o.matrix_world@v.co for v in mesh.vertices);o.to_mesh_clear()
+  sole=min(points,key=lambda p:p.z);surface=floor_height(sole.x,sole.y)
+  root.location.z+=surface+.002-sole.z;root.keyframe_insert('location',index=2,frame=frame)
+  if frame in [1,36,155,240,270,288]:contact_samples.append({'actor':root.name,'frame':frame,'surfaceZ':surface,'soleZ':surface+.002,'clearance':.002})
+report['contactSamples']=contact_samples
+report['grounding']='Evaluated skinned vertices against sampled real walking surfaces; 2 mm clearance'
+
 for root in actors:
  for fc in root.animation_data.action.fcurves:
   for k in fc.keyframe_points:k.interpolation='LINEAR'
@@ -123,16 +151,30 @@ scene.camera=camera('01 Courtyard release',1,60,[(1,(8,-13,4.3),(0,-8.4,1.2)),(6
 camera('02 Escort to gate',61,216,[(61,(3.8,-7.2,2.8),(0,-10.0,1.25)),(216,(3.8,-14.7,2.8),(0,-17.5,1.25))],40)
 camera('03 Outside the gate',217,272,[(217,(-5.6,-24,3),(0,-18.0,1.2)),(272,(-4.8,-25,2.6),(0,-20,1.2))],40)
 camera('04 First person handoff',273,288,[(273,(0,-20.2,1.65),(0,-60,1.65)),(288,(0,-20.2,1.65),(0,-60,1.65))],24)
+# Editable branded end card: the actual approved game logo, not re-created lettering.
+logo_path=ROOT/'apps/client/static/assets/branding/survive-the-block-768.webp'
+report['sources'][str(logo_path.relative_to(ROOT))]=hashlib.sha256(logo_path.read_bytes()).hexdigest()
+card_bg=mat('End card charcoal',(.008,.011,.016))
+background=box('Welcome card background',(0,0,1000),(18,10,.02),card_bg)
+bpy.ops.mesh.primitive_plane_add(size=1,location=(0,-.25,1000.05));logo=bpy.context.object;logo.name='Approved Survive the Block logo';logo.scale=(8.3,8.3*2/3,1)
+im=bpy.data.images.load(str(logo_path));im.pack();material=bpy.data.materials.new('Approved logo with alpha');material.use_nodes=True;nodes=material.node_tree.nodes;nodes.clear();tex=nodes.new('ShaderNodeTexImage');tex.image=im;bs=nodes.new('ShaderNodeBsdfPrincipled');bs.inputs['Emission Strength'].default_value=1;output=nodes.new('ShaderNodeOutputMaterial');material.node_tree.links.new(tex.outputs['Color'],bs.inputs['Base Color']);material.node_tree.links.new(tex.outputs['Color'],bs.inputs['Emission Color']);material.node_tree.links.new(tex.outputs['Alpha'],bs.inputs['Alpha']);material.node_tree.links.new(bs.outputs[0],output.inputs[0]);logo.data.materials.append(material)
+bpy.ops.object.text_add(location=(0,3.1,1000.1));welcome=bpy.context.object;welcome.name='Welcome to Survive the Block title';welcome.data.body='WELCOME TO';welcome.data.align_x='CENTER';welcome.data.size=.65;welcome.data.space_character=1.15
+font=Path('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf')
+if font.exists():welcome.data.font=bpy.data.fonts.load(str(font))
+white=mat('Welcome ivory',(1,.94,.8));white.diffuse_color=(1,.94,.8,1);welcome.data.materials.append(white)
+end_camera=camera('05 Welcome to Survive the Block',289,360,[(289,(0,0,1010),(0,0,1000)),(360,(0,0,1010),(0,0,1000))]);end_camera.data.type='ORTHO';end_camera.data.ortho_scale=16
+report['welcome']={'startFrame':289,'endFrame':360,'text':'WELCOME TO SURVIVE THE BLOCK','logo':str(logo_path.relative_to(ROOT))}
 for image in bpy.data.images:
  if image.size[0]>0 and not image.packed_file:
   try:image.pack()
   except RuntimeError:pass
+bpy.ops.file.pack_all()
 scene.frame_set(1);scene.render.image_settings.file_format='FFMPEG';scene.render.ffmpeg.format='MPEG4';scene.render.ffmpeg.codec='H264';scene.render.ffmpeg.constant_rate_factor='MEDIUM';scene.render.ffmpeg.ffmpeg_preset='GOOD'
 scene.render.filepath=str(WORK/'jail-release-silent.mp4')
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'jail-release.blend'),compress=True)
 (OUT/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
 if '--preview' in sys.argv:
  scene.render.image_settings.file_format='PNG';scene.render.resolution_percentage=60
- for frame in [36,155,240,280]:
+ for frame in [36,155,240,280,320]:
   scene.frame_set(frame);scene.render.filepath=str(WORK/f'preview-{frame}.png');bpy.ops.render.render(write_still=True)
 print('JAIL_INTRO_READY',json.dumps({'blend':str(OUT/'jail-release.blend'),'actors':report['actors']}))

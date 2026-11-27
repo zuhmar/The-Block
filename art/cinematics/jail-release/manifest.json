@@ -1,7 +1,7 @@
 {
-  "duration": 12,
+  "duration": 15,
   "fps": 24,
-  "frames": 288,
+  "frames": 360,
   "sources": {
     "apps/client/src/fps/models/street/jail-meshy-grounds.glb": "41fbe25213054e17854d3b312602e332c559815c2ebf1f2b5f27e86d0104ce41",
     "apps/client/src/fps/models/buildings/jail.glb": "ed2e705ba6239b211aaa34b677d3625833b126e2d0b3a394e247c55edc2db5b9",
@@ -12,33 +12,34 @@
     "apps/client/src/fps/models/buildings/north-workshop.glb": "a87a9a536c8122563b4004407155b1ce906f6066569176f62607b152b2b18438",
     "apps/client/src/fps/models/buildings/north-warehouse.glb": "eaae730a3072d1f1747ee6ceb28bf9e608499073248ae5ae646b8b4d0afea6f1",
     "apps/client/src/fps/models/buildings/flats.glb": "3c68818c5f67ab891c009bf503fc3a4776c0f62ea7e1df1900cc30ece07be935",
-    "apps/client/src/fps/models/meshy-shadow/animated.glb": "a3bb794b40e83cc6320e97d7068057a5b1e935431d05da843529af0c8ad70cb2",
-    "apps/client/src/fps/models/meshy-police/animated.glb": "1475b9f639c9fb211475f164b21138f5f4b0de710ae3e817c7a9fe61deb5ea7a"
+    "art/characters/meshy-jail/animated.glb": "a8f736aa60355983efa1ee7f529057f8ea70d2aac1d00b8f80700cebf1b3e6a6",
+    "apps/client/src/fps/models/meshy-police/animated.glb": "1475b9f639c9fb211475f164b21138f5f4b0de710ae3e817c7a9fe61deb5ea7a",
+    "apps/client/static/assets/branding/survive-the-block-768.webp": "8bd77b053e12d3feb2e431d4e5390cd4801ee37f02bd88032283cc7c41fdd6c7"
   },
   "actors": [
     {
       "role": "Player",
-      "rig": "SmartRigArmature",
-      "bones": 32,
-      "walk": "Walking_SmartRigArmature",
+      "rig": "STB Jail Player",
+      "bones": 76,
+      "walk": "Walking_STB Jail Player",
       "stop": 270,
       "height": 2,
       "x": 0
     },
     {
       "role": "Police left",
-      "rig": "SmartRigArmature.001",
+      "rig": "SmartRigArmature",
       "bones": 66,
-      "walk": "Walking_SmartRigArmature.001",
+      "walk": "Walking_SmartRigArmature",
       "stop": 255,
       "height": 2,
       "x": -1.05
     },
     {
       "role": "Police right",
-      "rig": "SmartRigArmature.002",
+      "rig": "SmartRigArmature.001",
       "bones": 66,
-      "walk": "Walking_SmartRigArmature.002",
+      "walk": "Walking_SmartRigArmature.001",
       "stop": 255,
       "height": 2,
       "x": 1.05
@@ -64,6 +65,11 @@
       "name": "04 First person handoff",
       "start": 273,
       "end": 288
+    },
+    {
+      "name": "05 Welcome to Survive the Block",
+      "start": 289,
+      "end": 360
     }
   ],
   "gate": {
@@ -81,11 +87,147 @@
     "z": 20.2,
     "y": 0
   },
+  "contactSamples": [
+    {
+      "actor": "Player escort actor",
+      "frame": 1,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 1,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 1,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 36,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 36,
+      "surfaceZ": -0.009999964386224747,
+      "soleZ": -0.007999964386224747,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 36,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 155,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 155,
+      "surfaceZ": 0.01526668667793274,
+      "soleZ": 0.01726668667793274,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 155,
+      "surfaceZ": -0.010000023990869522,
+      "soleZ": -0.008000023990869522,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 240,
+      "surfaceZ": 0.010000010952353477,
+      "soleZ": 0.012000010952353478,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 240,
+      "surfaceZ": 0.010000010952353477,
+      "soleZ": 0.012000010952353478,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 240,
+      "surfaceZ": 0.010000010952353477,
+      "soleZ": 0.012000010952353478,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 270,
+      "surfaceZ": 0.010000010952353477,
+      "soleZ": 0.012000010952353478,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 270,
+      "surfaceZ": 0.00999998115003109,
+      "soleZ": 0.01199998115003109,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 270,
+      "surfaceZ": 0.00999998115003109,
+      "soleZ": 0.01199998115003109,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Player escort actor",
+      "frame": 288,
+      "surfaceZ": 0.010000010952353477,
+      "soleZ": 0.012000010952353478,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police left escort actor",
+      "frame": 288,
+      "surfaceZ": 0.00999998115003109,
+      "soleZ": 0.01199998115003109,
+      "clearance": 0.002
+    },
+    {
+      "actor": "Police right escort actor",
+      "frame": 288,
+      "surfaceZ": 0.00999998115003109,
+      "soleZ": 0.01199998115003109,
+      "clearance": 0.002
+    }
+  ],
+  "grounding": "Evaluated skinned vertices against sampled real walking surfaces; 2 mm clearance",
+  "welcome": {
+    "startFrame": 289,
+    "endFrame": 360,
+    "text": "WELCOME TO SURVIVE THE BLOCK",
+    "logo": "apps/client/static/assets/branding/survive-the-block-768.webp"
+  },
   "render": {
     "engine": "Blender Workbench",
     "lighting": "Studio paint, texture materials, specular highlights, shadows and cavity",
     "antialiasing": "FXAA",
     "width": 960,
     "height": 540
-  }
+  },
+  "escortRoute": "Right officer tucks inward from x=1.05 to x=0.7 over frames 210\u2013225 to clear barrier pedestal"
 }
