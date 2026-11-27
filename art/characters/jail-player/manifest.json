@@ -1,0 +1,12 @@
+{
+  "taskId": "01a21d79-5596-75ff-a5a5-1ec20eab90ed",
+  "geometryModel": "meshy-t2.5",
+  "textureModel": "meshy-n1",
+  "targetTriangles": 15000,
+  "triangles": 15787,
+  "bytes": 2273676,
+  "sha256": "b879eed461f2795192b9dbee5a9f3519cd74b2abcd11894300aa2ef63bc54406",
+  "skins": 0,
+  "animations": 0,
+  "embeddedImages": 1
+}
