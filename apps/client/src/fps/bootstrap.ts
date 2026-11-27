@@ -1,3 +1,4 @@
+import "./settings.css";
 import { logoMarkup } from "../branding";
 import "../branding.css";
 import { preloadTimberYard } from "./timber-yard-view";

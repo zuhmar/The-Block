@@ -1,3 +1,11 @@
+import { createSettingsDialog } from "./settings-ui";
+import {
+  DEFAULT_SETTINGS,
+  readGameSettings,
+  settingsPixelRatio,
+  SETTINGS_KEY,
+  type GameSettings,
+} from "./settings";
 import { logoMarkup } from "../branding";
 import { createDayNightView } from "./day-night-view";
 import { fitRoadside, roadsideSources, roadsideModel } from "./roadside-models";
@@ -217,7 +225,7 @@ const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
 $("#app").innerHTML = `
 <canvas id="world" aria-label="Survive the Block first-person 3D world"></canvas>
 <div id="hud" hidden>
-  <header><div class="brand brand-with-logo">${logoMarkup("", "(max-width:700px) 84px, 112px")}<small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span><time id="world-time" aria-label="World time"></time></div><button id="inventory-button" aria-label="Open inventory">BAG <small>I</small></button><button id="housing-button" aria-label="Land, upkeep and hand crafting">LAND <small>H</small></button><button id="build-tool">BUILD <small>B</small></button><button id="pause-button" aria-label="Pause game">||</button></header>
+  <header><div class="brand brand-with-logo">${logoMarkup("", "(max-width:700px) 84px, 112px")}<small>FIRST-PERSON · OPEN WORLD</small></div><div class="location"><b id="zone">THE BLOCK</b><span id="coordinates"></span><time id="world-time" aria-label="World time"></time></div><button id="inventory-button" aria-label="Open inventory">BAG <small>I</small></button><button id="housing-button" aria-label="Land, upkeep and hand crafting">LAND <small>H</small></button><button id="build-tool">BUILD <small>B</small></button><button id="pause-button" aria-label="Pause game">||</button></header><button id="settings-button" aria-haspopup="dialog" aria-controls="settings-overlay">SETTINGS</button>
   <div id="damage-flash" aria-hidden="true"></div><div id="enemy-status"></div><div id="scope-overlay" hidden aria-hidden="true"></div><div id="crosshair" aria-hidden="true">+</div><div id="toast" role="status" aria-live="polite"></div>
   <div id="resource-wallet" aria-label="Gathered resources"><span>ROCK <b id="rock-count">0</b></span><span>SULFUR <b id="sulfur-count">0</b></span><span>METAL <b id="metal-count">0</b></span></div>
   <div id="hint"><b id="hint-title"></b><span id="hint-text"></span><span id="structure-health-label" hidden></span><meter id="structure-health-bar" min="0" max="100" value="100" aria-label="Structure health" hidden></meter></div>
@@ -244,13 +252,109 @@ $("#app").innerHTML = `
   <div id="weapon-status"><img id="ammo-icon" alt="" hidden><span id="ammo"></span><button id="detonate" hidden aria-label="Detonate placed C4">DETONATE <small>G</small></button><button id="reload" aria-label="Reload weapon">RELOAD <small>R</small></button></div>
   <footer><div class="status"><span class="dot"></span><b id="health">HEALTH 100</b><span id="wood"></span><span id="cash-count"></span></div><div class="tools" aria-label="Five hand slots">${Array.from({ length: 5 }, (_, i) => `<button id="hotbar-${i}" data-hand-slot="${i}"><small>${i + 1}</small><b>EMPTY</b></button>`).join("")}</div><div class="save-status">LOCAL PROTOTYPE <span id="fps"></span></div></footer>
 </div>
-<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">STB</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title" class="logo-heading">${logoMarkup("", "(max-width:700px) 252px, 340px")}</h1><p class="menu-intro">Get out of jail. Loot. Craft. Survive.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><div class="sound-settings"><button id="sound-mute" type="button" aria-label="Mute sound effects">SOUND ON</button><label for="sound-volume">EFFECTS VOLUME <output id="sound-level">60%</output><input id="sound-volume" type="range" min="0" max="100" step="5" value="60" aria-label="Sound effects volume"></label></div><div class="menu-secondary"><button id="view-models">CHARACTERS & GEAR</button><button id="reset">RESET WORLD</button></div><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>H land / upkeep / tools · B build · 1–8 pieces · R rotate · V chest size · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use LAND for plots, upkeep and tool crafting. BAG opens inventory; BUILD places structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Leave jail across the bridge. Explore connected city blocks, the military block, laboratory and harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
+<div id="menu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="menu-title"><div class="menu-card"><div class="menu-edition"><span class="edition-mark" aria-hidden="true">STB</span><span>THE BLOCK / OPEN WORLD SURVIVAL</span></div><span class="eyebrow">MAKE THESE STREETS YOURS</span><h1 id="menu-title" class="logo-heading">${logoMarkup("", "(max-width:700px) 252px, 340px")}</h1><p class="menu-intro">Get out of jail. Loot. Craft. Survive.<br>Own your corner of the city.</p><div class="menu-tags"><span>EXPLORE</span><span>BUILD & CRAFT</span><span>SURVIVE</span></div><button id="start" class="primary">ENTER THE BLOCK <span aria-hidden="true">↗</span></button><button id="pause-settings" hidden>SETTINGS</button><details class="menu-help"><summary>HOW TO PLAY</summary><p class="controls desktop-copy">WASD move · Mouse look · Shift run · Space jump<br>E search / gather / use stations · 1–5 hand slots · I / Tab inventory<br>Q / right mouse aim · R reload · G detonate C4 · M mute<br>H land / upkeep / tools · B build · 1–8 pieces · R rotate · V chest size · T material · Del remove · Esc pause</p><p class="controls touch-copy">Left thumb to move. Drag the right side to look.<br>Use LAND for plots, upkeep and tool crafting. BAG opens inventory; BUILD places structures.<br>Hold CHOP / MINE to gather. Tap USE near doors, loot and crafting stations.</p><p class="controls encounter-guide">Leave jail across the bridge. Explore connected city blocks, the military block, laboratory and harbor.</p></details><small class="save-note">Single-player · Progress saves on this device.<br>Your previous online characters and world are preserved separately.</small></div><div class="menu-art-caption" aria-hidden="true"><span>STAY SHARP. BUILD SOMETHING.</span><b>WELCOME TO THE BLOCK.</b></div></div>
 <div id="defeated" class="overlay" hidden><div class="menu-card">${logoMarkup("", "210px")}<h2>YOU DIED</h2><p>Your carried items and cash are dropped where you died. Your home and upkeep remain.</p><button id="respawn" class="primary">RELEASE FROM JAIL</button></div></div><div id="unavailable" class="overlay" hidden><div class="menu-card"><h2>3D graphics unavailable</h2><p>This browser couldn’t start WebGL. Try an updated browser with hardware acceleration enabled.</p></div></div>`;
 const touch =
   matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
 document.body.classList.toggle("touch", touch);
+let preferences = { ...DEFAULT_SETTINGS };
+try {
+  preferences = readGameSettings(localStorage.getItem(SETTINGS_KEY));
+} catch {
+  /* Storage is optional. */
+}
+let settingsOpen = false,
+  resumeAfterSettings = false,
+  settingsMenuVisible = false,
+  hasEntered = false;
 const sound = new GameSound(),
   footsteps = new FootstepClock();
+const settingsDialog = createSettingsDialog({
+  get: () => preferences,
+  change: applyPreferences,
+  close: () => closeSettings(),
+  defaults() {
+    applyPreferences({ ...DEFAULT_SETTINGS });
+    sound.setVolume(0.6);
+    if (sound.getSettings().muted) sound.toggleMute();
+    syncSoundControls();
+  },
+});
+function applyPreferences(next: GameSettings) {
+  const previousFov = preferences.fov;
+  preferences = readGameSettings(JSON.stringify(next));
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(preferences));
+    settingsDialog.feedback("Settings saved on this device.");
+  } catch {
+    settingsDialog.feedback(
+      "Storage unavailable · settings apply for this session.",
+    );
+  }
+  const ratio = settingsPixelRatio(
+    devicePixelRatio,
+    touch,
+    preferences.quality,
+  );
+  if (renderer.getPixelRatio() !== ratio) {
+    renderer.setPixelRatio(ratio);
+    renderer.setSize(innerWidth, innerHeight);
+  }
+  $("#crosshair").hidden = !preferences.crosshair;
+  if (preferences.fov !== previousFov) setAim(aiming);
+  syncSettingsDiagnostics();
+  needsRender = true;
+}
+function syncSettingsDiagnostics() {
+  canvas.dataset.settings = JSON.stringify({
+    ...preferences,
+    open: settingsOpen,
+    pixelRatio: renderer.getPixelRatio(),
+  });
+  canvas.dataset.fov = String(camera.fov);
+}
+function openSettings() {
+  if (
+    !hasEntered ||
+    settingsOpen ||
+    inventoryOpen ||
+    stationOpen ||
+    survivalOpen
+  )
+    return;
+  resumeAfterSettings = playing;
+  settingsMenuVisible = !$("#menu").hidden;
+  settingsOpen = true;
+  storeCurrentGun();
+  cancelReload(loadout);
+  pendingUse = undefined;
+  useRemaining = 0;
+  resetInput();
+  playing = false;
+  sound.setPaused(true);
+  persist();
+  $("#menu").hidden = true;
+  if (document.pointerLockElement) document.exitPointerLock();
+  syncSoundControls();
+  syncSettingsDiagnostics();
+  needsRender = true;
+  settingsDialog.open();
+}
+function closeSettings(resume = true) {
+  if (!settingsOpen) return;
+  settingsDialog.close();
+  settingsOpen = false;
+  playing = resume && resumeAfterSettings && health > 0;
+  $("#menu").hidden = playing || !settingsMenuVisible;
+  sound.setPaused(!playing);
+  lastFrame = performance.now();
+  $(
+    playing || !settingsMenuVisible ? "#settings-button" : "#pause-settings",
+  ).focus();
+  syncSettingsDiagnostics();
+  needsRender = true;
+  if (playing && !touch) captureMouse();
+}
 function syncSoundControls() {
   const settings = sound.getSettings(),
     silent = settings.muted || settings.volume === 0;
@@ -422,7 +526,9 @@ try {
   $("#menu").hidden = true;
   throw Error("WebGL could not initialize");
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio, touch ? 1.25 : 1.5));
+renderer.setPixelRatio(
+  settingsPixelRatio(devicePixelRatio, touch, preferences.quality),
+);
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -431,7 +537,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xb7d8db);
 scene.fog = new THREE.Fog(0xb7d8db, 48, 115);
 const camera = new THREE.PerspectiveCamera(
-  72,
+  preferences.fov,
   innerWidth / innerHeight,
   0.07,
   135,
@@ -2208,7 +2314,8 @@ function setAim(value: boolean) {
     tool !== "c4" &&
     !build &&
     !loadout.reload;
-  camera.fov = aiming && tool !== "hands" ? WEAPONS[tool].zoom : 72;
+  camera.fov =
+    aiming && tool !== "hands" ? WEAPONS[tool].zoom : preferences.fov;
   camera.updateProjectionMatrix();
   $("#scope-overlay").hidden = !(aiming && tool === "sniper");
   $("#aim").classList.toggle("selected", aiming);
@@ -2708,6 +2815,7 @@ function resetInput() {
   $("#stick").style.transform = "translate(-50%,-50%)";
 }
 function pause() {
+  if (settingsOpen) return;
   if (survivalOpen) {
     closeSurvival(false);
   }
@@ -2730,6 +2838,8 @@ function captureMouse() {
   });
 }
 function start() {
+  hasEntered = true;
+  $("#pause-settings").hidden = false;
   settleHousing();
   if (survival().dead) {
     $("#menu").hidden = true;
@@ -2774,11 +2884,14 @@ $("#menu").addEventListener("keydown", (e) => {
 });
 
 $("#view-models").addEventListener("click", () => {
+  closeSettings(false);
   pause();
   openActorPreview();
   document.querySelector<HTMLButtonElement>("#close-actors")?.focus();
 });
 $("#pause-button").addEventListener("click", pause);
+$("#settings-button").addEventListener("click", openSettings);
+$("#pause-settings").addEventListener("click", openSettings);
 $("#reset").addEventListener("click", () => {
   if (
     !confirm(
@@ -3442,9 +3555,18 @@ fireButton.addEventListener("pointerdown", (e) => {
 });
 fireButton.addEventListener("pointermove", (e) => {
   if (!touch || firePointer !== e.pointerId || !playing) return;
-  yaw -= (e.clientX - fireLook.x) * 0.005 * (camera.fov / 72);
+  yaw -=
+    (e.clientX - fireLook.x) *
+    0.005 *
+    preferences.sensitivity *
+    (camera.fov / 72);
   pitch = THREE.MathUtils.clamp(
-    pitch - (e.clientY - fireLook.y) * 0.005 * (camera.fov / 72),
+    pitch -
+      (e.clientY - fireLook.y) *
+        (preferences.invertY ? -1 : 1) *
+        0.005 *
+        preferences.sensitivity *
+        (camera.fov / 72),
     -1.35,
     1.35,
   );
@@ -3476,6 +3598,7 @@ $("#run").addEventListener("click", () => {
   $("#run").classList.toggle("selected", run);
 });
 window.addEventListener("keydown", (e) => {
+  if (settingsOpen) return;
   if (survivalOpen) {
     if (e.code === "Escape") {
       e.preventDefault();
@@ -3604,9 +3727,14 @@ document.addEventListener("pointerlockchange", () => {
 });
 document.addEventListener("mousemove", (e) => {
   if (document.pointerLockElement === canvas && playing) {
-    yaw -= e.movementX * 0.0024 * (camera.fov / 72);
+    yaw -= e.movementX * 0.0024 * preferences.sensitivity * (camera.fov / 72);
     pitch = THREE.MathUtils.clamp(
-      pitch - e.movementY * 0.0024 * (camera.fov / 72),
+      pitch -
+        e.movementY *
+          (preferences.invertY ? -1 : 1) *
+          0.0024 *
+          preferences.sensitivity *
+          (camera.fov / 72),
       -1.35,
       1.35,
     );
@@ -3673,9 +3801,18 @@ canvas.addEventListener("pointerdown", (e) => {
 });
 canvas.addEventListener("pointermove", (e) => {
   if (lookPointer !== e.pointerId || !playing) return;
-  yaw -= (e.clientX - lastLook.x) * 0.005 * (camera.fov / 72);
+  yaw -=
+    (e.clientX - lastLook.x) *
+    0.005 *
+    preferences.sensitivity *
+    (camera.fov / 72);
   pitch = THREE.MathUtils.clamp(
-    pitch - (e.clientY - lastLook.y) * 0.005 * (camera.fov / 72),
+    pitch -
+      (e.clientY - lastLook.y) *
+        (preferences.invertY ? -1 : 1) *
+        0.005 *
+        preferences.sensitivity *
+        (camera.fov / 72),
     -1.35,
     1.35,
   );
@@ -3692,7 +3829,9 @@ window.addEventListener("resize", () => {
   harvestView.setAspect(camera.aspect);
   heldResource.setAspect(camera.aspect);
   camera.updateProjectionMatrix();
-  renderer.setPixelRatio(Math.min(devicePixelRatio, touch ? 1.25 : 1.5));
+  renderer.setPixelRatio(
+    settingsPixelRatio(devicePixelRatio, touch, preferences.quality),
+  );
   renderer.setSize(innerWidth, innerHeight);
   resetInput();
 });
@@ -4211,7 +4350,9 @@ function frame(now: number) {
     updateExplosives(dt);
     camera.position.set(
       player.x,
-      1.65 + vertical + (length > 0.1 ? Math.sin(clock * 9) * 0.025 : 0),
+      1.65 +
+        vertical +
+        (preferences.headBob && length > 0.1 ? Math.sin(clock * 9) * 0.025 : 0),
       player.z,
     );
     camera.rotation.set(pitch, yaw, 0);
@@ -4606,6 +4747,11 @@ function frame(now: number) {
   );
   canvas.dataset.aiming = String(aiming);
   canvas.dataset.fov = String(camera.fov);
+  canvas.dataset.settings = JSON.stringify({
+    ...preferences,
+    open: settingsOpen,
+    pixelRatio: renderer.getPixelRatio(),
+  });
   canvas.dataset.playerSource = body.root.userData.playerSource;
   canvas.dataset.playerMotion = body.root.userData.playerClip || "legacy";
   canvas.dataset.playerCombat = viewModel.root.userData.playerClip || "legacy";
@@ -4619,6 +4765,7 @@ function frame(now: number) {
   canvas.dataset.movement = `${joystick.x.toFixed(2)},${joystick.y.toFixed(2)}`;
 }
 syncSoundControls();
+$("#crosshair").hidden = !preferences.crosshair;
 activateHand(inventory().active, false);
 persist();
 updateHud();
