@@ -779,7 +779,13 @@ export class FpsEngine {
   private policeSight = (
     a: { x: number; z: number; y?: number },
     b: { x: number; z: number; y?: number },
-  ) => this.cover.visible({ ...a, y: a.y ?? 0 }, { ...b, y: b.y ?? 0 });
+  ) =>
+    this.cover.visible(
+      { ...a, y: a.y ?? 0 },
+      { ...b, y: b.y ?? 0 },
+      undefined,
+      true,
+    );
   private reportViolence(
     p: OnlinePlayer,
     point: { x: number; z: number; y?: number },

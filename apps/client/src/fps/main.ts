@@ -1568,8 +1568,14 @@ function policeSight(
   b: { x: number; z: number; y?: number },
 ) {
   const from = new THREE.Vector3(a.x, a.y ?? 0, a.z),
-    to = new THREE.Vector3(b.x, b.y ?? 0, b.z);
-  return coverDistance(from, to) >= from.distanceTo(to) - 0.1;
+    to = new THREE.Vector3(b.x, b.y ?? 0, b.z),
+    distance = from.distanceTo(to);
+  coverRay.set(from, to.sub(from).normalize());
+  coverRay.far = Math.max(0, distance - 0.1);
+  return !coverRay.intersectObjects(
+    [...shotObstacles, ...construction.children, ...lootMeshes],
+    true,
+  ).length;
 }
 function soloViolence(
   kind: "gunfire" | "assault" | "explosion",

@@ -222,7 +222,12 @@ test("authority migrates patrols without resetting players, and only accepted wi
     };
     if (
       !blocked(q, engine.world.pieces) &&
-      engine.cover.visible({ x: e.x, y: 1.4, z: e.z }, { ...q, y: 1.1 })
+      engine.cover.visible(
+        { x: e.x, y: 1.4, z: e.z },
+        { ...q, y: 1.1 },
+        undefined,
+        true,
+      )
     ) {
       Object.assign(p.pose, q);
       found = true;
