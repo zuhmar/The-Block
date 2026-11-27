@@ -1,3 +1,5 @@
+import { streetPolicePatrols } from "./police-layout";
+import { isStreetPolice, reportPoliceViolence, updatePolice } from "./police";
 import { OnlineWorld, onlineMode, installOnlineMenu } from "./online";
 import { OnlinePlayers } from "./online-players";
 import { normalizeRoadsideLoot } from "./roadside-bounds";
@@ -1378,10 +1380,17 @@ const encounters: {
   labTier?: LabTier;
   weapon?: "pistol" | "rifle" | "lmg";
 }[] = [
-  ...NPC_KINDS.map((kind) => ({
-    id: kind + "-town",
-    kind,
-    patrol: undefined as PatrolSpec | undefined,
+  ...NPC_KINDS.filter((kind) => !COMPACT.active || kind !== "police").map(
+    (kind) => ({
+      id: kind + "-town",
+      kind,
+      patrol: undefined as PatrolSpec | undefined,
+    }),
+  ),
+  ...streetPolicePatrols().map((patrol) => ({
+    id: patrol.id,
+    kind: "police" as const,
+    patrol,
   })),
   ...COMPOUND_PATROLS.map((patrol) => ({
     id: patrol.id,
@@ -1546,6 +1555,38 @@ function recordDeath() {
   if (document.pointerLockElement) document.exitPointerLock();
 }
 
+function soloPolicePerson() {
+  return {
+    id: "solo",
+    position: { ...player, y: vertical },
+    alive: health > 0,
+    safe: inReleaseArea(),
+  };
+}
+function policeSight(
+  a: { x: number; z: number; y?: number },
+  b: { x: number; z: number; y?: number },
+) {
+  const from = new THREE.Vector3(a.x, a.y ?? 0, a.z),
+    to = new THREE.Vector3(b.x, b.y ?? 0, b.z);
+  return coverDistance(from, to) >= from.distanceTo(to) - 0.1;
+}
+function soloViolence(
+  kind: "gunfire" | "assault" | "explosion",
+  point: { x: number; z: number; y?: number },
+  victim?: typeof enemy,
+) {
+  if (onlineMode) return;
+  reportPoliceViolence(
+    enemies.map((n) => n.enemy),
+    soloPolicePerson(),
+    point,
+    kind,
+    policeSight,
+    Date.now(),
+    victim,
+  );
+}
 function enemyFrame(dt: number) {
   if (
     NORTH_LAB.enabled &&
@@ -1621,7 +1662,16 @@ function enemyFrame(dt: number) {
       ? networkNpcShots.delete(unit.id)
         ? { ...enemy.target }
         : undefined
-      : updateEnemy(enemy, player, save.pieces, dt, visible);
+      : isStreetPolice(enemy)
+        ? updatePolice(
+            enemy,
+            [soloPolicePerson()],
+            save.pieces,
+            dt,
+            policeSight,
+            Date.now(),
+          )?.point
+        : updateEnemy(enemy, player, save.pieces, dt, visible);
     enemyActor.root.visible =
       (enemy.health > 0 || (!!unit.labModel && enemy.timer < 1.3)) &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
@@ -1732,18 +1782,43 @@ function enemyFrame(dt: number) {
     )
     .sort(
       (a, b) =>
+        Number(
+          !isStreetPolice(b.enemy) ||
+            b.enemy.police?.suspectId === (onlineMode ? online?.id : "solo"),
+        ) -
+          Number(
+            !isStreetPolice(a.enemy) ||
+              a.enemy.police?.suspectId === (onlineMode ? online?.id : "solo"),
+          ) ||
         Number(b.enemy.state === "aim") - Number(a.enemy.state === "aim"),
     );
   const warning = nearby[0]?.enemy;
-  const status = warning
-    ? (nearby[0].labTier
-        ? { easy: "Lab worker", medium: "Lab security", hard: "Lab enforcer" }[
-            nearby[0].labTier!
-          ]
-        : ENEMY_TYPES[warning.kind].name
-      ).toUpperCase() +
-      (warning.state === "aim" ? " AIMING · MOVE OR FIND COVER" : " NEARBY")
-    : "";
+  const policeWarning =
+    warning && isStreetPolice(warning) ? warning.police : undefined;
+  const mine = policeWarning?.suspectId === (onlineMode ? online?.id : "solo");
+  const status = policeWarning
+    ? policeWarning.phase === "patrol" || policeWarning.phase === "return"
+      ? "POLICE PATROL · KEEP IT QUIET"
+      : mine
+        ? "POLICE ARE AFTER YOU · BREAK LINE OF SIGHT"
+        : policeWarning.phase === "search"
+          ? "POLICE SEARCHING THE AREA"
+          : "POLICE INVESTIGATING"
+    : warning
+      ? (nearby[0].labTier
+          ? {
+              easy: "Lab worker",
+              medium: "Lab security",
+              hard: "Lab enforcer",
+            }[nearby[0].labTier!]
+          : ENEMY_TYPES[warning.kind].name
+        ).toUpperCase() +
+        (warning.state === "aim" ? " AIMING · MOVE OR FIND COVER" : " NEARBY")
+      : "";
+  $("#enemy-status").classList.toggle(
+    "neutral-patrol",
+    !!policeWarning && !mine,
+  );
   if ($("#enemy-status").textContent !== status)
     $("#enemy-status").textContent = status;
   if (health <= 0) {
@@ -1906,6 +1981,7 @@ function spawnExplosive(
   if (kind === "rocket" && !countItem(inventory(), "rockets")) return;
   if (kind !== "rocket" && selectedItem(inventory())?.kind !== kind) return;
   if (!spendRound(loadout, kind)) return;
+  if (kind !== "c4") soloViolence("gunfire", { ...player, y: vertical });
   if (kind === "rocket") takeItem(inventory(), "rockets", 1);
   else useSelected(inventory());
   persist();
@@ -1990,6 +2066,7 @@ function spawnExplosive(
   updateHud();
 }
 function explode(p: Projectile) {
+  soloViolence("explosion", p.position);
   explosionSerial++;
   playAt("explosion", p.position, 1, 150);
   const center = new THREE.Vector3(p.position.x, p.position.y, p.position.z),
@@ -3612,6 +3689,7 @@ function landPunch() {
   if (hit) sound.play("punch-hit", { gain: 0.6 });
   if (unit) {
     damageEnemy(unit.enemy, MELEE.damage);
+    soloViolence("assault", { ...player, y: vertical }, unit.enemy);
     toast(
       unit.enemy.health <= 0
         ? "Enemy down"
@@ -3666,6 +3744,7 @@ function fire() {
     return;
   }
   if (onlineMode) void online?.action({ type: "fire", yaw, pitch });
+  soloViolence("gunfire", { ...player, y: vertical });
   sound.play(tool as SoundName, { gain: 0.8, interval: 0 });
   persistSoon();
   recoilRemaining = 1;
@@ -3718,6 +3797,7 @@ function fire() {
   if (hitEnemy && !onlineMode) {
     const enemy = hitEnemy.enemy;
     damageEnemy(enemy, weapon.damage);
+    soloViolence("assault", { ...player, y: vertical }, enemy);
     sound.play("hit-marker", { gain: 0.3 });
     toast(
       enemy.health <= 0
@@ -4868,6 +4948,7 @@ function frame(now: number) {
       z: u.enemy.z,
       health: u.enemy.health,
       state: u.enemy.state,
+      police: u.enemy.police,
       shots: u.enemy.shots,
       visible: u.actor.root.visible,
     })),

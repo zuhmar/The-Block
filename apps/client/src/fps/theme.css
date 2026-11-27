@@ -694,3 +694,8 @@ input[type="checkbox"] {
   margin: 0;
   line-height: 1.4;
 }
+#enemy-status.neutral-patrol {
+  color: #a8cddf;
+  background: #132935d9;
+  border-color: #50819a;
+}

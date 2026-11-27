@@ -1,3 +1,4 @@
+import { newPoliceMemory, type PoliceMemory } from "./police-state";
 import {
   buildingWorld,
   buildingLocal,
@@ -65,6 +66,7 @@ export type Enemy = Point & {
   magazine?: number;
   reloadRemaining?: number;
   burst?: { remaining: number; next: number; target: Point };
+  police?: PoliceMemory;
 };
 export const newEnemy = (
   kind: EnemyKind = "lookout",
@@ -100,11 +102,14 @@ export const newEnemy = (
     magazine: patrol?.combat?.magazine,
     reloadRemaining: 0,
     burst: undefined,
+    ...(patrol?.id.startsWith("street-police-")
+      ? { police: newPoliceMemory() }
+      : {}),
   };
 };
 /** A small cached grid is used only when a guard must rejoin its patrol after combat. */
 const navCache = new Map<string, Set<string>>();
-function patrolPath(
+export function patrolPath(
   from: Point,
   to: Point,
   spec: PatrolSpec,
@@ -119,6 +124,7 @@ function patrolPath(
       for (let z = bounds.minZ + 1; z < bounds.maxZ; z++) {
         if (!blocked({ x, z }, [], 0, true)) cells.add(x + "," + z);
       }
+    if (navCache.size >= 16) navCache.delete(navCache.keys().next().value!);
     navCache.set(key, cells);
   }
   const goal = [Math.round(to.x), Math.round(to.z)],
@@ -222,7 +228,8 @@ function patrolPath(
         !cells.has(k) ||
         blockedDoors.has(k) ||
         c >= (cost.get(k) ?? Infinity) ||
-        (nearbyPieces.length > 0 && blocked({ x, z }, nearbyPieces))
+        blocked({ x, z }, nearbyPieces) ||
+        blocked({ x: p.x + dx / 2, z: p.z + dz / 2 }, nearbyPieces)
       )
         continue;
       cost.set(k, c);

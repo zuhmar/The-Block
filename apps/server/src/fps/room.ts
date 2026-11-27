@@ -1,3 +1,4 @@
+import { FPS_CONTENT_VERSION } from "../../../../packages/shared/src/fps-protocol.js";
 import { Room, type Client } from "@colyseus/core";
 import { z } from "zod";
 import { createHash } from "node:crypto";
@@ -173,13 +174,18 @@ export function fpsRoom(bootstrap: string) {
         this.saving = false;
       }
     }
-    async onAuth(_client: Client, options: { token?: string; v?: number }) {
+    async onAuth(
+      _client: Client,
+      options: { token?: string; v?: number; contentVersion?: number },
+    ) {
       if (
         options.v !== 1 ||
         typeof options.token !== "string" ||
         options.token.length !== 64
       )
         throw Error("Sign in first or refresh the game");
+      if (options.contentVersion !== FPS_CONTENT_VERSION)
+        throw Error("City updated · refresh this page for police patrols");
       const token = createHash("sha256").update(options.token).digest("hex");
       const row = (
         await pool.query(

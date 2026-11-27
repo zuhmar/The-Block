@@ -1,3 +1,4 @@
+import { FPS_CONTENT_VERSION } from "../../../../packages/shared/src/fps-protocol";
 import { Client, type Room } from "colyseus.js";
 import type {
   FpsAction,
@@ -51,9 +52,11 @@ export class OnlineWorld {
       if (!response.ok) throw Error("City is starting · try again shortly");
       const world = await response.json();
       if (world.v !== 1) throw Error("Refresh to update the game");
+      if (world.contentVersion !== FPS_CONTENT_VERSION)
+        throw Error("City is updating · reconnect shortly");
       const room = await new Client(serverUrl.replace(/^http/, "ws")).joinById(
         world.roomId,
-        { token, v: 1 },
+        { token, v: 1, contentVersion: FPS_CONTENT_VERSION },
       );
       this.room = room;
       room.onMessage("snapshot", (s: FpsSnapshot) => {

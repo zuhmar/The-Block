@@ -1,3 +1,4 @@
+import { FPS_CONTENT_VERSION } from "../../../packages/shared/src/fps-protocol.js";
 import { fpsRoom } from "./fps/room.js";
 import { MovementInputs } from "./movement-inputs.js";
 import { WorldQueue } from "./world-queue.js";
@@ -134,7 +135,13 @@ app.get("/fps/world", (_req, res) => {
     res.status(503).json({ error: "City starting" });
     return;
   }
-  res.json({ roomId: fpsRoomId, v: 1, map: "compact-city", maxPlayers: 20 });
+  res.json({
+    roomId: fpsRoomId,
+    v: 1,
+    contentVersion: FPS_CONTENT_VERSION,
+    map: "compact-city",
+    maxPlayers: 20,
+  });
 });
 app.get("/world", (_req, res) => {
   if (!roomId) {

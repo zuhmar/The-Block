@@ -1,3 +1,10 @@
+import { streetPolicePatrols } from "../../../client/src/fps/police-layout.js";
+import {
+  isStreetPolice,
+  reportPoliceViolence,
+  updatePolice,
+  type PolicePerson,
+} from "../../../client/src/fps/police.js";
 import * as THREE from "three";
 import type {
   FpsAction,
@@ -231,6 +238,17 @@ export class FpsEngine {
           enemy: newEnemy(p.kind, saved.pieces, p.patrol),
         })),
       ];
+    // Add patrols without resetting existing encounters, player progress or structures.
+    const police = streetPolicePatrols();
+    if (police.length) {
+      saved.npcs = saved.npcs.filter((n) => n.id !== "police-town");
+      for (const patrol of police)
+        if (!saved.npcs.some((n) => n.id === patrol.id))
+          saved.npcs.push({
+            id: patrol.id,
+            enemy: newEnemy("police", saved.pieces, patrol),
+          });
+    }
     const elapsed = Math.max(0, (Date.now() - saved.updatedAt) / 1000);
     advanceProduction(saved.pieces, elapsed);
     this.restoreDoors();
@@ -758,6 +776,32 @@ export class FpsEngine {
       -Math.cos(yaw) * Math.cos(pitch),
     );
   }
+  private policeSight = (
+    a: { x: number; z: number; y?: number },
+    b: { x: number; z: number; y?: number },
+  ) => this.cover.visible({ ...a, y: a.y ?? 0 }, { ...b, y: b.y ?? 0 });
+  private reportViolence(
+    p: OnlinePlayer,
+    point: { x: number; z: number; y?: number },
+    kind: "gunfire" | "assault" | "explosion",
+    now: number,
+    victim?: Enemy,
+  ) {
+    reportPoliceViolence(
+      this.world.npcs.map((n) => n.enemy),
+      {
+        id: p.id,
+        position: p.pose,
+        alive: p.health > 0,
+        safe: this.isSafe(p.pose),
+      },
+      point,
+      kind,
+      this.policeSight,
+      now,
+      victim,
+    );
+  }
   private fire(p: OnlinePlayer, yaw: number, pitch: number, now: number) {
     fail(!this.isSafe(p.pose), "Jail release area · weapons are disabled");
     const held = selectedItem(p.inventory),
@@ -796,6 +840,8 @@ export class FpsEngine {
     p.nextShotAt = Math.max(p.nextShotAt, now - 25) + interval;
     p.shots++;
     p.combatUntil = now + 30000;
+    if (tool !== "hands" && tool !== "c4")
+      this.reportViolence(p, p.pose, "gunfire", now);
     p.pose.yaw = yaw;
     p.pose.pitch = pitch;
     if (tool !== "hands" && explosiveKind(tool)) {
@@ -887,6 +933,7 @@ export class FpsEngine {
         }
       }
       if (target) {
+        if (tool === "hands") this.reportViolence(p, p.pose, "assault", now);
         this.damage(target, damage, now);
         this.events.push({
           type: "hit",
@@ -896,6 +943,7 @@ export class FpsEngine {
         });
       } else if (npc) {
         damageEnemy(npc, damage);
+        this.reportViolence(p, p.pose, "assault", now, npc);
         this.events.push({
           type: "hit",
           target: p.id,
@@ -935,6 +983,8 @@ export class FpsEngine {
       this.coverDirty = false;
     }
     const center = projectile.position;
+    const owner = this.world.players[projectile.ownerId];
+    if (owner) this.reportViolence(owner, center, "explosion", now);
     this.world.projectiles = this.world.projectiles.filter(
       (p) => p.id !== projectile.id,
     );
@@ -1107,12 +1157,30 @@ export class FpsEngine {
       this.coverDirty,
     );
     this.coverDirty = false;
+    const policePeople: PolicePerson[] = active.map((p) => ({
+      id: p.id,
+      position: p.pose,
+      alive: p.health > 0,
+      safe: this.isSafe(p.pose),
+    }));
     for (const unit of this.world.npcs) {
-      const e = unit.enemy,
-        nearest = active
-          .filter((p) => !this.isSafe(p.pose))
-          .sort((a, b) => distance(a.pose, e) - distance(b.pose, e))[0],
-        target = nearest?.pose ?? { ...START, y: 0 },
+      const e = unit.enemy;
+      const policeShot = isStreetPolice(e)
+        ? updatePolice(
+            e,
+            policePeople,
+            this.world.pieces,
+            dt,
+            this.policeSight,
+            now,
+          )
+        : undefined;
+      const nearest = isStreetPolice(e)
+        ? active.find((p) => p.id === policeShot?.suspectId)
+        : active
+            .filter((p) => !this.isSafe(p.pose))
+            .sort((a, b) => distance(a.pose, e) - distance(b.pose, e))[0];
+      const target = nearest?.pose ?? { ...START, y: 0 },
         from = {
           x: e.x,
           y: surfaceHeight(e, this.world.pieces, 1) + 1.4,
@@ -1121,7 +1189,9 @@ export class FpsEngine {
         to = { x: target.x, y: target.y + 1.1, z: target.z };
       const visible =
         !!nearest && distance(e, target) < 24 && this.cover.visible(from, to);
-      const shot = updateEnemy(e, target, this.world.pieces, dt, visible);
+      const shot = isStreetPolice(e)
+        ? policeShot?.point
+        : updateEnemy(e, target, this.world.pieces, dt, visible);
       if (shot && nearest) {
         e.target = { ...shot, y: target.y };
         const aim = { x: shot.x, y: target.y + 1.1, z: shot.z };
@@ -1147,6 +1217,7 @@ export class FpsEngine {
           ).normalize(),
           life: 2,
           damage: e.patrol?.combat?.damage ?? ENEMY_TYPES[e.kind].damage,
+          ...(policeShot ? { suspectId: policeShot.suspectId } : {}),
         });
       }
     }
@@ -1180,7 +1251,8 @@ export class FpsEngine {
             new THREE.Vector3(),
           );
           if (point && point.distanceTo(ray.origin) <= range) {
-            this.damage(p, shot.damage, now);
+            if (!shot.suspectId || shot.suspectId === p.id)
+              this.damage(p, shot.damage, now);
             hit = true;
             break;
           }
@@ -1217,6 +1289,7 @@ export class FpsEngine {
     direction: THREE.Vector3;
     life: number;
     damage: number;
+    suspectId?: string;
   }[] = [];
   markWorld() {
     const ids = new Set(this.world.pieces.map((p) => p.id));
