@@ -12,7 +12,10 @@ export function createStationDialog(options: {
   inventory: () => Inventory;
   piece: () => Piece | undefined;
   close: () => void;
-  action: (action: "start" | "collect" | "cancel", recipe?: string) => string;
+  action: (
+    action: "start" | "collect" | "cancel",
+    recipe?: string,
+  ) => string | Promise<string>;
 }) {
   const overlay = document.createElement("div");
   overlay.id = "station-overlay";
@@ -34,8 +37,8 @@ export function createStationDialog(options: {
       element: HTMLElement;
     }[];
   }[] = [];
-  function action(kind: "start" | "collect" | "cancel", recipe?: string) {
-    const error = options.action(kind, recipe);
+  async function action(kind: "start" | "collect" | "cancel", recipe?: string) {
+    const error = await options.action(kind, recipe);
     $("#station-feedback").textContent =
       error ||
       (kind === "collect"

@@ -658,3 +658,39 @@ input[type="checkbox"] {
   border: 1px solid #72554c70;
   text-decoration: none;
 }
+.online-login {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.online-login form {
+  display: grid;
+  gap: 8px;
+}
+.online-login [hidden] {
+  display: none;
+}
+.online-login label {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  font-size: 12px;
+}
+.online-login input:not([type="checkbox"]) {
+  width: 100%;
+  padding: 10px;
+  color: #fff;
+  background: #151d24;
+  border: 1px solid #6b767d;
+  border-radius: 5px;
+}
+.online-login .online-register {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.online-login p {
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.4;
+}

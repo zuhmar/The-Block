@@ -7,7 +7,11 @@ type Options = {
   inventory: () => Inventory;
   spec: () => { size: StorageSize; name: string; slots: number };
   slots: () => StorageSlots;
-  transfer: (side: "bag" | "chest", index: number, quantity: number) => number;
+  transfer: (
+    side: "bag" | "chest",
+    index: number,
+    quantity: number,
+  ) => number | Promise<number>;
   close: () => void;
 };
 export function createStorageDialog(options: Options) {
@@ -17,10 +21,11 @@ export function createStorageDialog(options: Options) {
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "storage-title");
-  overlay.innerHTML = `<div class="storage-card"><div class="storage-heading"><div><span class="eyebrow">PLAYER-BUILT CONTAINER</span><h2><img id="storage-popup-icon" alt=""><span id="storage-title">STORAGE CHEST</span></h2></div><button id="storage-close" aria-label="Close storage">CLOSE ×</button></div><p class="storage-guide">Select an item, then deposit or withdraw it. Resources / bullets ×500 · Explosives ×5 · Guns ×1.</p><div class="storage-columns"><section><h3>YOUR INVENTORY <small id="storage-bag-count"></small></h3><div id="storage-bag-grid" class="storage-grid" aria-label="20 carried inventory slots"></div></section><section><h3>CHEST <small id="storage-chest-count"></small></h3><div id="storage-chest-grid" class="storage-grid" aria-label="20 chest storage slots"></div></section></div><div class="storage-controls"><b id="storage-selected">Select an item</b><label>Amount <select id="storage-amount"><option value="all">Full stack</option><option value="half">Half stack</option><option value="one">One item</option></select></label><button id="storage-transfer" class="primary" disabled>TRANSFER</button></div><p id="storage-feedback" role="status" aria-live="polite">Contents save on this device. Empty the chest before dismantling it.</p></div>`;
+  overlay.innerHTML = `<div class="storage-card"><div class="storage-heading"><div><span class="eyebrow">PLAYER-BUILT CONTAINER</span><h2><img id="storage-popup-icon" alt=""><span id="storage-title">STORAGE CHEST</span></h2></div><button id="storage-close" aria-label="Close storage">CLOSE ×</button></div><p class="storage-guide">Select an item, then deposit or withdraw it. Resources / bullets ×500 · Explosives ×5 · Guns ×1.</p><div class="storage-columns"><section><h3>YOUR INVENTORY <small id="storage-bag-count"></small></h3><div id="storage-bag-grid" class="storage-grid" aria-label="20 carried inventory slots"></div></section><section><h3>CHEST <small id="storage-chest-count"></small></h3><div id="storage-chest-grid" class="storage-grid" aria-label="20 chest storage slots"></div></section></div><div class="storage-controls"><b id="storage-selected">Select an item</b><label>Amount <select id="storage-amount"><option value="all">Full stack</option><option value="half">Half stack</option><option value="one">One item</option></select></label><button id="storage-transfer" class="primary" disabled>TRANSFER</button></div><p id="storage-feedback" role="status" aria-live="polite">Empty the chest before dismantling it.</p></div>`;
   document.body.append(overlay);
   const $ = <T extends HTMLElement = HTMLElement>(q: string) =>
     overlay.querySelector<T>(q)!;
+  let pending = false;
   let selection: { side: "bag" | "chest"; index: number } | undefined,
     previous: HTMLElement | null = null;
   const cells = {
@@ -82,16 +87,19 @@ export function createStorageDialog(options: Options) {
       ? itemName(item.kind) + " ×" + item.quantity
       : "Select an item";
     const transfer = $<HTMLButtonElement>("#storage-transfer");
-    transfer.disabled = !item;
+    transfer.disabled = !item || pending;
     transfer.textContent =
       selection?.side === "bag" ? "DEPOSIT →" : "← WITHDRAW";
   }
-  $("#storage-transfer").onclick = () => {
-    if (!selection) return;
+  $("#storage-transfer").onclick = async () => {
+    if (!selection || pending) return;
     const item = slots(selection.side)[selection.index];
     if (!item) return;
+    const side = selection.side;
+    pending = true;
+    $("#storage-feedback").textContent = "Transferring…";
     const amount = $<HTMLSelectElement>("#storage-amount").value,
-      n = options.transfer(
+      n = await options.transfer(
         selection.side,
         selection.index,
         amount === "one"
@@ -100,8 +108,9 @@ export function createStorageDialog(options: Options) {
             ? Math.max(1, Math.floor(item.quantity / 2))
             : item.quantity,
       );
+    pending = false;
     $("#storage-feedback").textContent = n
-      ? `${selection.side === "bag" ? "Deposited" : "Withdrew"} ${n} ${itemName(item.kind)}.`
+      ? `${side === "bag" ? "Deposited" : "Withdrew"} ${n} ${itemName(item.kind)}.`
       : "No space available. Make room in the destination first.";
     render();
   };
@@ -129,7 +138,7 @@ export function createStorageDialog(options: Options) {
       previous = document.activeElement as HTMLElement;
       overlay.hidden = false;
       $("#storage-feedback").textContent =
-        "Contents save on this device. Empty the chest before dismantling it.";
+        "Empty the chest before dismantling it.";
       render();
       $("#storage-close").focus();
     },

@@ -1,3 +1,4 @@
+import { fpsRoom } from "./fps/room.js";
 import { MovementInputs } from "./movement-inputs.js";
 import { WorldQueue } from "./world-queue.js";
 import { Server, Room, matchMaker, type Client } from "@colyseus/core";
@@ -35,6 +36,7 @@ await acquireAuthority(
 await migrate();
 const bootstrap = randomUUID();
 let roomId = "";
+let fpsRoomId = "";
 const app = express();
 app.disable("x-powered-by");
 app.use(cors({ origin: config.clientOrigin }));
@@ -50,7 +52,7 @@ const authSchema = z.object({
   appearance: appearanceSchema.optional(),
 });
 const digest = (s: string) => createHash("sha256").update(s).digest("hex");
-app.post("/auth", async (req, res) => {
+app.post(["/auth", "/fps/auth"], async (req, res) => {
   const ip = req.ip || "local";
   let limiter = attempts.get(ip);
   if (!limiter || limiter.until < Date.now()) {
@@ -91,20 +93,21 @@ app.post("/auth", async (req, res) => {
       )
     )
       throw Error("Invalid credentials");
-    await transaction((w) => {
-      if (!w.players[account.id])
-        w.players[account.id] = createPlayer(
-          account.id,
-          data.name,
-          data.appearance || {
-            skin: "#c98c62",
-            hair: "#252939",
-            top: "#ec8753",
-            body: "standard",
-            style: "short",
-          },
-        );
-    });
+    if (req.path === "/auth")
+      await transaction((w) => {
+        if (!w.players[account.id])
+          w.players[account.id] = createPlayer(
+            account.id,
+            data.name,
+            data.appearance || {
+              skin: "#c98c62",
+              hair: "#252939",
+              top: "#ec8753",
+              body: "standard",
+              style: "short",
+            },
+          );
+      });
     const token = randomBytes(32).toString("hex");
     await pool.query(
       "INSERT INTO sessions VALUES($1,$2,$3) ON CONFLICT(account) DO UPDATE SET token=$1,expires=$3",
@@ -121,6 +124,13 @@ app.post("/auth", async (req, res) => {
             : "Authentication failed",
     });
   }
+});
+app.get("/fps/world", (_req, res) => {
+  if (!fpsRoomId) {
+    res.status(503).json({ error: "City starting" });
+    return;
+  }
+  res.json({ roomId: fpsRoomId, v: 1, map: "compact-city", maxPlayers: 20 });
 });
 app.get("/world", (_req, res) => {
   if (!roomId) {
@@ -152,13 +162,13 @@ app.get("/world", (_req, res) => {
   });
 });
 app.get("/health", async (_req, res) => {
-  if (!roomId) {
+  if (!roomId || !fpsRoomId) {
     res.status(503).json({ ok: false, error: "City starting" });
     return;
   }
   try {
     await pool.query("SELECT 1");
-    res.json({ ok: true, district: "The Block", protocol: VERSION });
+    res.json({ ok: true, district: "The Block", protocol: VERSION, fps: 1 });
   } catch {
     res.status(503).json({ ok: false });
   }
@@ -358,9 +368,11 @@ export class Block extends Room {
 }
 const http = createServer(app);
 const game = new Server({
-  transport: new WebSocketTransport({ server: http }),
+  transport: new WebSocketTransport({ server: http, maxPayload: 65536 }),
 });
 game.define("block", Block).filterBy([]);
+game.define("block3d", fpsRoom(bootstrap)).filterBy([]);
 await game.listen(config.port);
 roomId = (await matchMaker.createRoom("block", { bootstrap })).roomId;
+fpsRoomId = (await matchMaker.createRoom("block3d", { bootstrap })).roomId;
 console.log(`Street Survival authority · listening on port ${config.port}`);

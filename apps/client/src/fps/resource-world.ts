@@ -44,6 +44,7 @@ export class ResourceWorld {
     saved?: HarvestSave,
     now = Date.now(),
     private random: () => number = Math.random,
+    initialTick = true,
   ) {
     for (const [i, t] of TREES.entries()) {
       const kind = (["tree-broadleaf", "tree-pine", "tree-birch"] as const)[
@@ -118,7 +119,18 @@ export class ResourceWorld {
       this.entities.push(r);
     }
     this.reindex();
-    this.tick(now, START);
+    if (initialTick) this.tick(now, START);
+  }
+  applyNetwork(changes: WorldResource[], full = false) {
+    if (full)
+      this.entities = changes.map((r) => ({ ...r, lastHitAt: -Infinity }));
+    else
+      for (const next of changes) {
+        const existing = this.entities.find((r) => r.id === next.id);
+        if (existing) Object.assign(existing, next, { lastHitAt: -Infinity });
+      }
+    this.revision++;
+    this.reindex();
   }
   private staticSite(p: Point, radius: number) {
     if (COMPACT.active && !parkSite(p, radius)) return false;

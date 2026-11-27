@@ -1,3 +1,14 @@
+import { OnlineWorld, onlineMode, installOnlineMenu } from "./online";
+import { OnlinePlayers } from "./online-players";
+import { normalizeRoadsideLoot } from "./roadside-bounds";
+import type {
+  FpsPrivate,
+  FpsSnapshot,
+  FpsEvent,
+} from "../../../../packages/shared/src/fps-protocol";
+let online: OnlineWorld | undefined;
+let networkClockOffset = 0;
+const networkNpcShots = new Set<string>();
 import { createSettingsDialog } from "./settings-ui";
 import {
   DEFAULT_SETTINGS,
@@ -408,7 +419,7 @@ let hadSavedGame = false;
 let save = readSave(null),
   saveAvailable = true;
 try {
-  const raw = localStorage.getItem(SAVE_KEY);
+  const raw = onlineMode ? null : localStorage.getItem(SAVE_KEY);
   hadSavedGame = !!raw;
   save = readSave(raw);
   if (
@@ -464,8 +475,10 @@ for (const id of settleUpkeep(survival(), Date.now()).cleared) {
 for (const id of save.opened)
   survival().lootReadyAt[id] ??= Date.now() + LOOT_COOLDOWN_MS;
 
+normalizeRoadsideLoot();
 const resourceWorld = new ResourceWorld(() => save.pieces, save.harvest);
 function reserveOwnedLand() {
+  if (onlineMode) return;
   const plot = survival().plots.find((p) => p.id === survival().lease?.plotId);
   resourceWorld.reserveLand(
     (p, r) => !plot || !inPlot(p, plot, -r),
@@ -479,6 +492,11 @@ setResourceCollisionProvider((p, feet, build, radius) =>
   resourceWorld.blocked(p, feet, build, radius),
 );
 function persist() {
+  if (onlineMode) {
+    syncCarry();
+    droppedItems.sync(inventory().drops);
+    return;
+  }
   clearTimeout(saveTimer);
   saveTimer = undefined;
   storeCurrentGun();
@@ -498,6 +516,7 @@ function persist() {
   }
 }
 function persistSoon() {
+  if (onlineMode) return;
   storeCurrentGun();
   if (saveTimer === undefined)
     saveTimer = setTimeout(() => {
@@ -1462,6 +1481,15 @@ function clearBullets() {
   enemyBullets.length = 0;
 }
 function respawn() {
+  if (onlineMode) {
+    void online?.action({ type: "respawn" }).then((ok) => {
+      if (ok) {
+        $("#defeated").hidden = true;
+        start();
+      }
+    });
+    return;
+  }
   cancelHarvest();
   survival().dead = false;
   health = 100;
@@ -1494,6 +1522,7 @@ function recordDeath() {
   cancelReload(loadout);
   cancelHarvest();
   if (
+    !onlineMode &&
     dropCarriedOnDeath(inventory(), survival(), {
       x: player.x,
       z: player.z,
@@ -1537,7 +1566,8 @@ function enemyFrame(dt: number) {
       enemyActor.root.visible = false;
       enemyAim.visible = false;
       enemyFlash.visible = false;
-      if (enemy.health <= 0) updateEnemy(enemy, player, save.pieces, dt, false);
+      if (enemy.health <= 0 && !onlineMode)
+        updateEnemy(enemy, player, save.pieces, dt, false);
       continue;
     }
     const enemySurface = surfaceHeight(
@@ -1586,7 +1616,11 @@ function enemyFrame(dt: number) {
     }
     const beforeX = enemy.x,
       beforeZ = enemy.z;
-    const shot = updateEnemy(enemy, player, save.pieces, dt, visible);
+    const shot = onlineMode
+      ? networkNpcShots.delete(unit.id)
+        ? { ...enemy.target }
+        : undefined
+      : updateEnemy(enemy, player, save.pieces, dt, visible);
     enemyActor.root.visible =
       (enemy.health > 0 || (!!unit.labModel && enemy.timer < 1.3)) &&
       Math.hypot(enemy.x - player.x, enemy.z - player.z) < 38;
@@ -1596,7 +1630,9 @@ function enemyFrame(dt: number) {
       enemy.z,
     );
     enemyActor.root.rotation.y = enemy.yaw;
-    const moving = Math.hypot(enemy.x - beforeX, enemy.z - beforeZ) > 0.0001;
+    const moving = onlineMode
+      ? unit.moving
+      : Math.hypot(enemy.x - beforeX, enemy.z - beforeZ) > 0.0001;
     unit.moving = moving;
     if (unit.imageRig) {
       if (unit.labModel)
@@ -1666,6 +1702,7 @@ function enemyFrame(dt: number) {
     b.life -= dt;
     const blocked = coverDistance(a, end) <= a.distanceTo(end);
     if (
+      !onlineMode &&
       !blocked &&
       !inReleaseArea() &&
       segmentHitsPlayer(a, end, player, vertical)
@@ -1857,6 +1894,10 @@ function spawnExplosive(
   normal?: THREE.Vector3,
   attachedPieceId?: string,
 ) {
+  if (onlineMode) {
+    void online?.action({ type: "fire", yaw, pitch });
+    return;
+  }
   if (kind === "c4" && point && camera.position.distanceTo(point) > 3.3) {
     toast("Move closer to place C4");
     return;
@@ -1952,74 +1993,76 @@ function explode(p: Projectile) {
   playAt("explosion", p.position, 1, 150);
   const center = new THREE.Vector3(p.position.x, p.position.y, p.position.z),
     spec = BLAST[p.kind];
-  for (const u of enemies) {
-    if (u.enemy.health <= 0) continue;
-    const target = new THREE.Vector3(u.enemy.x, 0.9, u.enemy.z),
-      distance = center.distanceTo(target);
-    let damage = blastDamage(p.kind, distance);
-    if (!damage) continue;
-    if (
-      blastOccluded(center, target, [
-        ...shotObstacles,
-        ...lootMeshes,
-        ...construction.children,
-      ])
-    )
-      damage = 0;
-    if (damage) damageEnemy(u.enemy, damage);
-  }
-  const playerTarget = new THREE.Vector3(player.x, vertical + 1, player.z);
-  let selfDamage = blastDamage(p.kind, center.distanceTo(playerTarget));
-  if (selfDamage) {
-    if (
-      blastOccluded(center, playerTarget, [
-        ...shotObstacles,
-        ...lootMeshes,
-        ...construction.children,
-      ])
-    )
-      selfDamage = 0;
-    if (inReleaseArea()) selfDamage = 0;
-    health = Math.max(0, health - selfDamage);
-    if (selfDamage > 0) sound.play("hurt", { gain: 0.65, interval: 0.15 });
-    if (health <= 0) {
-      recordDeath();
+  if (!onlineMode) {
+    for (const u of enemies) {
+      if (u.enemy.health <= 0) continue;
+      const target = new THREE.Vector3(u.enemy.x, 0.9, u.enemy.z),
+        distance = center.distanceTo(target);
+      let damage = blastDamage(p.kind, distance);
+      if (!damage) continue;
+      if (
+        blastOccluded(center, target, [
+          ...shotObstacles,
+          ...lootMeshes,
+          ...construction.children,
+        ])
+      )
+        damage = 0;
+      if (damage) damageEnemy(u.enemy, damage);
     }
-  }
-  if (p.kind === "c4") {
-    const damage = damageStructuresWithC4(
-      save.pieces,
-      p.position,
-      p.attachedPieceId,
-      (piece, target) =>
-        !blastOccluded(
-          center,
-          new THREE.Vector3(target.x, target.y, target.z),
-          [
-            ...shotObstacles,
-            ...lootMeshes,
-            ...construction.children.filter(
-              (root) => root.userData.pieceId !== piece.id,
-            ),
-          ],
-        ),
-    );
-    if (damage.damaged.length) {
-      for (const id of damage.destroyed) {
-        const piece = save.pieces.find((p) => p.id === id);
-        if (piece?.kind === "storage")
-          for (const item of piece.contents ?? [])
-            if (item)
-              inventory().drops.push({
-                ...item,
-                x: piece.x,
-                z: piece.z,
-                y: pieceBase(piece, save.pieces),
-              });
+    const playerTarget = new THREE.Vector3(player.x, vertical + 1, player.z);
+    let selfDamage = blastDamage(p.kind, center.distanceTo(playerTarget));
+    if (selfDamage) {
+      if (
+        blastOccluded(center, playerTarget, [
+          ...shotObstacles,
+          ...lootMeshes,
+          ...construction.children,
+        ])
+      )
+        selfDamage = 0;
+      if (inReleaseArea()) selfDamage = 0;
+      health = Math.max(0, health - selfDamage);
+      if (selfDamage > 0) sound.play("hurt", { gain: 0.65, interval: 0.15 });
+      if (health <= 0) {
+        recordDeath();
       }
-      save.pieces = damage.pieces;
-      rebuildConstruction();
-      persist();
+    }
+    if (p.kind === "c4") {
+      const damage = damageStructuresWithC4(
+        save.pieces,
+        p.position,
+        p.attachedPieceId,
+        (piece, target) =>
+          !blastOccluded(
+            center,
+            new THREE.Vector3(target.x, target.y, target.z),
+            [
+              ...shotObstacles,
+              ...lootMeshes,
+              ...construction.children.filter(
+                (root) => root.userData.pieceId !== piece.id,
+              ),
+            ],
+          ),
+      );
+      if (damage.damaged.length) {
+        for (const id of damage.destroyed) {
+          const piece = save.pieces.find((p) => p.id === id);
+          if (piece?.kind === "storage")
+            for (const item of piece.contents ?? [])
+              if (item)
+                inventory().drops.push({
+                  ...item,
+                  x: piece.x,
+                  z: piece.z,
+                  y: pieceBase(piece, save.pieces),
+                });
+        }
+        save.pieces = damage.pieces;
+        rebuildConstruction();
+        persist();
+      }
     }
   }
   const mesh = new THREE.Mesh(
@@ -2046,6 +2089,10 @@ function explode(p: Projectile) {
   updateHud();
 }
 function detonateC4() {
+  if (onlineMode) {
+    void online?.action({ type: "detonate" });
+    return;
+  }
   if (!playing || health <= 0) return;
   if (projectiles.some((p) => p.kind === "c4")) {
     detonationRemaining = 0.5;
@@ -2075,6 +2122,7 @@ function updateExplosives(dt: number) {
     : [];
   for (const p of [...projectiles]) {
     if (
+      !onlineMode &&
       advanceProjectile(p, dt, (a, b) => {
         const start = new THREE.Vector3(a.x, a.y, a.z),
           end = new THREE.Vector3(b.x, b.y, b.z),
@@ -2221,7 +2269,13 @@ function updateHarvest(dt: number) {
         notifyInventory("Inventory full · swing cancelled");
         cancelHarvest();
       } else if (target?.id === action.id && health > 0 && !build) {
-        const result = resourceWorld.hit(action.id, Date.now());
+        if (onlineMode) {
+          void online?.action({ type: "harvest", id: action.id });
+          sound.play(config.action === "chop" ? "chop" : "mine", { gain: 0.6 });
+        }
+        const result = onlineMode
+          ? undefined
+          : resourceWorld.hit(action.id, Date.now());
         if (result) {
           const awarded = addItem(inventory(), result.resource, result.amount);
           sound.play(config.action === "chop" ? "chop" : "mine", {
@@ -2267,7 +2321,7 @@ function updateHarvest(dt: number) {
     beginHarvest();
   if (Date.now() - lastResourceCheck > 1000) {
     lastResourceCheck = Date.now();
-    if (resourceWorld.tick(Date.now(), player)) {
+    if (!onlineMode && resourceWorld.tick(Date.now(), player)) {
       nature.update(player, 0);
       persist();
     }
@@ -2361,6 +2415,7 @@ function notifyInventory(message: string) {
   }
 }
 function storeCurrentGun() {
+  if (onlineMode) return;
   if (tool === "hands" || !isGun(tool) || !equippedItemId) return;
   const item =
     inventory().slots.find((s) => s?.id === equippedItemId) ??
@@ -2393,6 +2448,8 @@ function activateHand(index: number, toggle = true) {
         : index
       : -1;
   cleanHotbar(inventory());
+  if (onlineMode)
+    void online?.action({ type: "equip", slot: inventory().active });
   reconcileEquipment();
   persist();
   updateHud();
@@ -2413,6 +2470,12 @@ function refreshHotbar() {
   }
 }
 function inventoryChanged() {
+  if (onlineMode) {
+    void online?.action({
+      type: "inventory",
+      inventory: structuredClone(inventory()),
+    });
+  }
   cleanHotbar(inventory());
   reconcileEquipment();
   persist();
@@ -2425,6 +2488,10 @@ const inventoryDialog = createInventoryDialog({
   activate: activateHand,
   health: () => health,
   use(id) {
+    if (onlineMode) {
+      void online?.action({ type: "use", id });
+      return true;
+    }
     const result = useLootItem(inventory(), id, health);
     if (!result) return false;
     save.inventory = result.inventory;
@@ -2441,6 +2508,10 @@ const inventoryDialog = createInventoryDialog({
     return false;
   },
   withdraw(kind) {
+    if (onlineMode) {
+      toast("Online supplies stay in your bag or placed storage");
+      return 0;
+    }
     if (!atReserve()) return 0;
     const n = withdrawStack(inventory(), kind);
     if (n) {
@@ -2450,6 +2521,10 @@ const inventoryDialog = createInventoryDialog({
     return n;
   },
   drop(id) {
+    if (onlineMode) {
+      void online?.action({ type: "drop", id });
+      return true;
+    }
     storeCurrentGun();
     let point = { x: player.x, z: player.z, y: vertical };
     for (let i = 0; i < 8; i++) {
@@ -2543,6 +2618,30 @@ const storageDialog = createStorageDialog({
   },
   close: () => closeStation(),
   transfer(side, index, quantity) {
+    if (onlineMode) {
+      const id = stationId,
+        slots =
+          side === "bag"
+            ? inventory().slots
+            : save.pieces.find((p) => p.id === id)?.contents;
+      const item = slots?.[index];
+      if (!id || !item || !online) return 0;
+      const oldQuantity = item.quantity,
+        itemId = item.id;
+      return online
+        .action({ type: "storage", station: id, side, index, quantity })
+        .then((ok) => {
+          if (!ok) return 0;
+          const next =
+            side === "bag"
+              ? inventory().slots
+              : save.pieces.find((p) => p.id === id)?.contents;
+          return Math.max(
+            0,
+            oldQuantity - (next?.find((s) => s?.id === itemId)?.quantity ?? 0),
+          );
+        });
+    }
     const p = save.pieces.find(
       (p) => p.id === stationId && p.kind === "storage",
     );
@@ -2565,6 +2664,12 @@ const stationDialog = createStationDialog({
   piece: () => save.pieces.find((p) => p.id === stationId),
   close: () => closeStation(),
   action(action, recipe) {
+    if (onlineMode) {
+      if (!stationId || !online) return "Connect to the city first";
+      return online
+        .action({ type: "production", station: stationId, action, recipe })
+        .then((ok) => (ok ? "" : "Server rejected the action · see notice"));
+    }
     const piece = save.pieces.find((p) => p.id === stationId);
     if (!piece || !reachableStation(piece)) return "Move closer to the station";
     storeCurrentGun();
@@ -2594,6 +2699,7 @@ function openStation(piece: Piece) {
   if (stationOpen || inventoryOpen || !playing || !reachableStation(piece))
     return;
   stationId = piece.id;
+  if (onlineMode) void online?.action({ type: "inspect", id: piece.id });
   resumeAfterStation = playing;
   storeCurrentGun();
   cancelReload(loadout);
@@ -2627,7 +2733,7 @@ function closeStation(resume = true) {
 }
 function tickProduction(seconds: number, now: number) {
   const active = save.pieces.some((p) => p.job && p.job.remaining > 0);
-  if (active) {
+  if (active && !onlineMode) {
     const completed = advanceProduction(save.pieces, seconds);
     productionSaveElapsed += seconds;
     if (completed.length || productionSaveElapsed >= 1) {
@@ -2695,6 +2801,7 @@ function plotSignDistance(p: { x: number; z: number; depth: number }) {
   return Math.hypot(player.x - p.x, player.z - p.z - p.depth / 2 - 1);
 }
 function settleHousing() {
+  if (onlineMode) return;
   const result = settleUpkeep(survival(), Date.now());
   for (const id of result.cleared) {
     const plot = survival().plots.find((p) => p.id === id);
@@ -2719,6 +2826,14 @@ const survivalDialog = createSurvivalDialog({
   distance: plotSignDistance,
   close: () => closeSurvival(),
   buy(id) {
+    if (onlineMode) {
+      if (!online) return "Connect to the city first";
+      return online
+        .action({ type: "buy", id })
+        .then((ok) =>
+          ok ? "Plot purchased" : "Server rejected the action · see notice",
+        );
+    }
     settleHousing();
     const plot = survival().plots.find((p) => p.id === id);
     if (!plot || plotSignDistance(plot) > 4) return "Visit the plot sign first";
@@ -2730,6 +2845,14 @@ const survivalDialog = createSurvivalDialog({
     return "Plot purchased · one day of upkeep included";
   },
   pay(days) {
+    if (onlineMode) {
+      if (!online) return "Connect to the city first";
+      return online
+        .action({ type: "upkeep", days })
+        .then((ok) =>
+          ok ? "Upkeep paid" : "Server rejected the action · see notice",
+        );
+    }
     settleHousing();
     const plot = survival().plots.find(
       (p) => p.id === survival().lease?.plotId,
@@ -2743,6 +2866,14 @@ const survivalDialog = createSurvivalDialog({
     return "Upkeep paid · funds protected from raids";
   },
   craft(kind) {
+    if (onlineMode) {
+      if (!online) return "Connect to the city first";
+      return online
+        .action({ type: "craft", kind })
+        .then((ok) =>
+          ok ? "Tool crafted" : "Server rejected the action · see notice",
+        );
+    }
     storeCurrentGun();
     const next = handcraft(inventory(), kind);
     if (!next) return "Need materials and a free inventory slot";
@@ -2803,6 +2934,7 @@ function nearestDrop() {
   return result;
 }
 function resetInput() {
+  online?.stop();
   footsteps.reset();
   cancelHarvest();
   setAim(false);
@@ -2838,6 +2970,10 @@ function captureMouse() {
   });
 }
 function start() {
+  if (onlineMode && (!online?.ready || online.paused)) {
+    toast("Connect to the city first");
+    return;
+  }
   hasEntered = true;
   $("#pause-settings").hidden = false;
   settleHousing();
@@ -2899,6 +3035,7 @@ $("#reset").addEventListener("click", () => {
     )
   )
     return;
+  if (onlineMode) return toast("Online progress is stored on the server");
   save = readSave(null);
   save.resources = { rock: 0, sulfur: 0, metal: 0 };
   save.wood = 0;
@@ -2990,6 +3127,10 @@ function place() {
   if (!playing || !build) return;
   updatePreview();
   if (!candidate) return;
+  if (onlineMode) {
+    void online?.action({ type: "build", piece: { ...candidate } });
+    return;
+  }
   reason =
     housingPlacementReason(survival(), candidate, save.pieces, Date.now()) ||
     placementReason(
@@ -2997,6 +3138,7 @@ function place() {
       { ...player, y: vertical },
       save.pieces,
       save.wood,
+      onlineMode ? Infinity : BUILD_LIMIT,
     );
   if (reason) return toast(reason);
   if (isStationKind(candidate.kind)) {
@@ -3063,6 +3205,10 @@ function remove() {
   if (!playing) return;
   const p = aimedPiece();
   if (!p) return toast("Aim at one of your pieces within 8 m");
+  if (onlineMode) {
+    void online?.action({ type: "remove", id: p.id });
+    return;
+  }
   if (!canRemove(p, save.pieces))
     return toast(
       "Remove attached doors, walls, floors, storage or stations first",
@@ -3247,6 +3393,10 @@ function interact() {
   if (!playing) return;
   const drop = nearestDrop();
   if (drop) {
+    if (onlineMode) {
+      void online?.action({ type: "pickup", id: drop.id });
+      return;
+    }
     if (drop.kind === "cash") {
       if (survival().cash + drop.quantity > 1000000)
         return toast("Cash limit reached");
@@ -3272,6 +3422,10 @@ function interact() {
   }
   const built = nearestBuiltDoor();
   if (built) {
+    if (onlineMode) {
+      void online?.action({ type: "door", kind: "player", id: built.id });
+      return;
+    }
     built.doorAngle ??= built.open ? -Math.PI / 2 : 0;
     built.open = !built.open;
     sound.play(built.open ? "door-open" : "door-close", { gain: 0.5 });
@@ -3280,6 +3434,10 @@ function interact() {
     return toast(built.open ? "Opening wood door" : "Closing wood door");
   }
   if (jailGateNearby(player, vertical)) {
+    if (onlineMode) {
+      void online?.action({ type: "door", kind: "jail" });
+      return;
+    }
     jailGate.open = !jailGate.open;
     sound.play(jailGate.open ? "door-open" : "door-close", { gain: 0.5 });
     return toast(
@@ -3288,6 +3446,15 @@ function interact() {
   }
   const apartment = nearestApartmentDoor();
   if (apartment) {
+    if (onlineMode) {
+      void online?.action({
+        type: "door",
+        kind: "apartment",
+        index: apartment.i,
+        part: apartment.id,
+      });
+      return;
+    }
     const s = apartmentDoorState(apartment.i);
     s.targets[apartment.id] = !s.targets[apartment.id];
     sound.play(s.targets[apartment.id] ? "door-open" : "door-close", {
@@ -3301,6 +3468,15 @@ function interact() {
   }
   const mart = nearestMartDoor();
   if (mart) {
+    if (onlineMode) {
+      void online?.action({
+        type: "door",
+        kind: "mart",
+        index: mart.i,
+        part: mart.id,
+      });
+      return;
+    }
     const s = martState(mart.i);
     s.targets[mart.id] = !s.targets[mart.id];
     sound.play(s.targets[mart.id] ? "door-open" : "door-close", { gain: 0.5 });
@@ -3313,6 +3489,10 @@ function interact() {
   }
   const door = nearestDoor();
   if (door >= 0) {
+    if (onlineMode) {
+      void online?.action({ type: "door", kind: "building", index: door });
+      return;
+    }
     toggleDoor(door);
     sound.play(doorTargets[door] ? "door-open" : "door-close", { gain: 0.5 });
     updateHud();
@@ -3329,6 +3509,10 @@ function interact() {
   }
   const i = nearestLoot();
   if (i < 0) return toast("Move closer to a crate or trash can");
+  if (onlineMode) {
+    void online?.action({ type: "loot", index: i });
+    return;
+  }
   if ((survival().lootReadyAt[i] ?? 0) > Date.now())
     return toast("Container restocking · return later");
   storeCurrentGun();
@@ -3355,6 +3539,10 @@ function interact() {
   );
 }
 function jump() {
+  if (onlineMode) {
+    if (playing && online) online.jump = true;
+    return;
+  }
   if (
     playing &&
     vertical <= surfaceHeight(player, save.pieces, vertical + 0.02) + 0.001
@@ -3380,6 +3568,7 @@ function requestReload() {
   if (ammo && !countItem(inventory(), ammo))
     return toast("No " + itemName(ammo) + " carried");
   if (beginReload(loadout, tool)) {
+    if (onlineMode) void online?.action({ type: "reload" });
     reloadSoundStage = 1;
     sound.play("reload-out", { gain: 0.45 });
     setAim(false);
@@ -3397,6 +3586,10 @@ function punch() {
   sound.play("punch-swing", { gain: 0.4 });
 }
 function landPunch() {
+  if (onlineMode) {
+    void online?.action({ type: "fire", yaw, pitch });
+    return;
+  }
   aimRay();
   const hit = raycaster
     .intersectObjects(
@@ -3471,6 +3664,7 @@ function fire() {
     }
     return;
   }
+  if (onlineMode) void online?.action({ type: "fire", yaw, pitch });
   sound.play(tool as SoundName, { gain: 0.8, interval: 0 });
   persistSoon();
   recoilRemaining = 1;
@@ -3520,7 +3714,7 @@ function fire() {
     enemies.find(
       (u) => u.enemy.health > 0 && u.hitbox.getObjectById(hits[0].object.id),
     );
-  if (hitEnemy) {
+  if (hitEnemy && !onlineMode) {
     const enemy = hitEnemy.enemy;
     damageEnemy(enemy, weapon.damage);
     sound.play("hit-marker", { gain: 0.3 });
@@ -3897,7 +4091,8 @@ function updateHud() {
   $("#cash-count").textContent = `$${survival().cash.toLocaleString()}`;
   for (const key of ["rock", "sulfur", "metal"] as const)
     $("#" + key + "-count").textContent = String(save.resources?.[key] ?? 0);
-  $("#budget").textContent = `${save.pieces.length} / ${BUILD_LIMIT}`;
+  $("#budget").textContent =
+    `${onlineMode ? save.pieces.filter((p) => p.ownerId === online?.id).length : save.pieces.length} / ${BUILD_LIMIT}`;
   canvas.dataset.buildLevels = JSON.stringify(
     save.pieces.map((p) => ({
       id: p.id,
@@ -4146,6 +4341,7 @@ function updatePreview() {
         { ...player, y: vertical },
         save.pieces,
         save.wood,
+        onlineMode ? Infinity : BUILD_LIMIT,
       );
     if (!reason && isStationKind(candidate.kind)) {
       const missing = missingIngredients(
@@ -4187,7 +4383,11 @@ function frame(now: number) {
   const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
   clock += dt;
-  const worldTime = dayNight.update(Date.now(), player);
+  const worldTime = dayNight.update(Date.now() + networkClockOffset, player);
+  if (onlineMode) {
+    remotePlayers.update(dt);
+    needsRender = true;
+  }
   coast.setDaylight(worldTime.daylight);
   const timeLabel = `${worldTime.time} · ${worldTime.phase}`;
   if ($("#world-time").textContent !== timeLabel) {
@@ -4218,6 +4418,11 @@ function frame(now: number) {
   });
   cityRows.update(player);
   if (playing || stationOpen) tickProduction(productionDt, now);
+  if (onlineMode && !playing) {
+    enemyFrame(dt);
+    updateExplosives(dt);
+    nature.update(player, dt, camera);
+  }
   if (!playing && !needsRender) return;
   needsRender = false;
   if (playing) {
@@ -4268,25 +4473,42 @@ function frame(now: number) {
       run || keys.has("ShiftLeft") || keys.has("ShiftRight") ? 7 : 4.5;
     const previousPosition = { ...player },
       fallSpeed = verticalSpeed;
-    player = movePlayer(
-      player,
-      (-Math.sin(yaw) * forward + Math.cos(yaw) * right) * speed * dt,
-      (-Math.cos(yaw) * forward - Math.sin(yaw) * right) * speed * dt,
-      save.pieces,
-      vertical,
-    );
-    const surface = surfaceHeight(player, save.pieces, vertical + 0.75);
-    if (vertical > surface || verticalSpeed > 0) {
-      verticalSpeed -= 12 * dt;
-      const ceiling = ceilingHeight(player, save.pieces, vertical) - 1.9;
-      const next = vertical + verticalSpeed * dt;
-      vertical = Math.max(surface, Math.min(next, ceiling));
-      if (next > ceiling) verticalSpeed = Math.min(0, verticalSpeed);
-      if (vertical === surface) verticalSpeed = 0;
+    if (onlineMode && online) {
+      const next = online.predict(
+        { ...player, y: vertical, vy: verticalSpeed, yaw, pitch },
+        {
+          x: -Math.sin(yaw) * forward + Math.cos(yaw) * right,
+          z: -Math.cos(yaw) * forward - Math.sin(yaw) * right,
+          run: speed > 5,
+        },
+        save.pieces,
+        Math.min(0.1, productionDt),
+      );
+      player = { x: next.x, z: next.z };
+      vertical = next.y;
+      verticalSpeed = next.vy;
     } else {
-      vertical = surface;
-      verticalSpeed = 0;
+      player = movePlayer(
+        player,
+        (-Math.sin(yaw) * forward + Math.cos(yaw) * right) * speed * dt,
+        (-Math.cos(yaw) * forward - Math.sin(yaw) * right) * speed * dt,
+        save.pieces,
+        vertical,
+      );
+      const localSurface = surfaceHeight(player, save.pieces, vertical + 0.75);
+      if (vertical > localSurface || verticalSpeed > 0) {
+        verticalSpeed -= 12 * dt;
+        const ceiling = ceilingHeight(player, save.pieces, vertical) - 1.9;
+        const next = vertical + verticalSpeed * dt;
+        vertical = Math.max(localSurface, Math.min(next, ceiling));
+        if (next > ceiling) verticalSpeed = Math.min(0, verticalSpeed);
+        if (vertical === localSurface) verticalSpeed = 0;
+      } else {
+        vertical = localSurface;
+        verticalSpeed = 0;
+      }
     }
+    const surface = surfaceHeight(player, save.pieces, vertical + 0.75);
     const grounded = Math.abs(vertical - surface) < 0.02 && verticalSpeed === 0;
     if (grounded && fallSpeed < -0.8)
       sound.play("land", {
@@ -4369,7 +4591,10 @@ function frame(now: number) {
         sound.play("reload-rack", { gain: 0.45 });
       }
     }
-    if (advanceInventoryReload(loadout, inventory(), dt)) {
+    if (onlineMode && loadout.reload) {
+      loadout.reload.remaining = Math.max(0.01, loadout.reload.remaining - dt);
+    }
+    if (!onlineMode && advanceInventoryReload(loadout, inventory(), dt)) {
       persist();
       updateHud();
     }
@@ -4767,6 +4992,193 @@ function frame(now: number) {
 syncSoundControls();
 $("#crosshair").hidden = !preferences.crosshair;
 activateHand(inventory().active, false);
+const remotePlayers = new OnlinePlayers(scene);
+function applyOnlinePrivate(state: FpsPrivate) {
+  const wasDead = health <= 0;
+  const pieces = save.pieces,
+    drops = inventory().drops;
+  save = { ...state.save, pieces };
+  inventory().drops = drops;
+  health = state.health;
+  if (state.station) {
+    const p = pieces.find((p) => p.id === state.station!.id);
+    if (p) Object.assign(p, state.station);
+  }
+  equippedItemId = undefined;
+  reconcileEquipment();
+  const held = selectedItem(inventory());
+  if (held && isGun(held.kind))
+    loadout.rounds[held.kind as WeaponKind] = held.magazine ?? 0;
+  if (
+    !state.reloadUntil ||
+    state.reloadUntil <= Date.now() + networkClockOffset
+  )
+    cancelReload(loadout);
+  syncCarry();
+  droppedItems.sync(inventory().drops);
+  updateHud();
+  if (inventoryOpen) inventoryDialog.render();
+  if (stationOpen) {
+    if (save.pieces.find((p) => p.id === stationId)?.kind === "storage")
+      storageDialog.render();
+    else stationDialog.render();
+  }
+  if (survivalOpen) survivalDialog.render();
+  if (health <= 0 && !wasDead) recordDeath();
+  needsRender = true;
+}
+function applyOnlineSnapshot(s: FpsSnapshot) {
+  networkClockOffset = s.serverTime - Date.now();
+  const w = s.world;
+  if (w.pieces) {
+    const old = new Map(save.pieces.map((p) => [p.id, p]));
+    const changed = w.pieces.map((p) => ({ ...old.get(p.id), ...p }));
+    if (w.fullPieces) save.pieces = changed;
+    else {
+      const removed = new Set([
+        ...(w.removed ?? []),
+        ...changed.map((p) => p.id),
+      ]);
+      save.pieces = [
+        ...save.pieces.filter((p) => !removed.has(p.id)),
+        ...changed,
+      ];
+    }
+    rebuildConstruction();
+  }
+  if (w.resources) resourceWorld.applyNetwork(w.resources, !!w.fullResources);
+  if (w.drops) {
+    inventory().drops = w.drops;
+    droppedItems.sync(w.drops);
+  }
+  if (w.lootReadyAt) survival().lootReadyAt = w.lootReadyAt;
+  doorTargets.splice(0, doorTargets.length, ...w.doors.building);
+  doorAngles.splice(0, doorAngles.length, ...w.doors.angles);
+  jailGate.open = w.doors.jail;
+  jailGate.angle = w.doors.jailAngle;
+  for (const [i, state] of Object.entries(w.doors.mart))
+    Object.assign(martState(Number(i)), state);
+  for (const [i, state] of Object.entries(w.doors.apartments))
+    Object.assign(apartmentDoorState(Number(i)), state);
+  for (const unit of enemies) {
+    const state = s.npcs.find((n) => n.id === unit.id);
+    if (state) {
+      unit.moving =
+        Math.hypot(state.enemy.x - unit.enemy.x, state.enemy.z - unit.enemy.z) >
+        0.01;
+      Object.assign(unit.enemy, state.enemy);
+    } else unit.enemy.health = 0;
+  }
+  const predicted = online!.reconcile(s.pose, s.ack, save.pieces);
+  player = { x: predicted.x, z: predicted.z };
+  vertical = predicted.y;
+  verticalSpeed = predicted.vy;
+  // Camera orientation stays under local input control.
+  const me = s.players.find((p) => p.id === s.id);
+  if (me && me.health < health) {
+    damageFlash = 0.25;
+    sound.play("hurt", { gain: 0.5, interval: 0.15 });
+  }
+  if (me) {
+    const wasAlive = health > 0;
+    health = me.health;
+    if (wasAlive && health <= 0) recordDeath();
+  }
+  remotePlayers.snapshot(s.players, s.id);
+  const ids = new Set(w.projectiles.map((p) => p.id));
+  for (const [id, model] of projectileModels)
+    if (!ids.has(id)) {
+      scene.remove(model);
+      disposeProjectile(model);
+      projectileModels.delete(id);
+    }
+  projectiles.splice(0, projectiles.length, ...w.projectiles);
+  for (const p of projectiles) {
+    let model = projectileModels.get(p.id);
+    if (!model) {
+      model = createWeapon(p.kind).root;
+      scene.add(model);
+      projectileModels.set(p.id, model);
+    }
+    model.position.set(p.position.x, p.position.y, p.position.z);
+  }
+  canvas.dataset.online = JSON.stringify({
+    id: s.id,
+    players: s.players.length,
+    remote: remotePlayers.size,
+    ack: s.ack,
+    paused: s.paused,
+  });
+  if (s.paused && playing) pause();
+  needsRender = true;
+}
+function onlineEvent(e: FpsEvent) {
+  if (e.type === "explosion") explode(e.projectile);
+  if (e.type === "hit" && e.target === online?.id)
+    sound.play("hit-marker", { gain: 0.25 });
+  if (e.type === "death") toast(e.name + " was defeated");
+  if (e.type === "shot" && e.id !== online?.id) {
+    const npc = enemies.find((n) => n.id === e.id);
+    if (npc) {
+      networkNpcShots.add(e.id);
+      return;
+    }
+    const a = new THREE.Vector3(e.from.x, e.from.y, e.from.z),
+      b = new THREE.Vector3(e.to.x, e.to.y, e.to.z),
+      model = bulletModel(e.tool);
+    if (model) {
+      model.position.copy(a);
+      const direction = b.clone().sub(a).normalize();
+      model.quaternion.setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        direction,
+      );
+      scene.add(model);
+      bulletVisuals.push({
+        model,
+        velocity: direction.multiplyScalar(100),
+        remaining: a.distanceTo(b),
+      });
+    }
+    if (e.tool !== "hands") playAt(e.tool as SoundName, e.from, 0.55, 80);
+  }
+}
+function onlineStatus(message: string, disconnected: boolean) {
+  const status = document.querySelector<HTMLElement>("#online-status");
+  if (status) status.textContent = message;
+  const button = document.querySelector<HTMLButtonElement>("#start");
+  if (button) {
+    button.disabled = !online?.ready || !!online?.paused;
+    button.textContent = online?.ready ? "ENTER ONLINE CITY" : "CONNECTING…";
+  }
+  const retry = document.querySelector<HTMLElement>("#online-reconnect");
+  if (retry) retry.hidden = !disconnected;
+  if (disconnected) {
+    if (settingsOpen) closeSettings(false);
+    if (inventoryOpen) closeInventory();
+    if (stationOpen) closeStation(false);
+    if (survivalOpen) closeSurvival(false);
+    if (playing) pause();
+    $("#menu").hidden = false;
+  }
+  if (!message.startsWith("ONLINE") && !message.startsWith("Connecting"))
+    toast(message);
+  const footer = document.querySelector<HTMLElement>(".save-status");
+  if (footer?.firstChild)
+    footer.firstChild.textContent = disconnected
+      ? "OFFLINE · RECONNECT"
+      : "ONLINE · SERVER SAVED";
+}
+installOnlineMenu(() => location.reload());
+if (onlineMode) {
+  online = new OnlineWorld({
+    snapshot: applyOnlineSnapshot,
+    self: applyOnlinePrivate,
+    event: onlineEvent,
+    status: onlineStatus,
+  });
+  void online.connect();
+}
 persist();
 updateHud();
 requestAnimationFrame(frame);

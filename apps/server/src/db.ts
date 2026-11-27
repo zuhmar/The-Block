@@ -12,6 +12,12 @@ export const pool = new pg.Pool({
 export async function migrate() {
   await pool.query(
     await readFile(
+      new URL("../../../prisma/002_fps.sql", import.meta.url),
+      "utf8",
+    ),
+  );
+  await pool.query(
+    await readFile(
       new URL("../../../prisma/001_init.sql", import.meta.url),
       "utf8",
     ),

@@ -36,7 +36,7 @@ export function createHousingView(scene: THREE.Scene, s: SurvivalState) {
     update(s: SurvivalState, player: { x: number; z: number }) {
       for (const m of markers) {
         const distance = Math.hypot(player.x - m.p.x, player.z - m.p.z);
-        m.g.visible = distance < 100;
+        m.g.visible = distance < 100 && s.plots.some((p) => p.id === m.p.id);
         m.line.visible = distance < 45 || s.lease?.plotId === m.p.id;
         m.material.color.setHex(
           s.lease?.plotId === m.p.id

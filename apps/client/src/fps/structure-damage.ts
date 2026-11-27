@@ -17,7 +17,7 @@ type Part = {
   yaw: number;
 };
 /** Match the same physical parts used for placement and bullet cover, including swung doors. */
-function parts(p: Piece, pieces: Piece[]): Part[] {
+export function structureParts(p: Piece, pieces: Piece[]): Part[] {
   const base = pieceBase(p, pieces),
     r = (p.rotation * Math.PI) / 2;
   let x = p.x,
@@ -105,7 +105,7 @@ function closestPoint(point: V3, b: Part): V3 {
   };
 }
 export function structureBlastPoint(p: Piece, pieces: Piece[], point: V3) {
-  return parts(p, pieces)
+  return structureParts(p, pieces)
     .map((b) => closestPoint(point, b))
     .sort(
       (a, b) =>

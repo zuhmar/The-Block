@@ -411,3 +411,85 @@ export function createInventoryPlayer() {
   if (idle) mixer!.clipAction(idle).play();
   return { root, update: (dt: number) => mixer?.update(dt) };
 }
+
+/** Complete approved rig for other players; never the headless first-person mesh. */
+export function createRemotePlayer() {
+  const root = asset ? clone(asset.root) : createSurvivor("base").root;
+  const mixer = asset ? new THREE.AnimationMixer(root) : undefined;
+  root.scale.setScalar(1.12);
+  const clips = new Map(
+    asset?.clips.map((clip) => {
+      const inPlace = clip.clone();
+      inPlace.tracks = inPlace.tracks.filter(
+        (t) => !/^SmartRigArmature\..*position/.test(t.name),
+      );
+      // Retain the authored vertical hip motion while removing locomotion drift.
+      for (const track of inPlace.tracks)
+        if (/Hips.*position/.test(track.name))
+          for (let i = 0; i < track.values.length; i += 3) {
+            track.values[i] = track.values[0];
+            track.values[i + 2] = track.values[2];
+          }
+      return [clip.name, inPlace] as const;
+    }),
+  );
+  const weapons = new Map<WeaponKind, ReturnType<typeof createWeapon>>();
+  let current = "";
+  const right: THREE.Object3D[] = [];
+  root.traverse((o) => {
+    if (/RightHand$/.test(o.name)) right.push(o);
+  });
+  let weapon: ReturnType<typeof createWeapon> | undefined,
+    tool: Tool = "hands";
+  return {
+    root,
+    dispose() {
+      mixer?.stopAllAction();
+      mixer?.uncacheRoot(root);
+      root.removeFromParent();
+    },
+    update(
+      dt: number,
+      moving: boolean,
+      running: boolean,
+      next: Tool,
+      reloading: boolean,
+      firing: boolean,
+    ) {
+      if (next !== tool) {
+        weapon?.root.removeFromParent();
+        tool = next;
+        if (next !== "hands") {
+          weapon = weapons.get(next) ?? createWeapon(next);
+          weapons.set(next, weapon);
+          (right[0] ?? root).add(weapon.root);
+          weapon.root.position.set(0, -0.03, 0.03);
+          weapon.root.rotation.set(-Math.PI / 2, 0, Math.PI);
+        }
+      }
+      const name =
+        reloading && next !== "hands"
+          ? animationFamily(next) + "_Reload"
+          : firing
+            ? next === "hands"
+              ? "Punch_Right"
+              : animationFamily(next) + "_Fire"
+            : moving
+              ? running
+                ? "Running"
+                : "Walking"
+              : next !== "hands"
+                ? animationFamily(next) + "_Hold"
+                : "Idle_3";
+      if (name !== current && mixer) {
+        const clip = clips.get(name);
+        if (clip) {
+          mixer.stopAllAction();
+          mixer.clipAction(clip).reset().play();
+          current = name;
+        }
+      }
+      mixer?.update(dt);
+    },
+  };
+}

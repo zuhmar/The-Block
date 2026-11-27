@@ -79,6 +79,7 @@ export type PieceKind =
   | "foundation"
   | "door";
 export type Piece = Point & {
+  ownerId?: string;
   id: string;
   kind: PieceKind;
   rotation: number;
@@ -570,13 +571,14 @@ export function placementReason(
   player: Point,
   pieces: Piece[],
   wood: number,
+  buildLimit = BUILD_LIMIT,
 ) {
   if (
     piece.y !== undefined &&
     (!Number.isFinite(piece.y) || piece.y < 0 || piece.y > 40)
   )
     return "Building height limit reached";
-  if (pieces.length >= BUILD_LIMIT) return "Build limit reached · 100 pieces";
+  if (pieces.length >= buildLimit) return "Build limit reached · 100 pieces";
   if (wood < pieceCost(piece)) return "Not enough wood";
   if (Math.hypot(piece.x - player.x, piece.z - player.z) > 8)
     return "Move closer · building reach is 8 m";

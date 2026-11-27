@@ -9,9 +9,9 @@ import "./survival.css";
 export function createSurvivalDialog(options: {
   get: () => SurvivalState;
   distance: (p: HousingPlot) => number;
-  buy: (id: string) => string;
-  pay: (days: number) => string;
-  craft: (kind: "axe" | "pickaxe") => string;
+  buy: (id: string) => string | Promise<string>;
+  pay: (days: number) => string | Promise<string>;
+  craft: (kind: "axe" | "pickaxe") => string | Promise<string>;
   close: () => void;
 }) {
   const overlay = document.createElement("div");
@@ -48,22 +48,22 @@ export function createSurvivalDialog(options: {
       options.close;
     overlay.querySelectorAll<HTMLButtonElement>("[data-buy]").forEach(
       (b) =>
-        (b.onclick = () => {
-          message = options.buy(b.dataset.buy!);
+        (b.onclick = async () => {
+          message = await options.buy(b.dataset.buy!);
           render();
         }),
     );
     overlay.querySelectorAll<HTMLButtonElement>("[data-upkeep]").forEach(
       (b) =>
-        (b.onclick = () => {
-          message = options.pay(Number(b.dataset.upkeep));
+        (b.onclick = async () => {
+          message = await options.pay(Number(b.dataset.upkeep));
           render();
         }),
     );
     overlay.querySelectorAll<HTMLButtonElement>("[data-craft]").forEach(
       (b) =>
-        (b.onclick = () => {
-          message = options.craft(b.dataset.craft as "axe" | "pickaxe");
+        (b.onclick = async () => {
+          message = await options.craft(b.dataset.craft as "axe" | "pickaxe");
           render();
         }),
     );
